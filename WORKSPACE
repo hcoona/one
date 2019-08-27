@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "2ea8a5ed2b448baf4a6855d3ce049c4c452a6470b1efd1504fdb7c1c134d220a",
-    strip_prefix = "bazel-skylib-0.8.0",
-    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.8.0.tar.gz",
+    sha256 = "9245b0549e88e356cd6a25bf79f97aa19332083890b7ac6481a2affb6ada9752",
+    strip_prefix = "bazel-skylib-0.9.0",
+    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",  # 2019-07-13
 )
 
 ######## Protobuf & Grpc C++ libraries ########
@@ -18,10 +18,10 @@ http_archive(
     build_file = "//third_party/zlib:zlib.BUILD",
     sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
     strip_prefix = "zlib-1.2.11",
-    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],  # 2017-01-15
 )
 
-# abseil, required by Grpc.
+# abseil, required by Grpc, gtest.
 http_archive(
     name = "com_google_absl",
     patch_args = ["-p1"],
@@ -42,25 +42,25 @@ http_archive(
 # gtest, required by Grpc.
 http_archive(
     name = "com_google_googletest",
-    sha256 = "5aaa5d566517cae711e2a3505ea9a6438be1b37fcaae0ebcb96ccba9aa56f23a",
-    strip_prefix = "googletest-b4d4438df9479675a632b2f11125e57133822ece",
-    urls = ["https://github.com/google/googletest/archive/b4d4438df9479675a632b2f11125e57133822ece.zip"],  # 2018-07-16
+    strip_prefix = "googletest-1.8.1",
+    urls = ["https://github.com/google/googletest/archive/release-1.8.1.tar.gz"],  # 2018-08-31
 )
 
 # gflags, required by Grpc.
+# TODO(zhangshuai.ustc): Patch them to use abseil flags?
 http_archive(
     name = "com_github_gflags_gflags",
     sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
     strip_prefix = "gflags-2.2.2",
-    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],  # 2018-11-12
 )
 
 # Google benchmark, required by Grpc.
 http_archive(
     name = "com_github_google_benchmark",
     sha256 = "59f918c8ccd4d74b6ac43484467b500f1d64b40cc1010daa055375b322a43ba3",
-    strip_prefix = "benchmark-16703ff83c1ae6d53e5155df3bb3ab0bc96083be",
-    urls = ["https://github.com/google/benchmark/archive/16703ff83c1ae6d53e5155df3bb3ab0bc96083be.zip"],
+    strip_prefix = "benchmark-1.5.0",
+    urls = ["https://github.com/google/benchmark/archive/v1.5.0.tar.gz"],  # 2019-05-28
 )
 
 # proto_library, cc_proto_library, and java_proto_library rules implicitly
@@ -91,9 +91,9 @@ http_archive(
     name = "com_github_grpc_grpc",
     patch_args = ["-p1"],
     patches = ["//third_party/grpc:0001-build-with-com_github_madler_zlib.patch"],
-    sha256 = "11ac793c562143d52fd440f6549588712badc79211cdc8c509b183cb69bddad8",
-    strip_prefix = "grpc-1.22.0",
-    urls = ["https://github.com/grpc/grpc/archive/v1.22.0.tar.gz"],
+    sha256 = "cce1d4585dd017980d4a407d8c5e9f8fc8c1dbb03f249b99e88a387ebb45a035",
+    strip_prefix = "grpc-1.22.1",
+    urls = ["https://github.com/grpc/grpc/archive/v1.22.1.tar.gz"],  # 2019-08-15
 )
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
@@ -109,9 +109,7 @@ http_archive(
     patches = ["//third_party/grpc-java:0001-fix-build-with-grpc-1.22.0.patch"],
     sha256 = "6e63bd6f5a82de0b84c802390adb8661013bad9ebf910ad7e1f3f72b5f798832",
     strip_prefix = "grpc-java-1.22.1",
-    urls = [
-        "https://github.com/grpc/grpc-java/archive/v1.22.1.tar.gz",
-    ],
+    urls = ["https://github.com/grpc/grpc-java/archive/v1.22.1.tar.gz"],  # 2019-08-14
 )
 
 # Load the grpc-java dependencies from the local bzl file.
@@ -138,10 +136,7 @@ maven_server(
 http_archive(
     name = "io_bazel_rules_go",
     sha256 = "8df59f11fb697743cbb3f26cfb8750395f30471e9eabde0d174c3aebc7a1cd39",
-    urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/0.19.1/rules_go-0.19.1.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/0.19.1/rules_go-0.19.1.tar.gz",
-    ],
+    urls = ["https://github.com/bazelbuild/rules_go/releases/download/0.19.1/rules_go-0.19.1.tar.gz"],  # 2019-06-20
 )
 
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
@@ -178,7 +173,7 @@ http_archive(
     patches = ["//third_party/boost:0001-build-with-com_github_madler_zlib.patch"],
     sha256 = "23030ce74cd02a10df806c5b26c20af38d2ca06e2b2b2af31517f73d8ce63528",
     strip_prefix = "rules_boost-82ae1790cef07f3fd618592ad227fe2d66fe0b31",
-    urls = ["https://github.com/nelhage/rules_boost/archive/82ae1790cef07f3fd618592ad227fe2d66fe0b31.zip"],  # Boost 1.68.0
+    urls = ["https://github.com/nelhage/rules_boost/archive/82ae1790cef07f3fd618592ad227fe2d66fe0b31.zip"],  # 2019-08-05, Boost 1.68.0
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
@@ -202,7 +197,7 @@ http_archive(
     strip_prefix = "zookeeper-3.4.14/zookeeper-client/zookeeper-client-c",
     urls = [
         "https://www-eu.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz",
-        "https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz",
+        "https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz",  # 2019-04-01
     ],
 )
 
@@ -214,7 +209,7 @@ http_archive(
     strip_prefix = "pcre-8.42",
     urls = [
         "http://mirror.tensorflow.org/ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",
-        "http://ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",
+        "http://ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",  # 2018-03-20
     ],
 )
 
@@ -225,13 +220,13 @@ http_archive(
     strip_prefix = "swig-4.0.0",
     urls = [
         "http://ufpr.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",
-        "http://pilotfiber.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",
+        "http://pilotfiber.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",  # 2019-04-29
     ],
 )
 
 ######## Java External Dependencies ########
 
-RULES_JVM_EXTERNAL_TAG = "2.7"
+RULES_JVM_EXTERNAL_TAG = "2.7"  # 2019-08-15
 
 RULES_JVM_EXTERNAL_SHA = "f04b1466a00a2845106801e0c5cec96841f49ea4e7d1df88dc8e4bf31523df74"
 
@@ -265,7 +260,7 @@ http_archive(
     sha256 = "be9296bfd64882e3c08e3283c58fcb461fa6dd3c171764fcc4cf322f60615a9b",
     urls = [
         "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/0.18.1/bazel-gazelle-0.18.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/0.18.1/bazel-gazelle-0.18.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/0.18.1/bazel-gazelle-0.18.1.tar.gz",  # 2019-04-17
     ],
 )
 
@@ -280,7 +275,7 @@ gazelle_dependencies()
 http_archive(
     name = "cpplint",
     build_file_content =
-"""
+        """
 py_binary(
     name = "cpplint",
     srcs = ["cpplint.py"],
@@ -290,16 +285,16 @@ py_binary(
     sha256 = "05f879aab5a04307e916e32afb547567d8a44149ddc2f91bf846ce2650ce6d7d",
     strip_prefix = "cpplint-1.4.4",
     urls = [
-        "https://github.com/cpplint/cpplint/archive/1.4.4.tar.gz",
+        "https://github.com/cpplint/cpplint/archive/1.4.4.tar.gz",  # 2019-02-25
     ],
 )
 
 # Buildifier tool
 http_archive(
     name = "com_github_bazelbuild_buildtools",
-    sha256 = "86592d703ecbe0c5cbb5139333a63268cf58d7efd2c459c8be8e69e77d135e29",
-    strip_prefix = "buildtools-0.26.0",
-    url = "https://github.com/bazelbuild/buildtools/archive/0.26.0.tar.gz",
+    sha256 = "5ec71602e9b458b01717fab1d37492154c1c12ea83f881c745dbd88e9b2098d8",
+    strip_prefix = "buildtools-0.28.0",
+    url = "https://github.com/bazelbuild/buildtools/archive/0.28.0.tar.gz",  # 2019-07-16
 )
 
 load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")
@@ -312,5 +307,5 @@ http_archive(
     name = "io_kythe",
     sha256 = "4856b9b974ac771e5d8be9f14e7d98f71760ce85c9f20321a94c7ea94d4ab2ee",
     strip_prefix = "kythe-b366059660304a27ae7775055ca168a4ecb55a72",
-    urls = ["https://github.com/kythe/kythe/archive/b366059660304a27ae7775055ca168a4ecb55a72.zip"],
+    urls = ["https://github.com/kythe/kythe/archive/b366059660304a27ae7775055ca168a4ecb55a72.zip"],  # 2019-06-12
 )

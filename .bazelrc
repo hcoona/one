@@ -1,2 +1,2 @@
-build --cxxopt='-std=c++11'
+# TODO: patch grpc
 build --copt -DGRPC_BAZEL_BUILD
