@@ -1,0 +1,134 @@
+From fac03456163e7aaaa798de577a54deecefef8714 Mon Sep 17 00:00:00 2001
+From: Shuai Zhang <zhangshuai.ustc@gmail.com>
+Date: Tue, 30 Jul 2019 15:50:03 +0800
+Subject: [PATCH] Rename Valgrind related functions to avoid conflicts with
+ gperftools.
+
+---
+ absl/base/dynamic_annotations.cc        | 12 ++++++------
+ absl/base/dynamic_annotations.h         | 14 +++++++-------
+ absl/debugging/internal/vdso_support.cc |  2 +-
+ absl/strings/str_split_test.cc          |  2 +-
+ absl/strings/string_view_test.cc        |  2 +-
+ 5 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/absl/base/dynamic_annotations.cc b/absl/base/dynamic_annotations.cc
+index 08c27e5..d7ad927 100644
+--- a/absl/base/dynamic_annotations.cc
++++ b/absl/base/dynamic_annotations.cc
+@@ -84,7 +84,7 @@ void AnnotateMemoryIsUninitialized(const char *, int,
+ #endif
+ }
+
+-static int GetRunningOnValgrind(void) {
++static int AbslGetRunningOnValgrind(void) {
+ #ifdef RUNNING_ON_VALGRIND
+   if (RUNNING_ON_VALGRIND) return 1;
+ #endif
+@@ -96,24 +96,24 @@ static int GetRunningOnValgrind(void) {
+ }
+
+ /* See the comments in dynamic_annotations.h */
+-int RunningOnValgrind(void) {
++int AbslRunningOnValgrind(void) {
+   static volatile int running_on_valgrind = -1;
+   int local_running_on_valgrind = running_on_valgrind;
+   /* C doesn't have thread-safe initialization of statics, and we
+      don't want to depend on pthread_once here, so hack it. */
+   ANNOTATE_BENIGN_RACE(&running_on_valgrind, "safe hack");
+   if (local_running_on_valgrind == -1)
+-    running_on_valgrind = local_running_on_valgrind = GetRunningOnValgrind();
++    running_on_valgrind = local_running_on_valgrind = AbslGetRunningOnValgrind();
+   return local_running_on_valgrind;
+ }
+
+ /* See the comments in dynamic_annotations.h */
+-double ValgrindSlowdown(void) {
+-  /* Same initialization hack as in RunningOnValgrind(). */
++double AbslValgrindSlowdown(void) {
++  /* Same initialization hack as in AbslRunningOnValgrind(). */
+   static volatile double slowdown = 0.0;
+   double local_slowdown = slowdown;
+   ANNOTATE_BENIGN_RACE(&slowdown, "safe hack");
+-  if (RunningOnValgrind() == 0) {
++  if (AbslRunningOnValgrind() == 0) {
+     return 1.0;
+   }
+   if (local_slowdown == 0.0) {
+diff --git a/absl/base/dynamic_annotations.h b/absl/base/dynamic_annotations.h
+index 7e328d9..ae4df33 100644
+--- a/absl/base/dynamic_annotations.h
++++ b/absl/base/dynamic_annotations.h
+@@ -305,23 +305,23 @@ static inline void StaticAnnotateIgnoreWritesEnd(
+   If for some reason you can't use "valgrind.h" or want to fake valgrind,
+   there are two ways to make this function return non-zero:
+     - Use environment variable: export RUNNING_ON_VALGRIND=1
+-    - Make your tool intercept the function RunningOnValgrind() and
++    - Make your tool intercept the function AbslRunningOnValgrind() and
+       change its return value.
+  */
+-int RunningOnValgrind(void);
++int AbslRunningOnValgrind(void);
+
+-/* ValgrindSlowdown returns:
+-    * 1.0, if (RunningOnValgrind() == 0)
+-    * 50.0, if (RunningOnValgrind() != 0 && getenv("VALGRIND_SLOWDOWN") == NULL)
++/* AbslValgrindSlowdown returns:
++    * 1.0, if (AbslRunningOnValgrind() == 0)
++    * 50.0, if (AbslRunningOnValgrind() != 0 && getenv("VALGRIND_SLOWDOWN") == NULL)
+     * atof(getenv("VALGRIND_SLOWDOWN")) otherwise
+    This function can be used to scale timeout values:
+    EXAMPLE:
+    for (;;) {
+      DoExpensiveBackgroundTask();
+-     SleepForSeconds(5 * ValgrindSlowdown());
++     SleepForSeconds(5 * AbslValgrindSlowdown());
+    }
+  */
+-double ValgrindSlowdown(void);
++double AbslValgrindSlowdown(void);
+
+ #ifdef __cplusplus
+ }
+diff --git a/absl/debugging/internal/vdso_support.cc b/absl/debugging/internal/vdso_support.cc
+index 85b52bc..5868641 100644
+--- a/absl/debugging/internal/vdso_support.cc
++++ b/absl/debugging/internal/vdso_support.cc
+@@ -80,7 +80,7 @@ const void *VDSOSupport::Init() {
+     // on stack, and so glibc works as if VDSO was not present.
+     // But going directly to kernel via /proc/self/auxv below bypasses
+     // Valgrind zapping. So we check for Valgrind separately.
+-    if (RunningOnValgrind()) {
++    if (AbslRunningOnValgrind()) {
+       vdso_base_.store(nullptr, std::memory_order_relaxed);
+       getcpu_fn_.store(&GetCPUViaSyscall, std::memory_order_relaxed);
+       return nullptr;
+diff --git a/absl/strings/str_split_test.cc b/absl/strings/str_split_test.cc
+index caa8827..413ad31 100644
+--- a/absl/strings/str_split_test.cc
++++ b/absl/strings/str_split_test.cc
+@@ -27,7 +27,7 @@
+
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+-#include "absl/base/dynamic_annotations.h"  // for RunningOnValgrind
++#include "absl/base/dynamic_annotations.h"  // for AbslRunningOnValgrind
+ #include "absl/base/macros.h"
+ #include "absl/strings/numbers.h"
+
+diff --git a/absl/strings/string_view_test.cc b/absl/strings/string_view_test.cc
+index ed34ed8..9a9be1d 100644
+--- a/absl/strings/string_view_test.cc
++++ b/absl/strings/string_view_test.cc
+@@ -1065,7 +1065,7 @@ TEST(FindOneCharTest, EdgeCases) {
+
+ #ifndef THREAD_SANITIZER  // Allocates too much memory for tsan.
+ TEST(HugeStringView, TwoPointTwoGB) {
+-  if (sizeof(size_t) <= 4 || RunningOnValgrind())
++  if (sizeof(size_t) <= 4 || AbslRunningOnValgrind())
+     return;
+   // Try a huge std::string piece.
+   const size_t size = size_t{2200} * 1000 * 1000;
+--
+2.11.0
+

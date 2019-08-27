@@ -1,0 +1,54 @@
+diff --git a/BUILD b/BUILD
+index f08703a275..484a662775 100644
+--- a/BUILD
++++ b/BUILD
+@@ -1033,7 +1033,7 @@ grpc_cc_library(
+         "src/core/lib/uri/uri_parser.h",
+     ],
+     external_deps = [
+-        "madler_zlib",
++        "zlib",
+     ],
+     language = "c++",
+     public_hdrs = GRPC_PUBLIC_HDRS,
+diff --git a/bazel/grpc_build_system.bzl b/bazel/grpc_build_system.bzl
+index 5f8477d732..452d0d3212 100644
+--- a/bazel/grpc_build_system.bzl
++++ b/bazel/grpc_build_system.bzl
+@@ -51,6 +51,8 @@ def _get_external_deps(external_deps):
+                 "//:grpc_no_ares": [],
+                 "//conditions:default": ["//external:cares"],
+             })
++        elif dep == "zlib":
++            ret += ["@com_github_madler_zlib//:zlib"]
+         else:
+             ret += ["//external:" + dep]
+     return ret
+diff --git a/bazel/grpc_deps.bzl b/bazel/grpc_deps.bzl
+index 151825c683..d0efa90597 100644
+--- a/bazel/grpc_deps.bzl
++++ b/bazel/grpc_deps.bzl
+@@ -32,11 +32,6 @@ def grpc_deps():
+     )
+ 
+     native.bind(
+-        name = "madler_zlib",
+-        actual = "@zlib//:zlib",
+-    )
+-
+-    native.bind(
+         name = "protobuf",
+         actual = "@com_google_protobuf//:protobuf",
+     )
+@@ -115,9 +110,9 @@ def grpc_deps():
+             url = "https://boringssl.googlesource.com/boringssl/+archive/afc30d43eef92979b05776ec0963c9cede5fb80f.tar.gz",
+         )
+ 
+-    if "zlib" not in native.existing_rules():
++    if "com_github_madler_zlib" not in native.existing_rules():
+         http_archive(
+-            name = "zlib",
++            name = "com_github_madler_zlib",
+             build_file = "@com_github_grpc_grpc//third_party:zlib.BUILD",
+             sha256 = "6d4d6640ca3121620995ee255945161821218752b551a1a180f4215f7d124d45",
+             strip_prefix = "zlib-cacf7f1d4e3d44d871b605da3b647f07d718623f",

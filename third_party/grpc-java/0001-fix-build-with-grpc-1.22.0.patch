@@ -1,0 +1,25 @@
+From 669e46a3eb3df688477cb51e0b039a31746b9da0 Mon Sep 17 00:00:00 2001
+From: Shuai Zhang <zhangshuai.ustc@gmail.com>
+Date: Wed, 7 Aug 2019 16:49:29 +0800
+Subject: [PATCH] fix-build-with-grpc-1.22.0
+
+---
+ protobuf-lite/BUILD.bazel | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/protobuf-lite/BUILD.bazel b/protobuf-lite/BUILD.bazel
+index f1529c9c7..85cd9669e 100644
+--- a/protobuf-lite/BUILD.bazel
++++ b/protobuf-lite/BUILD.bazel
+@@ -10,7 +10,7 @@ java_library(
+         "@com_google_guava_guava//jar",
+         "@com_google_j2objc_j2objc_annotations//jar",
+     ] + select({
+-        ":android": ["@com_google_protobuf_javalite//:protobuf_java_lite"],
++        ":android": ["@com_google_protobuf_javalite//:protobuf_javalite"],
+         "//conditions:default": ["@com_google_protobuf//:protobuf_java"],
+     }),
+ )
+-- 
+2.11.0
+

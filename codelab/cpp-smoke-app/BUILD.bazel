@@ -1,0 +1,11 @@
+cc_binary(
+    name = "cpp_smoke_app",
+    srcs = ["main.cc"],
+    deps = [":library"],
+)
+
+cc_library(
+    name = "library",
+    srcs = ["library.cc"],
+    hdrs = ["library.h"],
+)

@@ -1,0 +1,19 @@
+= One: the unique repository for me
+Shuai Zhang <zhangshuai.ustc@gmail.com>
+v1.0, 2019-08-27
+
+One is a uni-repo for all of my codes. Please check Google's article link:https://cacm.acm.org/magazines/2016/7/204032-why-google-stores-billions-of-lines-of-code-in-a-single-repository/fulltext[Why Google Stores Billions of Lines of Code in a Single Repository] for more details about why this repo born.
+
+== Getting Started
+
+== New Projects
+
+This section shows how to add new projects to this repository.
+
+=== C++ Project
+
+=== Java Project
+
+=== Go Project
+
+=== Python Project
