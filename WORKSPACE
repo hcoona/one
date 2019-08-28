@@ -28,7 +28,7 @@ http_archive(
     urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],  # 2017-01-15
 )
 
-# abseil, required by Grpc, gtest.
+# abseil, required by Grpc, gtest & kythe.
 http_archive(
     name = "com_google_absl",
     patch_args = ["-p1"],
@@ -54,7 +54,7 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/release-1.8.1.tar.gz"],  # 2018-08-31
 )
 
-# gflags, required by Grpc.
+# gflags, required by Grpc & kythe.
 # TODO(zhangshuai.ustc): Patch them to use abseil flags?
 http_archive(
     name = "com_github_gflags_gflags",
@@ -166,7 +166,7 @@ python_configure(name = "local_config_python")
 
 ######## C++ External Dependencies ########
 
-# glog
+# glog, required by kythe.
 http_archive(
     name = "com_github_google_glog",
     sha256 = "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c",
@@ -195,6 +195,15 @@ http_archive(
     sha256 = "b991e8b347b763f4b0e521b9687cdf8aebd6c5a831a6b6435b33fc11007e2c7f",
     strip_prefix = "GSL-1212beae777dba02c230ece8c0c0ec12790047ea",
     urls = ["https://github.com/microsoft/GSL/archive/1212beae777dba02c230ece8c0c0ec12790047ea.zip"],  # 2019-06-13
+)
+
+# rapidjson, required by kythe.
+http_archive(
+    name = "com_github_tencent_rapidjson",
+    build_file = "//third_party/rapidjson:rapidjson.BUILD",
+    sha256 = "8e00c38829d6785a2dfb951bb87c6974fa07dfe488aa5b25deec4b8bc0f6a3ab",
+    strip_prefix = "rapidjson-1.1.0",
+    url = "https://github.com/Tencent/rapidjson/archive/v1.1.0.zip",
 )
 
 # zookeeper-client-c
