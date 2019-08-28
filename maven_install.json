@@ -31,6 +31,62 @@
                 "sha256": "5946d837fe6f960c02a53eda7a6926ecc3c758bbdd69aa453ee429f858217f22"
             },
             {
+                "coord": "com.google.code.findbugs:jsr305:3.0.2",
+                "file": "v1/http/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
+                ],
+                "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7"
+            },
+            {
+                "coord": "com.google.errorprone:error_prone_annotations:2.1.3",
+                "file": "v1/http/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar"
+                ],
+                "sha256": "03d0329547c13da9e17c634d1049ea2ead093925e290567e1a364fd6b1fc7ff8"
+            },
+            {
+                "coord": "com.google.guava:guava:26.0-jre",
+                "file": "v1/http/repo1.maven.org/maven2/com/google/guava/guava/26.0-jre/guava-26.0-jre.jar",
+                "directDependencies": [
+                    "com.google.code.findbugs:jsr305:3.0.2",
+                    "org.codehaus.mojo:animal-sniffer-annotations:1.14",
+                    "com.google.j2objc:j2objc-annotations:1.1",
+                    "com.google.errorprone:error_prone_annotations:2.1.3",
+                    "org.checkerframework:checker-qual:2.5.2"
+                ],
+                "dependencies": [
+                    "com.google.code.findbugs:jsr305:3.0.2",
+                    "org.codehaus.mojo:animal-sniffer-annotations:1.14",
+                    "com.google.j2objc:j2objc-annotations:1.1",
+                    "com.google.errorprone:error_prone_annotations:2.1.3",
+                    "org.checkerframework:checker-qual:2.5.2"
+                ],
+                "url": "http://repo1.maven.org/maven2/com/google/guava/guava/26.0-jre/guava-26.0-jre.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/com/google/guava/guava/26.0-jre/guava-26.0-jre.jar"
+                ],
+                "sha256": "a0e9cabad665bc20bcd2b01f108e5fc03f756e13aea80abaadb9f407033bea2c"
+            },
+            {
+                "coord": "com.google.j2objc:j2objc-annotations:1.1",
+                "file": "v1/http/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar"
+                ],
+                "sha256": "2994a7eb78f2710bd3d3bfb639b2c94e219cedac0d4d084d516e78c16dddecf6"
+            },
+            {
                 "coord": "javax.annotation:javax.annotation-api:1.3.2",
                 "file": "v1/http/repo1.maven.org/maven2/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar",
                 "directDependencies": [],
@@ -57,6 +113,28 @@
                 "sha256": "59721f0805e223d84b90677887d9ff567dc534d7c502ca903c0c2b17f05c116a"
             },
             {
+                "coord": "org.apache.commons:commons-lang3:3.9",
+                "file": "v1/http/repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar"
+                ],
+                "sha256": "de2e1dcdcf3ef917a8ce858661a06726a9a944f28e33ad7f9e08bea44dc3c230"
+            },
+            {
+                "coord": "org.apache.commons:commons-math3:3.6.1",
+                "file": "v1/http/repo1.maven.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"
+                ],
+                "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308"
+            },
+            {
                 "coord": "org.assertj:assertj-core:3.13.2",
                 "file": "v1/http/repo1.maven.org/maven2/org/assertj/assertj-core/3.13.2/assertj-core-3.13.2.jar",
                 "directDependencies": [],
@@ -66,6 +144,28 @@
                     "http://repo1.maven.org/maven2/org/assertj/assertj-core/3.13.2/assertj-core-3.13.2.jar"
                 ],
                 "sha256": "d8b69805f83d9666aa67dbe3a9b937468160768df407a23d7874752f2cc5b8ac"
+            },
+            {
+                "coord": "org.checkerframework:checker-qual:2.5.2",
+                "file": "v1/http/repo1.maven.org/maven2/org/checkerframework/checker-qual/2.5.2/checker-qual-2.5.2.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/org/checkerframework/checker-qual/2.5.2/checker-qual-2.5.2.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/org/checkerframework/checker-qual/2.5.2/checker-qual-2.5.2.jar"
+                ],
+                "sha256": "64b02691c8b9d4e7700f8ee2e742dce7ea2c6e81e662b7522c9ee3bf568c040a"
+            },
+            {
+                "coord": "org.codehaus.mojo:animal-sniffer-annotations:1.14",
+                "file": "v1/http/repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
+                "directDependencies": [],
+                "dependencies": [],
+                "url": "http://repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
+                "mirror_urls": [
+                    "http://repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar"
+                ],
+                "sha256": "2068320bd6bad744c3673ab048f67e30bef8f518996fa380033556600669905d"
             },
             {
                 "coord": "org.hamcrest:hamcrest-core:1.3",
@@ -91,6 +191,6 @@
             }
         ],
         "version": "0.1.0",
-        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": -1487035814
+        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": -426316145
     }
 }

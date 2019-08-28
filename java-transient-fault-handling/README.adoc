@@ -1,0 +1,3 @@
+= Transient Fault Handling =
+
+This is a direct Java port for Microsoft Transient Fault Handling.

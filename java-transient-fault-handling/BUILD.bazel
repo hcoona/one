@@ -1,0 +1,22 @@
+# https://docs.bazel.build/versions/master/be/c-cpp.html#cc_library
+java_library(
+    name = "transient_fault_handling",
+    srcs = [
+        "src/main/java/io/github/hcoona/retry/AsyncExecution.java",
+        "src/main/java/io/github/hcoona/retry/ExponentialBackoff.java",
+        "src/main/java/io/github/hcoona/retry/FixedInterval.java",
+        "src/main/java/io/github/hcoona/retry/Incremental.java",
+        "src/main/java/io/github/hcoona/retry/ITransientErrorDetectionStrategy.java",
+        "src/main/java/io/github/hcoona/retry/Ref.java",
+        "src/main/java/io/github/hcoona/retry/RetryLimitExceededException.java",
+        "src/main/java/io/github/hcoona/retry/RetryManager.java",
+        "src/main/java/io/github/hcoona/retry/RetryPolicy.java",
+        "src/main/java/io/github/hcoona/retry/RetryStrategy.java",
+        "src/main/java/io/github/hcoona/retry/ShouldRetry.java",
+    ],
+    deps = [
+        "@maven//:com_google_guava_guava",
+        "@maven//:org_apache_commons_commons_lang3",
+        "@maven//:org_apache_commons_commons_math3",
+    ],
+)
