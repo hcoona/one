@@ -9,6 +9,13 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",  # 2019-07-13
 )
 
+http_archive(
+    name = "platforms",
+    sha256 = "c0e41126bcb54b6c6d219d019b04ca7c0392e42c186b48c36d4cd5d817bf209e",
+    strip_prefix = "platforms-43155b81d40765f0d13008bc77cd2cca8ba9fb2a",
+    url = "https://github.com/bazelbuild/platforms/archive/43155b81d40765f0d13008bc77cd2cca8ba9fb2a.tar.gz",  # 2019-08-26
+)
+
 ######## Protobuf & Grpc C++ libraries ########
 
 # zlib, required by Protobuf & Grpc. (Patched them to use @com_github_madler_zlib//:zlib)
