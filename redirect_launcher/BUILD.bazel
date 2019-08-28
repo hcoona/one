@@ -1,0 +1,26 @@
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
+)
+
+cc_binary(
+    name = "redirect_launcher",
+    srcs = ["main.c"],
+    visibility = ["//visibility:public"],
+    deps = [":launcher"],
+)
+
+cc_library(
+    name = "launcher",
+    srcs = select({
+        "//bazel:linux": ["launcher.c"],
+        "//conditions:default": ["launcher_null.c"],
+    }),
+    hdrs = ["launcher.h"],
+    linkopts = select({
+        "//bazel:linux": ["-lpthread"],
+        "//conditions:default": [],
+    }),
+)
