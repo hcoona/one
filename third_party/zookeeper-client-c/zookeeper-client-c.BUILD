@@ -22,25 +22,35 @@ genrule(
           "&& mv external/org_apache_zookeeper/config.h $(location config.h)",
 )
 
-# Use `#include "zookeeper.h"` directly.
+cc_library(
+    name = "config",
+    hdrs = [":config.h"],
+)
+
+# TODO(zhangshuai.ustc): Use one flags.
 cc_library(
     name = "libzookeeper_mt",
     srcs = [
-        "config.h",
         "generated/zookeeper.jute.c",
-        "src/hashtable/hashtable.c",
-        "src/hashtable/hashtable.h",
-        "src/hashtable/hashtable_itr.c",
-        "src/hashtable/hashtable_itr.h",
-        "src/hashtable/hashtable_private.h",
         "src/mt_adaptor.c",
         "src/recordio.c",
-        "src/zk_adaptor.h",
         "src/zk_hashtable.c",
-        "src/zk_hashtable.h",
         "src/zk_log.c",
         "src/zookeeper.c",
-    ],
+        "src/hashtable/hashtable.c",
+        "src/hashtable/hashtable_itr.c",
+        "src/zk_adaptor.h",
+        "src/zk_hashtable.h",
+        "src/hashtable/hashtable.h",
+        "src/hashtable/hashtable_itr.h",
+        "src/hashtable/hashtable_private.h",
+    ] + select({
+        "@bazel_tools//src/conditions:windows": [
+            "src/winport.h",
+            "src/winport.c",
+        ],
+        "//conditions:default": [],
+    }),
     hdrs = [
         "generated/zookeeper.jute.h",
         "include/proto.h",
@@ -48,10 +58,22 @@ cc_library(
         "include/zookeeper.h",
         "include/zookeeper_log.h",
         "include/zookeeper_version.h",
-    ],
+    ] + select({
+        "@bazel_tools//src/conditions:windows": [
+            "include/winconfig.h",
+        ],
+        "//conditions:default": [],
+    }),
     defines = [
         "THREADED",
-    ],
+        "USE_STATIC_LIB",
+    ] + select({
+        "@bazel_tools//src/conditions:windows": [
+            "_WINDOWS",
+            "WIN32",
+        ],
+        "//conditions:default": [],
+    }),
     includes = [
         ".",
         "generated",
@@ -59,17 +81,18 @@ cc_library(
         "src",
         "src/hashtable",
     ],
-    linkopts = [
-        "-lpthread",
-    ],
+    linkopts = select({
+        "@bazel_tools//src/conditions:windows": ["-DEFAULTLIB:ws2_32.lib"],
+        "//conditions:default": ["-lpthread"],
+    }),
+    linkstatic = True,
     visibility = ["//visibility:public"],
-)
-
-cc_binary(
-    name = "cli_mt",
-    srcs = ["src/cli.c"],
-    defines = ["THREADED"],
-    linkopts = ["-lpthread"],
-    visibility = ["//visibility:public"],
-    deps = [":libzookeeper_mt"],
+    deps = select({
+        "@bazel_tools//src/conditions:windows": [
+            "@//third_party/zookeeper-client-c:config",
+        ],
+        "//conditions:default": [
+            ":config",
+        ],
+    }),
 )
