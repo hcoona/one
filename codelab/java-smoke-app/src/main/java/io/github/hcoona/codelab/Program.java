@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 final class Program {
   private static final Logger LOG = LoggerFactory.getLogger(Program.class);
 
-  private Program() {
-  }
+  private Program() {}
 
   public static void main(final String[] args) {
     Library library = new Library();

@@ -18,6 +18,7 @@
     <module>one-auxiliary-parent</module>
     <module>codelab</module>
     <module>java-transient-fault-handling</module>
+    <module>zed2zip</module>
   </modules>
 
   <properties>
@@ -29,6 +30,7 @@
 
     <!-- Dependency versions, sync with bazel, ordered lexicographically -->
     <version.assertj>3.13.2</version.assertj>
+    <version.commons.cli>1.4</version.commons.cli>
     <version.commons.lang3>3.9</version.commons.lang3>
     <version.commons.math3>3.6.1</version.commons.math3>
     <version.grpc>1.22.1</version.grpc>

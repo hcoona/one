@@ -246,6 +246,7 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
         "ch.qos.logback:logback-classic:1.2.3",
+        "commons-cli:commons-cli:1.4",
         "com.google.guava:guava:26.0-jre",
         "javax.annotation:javax.annotation-api:1.3.2",
         "junit:junit:4.12",
