@@ -1,4 +1,4 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 ######## Skylark libraries ########
 
@@ -230,6 +230,7 @@ http_archive(
     ],
 )
 
+# swig
 http_archive(
     name = "swig",
     build_file = "@//third_party/swig:swig.BUILD",
@@ -239,6 +240,13 @@ http_archive(
         "http://ufpr.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",
         "http://pilotfiber.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",  # 2019-04-29
     ],
+)
+
+# xxd
+http_file(
+    name = "xxd",
+    sha256 = "2d4c4f98726467fc023de6d3ca8da3795ec5d8fbf9d92bb8c29d744877d4cbf8",
+    urls = ["https://raw.githubusercontent.com/vim/vim/v8.1.1933/src/xxd/xxd.c"],  # 2019-08-28
 )
 
 ######## Java External Dependencies ########

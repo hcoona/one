@@ -1,0 +1,11 @@
+cc_binary(
+    name = "xxd",
+    srcs = ["xxd.c"],
+)
+
+genrule(
+    name = "gen_xxd_c",
+    srcs = ["@xxd//file"],
+    outs = ["xxd.c"],
+    cmd = "cp -f $< $@",
+)
