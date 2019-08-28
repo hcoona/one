@@ -1,0 +1,38 @@
+java_binary(
+    name = "java_smoke_app",
+    srcs = [
+        "src/main/java/io/github/hcoona/codelab/Program.java",
+    ],
+    main_class = "io.github.hcoona.codelab.Program",
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+    ],
+    deps = [
+        ":library",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+java_library(
+    name = "library",
+    srcs = [
+        "src/main/java/io/github/hcoona/codelab/Library.java",
+    ],
+    deps = [
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+java_test(
+    name = "library_test",
+    size = "small",
+    srcs = [
+        "src/test/java/io/github/hcoona/codelab/LibraryTests.java",
+    ],
+    test_class = "io.github.hcoona.codelab.LibraryTests",
+    deps = [
+        ":library",
+        "@maven//:junit_junit",
+        "@maven//:org_assertj_assertj_core",
+    ],
+)

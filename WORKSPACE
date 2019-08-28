@@ -124,7 +124,7 @@ grpc_java_repositories(
 ######## Java toolchains ########
 
 # TODO(zhangshuai.ustc): Load it from a bzl script file for flexibility.
-MAVEN_REPOSITORY_URL = "http://maven.aliyun.com/repository/public/"
+MAVEN_REPOSITORY_URL = "http://repo1.maven.org/maven2/"
 
 # Default Maven Server to a near server
 maven_server(
@@ -249,9 +249,15 @@ maven_install(
         "javax.annotation:javax.annotation-api:1.3.2",
         "junit:junit:4.12",
         "org.slf4j:slf4j-api:1.7.25",
+        "org.assertj:assertj-core:3.13.2",
     ],
+    maven_install_json = "@//:maven_install.json",
     repositories = [MAVEN_REPOSITORY_URL],
 )
+
+load("@maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
 
 ######## Go External Dependencies ########
 
