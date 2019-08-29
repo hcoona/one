@@ -2,7 +2,6 @@ load(
     "//bazel/copts:configure.bzl",
     "ONE_DEFAULT_COPTS",
     "ONE_DEFAULT_LINKOPTS",
-    "ONE_TEST_COPTS",
 )
 
 genrule(
@@ -10,7 +9,7 @@ genrule(
     srcs = ["parser_template.h"],
     outs = ["parser_template.h.cc"],
     cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
-    tools = ["//third_party/xxd:xxd"],
+    tools = ["//third_party/xxd"],
 )
 
 genrule(
@@ -18,7 +17,7 @@ genrule(
     srcs = ["parser_template.c"],
     outs = ["parser_template.c.cc"],
     cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
-    tools = ["//third_party/xxd:xxd"],
+    tools = ["//third_party/xxd"],
 )
 
 genrule(
@@ -26,7 +25,7 @@ genrule(
     srcs = ["parser_template.cc"],
     outs = ["parser_template.cc.cc"],
     cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
-    tools = ["//third_party/xxd:xxd"],
+    tools = ["//third_party/xxd"],
 )
 
 cc_library(

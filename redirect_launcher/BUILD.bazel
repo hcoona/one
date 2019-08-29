@@ -1,10 +1,3 @@
-load(
-    "//bazel/copts:configure.bzl",
-    "ONE_DEFAULT_COPTS",
-    "ONE_DEFAULT_LINKOPTS",
-    "ONE_TEST_COPTS",
-)
-
 cc_binary(
     name = "redirect_launcher",
     srcs = ["main.c"],

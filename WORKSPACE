@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "9245b0549e88e356cd6a25bf79f97aa19332083890b7ac6481a2affb6ada9752",
-    strip_prefix = "bazel-skylib-0.9.0",
-    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",  # 2019-07-13
+    sha256 = "2ea8a5ed2b448baf4a6855d3ce049c4c452a6470b1efd1504fdb7c1c134d220a",
+    strip_prefix = "bazel-skylib-0.8.0",
+    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.8.0.tar.gz",  # 2019-04-21
 )
 
 http_archive(

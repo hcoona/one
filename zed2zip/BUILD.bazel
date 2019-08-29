@@ -1,6 +1,6 @@
 java_binary(
     name = "zed2zip",
-    main_class = "net.slightlymagic.thefiremind.ZedToZip",
     srcs = ["src/main/java/net/slightlymagic/thefiremind/ZedToZip.java"],
+    main_class = "net.slightlymagic.thefiremind.ZedToZip",
     deps = ["@maven//:commons_cli_commons_cli"],
 )

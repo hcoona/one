@@ -21,6 +21,7 @@ cc_library(
 
 cc_test(
     name = "library_test",
+    size = "small",
     srcs = ["library_test.cc"],
     copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
@@ -28,5 +29,4 @@ cc_test(
         ":library",
         "@com_google_googletest//:gtest_main",
     ],
-    size = "small",
 )
