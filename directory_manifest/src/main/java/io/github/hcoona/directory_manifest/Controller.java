@@ -40,10 +40,11 @@ class Controller {
       throw new IllegalArgumentException("dir " + dir + " is not a directory");
     }
 
-    ThreadFactory tf = new ThreadFactoryBuilder()
-                           .setNameFormat("File hash calculate thread #%d")
-                           .setDaemon(true)
-                           .build();
+    ThreadFactory tf =
+        new ThreadFactoryBuilder()
+            .setNameFormat("File hash calculate thread #%d")
+            .setDaemon(true)
+            .build();
     this.scheduledExecutorService = new LogErrorScheduledThreadPoolExecutor(6, tf);
   }
 
@@ -67,52 +68,63 @@ class Controller {
   private CompletableFuture<String> computeDirectory(Path dir) {
     CompletableFuture<String>[] tasks;
     try {
-      tasks = (CompletableFuture<String>[]) Files.walk(dir, 1, FileVisitOption.FOLLOW_LINKS)
+      tasks =
+          (CompletableFuture<String>[])
+              Files.walk(dir, 1, FileVisitOption.FOLLOW_LINKS)
                   .skip(1)
                   .map(this::computePath)
-                  .toArray(CompletableFuture<?>[] ::new);
+                  .toArray(CompletableFuture<?>[]::new);
     } catch (IOException e) {
       LOG.error("Failed to walk dir " + dir, e);
       return CompletableFuture.completedFuture("");
     }
 
     return CompletableFuture.allOf(tasks)
-        .thenApplyAsync(ignored
-            -> new DigestUtils("MD5").digestAsHex(
-                Arrays.stream(tasks)
-                    .map(t -> {
-                      try {
-                        return t.get();
-                      } catch (InterruptedException e) {
-                        LOG.error("Interrupt computation before it finished", e);
-                      } catch (ExecutionException e) {
-                        LOG.error("Execution failed for task " + t, e);
-                      }
-                      return "";
-                    })
-                    .reduce((s1, s2) -> s1 + "|" + s2)
-                    .orElse("")))
-        .thenApplyAsync(checksum -> {
-          BasicFileAttributeView bfav =
-              Files.getFileAttributeView(dir, BasicFileAttributeView.class);
-          try {
-            BasicFileAttributes attrs = bfav.readAttributes();
-            OLOG.info(String.join(",",
-                Arrays.asList("\"" + dir.toString() + "\"", "DIRECTORY",
-                    formatFileTime(attrs.creationTime()), formatFileTime(attrs.lastModifiedTime()),
-                    String.valueOf(attrs.size()), checksum)));
-          } catch (IOException e) {
-            LOG.error("Failed to get file attributes " + dir, e);
-          }
-          return checksum;
-        }, scheduledExecutorService);
+        .thenApplyAsync(
+            ignored ->
+                new DigestUtils("MD5")
+                    .digestAsHex(
+                        Arrays.stream(tasks)
+                            .map(
+                                t -> {
+                                  try {
+                                    return t.get();
+                                  } catch (InterruptedException e) {
+                                    LOG.error("Interrupt computation before it finished", e);
+                                  } catch (ExecutionException e) {
+                                    LOG.error("Execution failed for task " + t, e);
+                                  }
+                                  return "";
+                                })
+                            .reduce((s1, s2) -> s1 + "|" + s2)
+                            .orElse("")))
+        .thenApplyAsync(
+            checksum -> {
+              BasicFileAttributeView bfav =
+                  Files.getFileAttributeView(dir, BasicFileAttributeView.class);
+              try {
+                BasicFileAttributes attrs = bfav.readAttributes();
+                OLOG.info(
+                    String.join(
+                        ",",
+                        Arrays.asList(
+                            "\"" + dir.toString() + "\"",
+                            "DIRECTORY",
+                            formatFileTime(attrs.creationTime()),
+                            formatFileTime(attrs.lastModifiedTime()),
+                            String.valueOf(attrs.size()),
+                            checksum)));
+              } catch (IOException e) {
+                LOG.error("Failed to get file attributes " + dir, e);
+              }
+              return checksum;
+            },
+            scheduledExecutorService);
   }
 
   private CompletableFuture<String> computeFile(Path file) {
-    return CompletableFuture
-        .supplyAsync(
-            ()
-                -> {
+    return CompletableFuture.supplyAsync(
+            () -> {
               try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
                 return new DigestUtils("MD5").digestAsHex(is);
               } catch (IOException e) {
@@ -121,20 +133,28 @@ class Controller {
               }
             },
             scheduledExecutorService)
-        .thenApplyAsync(checksum -> {
-          BasicFileAttributeView bfav =
-              Files.getFileAttributeView(file, BasicFileAttributeView.class);
-          try {
-            BasicFileAttributes attrs = bfav.readAttributes();
-            OLOG.info(String.join(",",
-                Arrays.asList("\"" + file.toString() + "\"", "FILE",
-                    formatFileTime(attrs.creationTime()), formatFileTime(attrs.lastModifiedTime()),
-                    String.valueOf(attrs.size()), checksum)));
-          } catch (IOException e) {
-            LOG.error("Failed to get file attributes " + file, e);
-          }
-          return checksum;
-        }, scheduledExecutorService);
+        .thenApplyAsync(
+            checksum -> {
+              BasicFileAttributeView bfav =
+                  Files.getFileAttributeView(file, BasicFileAttributeView.class);
+              try {
+                BasicFileAttributes attrs = bfav.readAttributes();
+                OLOG.info(
+                    String.join(
+                        ",",
+                        Arrays.asList(
+                            "\"" + file.toString() + "\"",
+                            "FILE",
+                            formatFileTime(attrs.creationTime()),
+                            formatFileTime(attrs.lastModifiedTime()),
+                            String.valueOf(attrs.size()),
+                            checksum)));
+              } catch (IOException e) {
+                LOG.error("Failed to get file attributes " + file, e);
+              }
+              return checksum;
+            },
+            scheduledExecutorService);
   }
 
   private static String formatFileTime(FileTime fileTime) {

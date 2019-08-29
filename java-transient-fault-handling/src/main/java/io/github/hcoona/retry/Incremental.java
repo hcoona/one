@@ -12,46 +12,32 @@ public class Incremental extends RetryStrategy {
   private final Duration initialInterval;
   private final Duration increment;
 
-  /**
-   * Initializes a new instance of the
-   * {@link #Incremental}
-   * class.
-   */
+  /** Initializes a new instance of the {@link #Incremental} class. */
   public Incremental() {
     this(DefaultClientRetryCount, DefaultRetryInterval, DefaultRetryIncrement);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #Incremental}
-   * class with the specified retry settings.
+   * Initializes a new instance of the {@link #Incremental} class with the specified retry settings.
    *
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param initialInterval
-   *     The initial interval that will apply for the first retry.
-   * @param increment
-   *     The incremental time value that will be used to calculate the progressive delay between
-   *     retries.
+   * @param retryCount The number of retry attempts.
+   * @param initialInterval The initial interval that will apply for the first retry.
+   * @param increment The incremental time value that will be used to calculate the progressive
+   *     delay between retries.
    */
   public Incremental(int retryCount, Duration initialInterval, Duration increment) {
     this(null, retryCount, initialInterval, increment);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #Incremental}
-   * class with the specified name and retry settings.
+   * Initializes a new instance of the {@link #Incremental} class with the specified name and retry
+   * settings.
    *
-   * @param name
-   *     The retry strategy name.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param initialInterval
-   *     The initial interval that will apply for the first retry.
-   * @param increment
-   *     The incremental time value that will be used to calculate the progressive delay between
-   *     retries.
+   * @param name The retry strategy name.
+   * @param retryCount The number of retry attempts.
+   * @param initialInterval The initial interval that will apply for the first retry.
+   * @param increment The incremental time value that will be used to calculate the progressive
+   *     delay between retries.
    */
   public Incremental(String name, int retryCount, Duration initialInterval, Duration increment) {
     this(name, retryCount, initialInterval, increment, DefaultFirstFastRetry);
@@ -61,20 +47,19 @@ public class Incremental extends RetryStrategy {
    * Initializes a new instance of the {@link #Incremental} class with the specified number of retry
    * attempts, time interval, retry strategy, and fast start option.
    *
-   * @param name
-   *     The retry strategy name.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param initialInterval
-   *     The initial interval that will apply for the first retry.
-   * @param increment
-   *     The incremental time value that will be used to calculate the progressive delay between
-   *     retries.
-   * @param firstFastRetry
-   *     true to immediately retry in the first attempt; otherwise, false. The subsequent retries
-   *     will remain subject to the configured retry interval.
+   * @param name The retry strategy name.
+   * @param retryCount The number of retry attempts.
+   * @param initialInterval The initial interval that will apply for the first retry.
+   * @param increment The incremental time value that will be used to calculate the progressive
+   *     delay between retries.
+   * @param firstFastRetry true to immediately retry in the first attempt; otherwise, false. The
+   *     subsequent retries will remain subject to the configured retry interval.
    */
-  public Incremental(String name, int retryCount, Duration initialInterval, Duration increment,
+  public Incremental(
+      String name,
+      int retryCount,
+      Duration initialInterval,
+      Duration increment,
       boolean firstFastRetry) {
     super(name, firstFastRetry);
 
@@ -95,8 +80,9 @@ public class Incremental extends RetryStrategy {
   public ShouldRetry getShouldRetry() {
     return (int currentRetryCount, Exception lastException, Ref<Duration> retryInterval) -> {
       if (currentRetryCount < this.retryCount) {
-        retryInterval.set(Duration.ofMillis(
-            this.initialInterval.toMillis() + (this.increment.toMillis() * currentRetryCount)));
+        retryInterval.set(
+            Duration.ofMillis(
+                this.initialInterval.toMillis() + (this.increment.toMillis() * currentRetryCount)));
 
         return true;
       }

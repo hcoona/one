@@ -16,11 +16,13 @@ public class IniReader<TSection, TOptionKey, TOptionValue> implements AutoClosea
   private final Function<String, TOptionKey> optionKeyFunction;
   private final Function<String, TOptionValue> optionValueFunction;
 
-  public IniReader(IniParser iniParser,
+  public IniReader(
+      IniParser iniParser,
       Supplier<Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>>
           sectionMapSupplier,
       Supplier<Set<IniOptionObject<TOptionKey, TOptionValue>>> optionSetSupplier,
-      Function<String, TSection> sectionFunction, Function<String, TOptionKey> optionKeyFunction,
+      Function<String, TSection> sectionFunction,
+      Function<String, TOptionKey> optionKeyFunction,
       Function<String, TOptionValue> optionValueFunction) {
     this.iniParser = iniParser;
     this.sectionMapSupplier = sectionMapSupplier;
@@ -49,8 +51,9 @@ public class IniReader<TSection, TOptionKey, TOptionValue> implements AutoClosea
         case START_SECTION:
           break;
         case VISIT_SECTION_HEADER:
-          currentSection = new IniSectionObject<>(
-              sectionFunction.apply(iniParser.getSectionHeader()), optionSetSupplier.get());
+          currentSection =
+              new IniSectionObject<>(
+                  sectionFunction.apply(iniParser.getSectionHeader()), optionSetSupplier.get());
           break;
         case END_SECTION:
           Objects.requireNonNull(currentSection);
@@ -69,8 +72,10 @@ public class IniReader<TSection, TOptionKey, TOptionValue> implements AutoClosea
           Objects.requireNonNull(currentKey);
           Objects.requireNonNull(currentValue);
           Objects.requireNonNull(currentSection)
-              .add(new IniOptionObject<>(
-                  optionKeyFunction.apply(currentKey), optionValueFunction.apply(currentValue)));
+              .add(
+                  new IniOptionObject<>(
+                      optionKeyFunction.apply(currentKey),
+                      optionValueFunction.apply(currentValue)));
           currentKey = null;
           currentValue = null;
           break;

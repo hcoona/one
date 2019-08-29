@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Provides the entry point to the retry functionality.
- */
+/** Provides the entry point to the retry functionality. */
 public class RetryManager {
   private static RetryManager defaultRetryManager;
 
@@ -22,13 +20,10 @@ public class RetryManager {
   /**
    * Sets the specified retry manager as the default retry manager.
    *
-   * @param retryManager
-   *     The retry manager.
-   * @param throwIfSet
-   *     true to throw an exception if the manager is already set; otherwise, false. Defaults to
-   *     <code>true</code>.
-   * @throws IllegalStateException
-   *     The singleton is already set and {@code throwIfSet} is true.
+   * @param retryManager The retry manager.
+   * @param throwIfSet true to throw an exception if the manager is already set; otherwise, false.
+   *     Defaults to <code>true</code>.
+   * @throws IllegalStateException The singleton is already set and {@code throwIfSet} is true.
    */
   public static void setDefault(RetryManager retryManager, boolean throwIfSet)
       throws IllegalStateException {
@@ -40,12 +35,8 @@ public class RetryManager {
   }
 
   /**
-   * Gets the default
-   * {@link RetryManager}
-   * for the application.
-   * You can update the default retry manager by calling the
-   * {@link RetryManager#setDefault(RetryManager, boolean)}
-   * method.
+   * Gets the default {@link RetryManager} for the application. You can update the default retry
+   * manager by calling the {@link RetryManager#setDefault(RetryManager, boolean)} method.
    *
    * @return The default {@link RetryManager}
    */
@@ -54,53 +45,46 @@ public class RetryManager {
     if (instance == null) {
       throw new IllegalStateException(
           "The default RetryManager has not been set. Set it by invoking the RetryManager. "
-          + "SetDefault static method, or if you are using declarative configuration, you can "
-          + "invoke the RetryPolicyFactory.CreateDefault() method to automatically create the "
-          + "retry manager from the configuration file.");
+              + "SetDefault static method, or if you are using declarative configuration, you can "
+              + "invoke the RetryPolicyFactory.CreateDefault() method to automatically create the "
+              + "retry manager from the configuration file.");
     }
 
     return instance;
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryManager}
-   * class.
+   * Initializes a new instance of the {@link RetryManager} class.
    *
-   * @param retryStrategies
-   *     The complete set of retry strategies.
+   * @param retryStrategies The complete set of retry strategies.
    */
   public RetryManager(Iterable<RetryStrategy> retryStrategies) {
     this(retryStrategies, null, null);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryManager}
-   * class with the specified retry strategies and default retry strategy name.
+   * Initializes a new instance of the {@link RetryManager} class with the specified retry
+   * strategies and default retry strategy name.
    *
-   * @param retryStrategies
-   *     The complete set of retry strategies.
-   * @param defaultRetryStrategyName
-   *     The default retry strategy.
+   * @param retryStrategies The complete set of retry strategies.
+   * @param defaultRetryStrategyName The default retry strategy.
    */
   public RetryManager(Iterable<RetryStrategy> retryStrategies, String defaultRetryStrategyName) {
     this(retryStrategies, defaultRetryStrategyName, null);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryManager}
-   * class with the specified retry strategies and defaults.
+   * Initializes a new instance of the {@link RetryManager} class with the specified retry
+   * strategies and defaults.
    *
-   * @param retryStrategies
-   *     The complete set of retry strategies.
-   * @param defaultRetryStrategyName
-   *     The default retry strategy.
-   * @param defaultRetryStrategyNamesMap
-   *     The names of the default strategies for different technologies.
+   * @param retryStrategies The complete set of retry strategies.
+   * @param defaultRetryStrategyName The default retry strategy.
+   * @param defaultRetryStrategyNamesMap The names of the default strategies for different
+   *     technologies.
    */
-  public RetryManager(Iterable<RetryStrategy> retryStrategies, String defaultRetryStrategyName,
+  public RetryManager(
+      Iterable<RetryStrategy> retryStrategies,
+      String defaultRetryStrategyName,
       Map<String, String> defaultRetryStrategyNamesMap) {
     this.retryStrategies = Maps.uniqueIndex(retryStrategies, RetryStrategy::getName);
     this.defaultRetryStrategyNamesMap = defaultRetryStrategyNamesMap;
@@ -108,13 +92,13 @@ public class RetryManager {
 
     this.defaultRetryStrategiesMap = new HashMap<>();
     if (this.defaultRetryStrategyNamesMap != null) {
-      this.defaultRetryStrategyNamesMap.entrySet()
-          .stream()
+      this.defaultRetryStrategyNamesMap.entrySet().stream()
           .filter(p -> StringUtils.isNotBlank(p.getValue()))
-          .forEach(map -> {
-            RetryStrategy retryStrategy = this.retryStrategies.get(map.getValue());
-            this.defaultRetryStrategiesMap.put(map.getKey(), retryStrategy);
-          });
+          .forEach(
+              map -> {
+                RetryStrategy retryStrategy = this.retryStrategies.get(map.getValue());
+                this.defaultRetryStrategiesMap.put(map.getKey(), retryStrategy);
+              });
     }
   }
 
@@ -148,8 +132,7 @@ public class RetryManager {
    * ITransientErrorDetectionStrategy} interface that is responsible for detecting transient
    * conditions.
    *
-   * @param errorDetectionStrategy
-   *     The error detection strategy.
+   * @param errorDetectionStrategy The error detection strategy.
    * @return A new retry policy with the specified error detection strategy and the default retry
    *     strategy defined in the configuration.
    */
@@ -158,15 +141,12 @@ public class RetryManager {
   }
 
   /**
-   * Returns a retry policy with the specified error detection strategy and retry strategy.
-   * The type that implements the
-   * {@link ITransientErrorDetectionStrategy}
-   * interface that is responsible for detecting transient conditions.
+   * Returns a retry policy with the specified error detection strategy and retry strategy. The type
+   * that implements the {@link ITransientErrorDetectionStrategy} interface that is responsible for
+   * detecting transient conditions.
    *
-   * @param errorDetectionStrategy
-   *     The error detection strategy.
-   * @param retryStrategyName
-   *     The retry strategy name, as defined in the configuration.
+   * @param errorDetectionStrategy The error detection strategy.
+   * @param retryStrategyName The retry strategy name, as defined in the configuration.
    * @return A new retry policy with the specified error detection strategy and the default retry
    *     strategy defined in the configuration.
    */
@@ -187,8 +167,7 @@ public class RetryManager {
   /**
    * Returns the retry strategy that matches the specified name.
    *
-   * @param retryStrategyName
-   *     The retry strategy name.
+   * @param retryStrategyName The retry strategy name.
    * @return The retry strategy that matches the specified name.
    */
   public RetryStrategy getRetryStrategy(String retryStrategyName) {
@@ -200,8 +179,7 @@ public class RetryManager {
   /**
    * Returns the retry strategy for the specified technology.
    *
-   * @param technology
-   *     The techonolgy to get the default retry strategy for.
+   * @param technology The techonolgy to get the default retry strategy for.
    * @return The retry strategy for the specified technology.
    */
   public RetryStrategy getDefaultRetryStrategy(String technology) {

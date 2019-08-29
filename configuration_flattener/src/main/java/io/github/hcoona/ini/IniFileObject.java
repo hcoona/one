@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class IniFileObject<TSection, TOptionKey, TOptionValue>
     implements Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>,
-               Comparable<IniFileObject<TSection, TOptionKey, TOptionValue>> {
+        Comparable<IniFileObject<TSection, TOptionKey, TOptionValue>> {
   private final Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>> sectionMap;
 
   public IniFileObject(

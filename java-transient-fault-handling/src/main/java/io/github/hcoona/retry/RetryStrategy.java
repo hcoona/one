@@ -23,21 +23,20 @@ public abstract class RetryStrategy {
     defaultFixed = new FixedInterval(DefaultClientRetryCount, DefaultRetryInterval);
     defaultProgressive =
         new Incremental(DefaultClientRetryCount, DefaultRetryInterval, DefaultRetryIncrement);
-    defaultExponential = new ExponentialBackoff(
-        DefaultClientRetryCount, DefaultMinBackoff, DefaultMaxBackoff, DefaultClientBackoff);
+    defaultExponential =
+        new ExponentialBackoff(
+            DefaultClientRetryCount, DefaultMinBackoff, DefaultMaxBackoff, DefaultClientBackoff);
   }
 
-  /**
-   * @return a default policy that performs no retries, but invokes the action only once.
-   */
+  /** @return a default policy that performs no retries, but invokes the action only once. */
   public static RetryStrategy getNoRetry() {
     return noRetry;
   }
 
   /**
-   * Returns a default policy that implements a fixed retry interval configured with the
-   * {@link #DefaultClientRetryCount} and {@link #DefaultRetryInterval} parameters.
-   * The default retry policy treats all caught exceptions as transient errors.
+   * Returns a default policy that implements a fixed retry interval configured with the {@link
+   * #DefaultClientRetryCount} and {@link #DefaultRetryInterval} parameters. The default retry
+   * policy treats all caught exceptions as transient errors.
    *
    * @return a default policy that implements a fixed retry interval configured with the {@link
    *     #DefaultClientRetryCount} and {@link #DefaultRetryInterval} parameters.
@@ -48,9 +47,9 @@ public abstract class RetryStrategy {
 
   /**
    * Returns a default policy that implements a progressive retry interval configured with the
-   * {@link #DefaultClientRetryCount}, {@link #DefaultRetryInterval}, and
-   * {@link #DefaultRetryIncrement} parameters.
-   * The default retry policy treats all caught exceptions as transient errors.
+   * {@link #DefaultClientRetryCount}, {@link #DefaultRetryInterval}, and {@link
+   * #DefaultRetryIncrement} parameters. The default retry policy treats all caught exceptions as
+   * transient errors.
    *
    * @return a default policy that implements a progressive retry interval configured with the
    *     {@link #DefaultClientRetryCount}, {@link #DefaultRetryInterval}, and {@link
@@ -62,28 +61,24 @@ public abstract class RetryStrategy {
 
   /**
    * Returns a default policy that implements a random exponential retry interval configured with
-   * the {@link #DefaultClientRetryCount}, {@link #DefaultMinBackoff}, {@link #DefaultMaxBackoff}
-   * , and {@link #DefaultClientBackoff} parameters. The default retry policy treats all caught
+   * the {@link #DefaultClientRetryCount}, {@link #DefaultMinBackoff}, {@link #DefaultMaxBackoff} ,
+   * and {@link #DefaultClientBackoff} parameters. The default retry policy treats all caught
    * exceptions as transient errors.
    *
    * @return a default policy that implements a random exponential retry interval configured with
-   *     the {@link #DefaultClientRetryCount}, {@link #DefaultMinBackoff},
-   *     {@link #DefaultMaxBackoff}, and {@link #DefaultClientBackoff} parameters.
+   *     the {@link #DefaultClientRetryCount}, {@link #DefaultMinBackoff}, {@link
+   *     #DefaultMaxBackoff}, and {@link #DefaultClientBackoff} parameters.
    */
   public static RetryStrategy getDefaultExponential() {
     return defaultExponential;
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #RetryStrategy}
-   * class.
+   * Initializes a new instance of the {@link #RetryStrategy} class.
    *
-   * @param name
-   *     The name of the retry strategy.
-   * @param firstFastRetry
-   *     true to immediately retry in the first attempt; otherwise, false. The subsequent retries
-   *     will remain subject to the configured retry interval.
+   * @param name The name of the retry strategy.
+   * @param firstFastRetry true to immediately retry in the first attempt; otherwise, false. The
+   *     subsequent retries will remain subject to the configured retry interval.
    */
   protected RetryStrategy(String name, boolean firstFastRetry) {
     this.setName(name);
@@ -104,9 +99,7 @@ public abstract class RetryStrategy {
     fastFirstRetry = value;
   }
 
-  /**
-   * Gets the name of the retry strategy.
-   */
+  /** Gets the name of the retry strategy. */
   private String name = "";
 
   public String getName() {

@@ -19,16 +19,15 @@ import org.apache.commons.cli.ParseException;
 
 public class ZedToZip {
   // Public Key
-  private static final BigInteger n = new BigInteger(
-      "00C4D0B8819CAB92E7E87A4D2E1A7B5C911F1D7CF1818BC8B5CDC955374A019E67984A3A26FE200D8187CEADEC5637EBC009CA1163CC5016E6FD59A4773D91AA361239AA16462C8A63FE086747BAD97F7607619A4BFA325272934639922F1EC3E94BC57E2352C2C7754625542884FDE95952702AB9EE39EB4BF9FB6D6605552C07190388ABD8E49E04732A2AA1B0070A84E8B85A68485919B8B66D5CF5D12A31C0C65F11C5695A2B3BC01B9038513A6CEB47892F1E679D2F7D6F1A30FEC526C6BE19D260E8568CC9B2074B759B473BB8DE7CFAB3CC540A7D69340496B65D45274C7A602FDA2155AF24D828E756EBB8555D2F379A57DCED0EE3BF6FF8543890A435",
-      16);
+  private static final BigInteger n =
+      new BigInteger(
+          "00C4D0B8819CAB92E7E87A4D2E1A7B5C911F1D7CF1818BC8B5CDC955374A019E67984A3A26FE200D8187CEADEC5637EBC009CA1163CC5016E6FD59A4773D91AA361239AA16462C8A63FE086747BAD97F7607619A4BFA325272934639922F1EC3E94BC57E2352C2C7754625542884FDE95952702AB9EE39EB4BF9FB6D6605552C07190388ABD8E49E04732A2AA1B0070A84E8B85A68485919B8B66D5CF5D12A31C0C65F11C5695A2B3BC01B9038513A6CEB47892F1E679D2F7D6F1A30FEC526C6BE19D260E8568CC9B2074B759B473BB8DE7CFAB3CC540A7D69340496B65D45274C7A602FDA2155AF24D828E756EBB8555D2F379A57DCED0EE3BF6FF8543890A435",
+          16);
   private static final BigInteger e = new BigInteger("11", 16);
 
   private static MessageDigest sha1;
 
-  /**
-   * Entry point.
-   */
+  /** Entry point. */
   public static void main(String[] args) {
     Options options = new Options();
     options.addOption("h", "help", false, "Print this message");
@@ -73,8 +72,8 @@ public class ZedToZip {
 
     if (printHelp) {
       String selfName =
-          new java.io
-              .File(ZedToZip.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+          new java.io.File(
+                  ZedToZip.class.getProtectionDomain().getCodeSource().getLocation().getPath())
               .getName();
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("java -jar " + selfName, options);
@@ -108,8 +107,11 @@ public class ZedToZip {
     }
     fileContent[0] ^= fileContent[7];
 
-    int centralDirOffset = ((fileContent[7] & 0xFF) << 24) | ((fileContent[5] & 0xFF) << 16)
-        | ((fileContent[3] & 0xFF) << 8) | (fileContent[1] & 0xFF);
+    int centralDirOffset =
+        ((fileContent[7] & 0xFF) << 24)
+            | ((fileContent[5] & 0xFF) << 16)
+            | ((fileContent[3] & 0xFF) << 8)
+            | (fileContent[1] & 0xFF);
     // Read first 256 bytes of Central Directory
     zedFile.seek(centralDirOffset);
     fileContent = new byte[257];
@@ -117,8 +119,11 @@ public class ZedToZip {
     fileContent[0] = 0; // c must be considered positive
     // Decode first 256 bytes
     fileContent = decodeFirst256B(fileContent);
-    int centralDirSize = ((fileContent[6] & 0xFF) << 24) | ((fileContent[4] & 0xFF) << 16)
-        | ((fileContent[2] & 0xFF) << 8) | (fileContent[0] & 0xFF);
+    int centralDirSize =
+        ((fileContent[6] & 0xFF) << 24)
+            | ((fileContent[4] & 0xFF) << 16)
+            | ((fileContent[2] & 0xFF) << 8)
+            | (fileContent[0] & 0xFF);
     centralDirSize -= 256 - fileContent.length; // New Central Directory Size
     byte[] centralDir = new byte[centralDirSize];
     System.arraycopy(fileContent, 0, centralDir, 0, fileContent.length);
@@ -138,11 +143,16 @@ public class ZedToZip {
     byte[] localFileHeader;
     int entries = 0;
     while (pt < centralDirSize - 1) { // Scan Central Dir
-      localFileOffset = ((centralDir[pt + 45] & 0xFF) << 24) | ((centralDir[pt + 44] & 0xFF) << 16)
-          | ((centralDir[pt + 43] & 0xFF) << 8) | (centralDir[pt + 42] & 0xFF);
-      localFileCompSize = ((centralDir[pt + 23] & 0xFF) << 24)
-          | ((centralDir[pt + 22] & 0xFF) << 16) | ((centralDir[pt + 21] & 0xFF) << 8)
-          | (centralDir[pt + 20] & 0xFF);
+      localFileOffset =
+          ((centralDir[pt + 45] & 0xFF) << 24)
+              | ((centralDir[pt + 44] & 0xFF) << 16)
+              | ((centralDir[pt + 43] & 0xFF) << 8)
+              | (centralDir[pt + 42] & 0xFF);
+      localFileCompSize =
+          ((centralDir[pt + 23] & 0xFF) << 24)
+              | ((centralDir[pt + 22] & 0xFF) << 16)
+              | ((centralDir[pt + 21] & 0xFF) << 8)
+              | (centralDir[pt + 20] & 0xFF);
       localFileData = new byte[0];
       if (localFileCompSize > 0) { // Not a Directory
         if (centralDir[pt + 10] == 8) { // Local File is compressed

@@ -11,8 +11,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class IniSectionObject<TSection, TOptionKey, TOptionValue>
     implements Map.Entry<TSection, Set<IniOptionObject<TOptionKey, TOptionValue>>>,
-               Set<IniOptionObject<TOptionKey, TOptionValue>>,
-               Comparable<IniSectionObject<TSection, TOptionKey, TOptionValue>> {
+        Set<IniOptionObject<TOptionKey, TOptionValue>>,
+        Comparable<IniSectionObject<TSection, TOptionKey, TOptionValue>> {
   private final TSection section;
   private Set<IniOptionObject<TOptionKey, TOptionValue>> optionSet;
 

@@ -6,50 +6,43 @@ package io.github.hcoona.retry;
  */
 public final class RetryLimitExceededException extends Exception {
   /**
-   * Initializes a new instance of the
-   * {@link RetryLimitExceededException}
-   * class with a default error message.
+   * Initializes a new instance of the {@link RetryLimitExceededException} class with a default
+   * error message.
    */
   public RetryLimitExceededException() {
     this("The action has exceeded its defined retry limit.");
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryLimitExceededException}
-   * class with a specified error message.
+   * Initializes a new instance of the {@link RetryLimitExceededException} class with a specified
+   * error message.
    *
-   * @param message
-   *     The message that describes the error.
+   * @param message The message that describes the error.
    */
   public RetryLimitExceededException(String message) {
     super(message);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryLimitExceededException}
-   * class with a reference to the inner exception
-   * that is the cause of this exception.
+   * Initializes a new instance of the {@link RetryLimitExceededException} class with a reference to
+   * the inner exception that is the cause of this exception.
    *
-   * @param innerException
-   *     The exception that is the cause of the current exception.
+   * @param innerException The exception that is the cause of the current exception.
    */
   public RetryLimitExceededException(Exception innerException) {
-    super(innerException != null ? innerException.getMessage()
-                                 : "The action has exceeded its defined retry limit.",
+    super(
+        innerException != null
+            ? innerException.getMessage()
+            : "The action has exceeded its defined retry limit.",
         innerException);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryLimitExceededException}
-   * class with a specified error message and inner exception.
+   * Initializes a new instance of the {@link RetryLimitExceededException} class with a specified
+   * error message and inner exception.
    *
-   * @param message
-   *     The message that describes the error.
-   * @param innerException
-   *     The exception that is the cause of the current exception.
+   * @param message The message that describes the error.
+   * @param innerException The exception that is the cause of the current exception.
    */
   public RetryLimitExceededException(String message, Exception innerException) {
     super(message, innerException);

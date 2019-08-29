@@ -22,10 +22,12 @@ public class RetryPolicy {
       noRetry = new RetryPolicy(new TransientErrorIgnoreStrategy(), RetryStrategy.getNoRetry());
       defaultFixed =
           new RetryPolicy(new TransientErrorCatchAllStrategy(), RetryStrategy.getDefaultFixed());
-      defaultProgressive = new RetryPolicy(
-          new TransientErrorCatchAllStrategy(), RetryStrategy.getDefaultProgressive());
-      defaultExponential = new RetryPolicy(
-          new TransientErrorCatchAllStrategy(), RetryStrategy.getDefaultExponential());
+      defaultProgressive =
+          new RetryPolicy(
+              new TransientErrorCatchAllStrategy(), RetryStrategy.getDefaultProgressive());
+      defaultExponential =
+          new RetryPolicy(
+              new TransientErrorCatchAllStrategy(), RetryStrategy.getDefaultExponential());
     } catch (Exception e) {
       // TODO: Might remove this try-catch block after revisited the constructors
       throw new RuntimeException("", e);
@@ -43,8 +45,8 @@ public class RetryPolicy {
 
   /**
    * Returns a default policy that implements a fixed retry interval configured with the default
-   * {@link FixedInterval} retry strategy.
-   * The default retry policy treats all caught exceptions as transient errors.
+   * {@link FixedInterval} retry strategy. The default retry policy treats all caught exceptions as
+   * transient errors.
    *
    * @return a default policy that implements a fixed retry interval configured with the default
    *     {@link FixedInterval} retry strategy.
@@ -81,11 +83,9 @@ public class RetryPolicy {
    * Initializes a new instance of the {@link RetryPolicy} class with the specified number of retry
    * attempts and parameters defining the progressive delay between retries.
    *
-   * @param errorDetectionStrategy
-   *     The {@link ITransientErrorDetectionStrategy} that is responsible for detecting transient
-   *     conditions.
-   * @param retryStrategy
-   *     The strategy to use for this retry policy.
+   * @param errorDetectionStrategy The {@link ITransientErrorDetectionStrategy} that is responsible
+   *     for detecting transient conditions.
+   * @param retryStrategy The strategy to use for this retry policy.
    */
   public RetryPolicy(
       ITransientErrorDetectionStrategy errorDetectionStrategy, RetryStrategy retryStrategy) {
@@ -100,30 +100,26 @@ public class RetryPolicy {
    * Initializes a new instance of the {@link RetryPolicy} class with the specified number of retry
    * attempts and default fixed time interval between retries.
    *
-   * @param errorDetectionStrategy
-   *     The {@link ITransientErrorDetectionStrategy} that is responsible for detecting transient
-   *     conditions.
-   * @param retryCount
-   *     The number of retry attempts.
+   * @param errorDetectionStrategy The {@link ITransientErrorDetectionStrategy} that is responsible
+   *     for detecting transient conditions.
+   * @param retryCount The number of retry attempts.
    */
   public RetryPolicy(ITransientErrorDetectionStrategy errorDetectionStrategy, int retryCount) {
     this(errorDetectionStrategy, new FixedInterval(retryCount));
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link RetryPolicy}
-   * class with the specified number of retry attempts and fixed time interval between retries.
+   * Initializes a new instance of the {@link RetryPolicy} class with the specified number of retry
+   * attempts and fixed time interval between retries.
    *
-   * @param errorDetectionStrategy
-   *     The {@link ITransientErrorDetectionStrategy} that is responsible for detecting transient
-   *     conditions.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param retryInterval
-   *     The interval between retries.
+   * @param errorDetectionStrategy The {@link ITransientErrorDetectionStrategy} that is responsible
+   *     for detecting transient conditions.
+   * @param retryCount The number of retry attempts.
+   * @param retryInterval The interval between retries.
    */
-  public RetryPolicy(ITransientErrorDetectionStrategy errorDetectionStrategy, int retryCount,
+  public RetryPolicy(
+      ITransientErrorDetectionStrategy errorDetectionStrategy,
+      int retryCount,
       Duration retryInterval) {
     this(errorDetectionStrategy, new FixedInterval(retryCount, retryInterval));
   }
@@ -132,22 +128,22 @@ public class RetryPolicy {
    * Initializes a new instance of the {@link RetryPolicy} class with the specified number of retry
    * attempts and backoff parameters for calculating the exponential delay between retries.
    *
-   * @param errorDetectionStrategy
-   *     The {@link ITransientErrorDetectionStrategy} that is responsible for detecting transient
-   *     conditions.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param minBackoff
-   *     The minimum backoff time.
-   * @param maxBackoff
-   *     The maximum backoff time.
-   * @param deltaBackoff
-   *     The time value that will be used to calculate a random delta in the exponential delay
-   *     between retries.
+   * @param errorDetectionStrategy The {@link ITransientErrorDetectionStrategy} that is responsible
+   *     for detecting transient conditions.
+   * @param retryCount The number of retry attempts.
+   * @param minBackoff The minimum backoff time.
+   * @param maxBackoff The maximum backoff time.
+   * @param deltaBackoff The time value that will be used to calculate a random delta in the
+   *     exponential delay between retries.
    */
-  public RetryPolicy(ITransientErrorDetectionStrategy errorDetectionStrategy, int retryCount,
-      Duration minBackoff, Duration maxBackoff, Duration deltaBackoff) {
-    this(errorDetectionStrategy,
+  public RetryPolicy(
+      ITransientErrorDetectionStrategy errorDetectionStrategy,
+      int retryCount,
+      Duration minBackoff,
+      Duration maxBackoff,
+      Duration deltaBackoff) {
+    this(
+        errorDetectionStrategy,
         new ExponentialBackoff(retryCount, minBackoff, maxBackoff, deltaBackoff));
   }
 
@@ -155,25 +151,22 @@ public class RetryPolicy {
    * Initializes a new instance of the {@link RetryPolicy} class with the specified number of retry
    * attempts and parameters defining the progressive delay between retries.
    *
-   * @param errorDetectionStrategy
-   *     The {@link ITransientErrorDetectionStrategy} that is responsible for detecting transient
-   *     conditions.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param initialInterval
-   *     The initial interval that will apply for the first retry.
-   * @param increment
-   *     The incremental time value that will be used to calculate the progressive delay between
-   *     retries.
+   * @param errorDetectionStrategy The {@link ITransientErrorDetectionStrategy} that is responsible
+   *     for detecting transient conditions.
+   * @param retryCount The number of retry attempts.
+   * @param initialInterval The initial interval that will apply for the first retry.
+   * @param increment The incremental time value that will be used to calculate the progressive
+   *     delay between retries.
    */
-  public RetryPolicy(ITransientErrorDetectionStrategy errorDetectionStrategy, int retryCount,
-      Duration initialInterval, Duration increment) {
+  public RetryPolicy(
+      ITransientErrorDetectionStrategy errorDetectionStrategy,
+      int retryCount,
+      Duration initialInterval,
+      Duration increment) {
     this(errorDetectionStrategy, new Incremental(retryCount, initialInterval, increment));
   }
 
-  /**
-   * Gets the retry strategy.
-   */
+  /** Gets the retry strategy. */
   private RetryStrategy retryStrategy = null;
 
   public RetryStrategy getRetryStrategy() {
@@ -184,9 +177,7 @@ public class RetryPolicy {
     retryStrategy = value;
   }
 
-  /**
-   * Gets the instance of the error detection strategy.
-   */
+  /** Gets the instance of the error detection strategy. */
   private ITransientErrorDetectionStrategy errorDetectionStrategy;
 
   public ITransientErrorDetectionStrategy getErrorDetectionStrategy() {
@@ -200,27 +191,27 @@ public class RetryPolicy {
   /**
    * Repetitively executes the specified action while it satisfies the current retry policy.
    *
-   * @param action
-   *     A delegate that represents the executable action that doesn't return any results.
+   * @param action A delegate that represents the executable action that doesn't return any results.
    * @throws Exception The exception raised by <code>action</code>
    */
   public void executeAction(Runnable action) throws Exception {
     Preconditions.checkNotNull(action);
 
-    this.executeAction((Callable<Void>) () -> {
-      action.run();
-      return null;
-    });
+    this.executeAction(
+        (Callable<Void>)
+            () -> {
+              action.run();
+              return null;
+            });
   }
 
   /**
-   * Repetitively executes the specified action while it satisfies the current retry policy.
-   * The type of result expected from the executable action.
+   * Repetitively executes the specified action while it satisfies the current retry policy. The
+   * type of result expected from the executable action.
    *
-   * @param callable
-   *     A delegate that represents the executable action that returns the result of type.
-   * @param <T>
-   *     The <code>callable</code>'s return type
+   * @param callable A delegate that represents the executable action that returns the result of
+   *     type.
+   * @param <T> The <code>callable</code>'s return type
    * @return The result from the action.
    * @throws Exception The exception raised by <code>callable</code>
    */
@@ -248,7 +239,7 @@ public class RetryPolicy {
         }
       } catch (Exception e) {
         if (!(this.getErrorDetectionStrategy().isTransient(e)
-                && shouldRetry.invoke(retryCount++, e, delay))) {
+            && shouldRetry.invoke(retryCount++, e, delay))) {
           throw e;
         }
       }
@@ -269,66 +260,68 @@ public class RetryPolicy {
   }
 
   /**
-   * Repetitively executes the specified asynchronous task in the given executor
-   * while it satisfies the current retry policy.
+   * Repetitively executes the specified asynchronous task in the given executor while it satisfies
+   * the current retry policy.
    *
-   * @param command
-   *     the action to run before completing the returned {@link CompletableFuture}
-   * @param executor
-   *     the executor to use for asynchronous execution
-   * @return A {@link CompletableFuture} that will run to completion
-   *     if the given <code>command</code> completes successfully (either the first time
-   *     or after retrying transient failures). If the task fails with a non-transient
-   *     error or the retry limit is reached, the returned {@link CompletableFuture}
-   *     will transition to a faulted state and the exception must be observed.
+   * @param command the action to run before completing the returned {@link CompletableFuture}
+   * @param executor the executor to use for asynchronous execution
+   * @return A {@link CompletableFuture} that will run to completion if the given <code>command
+   *     </code> completes successfully (either the first time or after retrying transient
+   *     failures). If the task fails with a non-transient error or the retry limit is reached, the
+   *     returned {@link CompletableFuture} will transition to a faulted state and the exception
+   *     must be observed.
    */
   public CompletableFuture executeActionAsync(Runnable command, ScheduledExecutorService executor) {
     Preconditions.checkNotNull(command);
 
-    Callable<Void> callable = () -> {
-      command.run();
-      return null;
-    };
-    return new AsyncExecution<Void>(callable, executor, getRetryStrategy().getShouldRetry(),
-        getErrorDetectionStrategy(), getRetryStrategy().getFastFirstRetry())
+    Callable<Void> callable =
+        () -> {
+          command.run();
+          return null;
+        };
+    return new AsyncExecution<Void>(
+            callable,
+            executor,
+            getRetryStrategy().getShouldRetry(),
+            getErrorDetectionStrategy(),
+            getRetryStrategy().getFastFirstRetry())
         .executeAsync();
   }
 
   /**
-   * Repeatedly executes the specified asynchronous task in the given executor
-   * while it satisfies the current retry policy.
+   * Repeatedly executes the specified asynchronous task in the given executor while it satisfies
+   * the current retry policy.
    *
-   * @param command
-   *     the {@link Callable} returning the value to be used to complete
-   *     the returned {@link CompletableFuture}
-   * @param executor
-   *     the executor to use for asynchronous execution
+   * @param command the {@link Callable} returning the value to be used to complete the returned
+   *     {@link CompletableFuture}
+   * @param executor the executor to use for asynchronous execution
    * @param <T> the {@link CompletableFuture}'s return type
-   * @return A {@link CompletableFuture} that will run to completion
-   *     if the given <code>command</code> completes successfully (either the first time
-   *     or after retrying transient failures). If the task fails with a non-transient
-   *     error or the retry limit is reached, the returned {@link CompletableFuture}
-   *     will transition to a faulted state and the exception must be observed.
+   * @return A {@link CompletableFuture} that will run to completion if the given <code>command
+   *     </code> completes successfully (either the first time or after retrying transient
+   *     failures). If the task fails with a non-transient error or the retry limit is reached, the
+   *     returned {@link CompletableFuture} will transition to a faulted state and the exception
+   *     must be observed.
    */
   public <T> CompletableFuture<T> executeActionAsync(
       Callable<T> command, ScheduledExecutorService executor) {
     Preconditions.checkNotNull(command);
 
-    return new AsyncExecution<T>(command, executor, getRetryStrategy().getShouldRetry(),
-        getErrorDetectionStrategy(), getRetryStrategy().getFastFirstRetry())
+    return new AsyncExecution<T>(
+            command,
+            executor,
+            getRetryStrategy().getShouldRetry(),
+            getErrorDetectionStrategy(),
+            getRetryStrategy().getFastFirstRetry())
         .executeAsync();
   }
 
-  /**
-   * Implements a strategy that ignores any transient errors.
-   */
+  /** Implements a strategy that ignores any transient errors. */
   @VisibleForTesting
   static final class TransientErrorIgnoreStrategy implements ITransientErrorDetectionStrategy {
     /**
      * Always returns false.
      *
-     * @param ex
-     *     The exception.
+     * @param ex The exception.
      * @return Always false.
      */
     public boolean isTransient(Exception ex) {
@@ -336,16 +329,13 @@ public class RetryPolicy {
     }
   }
 
-  /**
-   * Implements a strategy that treats all exceptions as transient errors.
-   */
+  /** Implements a strategy that treats all exceptions as transient errors. */
   @VisibleForTesting
   static final class TransientErrorCatchAllStrategy implements ITransientErrorDetectionStrategy {
     /**
      * Always returns true.
      *
-     * @param ex
-     *     The exception.
+     * @param ex The exception.
      * @return Always true.
      */
     public boolean isTransient(Exception ex) {

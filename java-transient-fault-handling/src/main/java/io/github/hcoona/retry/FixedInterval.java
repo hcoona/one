@@ -11,52 +11,39 @@ public class FixedInterval extends RetryStrategy {
   private final int retryCount;
   private final Duration retryInterval;
 
-  /**
-   * Initializes a new instance of the
-   * {@link #FixedInterval}
-   * class.
-   */
+  /** Initializes a new instance of the {@link #FixedInterval} class. */
   public FixedInterval() {
     this(DefaultClientRetryCount);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #FixedInterval}
-   * class with the specified number of retry attempts.
+   * Initializes a new instance of the {@link #FixedInterval} class with the specified number of
+   * retry attempts.
    *
-   * @param retryCount
-   *     The number of retry attempts.
+   * @param retryCount The number of retry attempts.
    */
   public FixedInterval(int retryCount) {
     this(retryCount, DefaultRetryInterval);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #FixedInterval}
-   * class with the specified number of retry attempts and time interval.
+   * Initializes a new instance of the {@link #FixedInterval} class with the specified number of
+   * retry attempts and time interval.
    *
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param retryInterval
-   *     The time interval between retries.
+   * @param retryCount The number of retry attempts.
+   * @param retryInterval The time interval between retries.
    */
   public FixedInterval(int retryCount, Duration retryInterval) {
     this(null, retryCount, retryInterval, DefaultFirstFastRetry);
   }
 
   /**
-   * Initializes a new instance of the
-   * {@link #FixedInterval}
-   * class with the specified number of retry attempts, time interval, and retry strategy.
+   * Initializes a new instance of the {@link #FixedInterval} class with the specified number of
+   * retry attempts, time interval, and retry strategy.
    *
-   * @param name
-   *     The retry strategy name.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param retryInterval
-   *     The time interval between retries.
+   * @param name The retry strategy name.
+   * @param retryCount The number of retry attempts.
+   * @param retryInterval The time interval between retries.
    */
   public FixedInterval(String name, int retryCount, Duration retryInterval) {
     this(name, retryCount, retryInterval, DefaultFirstFastRetry);
@@ -66,15 +53,11 @@ public class FixedInterval extends RetryStrategy {
    * Initializes a new instance of the {@link #FixedInterval} class with the specified number of
    * retry attempts, time interval, retry strategy, and fast start option.
    *
-   * @param name
-   *     The retry strategy name.
-   * @param retryCount
-   *     The number of retry attempts.
-   * @param retryInterval
-   *     The time interval between retries.
-   * @param firstFastRetry
-   *     true to immediately retry in the first attempt; otherwise, false. The subsequent retries
-   *     will remain subject to the configured retry interval.
+   * @param name The retry strategy name.
+   * @param retryCount The number of retry attempts.
+   * @param retryInterval The time interval between retries.
+   * @param firstFastRetry true to immediately retry in the first attempt; otherwise, false. The
+   *     subsequent retries will remain subject to the configured retry interval.
    */
   public FixedInterval(
       String name, int retryCount, Duration retryInterval, boolean firstFastRetry) {

@@ -19,8 +19,11 @@ class AsyncExecution<T> implements Runnable {
   private int retryCount = 0;
   private final Ref<Duration> delay = new Ref<Duration>(null);
 
-  public AsyncExecution(Callable<T> command, ScheduledExecutorService executor,
-      ShouldRetry shouldRetry, ITransientErrorDetectionStrategy errorDetectionStrategy,
+  public AsyncExecution(
+      Callable<T> command,
+      ScheduledExecutorService executor,
+      ShouldRetry shouldRetry,
+      ITransientErrorDetectionStrategy errorDetectionStrategy,
       boolean fastFirstRetry) {
     this.command = command;
     this.executor = executor;
