@@ -16,3 +16,9 @@ indent_size = 4
 
 [third_party/**/*.{BUILD,WORKSPACE}]
 indent_size = 4
+
+[**/*.py]
+indent_size = 4
+
+[**/*.bzl]
+indent_size = 4
