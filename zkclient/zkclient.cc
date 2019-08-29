@@ -22,12 +22,6 @@ static ACL_vector to_zoo(gsl::span<Acl> acls) {
 
 static ::Stat* to_zoo(Stat* stat) { return reinterpret_cast<::Stat*>(stat); }
 
-template <class T>
-class Holder {
- public:
-  T t_;
-};
-
 Client::Client() = default;
 
 // TODO(hcoona): Persist & Reload client_id from file.
@@ -91,25 +85,25 @@ ErrorCode Client::CreateSync(string_view path, gsl::span<const gsl::byte> value,
 ErrorCode Client::CreateAsync(
     string_view path, gsl::span<const gsl::byte> value, gsl::span<Acl> acls,
     CreateFlag flags, std::function<void(ErrorCode, string_view)> callback) {
-  auto holder = new Holder<std::function<void(ErrorCode, string_view)>>;
-  holder->t_ = std::move(callback);
+  auto callback_holder =
+      new std::function<void(ErrorCode, string_view)>(std::move(callback));
 
   struct ACL_vector z_acls = to_zoo(acls);
   ErrorCode error_code = static_cast<ErrorCode>(zoo_acreate(
       to_zoo(handle_), path.data(), reinterpret_cast<const char*>(value.data()),
       value.size_bytes(), &z_acls, static_cast<int>(flags),
       [](int rc, const char* value, const void* data) {
-        auto holder =
-            (Holder<std::function<void(ErrorCode, string_view)>>*)data;
+        auto callback_holder =
+            (std::function<void(ErrorCode, string_view)>*)data;
         std::function<void(ErrorCode, string_view)> callback =
-            std::move(holder->t_);
-        delete holder;
+            std::move(*callback_holder);
+        delete callback_holder;
 
         callback(static_cast<ErrorCode>(rc), value);
       },
-      holder));
+      callback_holder));
   if (error_code != ErrorCode::kOk) {
-    delete holder;
+    delete callback_holder;
   }
 
   return error_code;
@@ -139,21 +133,21 @@ ErrorCode Client::DeleteSync(string_view path, int version) {
 
 ErrorCode Client::DeleteAsync(string_view path, int version,
                               std::function<void(ErrorCode)> callback) {
-  auto holder = new Holder<std::function<void(ErrorCode)>>;
-  holder->t_ = std::move(callback);
+  auto callback_holder =
+      new std::function<void(ErrorCode)>(std::move(callback));
 
   ErrorCode error_code = static_cast<ErrorCode>(zoo_adelete(
       to_zoo(handle_), path.data(), version,
       [](int rc, const void* data) {
-        auto holder = (Holder<std::function<void(ErrorCode)>>*)data;
-        std::function<void(ErrorCode)> callback = std::move(holder->t_);
-        delete holder;
+        auto callback_holder = (std::function<void(ErrorCode)>*)data;
+        std::function<void(ErrorCode)> callback = std::move(*callback_holder);
+        delete callback_holder;
 
         callback(static_cast<ErrorCode>(rc));
       },
-      holder));
+      callback_holder));
   if (error_code != ErrorCode::kOk) {
-    delete holder;
+    delete callback_holder;
   }
 
   return error_code;
