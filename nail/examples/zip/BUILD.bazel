@@ -1,0 +1,18 @@
+# genrule(
+#     name = "gen_zip_nail_grammar",
+#     srcs = ["zip.nail"],
+#     outs = [
+#         "zip.nail.h",
+#         "zip.nail.c",
+#     ],
+# )
+
+# cc_binary(
+#     name = "extract",
+#     srcs = [
+#         "extract.c",
+#         "zip.c",
+#         "zip.nail.h",
+#         "zip.nail.c",
+#     ],
+# )

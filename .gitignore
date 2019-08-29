@@ -274,3 +274,6 @@ $RECYCLE.BIN/
 # VSCode generated eclipse files for Java
 .project
 .settings
+
+# nail data
+!/nail/examples/zip/test.zip
