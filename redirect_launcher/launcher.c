@@ -38,8 +38,9 @@ static void InitBufferSize(void) {
 
 static const size_t kPathMaxLength = _POSIX_PATH_MAX;
 
-static const int64_t kOutputFileSizeThreshold = 1 << 20;  // 1 MiB
-static const int kMaxBackupCount = 3;
+// TODO(zhangshuai.ustc): Load from settings
+static const int64_t kOutputFileSizeThreshold = 1 << 30;  // 1 GiB
+static const int kMaxBackupCount = 1;
 
 static const int kStdoutIndex = 0;
 static const int kStderrIndex = 1;
@@ -62,6 +63,7 @@ struct ThreadContext {
 };
 
 static void* CopyPipeToFile(void* context);
+static int MoveFirstOutputFile(const char* filename);
 static int RollOutputFile(const char* filename);
 static _Noreturn void FatalExit();
 
@@ -153,7 +155,7 @@ int launch(const char* stdout_file, const char* stderr_file,
   ec = pthread_create(&stdout_tid, NULL /* attr */, &CopyPipeToFile,
                       &stdout_context);
   if (ec != 0) {
-    // TODO(zhangshuai.ds): Use strerror_r()
+    // TODO(zhangshuai.ustc): Use strerror_r()
     fprintf_s(stderr, "Failed to create STDOUT redirecting thread: %s\n",
               strerror(errno));
     FatalExit();
@@ -174,7 +176,7 @@ int launch(const char* stdout_file, const char* stderr_file,
 
   if (WIFEXITED(status)) {
     exit_code = WEXITSTATUS(status);
-    // TODO(zhangshuai.ds): Use macro to eliminate debug log when releasing.
+    // TODO(zhangshuai.ustc): Use macro to eliminate debug log when releasing.
     fprintf_s(stdout, "Child process finished with exit code: %d\n", exit_code);
   } else {
     fprintf_s(stderr, "Child process finished abnormally\n");
@@ -241,6 +243,7 @@ void* CopyPipeToFile(void* context) {
   struct ThreadContext* the_context = (struct ThreadContext*)context;
   int ec = 0;
 
+  bool first_rotating = true;
   int output_fileno =
       open(the_context->output_file,
            O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NONBLOCK,
@@ -264,10 +267,19 @@ void* CopyPipeToFile(void* context) {
                     the_context->output_file, strerror(errno));
         }
 
-        ec = RollOutputFile(the_context->output_file);
-        if (ec != 0) {
-          fprintf_s(stderr, "Failed to roll %s: %s\n", the_context->output_file,
-                    strerror(errno));
+        if (first_rotating) {
+          ec = MoveFirstOutputFile(the_context->output_file);
+          if (ec != 0) {
+            fprintf_s(stderr, "Failed to roll %s: %s\n",
+                      the_context->output_file, strerror(errno));
+          }
+          first_rotating = false;
+        } else {
+          ec = RollOutputFile(the_context->output_file);
+          if (ec != 0) {
+            fprintf_s(stderr, "Failed to roll %s: %s\n",
+                      the_context->output_file, strerror(errno));
+          }
         }
 
         output_fileno =
@@ -328,7 +340,7 @@ void* CopyPipeToFile(void* context) {
 
     fprintf_s(stdout, "Wait 1 second for next round or exiting.\n");
 
-    // TODO(zhangshuai.ds): Load from settings
+    // TODO(zhangshuai.ustc): Load from settings
     struct timespec timeout = {.tv_sec = now.tv_sec + 1,
                                .tv_nsec = now.tv_usec * 1000};
     ec = pthread_cond_timedwait(the_context->exit_cond, the_context->exit_mutex,
@@ -354,6 +366,22 @@ void* CopyPipeToFile(void* context) {
   }
 
   return NULL;
+}
+
+int MoveFirstOutputFile(const char* filename) {
+  int ec = 0;
+  char path_buffer[kPathMaxLength];
+
+  snprintf_s(path_buffer, sizeof(path_buffer), "%s.head", filename);
+  fprintf_s(stdout, "Renaming from %s to %s\n", filename, path_buffer);
+  ec = rename(filename, path_buffer);
+  if (ec != 0) {
+    fprintf_s(stderr, "Failed to rename file from %s to %s: %s\n", filename,
+              path_buffer, strerror(errno));
+    return ec;
+  }
+
+  return 0;
 }
 
 int RollOutputFile(const char* filename) {
