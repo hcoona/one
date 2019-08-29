@@ -251,6 +251,12 @@ http_file(
 
 ######## Java External Dependencies ########
 
+load("//bazel:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
+
+junit_jupiter_java_repositories()
+
+junit_platform_java_repositories()
+
 RULES_JVM_EXTERNAL_TAG = "2.7"  # 2019-08-15
 
 RULES_JVM_EXTERNAL_SHA = "f04b1466a00a2845106801e0c5cec96841f49ea4e7d1df88dc8e4bf31523df74"
