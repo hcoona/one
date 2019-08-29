@@ -43,6 +43,7 @@ cc_binary(
         "datatype.cc",
         "expr.hpp",
         "main.cc",
+        "mk_directparser.cc",
         "mk_gen.cc",
         "mk_parser.cc",
         "nailtool.h",
