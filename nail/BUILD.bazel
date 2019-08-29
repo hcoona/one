@@ -61,4 +61,13 @@ cc_binary(
         "@boost//:format",
         "@boost//:lexical_cast",
     ],
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "gen_cnail",
+    srcs = ["nail"],
+    outs = ["cnail"],
+    cmd = "cp $< $@",
+    visibility = ["//visibility:public"],
 )
