@@ -3,10 +3,8 @@ package io.github.hcoona.util;
 import java.io.Serializable;
 import java.util.Locale;
 
-public class CaseInsensitiveString implements
-    Serializable,
-    Comparable<CaseInsensitiveString>,
-    CharSequence {
+public class CaseInsensitiveString
+    implements Serializable, Comparable<CaseInsensitiveString>, CharSequence {
   private final String value;
   private final String lowerCasedValue;
 

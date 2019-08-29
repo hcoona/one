@@ -1,15 +1,13 @@
 package io.github.hcoona.ini;
 
 import io.github.hcoona.ini.IniParser.Event;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class IniReader<TSection, TOptionKey, TOptionValue>
-    implements AutoCloseable {
+public class IniReader<TSection, TOptionKey, TOptionValue> implements AutoCloseable {
   private final IniParser iniParser;
   private final Supplier<Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>>
       sectionMapSupplier;
@@ -19,10 +17,10 @@ public class IniReader<TSection, TOptionKey, TOptionValue>
   private final Function<String, TOptionValue> optionValueFunction;
 
   public IniReader(IniParser iniParser,
-      Supplier<Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>> sectionMapSupplier,
+      Supplier<Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>>
+          sectionMapSupplier,
       Supplier<Set<IniOptionObject<TOptionKey, TOptionValue>>> optionSetSupplier,
-      Function<String, TSection> sectionFunction,
-      Function<String, TOptionKey> optionKeyFunction,
+      Function<String, TSection> sectionFunction, Function<String, TOptionKey> optionKeyFunction,
       Function<String, TOptionValue> optionValueFunction) {
     this.iniParser = iniParser;
     this.sectionMapSupplier = sectionMapSupplier;
@@ -52,8 +50,7 @@ public class IniReader<TSection, TOptionKey, TOptionValue>
           break;
         case VISIT_SECTION_HEADER:
           currentSection = new IniSectionObject<>(
-              sectionFunction.apply(iniParser.getSectionHeader()),
-              optionSetSupplier.get());
+              sectionFunction.apply(iniParser.getSectionHeader()), optionSetSupplier.get());
           break;
         case END_SECTION:
           Objects.requireNonNull(currentSection);
@@ -71,10 +68,9 @@ public class IniReader<TSection, TOptionKey, TOptionValue>
         case END_OPTION:
           Objects.requireNonNull(currentKey);
           Objects.requireNonNull(currentValue);
-          Objects.requireNonNull(currentSection).add(
-              new IniOptionObject<>(
-                  optionKeyFunction.apply(currentKey),
-                  optionValueFunction.apply(currentValue)));
+          Objects.requireNonNull(currentSection)
+              .add(new IniOptionObject<>(
+                  optionKeyFunction.apply(currentKey), optionValueFunction.apply(currentValue)));
           currentKey = null;
           currentValue = null;
           break;

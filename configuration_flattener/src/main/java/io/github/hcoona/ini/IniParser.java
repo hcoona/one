@@ -88,10 +88,13 @@ public class IniParser implements AutoCloseable {
   }
 
   public enum Event {
-    START_SECTION, END_SECTION,
-    START_OPTION, END_OPTION,
+    START_SECTION,
+    END_SECTION,
+    START_OPTION,
+    END_OPTION,
     VISIT_SECTION_HEADER,
-    VISIT_KEY, VISIT_VALUE,
+    VISIT_KEY,
+    VISIT_VALUE,
     VISIT_COMMENT
   }
 }

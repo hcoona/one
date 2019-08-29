@@ -1,23 +1,23 @@
 package io.github.hcoona.ini;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 public class IniSectionObject<TSection, TOptionKey, TOptionValue>
     implements Map.Entry<TSection, Set<IniOptionObject<TOptionKey, TOptionValue>>>,
-    Set<IniOptionObject<TOptionKey, TOptionValue>>,
-    Comparable<IniSectionObject<TSection, TOptionKey, TOptionValue>> {
+               Set<IniOptionObject<TOptionKey, TOptionValue>>,
+               Comparable<IniSectionObject<TSection, TOptionKey, TOptionValue>> {
   private final TSection section;
   private Set<IniOptionObject<TOptionKey, TOptionValue>> optionSet;
 
-  public IniSectionObject(TSection section, Set<IniOptionObject<TOptionKey, TOptionValue>> optionSet) {
+  public IniSectionObject(
+      TSection section, Set<IniOptionObject<TOptionKey, TOptionValue>> optionSet) {
     this.section = section;
     this.optionSet = optionSet;
   }
@@ -33,7 +33,8 @@ public class IniSectionObject<TSection, TOptionKey, TOptionValue>
   }
 
   @Override
-  public Set<IniOptionObject<TOptionKey, TOptionValue>> setValue(Set<IniOptionObject<TOptionKey, TOptionValue>> value) {
+  public Set<IniOptionObject<TOptionKey, TOptionValue>> setValue(
+      Set<IniOptionObject<TOptionKey, TOptionValue>> value) {
     final Set<IniOptionObject<TOptionKey, TOptionValue>> oldValue = this.optionSet;
     this.optionSet = value;
     return oldValue;
@@ -71,7 +72,8 @@ public class IniSectionObject<TSection, TOptionKey, TOptionValue>
   }
 
   @Override
-  public boolean add(IniOptionObject<TOptionKey, TOptionValue> tOptionKeyTOptionValueIniOptionObject) {
+  public boolean add(
+      IniOptionObject<TOptionKey, TOptionValue> tOptionKeyTOptionValueIniOptionObject) {
     return optionSet.add(tOptionKeyTOptionValueIniOptionObject);
   }
 
@@ -107,10 +109,7 @@ public class IniSectionObject<TSection, TOptionKey, TOptionValue>
 
   @Override
   public int compareTo(IniSectionObject<TSection, TOptionKey, TOptionValue> o) {
-    return new CompareToBuilder()
-        .append(section, o.section)
-        .append(optionSet, o.optionSet)
-        .build();
+    return new CompareToBuilder().append(section, o.section).append(optionSet, o.optionSet).build();
   }
 
   @Override
@@ -134,10 +133,7 @@ public class IniSectionObject<TSection, TOptionKey, TOptionValue>
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder()
-        .append(section)
-        .append(optionSet)
-        .toHashCode();
+    return new HashCodeBuilder().append(section).append(optionSet).toHashCode();
   }
 
   @Override

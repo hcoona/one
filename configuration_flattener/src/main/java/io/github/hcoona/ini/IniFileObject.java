@@ -1,27 +1,25 @@
 package io.github.hcoona.ini;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 public class IniFileObject<TSection, TOptionKey, TOptionValue>
     implements Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>,
-    Comparable<IniFileObject<TSection, TOptionKey, TOptionValue>> {
-  private final Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>>
-      sectionMap;
+               Comparable<IniFileObject<TSection, TOptionKey, TOptionValue>> {
+  private final Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>> sectionMap;
 
   public IniFileObject(
       Map<TSection, IniSectionObject<TSection, TOptionKey, TOptionValue>> sectionMap) {
     this.sectionMap = sectionMap;
   }
 
-  public IniSectionObject<TSection, TOptionKey, TOptionValue>
-  put(IniSectionObject<TSection, TOptionKey, TOptionValue> value) {
+  public IniSectionObject<TSection, TOptionKey, TOptionValue> put(
+      IniSectionObject<TSection, TOptionKey, TOptionValue> value) {
     return sectionMap.put(value.getKey(), value);
   }
 
@@ -51,8 +49,8 @@ public class IniFileObject<TSection, TOptionKey, TOptionValue>
   }
 
   @Override
-  public IniSectionObject<TSection, TOptionKey, TOptionValue>
-  put(TSection key, IniSectionObject<TSection, TOptionKey, TOptionValue> value) {
+  public IniSectionObject<TSection, TOptionKey, TOptionValue> put(
+      TSection key, IniSectionObject<TSection, TOptionKey, TOptionValue> value) {
     return sectionMap.put(key, value);
   }
 
@@ -62,7 +60,8 @@ public class IniFileObject<TSection, TOptionKey, TOptionValue>
   }
 
   @Override
-  public void putAll(Map<? extends TSection, ? extends IniSectionObject<TSection, TOptionKey, TOptionValue>> m) {
+  public void putAll(
+      Map<? extends TSection, ? extends IniSectionObject<TSection, TOptionKey, TOptionValue>> m) {
     sectionMap.putAll(m);
   }
 
@@ -88,9 +87,7 @@ public class IniFileObject<TSection, TOptionKey, TOptionValue>
 
   @Override
   public int compareTo(IniFileObject<TSection, TOptionKey, TOptionValue> o) {
-    return new CompareToBuilder()
-        .append(sectionMap, sectionMap)
-        .build();
+    return new CompareToBuilder().append(sectionMap, sectionMap).build();
   }
 
   @Override
@@ -106,22 +103,16 @@ public class IniFileObject<TSection, TOptionKey, TOptionValue>
     }
     IniFileObject rhs = (IniFileObject) obj;
 
-    return new EqualsBuilder()
-        .append(sectionMap, rhs.sectionMap)
-        .build();
+    return new EqualsBuilder().append(sectionMap, rhs.sectionMap).build();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder()
-        .append(sectionMap)
-        .toHashCode();
+    return new HashCodeBuilder().append(sectionMap).toHashCode();
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("sectionMap", sectionMap)
-        .toString();
+    return new ToStringBuilder(this).append("sectionMap", sectionMap).toString();
   }
 }
