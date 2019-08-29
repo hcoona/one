@@ -1,16 +1,16 @@
-genrule(
-    name = "gen_zip_nail_grammar",
-    srcs = ["zip.nail"],
-    outs = [
-        "zip.nail.h",
-        "zip.nail.c",
-    ],
-    cmd = """$(location //nail:cnail) $< && \
-cp `dirname $<`/zip.nail.h $(location zip.nail.h) && \
-cp `dirname $<`/zip.nail.c $(location zip.nail.c)
-""",
-    tools = ["//nail:cnail"],
-)
+# genrule(
+#     name = "gen_zip_nail_grammar",
+#     srcs = ["zip.nail"],
+#     outs = [
+#         "zip.nail.h",
+#         "zip.nail.c",
+#     ],
+#     cmd = """$(execpath //nail:cnail) $< && \
+# cp $$(dirname $<)/zip.nail.h $(location zip.nail.h) && \
+# cp $$(dirname $<)/zip.nail.c $(location zip.nail.c)
+# """,
+#     tools = ["//nail:cnail"],
+# )
 
 # cc_binary(
 #     name = "extract",
