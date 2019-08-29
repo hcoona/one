@@ -284,6 +284,8 @@ maven_install(
         "org.apache.commons:commons-math3:3.6.1",
         "org.slf4j:slf4j-api:1.7.25",
         "org.assertj:assertj-core:3.13.2",
+        # TODO(zhangshuai.ustc): Add it to Maven.
+        "commons-codec:commons-codec:1.13"
     ],
     maven_install_json = "@//:maven_install.json",
     repositories = [MAVEN_REPOSITORY_URL],
