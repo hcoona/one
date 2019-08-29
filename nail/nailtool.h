@@ -15,10 +15,10 @@ namespace option {
         extern bool templates;
         extern bool cpp;
 }
-extern unsigned char parser_template_cc[];
-extern unsigned char parser_template_c[];
-extern unsigned char parser_template_h[];
-extern unsigned int parser_template_c_len, parser_template_cc_len, parser_template_h_len;
+extern unsigned char nail_parser_template_cc[];
+extern unsigned char nail_parser_template_c[];
+extern unsigned char nail_parser_template_h[];
+extern unsigned int nail_parser_template_c_len, nail_parser_template_cc_len, nail_parser_template_h_len;
 #include "grammar.h"
 typedef struct expr{
   struct expr *parent;
@@ -37,16 +37,16 @@ std::string intconstant_value(const intconstant &val);
 bool parameter_type_check(parameterlist *param, parameterdefinitionlist *def);
 
 #define mk_str(x) std::string((const char *)(x).elem,(x).count)
-struct NailException : public std::logic_error { 
+struct NailException : public std::logic_error {
 public:
-NailException(const std::string &message) : std::logic_error(message){}              
+NailException(const std::string &message) : std::logic_error(message){}
 };
 struct Dependency{
   std::string name;
   std::string typedef_type;
   uint64_t width; // XXX: Replace by a line that should be inserted to output this Dependency
 };
-class Scope{ 
+class Scope{
   std::map<std::string,Dependency> dependencies;
   std::map<std::string,std::string> streams;
   Scope *parent;
@@ -89,7 +89,7 @@ public:
       else
         return parent->dependency_type(name);
     }
-    return i->second.typedef_type;                
+    return i->second.typedef_type;
   }
     std::string dependency_ptr(std::string name) const{
     auto i = dependencies.find(name);
@@ -99,7 +99,7 @@ public:
       else
         return parent->dependency_ptr(name);
     }
-    return i->second.name;                
+    return i->second.name;
   }
   std::string stream_ptr(std::string name) const{
     auto i = streams.find(name);
@@ -109,7 +109,7 @@ public:
       else
         return parent->stream_ptr(name);
     }
-    return i->second;                
+    return i->second;
   }
   bool is_local_dependency(std::string name){
     return dependencies.count(name)>0;
@@ -122,7 +122,7 @@ public:
       else
         return parent->dependency_width(name);
     }
-    return i->second.width;            
+    return i->second.width;
   }
 };
 

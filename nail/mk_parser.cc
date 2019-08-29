@@ -32,8 +32,8 @@ static std::string int_expr(const char * stream,unsigned int width,Endian endian
   //TODO: Support little endian?
   if(endian == Big){
     return boost::str(boost::format("read_unsigned_bits(%s,%d)")%stream % width);
-  } else { 
-    return boost::str(boost::format("read_unsigned_bits_littleendian(%s,%d)")%stream % width);    
+  } else {
+    return boost::str(boost::format("read_unsigned_bits_littleendian(%s,%d)")%stream % width);
   }
 }
 
@@ -96,7 +96,7 @@ public:
         FOREACH(c,*p.wrap.constafter){
           action_constparser();
         }
-      }      
+      }
       break;
     case CHOICE:
       {
@@ -117,7 +117,7 @@ public:
         }
         out << "default: assert(\"BUG\");";
         out << "}";
-      }      
+      }
       break;
     case NUNION:
       {
@@ -174,7 +174,7 @@ public:
         else{ /* LENGTH*/
           i = p.length.parser;
         }
-          
+
         out << "{ /*ARRAY*/ \n pos save = 0;";
         out << count << "=" << "*(tr++);\n"
             << "save = *(tr++);\n";
@@ -232,11 +232,11 @@ public:
 public:
   //Refactor this. make emit_action static, allocation its own CAction to build stuff
   CAction(std::ostream *os,std::string _arena): out(*os), num_iters(1),arena(_arena){}
- 
+
   void emit_action(const grammar &grammar){
     Endian end;
     FOREACH(def, grammar){
-      if(def->N_type == PARSER){ 
+      if(def->N_type == PARSER){
         std::string name= mk_str(def->parser.name);
         out << "static pos bind_"<< name<< "(NailArena *arena," << name <<"*out,NailStream *stream, pos **trace,  pos * trace_begin);";
       }
@@ -245,7 +245,7 @@ public:
       if(def->N_type == ENDIAN){
         end = def->endian.N_type == BIG ? Big : Little;
       }
-        
+
       if(def->N_type == PARSER){
         std::string name= mk_str(def->parser.name);
         out << "static int bind_"<<name<< "(NailArena *arena," << name <<"*out,NailStream *stream, pos **trace ,  pos * trace_begin){\n";
@@ -292,7 +292,7 @@ class CPrimitiveParser{
   int nr_const;
   int nr_dep;
   int num_iters;
-  int bit_offset = 0; // < 0 = unknown alignment, 0 == byte aligned, 1 = byte + 1, etc 
+  int bit_offset = 0; // < 0 = unknown alignment, 0 == byte aligned, 1 = byte + 1, etc
   Endian end;
   CAction dependency_action;
   /*Parse pass emits a light-weight trace of data structure*/
@@ -300,8 +300,8 @@ class CPrimitiveParser{
   void check_int(unsigned int width, const std::string &fail){
     out << "if(parser_fail(stream_check(str_current,"<<width<<"))) {"<<fail<<"}\n";
   }
-  
-  
+
+
   void peg(const constrainedint &c, const std::string &fail){
     int width = boost::lexical_cast<int>(mk_str(c.parser.unsign));
     check_int(width,fail);
@@ -389,7 +389,7 @@ class CPrimitiveParser{
       out << succ_label << ":;\n";
       out << "}\n";
     }
-      
+
       break;
     }
 
@@ -407,13 +407,13 @@ class CPrimitiveParser{
   typedef  std::list<namedparser> parserlist;
   void peg_choice(const parserlist &list, const std::string &fail, const Scope &scope){
     int this_choice = nr_choice++;
-  
+
     out << "{NailStreamPos back = stream_getpos(str_current);\n"
         << "pos choice_begin = n_tr_begin_choice(trace); \n"
         << "pos choice;\n"
         << "if(parser_fail(choice_begin)) {" << fail <<"}\n";
     std::string success_label = (boost::format("choice_%d_succ") % this_choice).str();
-    
+
     BOOST_FOREACH(const namedparser p, list){
       std::string fallthrough_memo  =  (boost::format("choice_%u_%s_out") % this_choice %p.name).str();
       std::string fallthrough_goto = boost::str(boost::format("goto %s;") % fallthrough_memo);
@@ -450,7 +450,7 @@ class CPrimitiveParser{
       out << "if(count < "<<min<<"){"<< fail << "}\n";
     }
     out << "}\n";
-    
+
   }
   void peg(const arrayparser &array, const std::string &fail, const Scope &scope){
     switch(array.N_type){
@@ -512,14 +512,14 @@ class CPrimitiveParser{
                  << "NailStream tmpstream = *str_current;\n";
             peg(*field->dependency.parser, fail, scope);
             out  << "NailStream *stream = &tmpstream;"; //TODO: parametrize this on action
-            dependency_action.action(field->dependency.parser->pr,lval,end); 
+            dependency_action.action(field->dependency.parser->pr,lval,end);
             out << "}";
             newscope.add_dependency_definition(name,type, 0);
             out << "n_tr_setpos(trace,trace_"<<name<<");\n";
             out << "n_tr_const(trace,str_current);\n";
           }
           break;
-          
+
         case TRANSFORM:
           {
             header << "extern int " << mk_str(field->transform.cfunction) << "_parse(NailArena *tmp";
@@ -532,22 +532,22 @@ class CPrimitiveParser{
             out << "if(";
             out << mk_str(field->transform.cfunction) << "_parse(tmp_arena"; //TODO: use temp arena
 
-            FOREACH(stream, field->transform.left){           
+            FOREACH(stream, field->transform.left){
               header << ",NailStream *str_" << mk_str(*stream);
               out << ", &str_"  << mk_str(*stream);
-            }      
+            }
             FOREACH(param, field->transform.right){
               switch(param->N_type){
               case PDEPENDENCY:{
                 std::string name (mk_str(param->pdependency));
                 //                if(newscope.dependency_type(name))
                 //we need to emit a type for this function!
-                out << "," << newscope.dependency_ptr(name); 
+                out << "," << newscope.dependency_ptr(name);
                 header << "," << newscope.dependency_type(name) << "* " << name;
               }
                 break;
               case PSTREAM:
-                out << "," <<  newscope.stream_ptr(mk_str(param->pstream));  
+                out << "," <<  newscope.stream_ptr(mk_str(param->pstream));
                 header << ",NailStream *" << mk_str(param->pstream);
                 break;
               }
@@ -558,7 +558,7 @@ class CPrimitiveParser{
               newscope.add_stream_definition(mk_str(*stream));
             }
             out << "n_tr_stream(trace,str_current);";
-            
+
           }
           break;
         }
@@ -599,11 +599,11 @@ class CPrimitiveParser{
         peg_choice(l,fail,scope);
       }
     case ARRAY:
-      peg(parser.pr.array,fail,scope); 
+      peg(parser.pr.array,fail,scope);
       break;
     case FIXEDARRAY:{
       std::string iter = boost::str(boost::format("i%d") % num_iters++);
-      
+
       out << "/*FIXEDARRAY*/ \n"
           << "for(pos "<<iter<<"=0;"<<iter<<"<"<<intconstant_value(parser.pr.fixedarray.length)<<";"<<iter<<"++){\n";
       peg(*parser.pr.fixedarray.inner,fail,scope);
@@ -635,11 +635,11 @@ class CPrimitiveParser{
       peg(*parser.pr.apply.inner,(boost::format("goto fail_apply_%d;") % this_many).str(), scope);
       out << "goto succ_apply_" << this_many << ";\n";
       out << "fail_apply_" << this_many << ":\n";
-      out << "str_current = orig_str; \n" 
+      out << "str_current = orig_str; \n"
           << fail << "\n";
       out << "succ_apply_" << this_many << ":\n"
           << "str_current = orig_str;\n";
-      out << "}";        
+      out << "}";
     }
       break;
     case OPTIONAL:
@@ -659,7 +659,7 @@ class CPrimitiveParser{
 public:
   CPrimitiveParser(std::ostream *os, std::ostream *header) : final(*os), hdr(*header),nr_choice(1),nr_many(0),nr_const(0),nr_dep(0),num_iters(1), dependency_action(&out,"tmp_arena"), end(Big){}
   void peg(const definition &def) {
-    if(def.N_type == ENDIAN){  
+    if(def.N_type == ENDIAN){
       end = def.endian.N_type == BIG ? Big : Little;
     } else if(def.N_type == PARSER){
       Scope scope;
@@ -700,9 +700,9 @@ void emit_parser(std::ostream *out, std::ostream *header,grammar *grammar){
 
   CPrimitiveParser p(out,header);
   CAction a(out,"arena");
-  *out << std::string((char *)parser_template_c,parser_template_c_len);
-  *out << std::string((char *)parser_template_cc, parser_template_cc_len);
-  
+  *out << std::string((char *)nail_parser_template_c,nail_parser_template_c_len);
+  *out << std::string((char *)nail_parser_template_cc, nail_parser_template_cc_len);
+
   p.emit_parser(*grammar);
   a.emit_action(*grammar);
 }

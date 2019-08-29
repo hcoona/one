@@ -1,6 +1,6 @@
 #define t(x) {WHITE;many uint8 = x}
 #define lower  (uint8 |  ['a'..'z','0'..'9', '_'])
-#define upper (uint8 |  'A'..'Z') 
+#define upper (uint8 |  'A'..'Z')
 #define digit  (uint8 | '0' .. '9')
 number = many1 digit
 varidentifier   = <WHITE; many1 lower>
@@ -15,9 +15,9 @@ intconstant = <WHITE;  choose {
                    choose{
                      ESCAPE= <uint8 = '\\'; uint8>
                      DIRECT= uint8
-                    } 
+                    }
                      uint8 = '\''>
-            HEX = < uint8 = '0'; uint8 = 'x';  many  || digit || (uint8 | ['A' .. 'F', 'a'..'f']) > 
+            HEX = < uint8 = '0'; uint8 = 'x';  many  || digit || (uint8 | ['A' .. 'F', 'a'..'f']) >
             NUMBER= number
             }>
 
@@ -26,24 +26,24 @@ intp = choose{
                       many1 digit>
           SIGN =   < t("int")
                       many1 uint8 | '0' .. '9'>
-}  
+}
 constint = { parser intp
              t("=")
              value intconstant }
-arrayvalue = choose {  // We could use a push-choose operator here.... 
-           STRING= < WHITE uint8 = '"' many uint8 | !['"'] uint8 = '"' > 
-           VALUES= < t("[") many intconstant t("]")> 
-           }    
+arrayvalue = choose {  // We could use a push-choose operator here....
+           STRING= < WHITE uint8 = '"' many uint8 | !['"'] uint8 = '"' >
+           VALUES= < t("[") many intconstant t("]")>
+           }
 constarray = { t("many ");parser intp;  t("="); value arrayvalue}
 constfields = sepBy1 SEPERATOR constparser
-constparser = choose{   
+constparser = choose{
             CARRAY=            constarray
             CREPEAT=           <t("many ") *constparser>
             CINT=              constint
             CREF=              constidentifier
             CSTRUCT =          < t("{"); constfields ;t("}")>
             CUNION = many1 <t("||") constparser>
-}         
+}
 constraintelem = choose {
                RANGE = { min optional intconstant; t(".."); max optional intconstant}
                INTVALUE = intconstant
@@ -55,44 +55,44 @@ intconstraint  = choose {
                }
 constrainedint = {
                 parser intp
-                constraint optional <t("|")  intconstraint  >  
+                constraint optional <t("|")  intconstraint  >
 }
 transform = {left sepBy t(",") streamidentifier; t("transform"); cfunction varidentifier; t("(") ;right many parameter; t(")")}
 structparser = <t("{"); sepBy SEPERATOR choose{
-              CONSTANT = constparser                      
-              DEPENDENCY = {name dependencyidentifier; parser *parser}    
-              TRANSFORM  = transform                    
+              CONSTANT = constparser
+              DEPENDENCY = {name dependencyidentifier; parser *parser}
+              TRANSFORM  = transform
               FIELD= { name varidentifier;  parser *parser }
-              } 
+              }
          t("}")>
 wrapparser = {t("<"); constbefore optional <sepBy1 SEPERATOR constparser; SEPERATOR>
                       parser *parser
                       constafter optional <SEPERATOR;sepBy SEPERATOR constparser>
                       t(">") }
-// choiceidentifier = || varidentifier || constidentifier                      
+// choiceidentifier = || varidentifier || constidentifier
 choiceparser = < t("choose"); t("{"); many {tag  constidentifier; t("="); parser  *parser }; t("}") >
 selectparser = {  t("select"); t("(") dep dependencyidentifier; t(")") t("{"); options many {tag constidentifier; t("="); value intconstant; parser *parser }; t("}")}
-arrayparser =   choose{         
+arrayparser =   choose{
                 MANYONE= < t("many1"); *parser>
-                MANY=  < t("many"); *parser>  
-                SEPBYONE={ t("sepBy1"); separator constparser; inner *parser}    
+                MANY=  < t("many"); *parser>
+                SEPBYONE={ t("sepBy1"); separator constparser; inner *parser}
                 SEPBY= { t("sepBy") ; separator constparser; inner *parser}
                 }
-parameter = choose { 
+parameter = choose {
                             PDEPENDENCY = dependencyidentifier
                             PSTREAM  = streamidentifier
                       }
-parameterlist = < t("("); sepBy1 t(",") parameter; t(")") > 
+parameterlist = < t("("); sepBy1 t(",") parameter; t(")") >
 
-parameterdefinition = choose { 
+parameterdefinition = choose {
                     DSTREAM = streamidentifier
                     DDEPENDENCY = {name dependencyidentifier; type * parser }
                     }
 parameterdefinitionlist = <t("(") sepBy1 t(",") parameterdefinition t(")")>
-parserinvocation = { name varidentifier; 
+parserinvocation = { name varidentifier;
                      parameters optional parameterlist  }
 
-parserinner =  choose {// because we don't do left recursive grammars yet
+parserinner =  choose {// because we do not do left recursive grammars yet
                 INTEGER= constrainedint
                 STRUCTURE= structparser
                 WRAP = wrapparser
@@ -106,21 +106,21 @@ parserinner =  choose {// because we don't do left recursive grammars yet
                 NUNION = many1 <t("||") *parser>
                 REF   =  <t("*") parserinvocation >
                 NAME  =  parserinvocation
-         } 
+         }
 parser = choose {PAREN=<t("(") parserinner t(")")>
                  PR= parserinner}
 definition = choose {
            PARSER = {name  varidentifier
-                     parameters optional parameterdefinitionlist 
+                     parameters optional parameterdefinitionlist
                     t("=")
                     definition parser }
            CONSTANTDEF = {
-                 name constidentifier 
+                 name constidentifier
                  WHITE
                  uint8 = '='
-                 WHITE 
+                 WHITE
                  definition constparser
-           }          
+           }
            ENDIAN = choose {
                  LITTLE = t("!LITTLE-ENDIAN")
                  BIG = t("!BIG-ENDIAN")

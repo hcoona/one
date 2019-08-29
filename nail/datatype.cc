@@ -63,12 +63,12 @@ class CDataModel{
     }
     case CHOICE:{
       out << "struct " << name<< "{\n";
-      if(0){//TODO: global enum option 
+      if(0){//TODO: global enum option
         out<< " enum  {";
         int idx=0;
         FOREACH(option, p.choice){
           std::string tag = mk_str(option->tag);
-          if(idx++ >0) 
+          if(idx++ >0)
             out << ',';
           out << tag;
         }
@@ -89,7 +89,7 @@ class CDataModel{
       out<< "};\n}";
     }
       break;
-  
+
     case ARRAY:
       switch(p.array.N_type){
       case MANY:
@@ -142,7 +142,7 @@ class CDataModel{
       out << mk_str(p.name.name);
       break;
     case APPLY:
-      emit_type(*p.apply.inner); 
+      emit_type(*p.apply.inner);
       break;
     }
   }
@@ -179,7 +179,7 @@ public:
         if(definition->N_type!=PARSER)
           continue;
         std::string name(mk_str(definition->parser.name));
-        std::string post; 
+        std::string post;
         std::string typedef_t( typedef_type(definition->parser.definition,name,&post));
         out << "typedef "<<typedef_t<< " " << name << post <<";" << std::endl;
       }
@@ -201,12 +201,12 @@ public:
   }
 
   CDataModel(std::ostream *os) : outs(*os){}
-  
+
 };
 void emit_header(std::ostream *out, grammar *grammar){
   CDataModel data(out);
   data.emit_parser(grammar);
-  *out  <<   std::string((char *)parser_template_h,parser_template_h_len);
+  *out  <<   std::string((char *)nail_parser_template_h,nail_parser_template_h_len);
   FOREACH(def, *grammar){
     if(def->N_type == PARSER){
       std::string name= mk_str(def->parser.name);
