@@ -2,30 +2,30 @@ load("//bazel:junit5.bzl", "java_junit5_test")
 
 java_junit5_test(
     name = "IniParserTest",
+    size = "small",
     srcs = [
         "IniParserTest.java",
+    ],
+    resources = [
+        "//configuration_flattener/src/test/resources/ini:ini_test_cases",
     ],
     test_class = "io.github.hcoona.ini.IniParserTest",
     deps = [
         "//configuration_flattener/src/main/java/io/github/hcoona/ini:ini_parser",
     ],
-    resources = [
-        "//configuration_flattener/src/test/resources/ini:ini_test_cases",
-    ],
-    size = "small",
 )
 
 java_junit5_test(
     name = "IniReaderTest",
+    size = "small",
     srcs = [
         "IniReaderTest.java",
+    ],
+    resources = [
+        "//configuration_flattener/src/test/resources/ini:ini_test_cases",
     ],
     test_class = "io.github.hcoona.ini.IniReaderTest",
     deps = [
         "//configuration_flattener/src/main/java/io/github/hcoona/ini:ini_reader",
     ],
-    resources = [
-        "//configuration_flattener/src/test/resources/ini:ini_test_cases",
-    ],
-    size = "small",
 )

@@ -1,5 +1,5 @@
 package(
-    default_visibility = ["//configuration_flattener/src:__subpackages__"]
+    default_visibility = ["//configuration_flattener/src:__subpackages__"],
 )
 
 java_library(
@@ -12,10 +12,10 @@ java_library(
 java_library(
     name = "ini_api",
     srcs = [
-        "IniFileObject.java",
-        "IniSectionObject.java",
-        "IniOptionObject.java",
         "IniException.java",
+        "IniFileObject.java",
+        "IniOptionObject.java",
+        "IniSectionObject.java",
     ],
     deps = [
         "@maven//:org_apache_commons_commons_lang3",
@@ -27,11 +27,11 @@ java_library(
     srcs = [
         "IniReader.java",
     ],
-    deps = [
+    exports = [
         ":ini_api",
         ":ini_parser",
     ],
-    exports = [
+    deps = [
         ":ini_api",
         ":ini_parser",
     ],

@@ -54,6 +54,7 @@ cc_binary(
     ],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         ":nail_grammar",
         "@boost//:algorithm",
@@ -61,7 +62,6 @@ cc_binary(
         "@boost//:format",
         "@boost//:lexical_cast",
     ],
-    visibility = ["//visibility:public"],
 )
 
 genrule(

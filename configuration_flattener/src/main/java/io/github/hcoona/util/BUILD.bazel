@@ -1,5 +1,5 @@
 package(
-    default_visibility = ["//configuration_flattener/src:__subpackages__"]
+    default_visibility = ["//configuration_flattener/src:__subpackages__"],
 )
 
 java_library(
