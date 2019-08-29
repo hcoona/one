@@ -30,28 +30,34 @@ genrule(
 
 cc_library(
     name = "nail_grammar",
-    srcs = [
-        "new_grammar.nail.c",
-        "new_grammar.nail.h",
-    ],
+    srcs = select({
+        "//bazel:windows": [],
+        "//conditions:default": [
+            "new_grammar.nail.c",
+            "new_grammar.nail.h",
+        ],
+    }),
     hdrs = ["grammar.h"],
 )
 
 cc_binary(
     name = "nail",
-    srcs = [
-        "datatype.cc",
-        "expr.hpp",
-        "main.cc",
-        "mk_directparser.cc",
-        "mk_gen.cc",
-        "mk_parser.cc",
-        "nailtool.h",
-        "parser_template.c.cc",
-        "parser_template.cc.cc",
-        "parser_template.h.cc",
-        "util.cc",
-    ],
+    srcs = select({
+        "//bazel:windows": ["empty_main.cc"],
+        "//conditions:default": [
+            "datatype.cc",
+            "expr.hpp",
+            "main.cc",
+            "mk_directparser.cc",
+            "mk_gen.cc",
+            "mk_parser.cc",
+            "nailtool.h",
+            "parser_template.c.cc",
+            "parser_template.cc.cc",
+            "parser_template.h.cc",
+            "util.cc",
+        ],
+    }),
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
