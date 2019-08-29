@@ -1,10 +1,6 @@
 package io.github.hcoona.directory_manifest;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
@@ -25,6 +21,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class Controller {
   private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
@@ -42,11 +41,10 @@ class Controller {
     }
 
     ThreadFactory tf = new ThreadFactoryBuilder()
-        .setNameFormat("File hash calculate thread #%d")
-        .setDaemon(true)
-        .build();
-    this.scheduledExecutorService =
-        new LogErrorScheduledThreadPoolExecutor(6, tf);
+                           .setNameFormat("File hash calculate thread #%d")
+                           .setDaemon(true)
+                           .build();
+    this.scheduledExecutorService = new LogErrorScheduledThreadPoolExecutor(6, tf);
   }
 
   public void run() throws InterruptedException {
@@ -69,44 +67,40 @@ class Controller {
   private CompletableFuture<String> computeDirectory(Path dir) {
     CompletableFuture<String>[] tasks;
     try {
-      tasks = (CompletableFuture<String>[])
-          Files.walk(dir, 1, FileVisitOption.FOLLOW_LINKS)
-              .skip(1)
-              .map(this::computePath)
-              .toArray(CompletableFuture<?>[]::new);
+      tasks = (CompletableFuture<String>[]) Files.walk(dir, 1, FileVisitOption.FOLLOW_LINKS)
+                  .skip(1)
+                  .map(this::computePath)
+                  .toArray(CompletableFuture<?>[] ::new);
     } catch (IOException e) {
       LOG.error("Failed to walk dir " + dir, e);
       return CompletableFuture.completedFuture("");
     }
 
-    return CompletableFuture
-        .allOf(tasks)
-        .thenApplyAsync(ignored -> new DigestUtils("MD5").digestAsHex(
-            Arrays.stream(tasks)
-                .map(t -> {
-                  try {
-                    return t.get();
-                  } catch (InterruptedException e) {
-                    LOG.error("Interrupt computation before it finished", e);
-                  } catch (ExecutionException e) {
-                    LOG.error("Execution failed for task " + t, e);
-                  }
-                  return "";
-                })
-                .reduce((s1, s2) -> s1 + "|" + s2)
-                .orElse("")))
+    return CompletableFuture.allOf(tasks)
+        .thenApplyAsync(ignored
+            -> new DigestUtils("MD5").digestAsHex(
+                Arrays.stream(tasks)
+                    .map(t -> {
+                      try {
+                        return t.get();
+                      } catch (InterruptedException e) {
+                        LOG.error("Interrupt computation before it finished", e);
+                      } catch (ExecutionException e) {
+                        LOG.error("Execution failed for task " + t, e);
+                      }
+                      return "";
+                    })
+                    .reduce((s1, s2) -> s1 + "|" + s2)
+                    .orElse("")))
         .thenApplyAsync(checksum -> {
           BasicFileAttributeView bfav =
               Files.getFileAttributeView(dir, BasicFileAttributeView.class);
           try {
             BasicFileAttributes attrs = bfav.readAttributes();
-            OLOG.info(String.join(",", Arrays.asList(
-                "\"" + dir.toString() + "\"",
-                "DIRECTORY",
-                formatFileTime(attrs.creationTime()),
-                formatFileTime(attrs.lastModifiedTime()),
-                String.valueOf(attrs.size()),
-                checksum)));
+            OLOG.info(String.join(",",
+                Arrays.asList("\"" + dir.toString() + "\"", "DIRECTORY",
+                    formatFileTime(attrs.creationTime()), formatFileTime(attrs.lastModifiedTime()),
+                    String.valueOf(attrs.size()), checksum)));
           } catch (IOException e) {
             LOG.error("Failed to get file attributes " + dir, e);
           }
@@ -116,26 +110,26 @@ class Controller {
 
   private CompletableFuture<String> computeFile(Path file) {
     return CompletableFuture
-        .supplyAsync(() -> {
-          try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
-            return new DigestUtils("MD5").digestAsHex(is);
-          } catch (IOException e) {
-            LOG.error("Failed to compute file " + file);
-            return "";
-          }
-        }, scheduledExecutorService)
+        .supplyAsync(
+            ()
+                -> {
+              try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
+                return new DigestUtils("MD5").digestAsHex(is);
+              } catch (IOException e) {
+                LOG.error("Failed to compute file " + file);
+                return "";
+              }
+            },
+            scheduledExecutorService)
         .thenApplyAsync(checksum -> {
           BasicFileAttributeView bfav =
               Files.getFileAttributeView(file, BasicFileAttributeView.class);
           try {
             BasicFileAttributes attrs = bfav.readAttributes();
-            OLOG.info(String.join(",", Arrays.asList(
-                "\"" + file.toString() + "\"",
-                "FILE",
-                formatFileTime(attrs.creationTime()),
-                formatFileTime(attrs.lastModifiedTime()),
-                String.valueOf(attrs.size()),
-                checksum)));
+            OLOG.info(String.join(",",
+                Arrays.asList("\"" + file.toString() + "\"", "FILE",
+                    formatFileTime(attrs.creationTime()), formatFileTime(attrs.lastModifiedTime()),
+                    String.valueOf(attrs.size()), checksum)));
           } catch (IOException e) {
             LOG.error("Failed to get file attributes " + file, e);
           }

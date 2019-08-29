@@ -1,8 +1,5 @@
 package io.github.hcoona.directory_manifest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
@@ -13,9 +10,10 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LogErrorScheduledThreadPoolExecutor
-    extends ScheduledThreadPoolExecutor {
+public class LogErrorScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
   private static final Logger LOG =
       LoggerFactory.getLogger(LogErrorScheduledThreadPoolExecutor.class);
 
@@ -31,12 +29,14 @@ public class LogErrorScheduledThreadPoolExecutor
     super(corePoolSize, handler);
   }
 
-  public LogErrorScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+  public LogErrorScheduledThreadPoolExecutor(
+      int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
     super(corePoolSize, threadFactory, handler);
   }
 
   @Override
-  protected <V> RunnableScheduledFuture<V> decorateTask(Callable<V> callable, RunnableScheduledFuture<V> task) {
+  protected <V> RunnableScheduledFuture<V> decorateTask(
+      Callable<V> callable, RunnableScheduledFuture<V> task) {
     return new RunnableScheduledFuture<V>() {
       @Override
       public boolean isPeriodic() {
@@ -79,7 +79,8 @@ public class LogErrorScheduledThreadPoolExecutor
       }
 
       @Override
-      public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+      public V get(long timeout, TimeUnit unit)
+          throws InterruptedException, ExecutionException, TimeoutException {
         return task.get(timeout, unit);
       }
 
@@ -99,11 +100,10 @@ public class LogErrorScheduledThreadPoolExecutor
   private static void logThrowableFromAfterExecute(Runnable r, Throwable t) {
     if (LOG.isDebugEnabled()) {
       LOG.debug("afterExecute in thread: " + Thread.currentThread().getName()
-          + ", runnable type: " + r.getClass().getName()
-          + ", runnable: " + r.toString());
+          + ", runnable type: " + r.getClass().getName() + ", runnable: " + r.toString());
     }
 
-    //For additional information, see: https://docs.oracle
+    // For additional information, see: https://docs.oracle
     // .com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor
     // .html#afterExecute(java.lang.Runnable,%20java.lang.Throwable)
 
@@ -112,8 +112,7 @@ public class LogErrorScheduledThreadPoolExecutor
       try {
         ((Future<?>) r).get();
       } catch (ExecutionException ee) {
-        LOG.warn("Execution exception when running task in "
-            + Thread.currentThread().getName());
+        LOG.warn("Execution exception when running task in " + Thread.currentThread().getName());
         t = ee.getCause();
       } catch (InterruptedException ie) {
         LOG.warn("Thread (" + Thread.currentThread() + ") interrupted: ", ie);
@@ -124,8 +123,7 @@ public class LogErrorScheduledThreadPoolExecutor
     }
 
     if (t != null) {
-      LOG.warn("Caught exception in thread " + Thread
-          .currentThread().getName() + ": ", t);
+      LOG.warn("Caught exception in thread " + Thread.currentThread().getName() + ": ", t);
     }
   }
 }
