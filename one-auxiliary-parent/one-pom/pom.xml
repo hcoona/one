@@ -71,6 +71,14 @@
         <scope>compile</scope>
       </dependency>
 
+      <!-- commons-exec -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-exec</artifactId>
+        <version>${version.commons.exec}</version>
+        <scope>compile</scope>
+      </dependency>
+
       <!-- commons-lang3 -->
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -100,6 +108,20 @@
         <groupId>javax.annotation</groupId>
         <artifactId>javax.annotation-api</artifactId>
         <version>${version.javax.annotation}</version>
+        <scope>compile</scope>
+      </dependency>
+
+      <!-- JNA -->
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>${version.jna}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna-platform</artifactId>
+        <version>${version.jna}</version>
         <scope>compile</scope>
       </dependency>
 

@@ -1,0 +1,91 @@
+image:https://travis-ci.org/hcoona/native-named-mutex.svg?branch=master["Build Status", link="https://travis-ci.org/hcoona/native-named-mutex"]
+image:https://maven-badges.herokuapp.com/maven-central/io.github.hcoona/native-named-mutex/badge.svg["Maven Package Version", link="https://repo1.maven.org/maven2/io/github/hcoona/native-named-mutex/"]
+
+= native-named-mutex =
+
+This is a Java library to provide a cross-platform system-wide named mutex synchronization primitive. It could be used for inter-process synchronization.
+
+[source,xml]
+-------------------------------------------
+<dependency>
+    <groupId>io.github.hcoona</groupId>
+    <artifactId>native-named-mutex</artifactId>
+    <version>1.3.0</version>
+</dependency>
+-------------------------------------------
+
+== Underlying ==
+
+It underlying use system API to implement Mutex.
+
+[horizontal]
+*Windows*:: Use https://msdn.microsoft.com/en-us/library/windows/desktop/ms682411(v=vs.85).aspx[CreateMutex] API
+            to create or open a named mutex object.
+*Linux*:: Use named semaphore in pthread to simulate a mutex.
+*Other*:: Use Java `FileLock` and `ReentrantLock` to simulate a mutex.
+
+== Future plan ==
+
+Notice that *macOS is supported in Other platform* because macOS does not implement all posix semaphores API, especially `sem_timedwait`.
+
+It is possible to leverage the Posix robust mutex with shared memory for more reliability in the future, so please *NOT assume it always use semaphore on Linux*. (See discussion https://github.com/dotnet/coreclr/issues/3422[here] for more details)
+
+== Usage ==
+
+=== Singleton your service in system-wide ===
+
+You somehow might have to ensure there is only 1 instance running in your system.
+This is specially useful in enterprise services.
+
+[source,java]
+-------------------------------------------
+public static void main(String[] args) {
+    final String mutexName = "/UniqueNameForYourService";
+    try (NamedMutex mutex = NamedMutex.newInstance(true, mutexName)) {
+        mutex.waitOne();
+        Service service = createYourService();
+        service.run();
+    }
+}
+-------------------------------------------
+
+Wait with a timeout limit is also supported.
+
+[source,java]
+-------------------------------------------
+public static void main(String[] args) {
+    final String mutexName = "/UniqueNameForYourService";
+    try (NamedMutex mutex = NamedMutex.newInstance(true, mutexName)) {
+        if (mutex.waitOne(5, TimeUnit.SECONDS)) {
+            Service service = createYourService();
+            service.run();
+        } else {
+            System.err.println("Cannot startup because there is another instance already running.");
+        }
+    }
+}
+-------------------------------------------
+
+=== Protect system-wide resources ===
+
+You might need to run 2 apps but they have to use same TCP port some time.
+
+[source,java]
+-------------------------------------------
+try (NamedMutex mutex = NamedMutex.newInstance(true, "/Port_3386")) {
+    mutex.waitOne();
+    HttpListener listener = new HttpListener("0.0.0.0", 3386);
+}
+-------------------------------------------
+
+=== Synchronization between processes ===
+
+You might need to synchronize between processes.
+
+[source,java]
+-------------------------------------------
+try (NamedMutex mutex = NamedMutex.newInstance(false, "/ProtectedSharedFileName")) {
+    mutex.waitOne();
+    writeSharedFile();
+}
+-------------------------------------------

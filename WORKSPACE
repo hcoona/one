@@ -280,13 +280,15 @@ maven_install(
         "com.google.guava:guava:26.0-jre",
         "javax.annotation:javax.annotation-api:1.3.2",
         "junit:junit:4.12",
+        "net.java.dev.jna:jna:5.4.0",
+        "net.java.dev.jna:jna-platform:5.4.0",
         "org.apache.commons:commons-lang3:3.9",
         "org.apache.commons:commons-math3:3.6.1",
         "org.slf4j:slf4j-api:1.7.25",
         "org.assertj:assertj-core:3.13.2",
         # TODO(zhangshuai.ustc): Add it to Maven.
-        "commons-codec:commons-codec:1.13",
-        "com.google.googlejavaformat:google-java-format:1.7",
+        "commons-codec:commons-codec:1.13",  # directory_manifest
+        "com.google.googlejavaformat:google-java-format:1.7",  # tools/google-java-format
     ],
     maven_install_json = "@//:maven_install.json",
     repositories = [MAVEN_REPOSITORY_URL],
