@@ -1,0 +1,64 @@
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
+)
+
+genrule(
+    name = "gen_parser_template_h",
+    srcs = ["parser_template.h"],
+    outs = ["parser_template.h.cc"],
+    cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
+    tools = ["//third_party/xxd:xxd"],
+)
+
+genrule(
+    name = "gen_parser_template_c",
+    srcs = ["parser_template.c"],
+    outs = ["parser_template.c.cc"],
+    cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
+    tools = ["//third_party/xxd:xxd"],
+)
+
+genrule(
+    name = "gen_parser_template_cc",
+    srcs = ["parser_template.cc"],
+    outs = ["parser_template.cc.cc"],
+    cmd = "$(location //third_party/xxd:xxd) -i $< > $@",
+    tools = ["//third_party/xxd:xxd"],
+)
+
+cc_library(
+    name = "nail_grammar",
+    srcs = [
+        "new_grammar.nail.c",
+        "new_grammar.nail.h",
+    ],
+    hdrs = ["grammar.h"],
+)
+
+cc_binary(
+    name = "nail",
+    srcs = [
+        "datatype.cc",
+        "expr.hpp",
+        "main.cc",
+        "mk_gen.cc",
+        "mk_parser.cc",
+        "nailtool.h",
+        "parser_template.c.cc",
+        "parser_template.cc.cc",
+        "parser_template.h.cc",
+        "util.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":nail_grammar",
+        "@boost//:algorithm",
+        "@boost//:foreach",
+        "@boost//:format",
+        "@boost//:lexical_cast",
+    ],
+)
