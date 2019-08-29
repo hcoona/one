@@ -1,5 +1,6 @@
 #include "zkclient/zkclient.h"
 
+#include <cassert>
 #include <memory>
 #include <utility>
 #include "zookeeper.h"      // NOLINT
@@ -31,6 +32,8 @@ Client::Client(string_view host) {
       +[](zhandle_t* zh, int type, int state, const char* path,
           void* watcherCtx) {
         Client* client = reinterpret_cast<Client*>(watcherCtx);
+        assert(zh == client->handle_);
+
         WatchEventType watch_type = static_cast<WatchEventType>(type);
         State zk_state = static_cast<State>(state);
 
@@ -93,8 +96,8 @@ ErrorCode Client::CreateAsync(
       to_zoo(handle_), path.data(), reinterpret_cast<const char*>(value.data()),
       value.size_bytes(), &z_acls, static_cast<int>(flags),
       [](int rc, const char* value, const void* data) {
-        auto callback_holder =
-            (std::function<void(ErrorCode, string_view)>*)data;
+        auto callback_holder = reinterpret_cast<
+            const std::function<void(ErrorCode, string_view)>*>(data);
         std::function<void(ErrorCode, string_view)> callback =
             std::move(*callback_holder);
         delete callback_holder;
@@ -139,7 +142,8 @@ ErrorCode Client::DeleteAsync(string_view path, int version,
   ErrorCode error_code = static_cast<ErrorCode>(zoo_adelete(
       to_zoo(handle_), path.data(), version,
       [](int rc, const void* data) {
-        auto callback_holder = (std::function<void(ErrorCode)>*)data;
+        auto callback_holder =
+            reinterpret_cast<const std::function<void(ErrorCode)>*>(data);
         std::function<void(ErrorCode)> callback = std::move(*callback_holder);
         delete callback_holder;
 
