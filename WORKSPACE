@@ -251,6 +251,18 @@ http_archive(
     urls = ["https://github.com/lz4/lz4/archive/v1.9.2.tar.gz"],  # 2019-08-20
 )
 
+# snappy, required by rocksdb.
+http_archive(
+    name = "com_github_google_snappy",
+    build_file = "//third_party/snappy:snappy.BUILD",
+    sha256 = "3dfa02e873ff51a11ee02b9ca391807f0c8ea0529a4924afa645fbf97163f9d4",
+    strip_prefix = "snappy-1.1.7",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/1.1.7.tar.gz",
+        "https://github.com/google/snappy/archive/1.1.7.tar.gz",
+    ],
+)
+
 ######## Java External Dependencies ########
 
 load("//bazel:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
