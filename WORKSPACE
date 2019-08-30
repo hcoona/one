@@ -46,7 +46,7 @@ http_archive(
     urls = ["https://github.com/google/boringssl/archive/a21f78d24bf645ccd6774b2c7e52e3c0514f7f29.tar.gz"],  # 2019-08-05
 )
 
-# gtest, required by Grpc.
+# gtest, required by Grpc, rocksdb.
 http_archive(
     name = "com_google_googletest",
     sha256 = "9bf1fe5182a604b4135edc1a425ae356c9ad15e9b23f9f12a02e80184c3a249c",
@@ -270,6 +270,15 @@ http_archive(
     sha256 = "5eda3502ecc285c3c92ee0cc8cd002234dee39d539b3f692997a0e80de1d33de",
     strip_prefix = "zstd-1.4.3/lib",
     urls = ["https://github.com/facebook/zstd/archive/v1.4.3.tar.gz"],  # 2019-08-20
+)
+
+# rocksdb
+http_archive(
+    name = "com_github_facebook_rocksdb",
+    build_file = "//third_party/rocksdb:rocksdb.BUILD",
+    sha256 = "3e7365cb2a35982e95e5e5dd0b3352dc78573193dafca02788572318c38483fb",
+    strip_prefix = "rocksdb-6.2.2",
+    urls = ["https://github.com/facebook/rocksdb/archive/v6.2.2.tar.gz"],  # 2019-08-12
 )
 
 ######## Java External Dependencies ########

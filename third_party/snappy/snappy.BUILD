@@ -23,6 +23,8 @@ cc_library(
             "-Wno-implicit-function-declaration",
         ],
     }),
+    includes = ["."],
+    visibility = ["//visibility:public"],
 )
 
 genrule(
