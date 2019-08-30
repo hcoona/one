@@ -171,7 +171,7 @@ load("@rules_python//python:repositories.bzl", "py_repositories")
 
 py_repositories()
 
-load("@rules_python//python:pip.bzl", "pip_repositories")
+load("@rules_python//python:pip.bzl", "pip_import", "pip_repositories")
 
 pip_repositories()
 
@@ -242,6 +242,15 @@ http_archive(
     urls = ["https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"],  # 2019-06-13
 )
 
+# lz4, required by rocksdb.
+http_archive(
+    name = "com_github_lz4_lz4",
+    build_file = "//third_party/lz4:lz4.BUILD",
+    sha256 = "658ba6191fa44c92280d4aa2c271b0f4fbc0e34d249578dd05e50e76d0e5efcc",
+    strip_prefix = "lz4-1.9.2",
+    urls = ["https://github.com/lz4/lz4/archive/v1.9.2.tar.gz"],  # 2019-08-20
+)
+
 ######## Java External Dependencies ########
 
 load("//bazel:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
@@ -309,8 +318,6 @@ load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 gazelle_dependencies()
 
 ######## Python External Dependencies ########
-
-load("@rules_python//python:pip.bzl", "pip_import")
 
 pip_import(
     name = "one_pip_deps",
