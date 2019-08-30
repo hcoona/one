@@ -54,7 +54,7 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/release-1.8.1.tar.gz"],  # 2018-08-31
 )
 
-# gflags, required by Grpc & kythe.
+# gflags, required by Grpc, kythe, glog, rocksdb.
 # TODO(zhangshuai.ustc): Patch them to use abseil flags?
 http_archive(
     name = "com_github_gflags_gflags",
