@@ -20,6 +20,7 @@ http_archive(
 
 # zlib, required by Protobuf & Grpc. (Patched them to use @com_github_madler_zlib//:zlib)
 # required by boost. (Patched com_github_nelhage_rules_boost to use @com_github_madler_zlib//:zlib)
+# required by rocksdb.
 http_archive(
     name = "com_github_madler_zlib",
     build_file = "//third_party/zlib:zlib.BUILD",
@@ -54,7 +55,7 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/release-1.8.1.tar.gz"],  # 2018-08-31
 )
 
-# gflags, required by Grpc, kythe, glog, rocksdb.
+# gflags, required by Grpc, kythe, glog.
 # TODO(zhangshuai.ustc): Patch them to use abseil flags?
 http_archive(
     name = "com_github_gflags_gflags",
