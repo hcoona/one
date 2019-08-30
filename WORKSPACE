@@ -233,35 +233,13 @@ http_archive(
     ],
 )
 
-# Required by swig.
+# bzip2, required by rocksdb.
 http_archive(
-    name = "pcre",
-    build_file = "//third_party/pcre:pcre.BUILD",
-    sha256 = "69acbc2fbdefb955d42a4c606dfde800c2885711d2979e356c0636efde9ec3b5",
-    strip_prefix = "pcre-8.42",
-    urls = [
-        "http://mirror.tensorflow.org/ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",
-        "http://ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",  # 2018-03-20
-    ],
-)
-
-# swig
-http_archive(
-    name = "swig",
-    build_file = "@//third_party/swig:swig.BUILD",
-    sha256 = "e8a39cd6437e342cdcbd5af27a9bf11b62dc9efec9248065debcb8276fcbb925",
-    strip_prefix = "swig-4.0.0",
-    urls = [
-        "http://ufpr.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",
-        "http://pilotfiber.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",  # 2019-04-29
-    ],
-)
-
-# xxd
-http_file(
-    name = "xxd",
-    sha256 = "2d4c4f98726467fc023de6d3ca8da3795ec5d8fbf9d92bb8c29d744877d4cbf8",
-    urls = ["https://raw.githubusercontent.com/vim/vim/v8.1.1933/src/xxd/xxd.c"],  # 2019-08-28
+    name = "org_sourceware_bzip",
+    build_file = "//third_party/bzip:bzip.BUILD",
+    sha256 = "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
+    strip_prefix = "bzip2-1.0.8",
+    urls = ["https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"],  # 2019-06-13
 )
 
 ######## Java External Dependencies ########
@@ -344,6 +322,37 @@ load("@one_pip_deps//:requirements.bzl", "pip_install")
 pip_install()
 
 ######## Load Tools After Loading All Others ########
+
+# Required by swig.
+http_archive(
+    name = "pcre",
+    build_file = "//third_party/pcre:pcre.BUILD",
+    sha256 = "69acbc2fbdefb955d42a4c606dfde800c2885711d2979e356c0636efde9ec3b5",
+    strip_prefix = "pcre-8.42",
+    urls = [
+        "http://mirror.tensorflow.org/ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",
+        "http://ftp.exim.org/pub/pcre/pcre-8.42.tar.gz",  # 2018-03-20
+    ],
+)
+
+# swig
+http_archive(
+    name = "swig",
+    build_file = "@//third_party/swig:swig.BUILD",
+    sha256 = "e8a39cd6437e342cdcbd5af27a9bf11b62dc9efec9248065debcb8276fcbb925",
+    strip_prefix = "swig-4.0.0",
+    urls = [
+        "http://ufpr.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",
+        "http://pilotfiber.dl.sourceforge.net/project/swig/swig/swig-4.0.0/swig-4.0.0.tar.gz",  # 2019-04-29
+    ],
+)
+
+# xxd
+http_file(
+    name = "xxd",
+    sha256 = "2d4c4f98726467fc023de6d3ca8da3795ec5d8fbf9d92bb8c29d744877d4cbf8",
+    urls = ["https://raw.githubusercontent.com/vim/vim/v8.1.1933/src/xxd/xxd.c"],  # 2019-08-28
+)
 
 # cpplint
 http_archive(
