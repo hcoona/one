@@ -23,6 +23,7 @@ cc_library(
         "XXH_NAMESPACE=ZSTD_",
     ],
     includes = [
+        ".",
         "common",
         "compress",
         "decompress",
@@ -30,4 +31,5 @@ cc_library(
         "dictBuilder",
         "legacy",
     ],
+    visibility = ["//visibility:public"],
 )

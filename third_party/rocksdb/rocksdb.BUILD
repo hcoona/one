@@ -244,8 +244,11 @@ cc_library(
         "ROCKSDB_RANGESYNC_PRESENT",
         "ROCKSDB_SCHED_GETCPU_PRESENT",
         "ROCKSDB_SUPPORT_THREAD_LOCAL",
-        "ZLIB",
         "SNAPPY",
+        "ZLIB",
+        "BZIP2",
+        "LZ4",
+        "ZSTD",
     ],
     includes = [
         ".",
@@ -254,9 +257,12 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":build_version",
+        "@com_github_facebook_zstd//:zstd",
         "@com_github_google_snappy//:snappy",
+        "@com_github_lz4_lz4//:lz4",
         "@com_github_madler_zlib//:zlib",
         "@com_google_googletest//:gtest",
+        "@org_sourceware_bzip2//:bz2",
     ],
 )
 

@@ -15,6 +15,7 @@ cc_library(
         "lib/lz4hc.h",
     ],
     includes = ["./lib"],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(

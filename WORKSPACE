@@ -235,8 +235,8 @@ http_archive(
 
 # bzip2, required by rocksdb.
 http_archive(
-    name = "org_sourceware_bzip",
-    build_file = "//third_party/bzip:bzip.BUILD",
+    name = "org_sourceware_bzip2",
+    build_file = "//third_party/bzip2:bzip2.BUILD",
     sha256 = "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
     strip_prefix = "bzip2-1.0.8",
     urls = ["https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"],  # 2019-06-13
