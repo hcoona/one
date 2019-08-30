@@ -259,8 +259,17 @@ http_archive(
     strip_prefix = "snappy-1.1.7",
     urls = [
         "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/1.1.7.tar.gz",
-        "https://github.com/google/snappy/archive/1.1.7.tar.gz",
+        "https://github.com/google/snappy/archive/1.1.7.tar.gz",  # 2017-08-25
     ],
+)
+
+# zstd, required by rocksdb.
+http_archive(
+    name = "com_github_facebook_zstd",
+    build_file = "//third_party/zstd:zstd.BUILD",
+    sha256 = "5eda3502ecc285c3c92ee0cc8cd002234dee39d539b3f692997a0e80de1d33de",
+    strip_prefix = "zstd-1.4.3/lib",
+    urls = ["https://github.com/facebook/zstd/archive/v1.4.3.tar.gz"],  # 2019-08-20
 )
 
 ######## Java External Dependencies ########
