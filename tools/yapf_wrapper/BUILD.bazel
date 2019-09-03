@@ -1,0 +1,10 @@
+load("@one_pip_deps//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "yapf_wrapper",
+    srcs = ["yapf_wrapper.py"],
+    deps = [
+        requirement("yapf"),
+        requirement("futures"),
+    ],
+)
