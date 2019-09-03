@@ -1,0 +1,9 @@
+load("@one_pip_deps//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "isort_wrapper",
+    srcs = ["isort_wrapper.py"],
+    deps = [
+        requirement("isort"),
+    ],
+)

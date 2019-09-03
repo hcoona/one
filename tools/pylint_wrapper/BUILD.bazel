@@ -1,0 +1,9 @@
+load("@one_pip_deps//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "pylint_wrapper",
+    srcs = ["pylint_wrapper.py"],
+    deps = [
+        requirement("pylint"),
+    ],
+)
