@@ -9,8 +9,7 @@
 
   <groupId>net.slightlymagic.thefiremind</groupId>
   <artifactId>zed2zip</artifactId>
-
-  <name>zed2zip</name>
+  <name>ZED to ZIP</name>
 
   <dependencyManagement>
     <dependencies>

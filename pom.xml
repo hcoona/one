@@ -20,6 +20,7 @@
     <module>java-transient-fault-handling</module>
     <module>native-named-mutex</module>
     <module>zed2zip</module>
+    <module>am2bazel</module>
   </modules>
 
   <properties>
