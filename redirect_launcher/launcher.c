@@ -54,6 +54,7 @@ static void InitBufferSize(void) {
 }
 
 static const size_t kPathMaxLength = _POSIX_PATH_MAX;
+static const int64_t kLoopIntervalNanoseconds = 10 * 1000;  // 10ms
 
 static const int kStdoutIndex = 0;
 static const int kStderrIndex = 1;
@@ -283,6 +284,7 @@ void* CopyPipeToFile(void* context) {
   while (true) {
     while (true) {
       if (output_file_offset > the_context->output_file_size_threshold_bytes) {
+        LAUNCHER_LOG_INFO("Begin rollover log file.\n");
         ec = close(output_fileno);
         if (ec != 0) {
           LAUNCHER_LOGF_WARN("Failed to close %s: %s\n",
@@ -321,8 +323,7 @@ void* CopyPipeToFile(void* context) {
           }
         }
         output_file_offset = 0;
-        LAUNCHER_LOGF_INFO("Open new file %s for rolling\n",
-                           the_context->output_file);
+        LAUNCHER_LOG_INFO("Finish rollover log file.\n");
       }
 
       ssize_t count = splice(
@@ -365,11 +366,12 @@ void* CopyPipeToFile(void* context) {
 
     // TODO(zhangshuai.ustc): Load from settings
     struct timespec deadline;  // deadline = now + 10ms
-    if (now.tv_usec + 10000 >= 1E9) {
+    if (now.tv_usec + kLoopIntervalNanoseconds >= 1E9) {
       deadline.tv_sec = now.tv_sec + 1,
-      deadline.tv_nsec = now.tv_usec + 10000 - 1E9;
+      deadline.tv_nsec = now.tv_usec + kLoopIntervalNanoseconds - 1E9;
     } else {
-      deadline.tv_sec = now.tv_sec, deadline.tv_nsec = now.tv_usec + 10000;
+      deadline.tv_sec = now.tv_sec,
+      deadline.tv_nsec = now.tv_usec + kLoopIntervalNanoseconds;
     }
     ec = pthread_cond_timedwait(the_context->exit_cond, the_context->exit_mutex,
                                 &deadline);
