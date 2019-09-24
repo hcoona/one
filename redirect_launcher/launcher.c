@@ -361,13 +361,18 @@ void* CopyPipeToFile(void* context) {
       FatalExit();
     }
 
-    LAUNCHER_DLOG("Wait 1 second for next round or exiting.\n");
+    LAUNCHER_DLOG("Wait 10ms for next round or exiting.\n");
 
     // TODO(zhangshuai.ustc): Load from settings
-    struct timespec timeout = {.tv_sec = now.tv_sec + 1,
-                               .tv_nsec = now.tv_usec * 1000};
+    struct timespec deadline;  // deadline = now + 10ms
+    if (now.tv_usec + 10000 >= 1E9) {
+      deadline.tv_sec = now.tv_sec + 1,
+      deadline.tv_nsec = now.tv_usec + 10000 - 1E9;
+    } else {
+      deadline.tv_sec = now.tv_sec, deadline.tv_nsec = now.tv_usec + 10000;
+    }
     ec = pthread_cond_timedwait(the_context->exit_cond, the_context->exit_mutex,
-                                &timeout);
+                                &deadline);
     if (ec != 0 && ec != ETIMEDOUT) {
       LAUNCHER_LOGF_ERROR("Failed to wait exit condition: %s\n",
                           strerror(errno));
