@@ -41,6 +41,13 @@
 #define LAUNCHER_DLOGF(s_, ...) fprintf_s(stdout, "[DEBUG] " s_, __VA_ARGS__)
 #endif  // NDEBUG
 
+static const int64_t kOneMillisecondInNanoseconds = 1000;
+static const int64_t kOneSecondInNanoseconds = 1E9L;
+
+static const int kLoopIntervalMilliseconds = 10;
+static const int64_t kLoopIntervalNanoseconds =
+    kLoopIntervalMilliseconds * kOneMillisecondInNanoseconds;
+
 static const ssize_t kDefaultBufferSize = 4096;
 static pthread_once_t init_buffer_size_once = PTHREAD_ONCE_INIT;
 static ssize_t buffer_size;
@@ -54,7 +61,6 @@ static void InitBufferSize(void) {
 }
 
 static const size_t kPathMaxLength = _POSIX_PATH_MAX;
-static const int64_t kLoopIntervalNanoseconds = 10 * 1000;  // 10ms
 
 static const int kStdoutIndex = 0;
 static const int kStderrIndex = 1;
@@ -362,17 +368,20 @@ void* CopyPipeToFile(void* context) {
       FatalExit();
     }
 
-    LAUNCHER_DLOG("Wait 10ms for next round or exiting.\n");
+    LAUNCHER_DLOGF("Wait %d ms for next round or exiting.\n",
+                   kLoopIntervalMilliseconds);
 
     // TODO(zhangshuai.ustc): Load from settings
-    struct timespec deadline;  // deadline = now + 10ms
-    if (now.tv_usec + kLoopIntervalNanoseconds >= 1E9) {
+    struct timespec deadline;  // deadline = now + interval
+    if (now.tv_usec + kLoopIntervalNanoseconds >= kOneSecondInNanoseconds) {
       deadline.tv_sec = now.tv_sec + 1,
-      deadline.tv_nsec = now.tv_usec + kLoopIntervalNanoseconds - 1E9;
+      deadline.tv_nsec =
+          now.tv_usec + (kLoopIntervalNanoseconds - kOneSecondInNanoseconds);
     } else {
       deadline.tv_sec = now.tv_sec,
       deadline.tv_nsec = now.tv_usec + kLoopIntervalNanoseconds;
     }
+
     ec = pthread_cond_timedwait(the_context->exit_cond, the_context->exit_mutex,
                                 &deadline);
     if (ec != 0 && ec != ETIMEDOUT) {

@@ -1,5 +1,4 @@
-#ifndef REDIRECT_LAUNCHER_LAUNCHER_H_
-#define REDIRECT_LAUNCHER_LAUNCHER_H_
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,5 +10,3 @@ int launch(int size_mib, int backup_count, const char* stdout_file,
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // REDIRECT_LAUNCHER_LAUNCHER_H_
