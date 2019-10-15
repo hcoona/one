@@ -2,6 +2,7 @@ load(
     "//bazel/copts:configure.bzl",
     "ONE_DEFAULT_COPTS",
     "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
 )
 
 cc_library(
@@ -11,4 +12,16 @@ cc_library(
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = ["@com_github_microsoft_gsl//:gsl"],
+)
+
+cc_test(
+    name = "encoder_test",
+    srcs = ["encoder_test.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":encoder",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+    ]
 )
