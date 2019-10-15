@@ -234,22 +234,26 @@ cc_library(
     defines = [
         "HAVE_PCLMUL",
         "HAVE_SSE42",
-        "OS_LINUX",
         "ROCKSDB_BACKTRACE",
-        "ROCKSDB_FALLOCATE_PRESENT",
         "ROCKSDB_LIB_IO_POSIX",
-        "ROCKSDB_MALLOC_USABLE_SIZE",
         "ROCKSDB_PLATFORM_POSIX",
-        "ROCKSDB_PTHREAD_ADAPTIVE_MUTEX",
-        "ROCKSDB_RANGESYNC_PRESENT",
-        "ROCKSDB_SCHED_GETCPU_PRESENT",
         "ROCKSDB_SUPPORT_THREAD_LOCAL",
         "SNAPPY",
         "ZLIB",
         "BZIP2",
         "LZ4",
         "ZSTD",
-    ],
+    ] + select({
+        ":macos": ["OS_MACOSX"],
+        "//conditions:default": [
+            "OS_LINUX",
+            "ROCKSDB_FALLOCATE_PRESENT",
+            "ROCKSDB_MALLOC_USABLE_SIZE",
+            "ROCKSDB_PTHREAD_ADAPTIVE_MUTEX",
+            "ROCKSDB_RANGESYNC_PRESENT",
+            "ROCKSDB_SCHED_GETCPU_PRESENT",
+        ],
+    }),
     includes = [
         ".",
         "include",
@@ -278,4 +282,18 @@ genrule(
     srcs = ["util/build_version.cc.in"],
     outs = ["util/build_version.cc"],
     cmd = "sed -e s/@@GIT_SHA@@/6d113fc066c5816887eb19c84d12c0677a68af2b/ -e s/@@GIT_DATE_TIME@@/2019-08-12/ $< > $@",
+)
+
+config_setting(
+    name = "macos",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
 )

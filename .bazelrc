@@ -1,2 +1,3 @@
 # TODO: patch grpc
 build --copt -DGRPC_BAZEL_BUILD
+build --incompatible_disallow_unverified_http_downloads=false

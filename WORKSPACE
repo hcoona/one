@@ -1,12 +1,13 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+load("//bazel:repository_defs.bzl", "bazel_version_repository")
 
 ######## Skylark libraries ########
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "2ea8a5ed2b448baf4a6855d3ce049c4c452a6470b1efd1504fdb7c1c134d220a",
-    strip_prefix = "bazel-skylib-0.8.0",
-    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.8.0.tar.gz",  # 2019-04-21
+    sha256 = "9245b0549e88e356cd6a25bf79f97aa19332083890b7ac6481a2affb6ada9752",
+    strip_prefix = "bazel-skylib-0.9.0",
+    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",  # 2019-07-13
 )
 
 http_archive(
@@ -14,6 +15,20 @@ http_archive(
     sha256 = "c0e41126bcb54b6c6d219d019b04ca7c0392e42c186b48c36d4cd5d817bf209e",
     strip_prefix = "platforms-43155b81d40765f0d13008bc77cd2cca8ba9fb2a",
     url = "https://github.com/bazelbuild/platforms/archive/43155b81d40765f0d13008bc77cd2cca8ba9fb2a.tar.gz",  # 2019-08-26
+)
+
+# Required by grpc.
+http_archive(
+    name = "build_bazel_apple_support",
+    sha256 = "9114c452eee622598cf9cdc90ecb12b06af7f914f33440b26deba9a9704d450c",
+    url = "https://github.com/bazelbuild/apple_support/releases/download/0.7.2/apple_support.0.7.2.tar.gz",  # 2019-10-09
+)
+
+# Required by grpc.
+http_archive(
+    name = "build_bazel_rules_swift",
+    sha256 = "ef2578a50a4dae1debb42a41699a8a77d3f31814c097be8d594f7f4d7f9fce14",
+    url = "https://github.com/bazelbuild/rules_swift/releases/download/0.13.0/rules_swift.0.13.0.tar.gz",  # 2019-10-09
 )
 
 ######## Protobuf & Grpc C++ libraries ########
@@ -72,15 +87,20 @@ http_archive(
     urls = ["https://github.com/google/benchmark/archive/v1.5.0.tar.gz"],  # 2019-05-28
 )
 
+# Required by upb, which is required by protobuf.
+bazel_version_repository(
+    name = "bazel_version",
+)
+
 # proto_library, cc_proto_library, and java_proto_library rules implicitly
 # depend on @com_google_protobuf for protoc and proto runtimes.
 http_archive(
     name = "com_google_protobuf",
     patch_args = ["-p1"],
-    patches = ["//third_party/protobuf:0001-build-with-com_github_madler_zlib.patch"],
-    sha256 = "c90d9e13564c0af85fd2912545ee47b57deded6e5a97de80395b6d2d9be64854",
-    strip_prefix = "protobuf-3.9.1",
-    urls = ["https://github.com/google/protobuf/archive/v3.9.1.zip"],
+    patches = ["//third_party/protobuf:v3.10.0.patch"],
+    sha256 = "33cba8b89be6c81b1461f1c438424f7a1aa4e31998dbe9ed6f8319583daac8c7",
+    strip_prefix = "protobuf-3.10.0",
+    urls = ["https://github.com/google/protobuf/archive/v3.10.0.zip"],  # 2019-10-03
 )
 
 # java_lite_proto_library rules implicitly depend on @com_google_protobuf_javalite//:javalite_toolchain,
@@ -99,10 +119,10 @@ protobuf_deps()
 http_archive(
     name = "com_github_grpc_grpc",
     patch_args = ["-p1"],
-    patches = ["//third_party/grpc:0001-build-with-com_github_madler_zlib.patch"],
-    sha256 = "cce1d4585dd017980d4a407d8c5e9f8fc8c1dbb03f249b99e88a387ebb45a035",
-    strip_prefix = "grpc-1.22.1",
-    urls = ["https://github.com/grpc/grpc/archive/v1.22.1.tar.gz"],  # 2019-08-15
+    patches = ["//third_party/grpc:v1.24.2.patch"],
+    sha256 = "fd040f5238ff1e32b468d9d38e50f0d7f8da0828019948c9001e9a03093e1d8f",
+    strip_prefix = "grpc-1.24.2",
+    urls = ["https://github.com/grpc/grpc/archive/v1.24.2.tar.gz"],  # 2019-10-10
 )
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")

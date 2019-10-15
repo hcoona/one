@@ -1,0 +1,14 @@
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_library(
+    name = "encoder",
+    srcs = ["encoder.cc"],
+    hdrs = ["encoder.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = ["@com_github_microsoft_gsl//:gsl"],
+)
