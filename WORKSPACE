@@ -169,6 +169,7 @@ http_archive(
     name = "com_github_grpc_grpc",
     patch_args = ["-p1"],
     patches = ["//third_party/grpc:v1.29.1.patch"],
+    sha256 = "0343e6dbde66e9a31c691f2f61e98d79f3584e03a11511fad3f10e3667832a45",
     strip_prefix = "grpc-1.29.1",
     urls = ["https://github.com/grpc/grpc/archive/v1.29.1.tar.gz"],  # 2020-05-21
 )
