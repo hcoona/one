@@ -1,0 +1,189 @@
+diff --git a/example/stream.cc b/example/stream.cc
+index 08d72408..ffe615f5 100644
+--- a/example/stream.cc
++++ b/example/stream.cc
+@@ -13,7 +13,7 @@ public:
+
+ 	~Server() { }
+
+-	typedef std::auto_ptr<msgpack::zone> auto_zone;
++	typedef std::unique_ptr<msgpack::zone> auto_zone;
+
+ 	void socket_readable()
+ 	{
+diff --git a/src/msgpack/unpack.hpp b/src/msgpack/unpack.hpp
+index baca1176..a4f40737 100644
+--- a/src/msgpack/unpack.hpp
++++ b/src/msgpack/unpack.hpp
+@@ -23,6 +23,7 @@
+ #include "zone.hpp"
+ #include <memory>
+ #include <stdexcept>
++#include <utility>
+
+ // backward compatibility
+ #ifndef MSGPACK_UNPACKER_DEFAULT_INITIAL_BUFFER_SIZE
+@@ -42,8 +43,8 @@ class unpacked {
+ public:
+ 	unpacked() { }
+
+-	unpacked(object obj, std::auto_ptr<msgpack::zone> z) :
+-		m_obj(obj), m_zone(z) { }
++	unpacked(object obj, std::unique_ptr<msgpack::zone> z) :
++		m_obj(obj), m_zone(std::move(z)) { }
+
+ 	object& get()
+ 		{ return m_obj; }
+@@ -51,15 +52,15 @@ public:
+ 	const object& get() const
+ 		{ return m_obj; }
+
+-	std::auto_ptr<msgpack::zone>& zone()
++	std::unique_ptr<msgpack::zone>& zone()
+ 		{ return m_zone; }
+
+-	const std::auto_ptr<msgpack::zone>& zone() const
++	const std::unique_ptr<msgpack::zone>& zone() const
+ 		{ return m_zone; }
+
+ private:
+ 	object m_obj;
+-	std::auto_ptr<msgpack::zone> m_zone;
++	std::unique_ptr<msgpack::zone> m_zone;
+ };
+
+
+@@ -106,7 +107,7 @@ public:
+ 	//     while(pac.next(&result)) {
+ 	//         // do some with the object with the zone.
+ 	//         msgpack::object obj = result.get();
+-	//         std::auto_ptr<msgpack:zone> z = result.zone();
++	//         std::unique_ptr<msgpack:zone> z = result.zone();
+ 	//         on_message(obj, z);
+ 	//
+ 	//         //// boost::shared_ptr is also usable:
+@@ -307,7 +308,7 @@ inline void unpack(unpacked* result,
+ 		const char* data, size_t len, size_t* offset)
+ {
+ 	msgpack::object obj;
+-	std::auto_ptr<msgpack::zone> z(new zone());
++	std::unique_ptr<msgpack::zone> z(new zone());
+
+ 	unpack_return ret = (unpack_return)msgpack_unpack(
+ 			data, len, offset, z.get(),
+@@ -316,12 +317,12 @@ inline void unpack(unpacked* result,
+ 	switch(ret) {
+ 	case UNPACK_SUCCESS:
+ 		result->get() = obj;
+-		result->zone() = z;
++		result->zone() = std::move(z);
+ 		return;
+
+ 	case UNPACK_EXTRA_BYTES:
+ 		result->get() = obj;
+-		result->zone() = z;
++		result->zone() = std::move(z);
+ 		return;
+
+ 	case UNPACK_CONTINUE:
+diff --git a/src/msgpack/zone.hpp b/src/msgpack/zone.hpp
+index 692fbf8c..bbd9a23b 100644
+--- a/src/msgpack/zone.hpp
++++ b/src/msgpack/zone.hpp
+@@ -39,7 +39,7 @@ public:
+ 	void push_finalizer(void (*func)(void*), void* data);
+
+ 	template <typename T>
+-	void push_finalizer(std::auto_ptr<T> obj);
++	void push_finalizer(std::unique_ptr<T> obj);
+
+ 	void clear();
+
+@@ -154,7 +154,7 @@ inline void zone::push_finalizer(void (*func)(void*), void* data)
+ }
+
+ template <typename T>
+-inline void zone::push_finalizer(std::auto_ptr<T> obj)
++inline void zone::push_finalizer(std::unique_ptr<T> obj)
+ {
+ 	if(!msgpack_zone_push_finalizer(this, &zone::object_destructor<T>, obj.get())) {
+ 		throw std::bad_alloc();
+diff --git a/src/msgpack/zone.hpp.erb b/src/msgpack/zone.hpp.erb
+index b2c19db0..784c585b 100644
+--- a/src/msgpack/zone.hpp.erb
++++ b/src/msgpack/zone.hpp.erb
+@@ -39,7 +39,7 @@ public:
+ 	void push_finalizer(void (*func)(void*), void* data);
+
+ 	template <typename T>
+-	void push_finalizer(std::auto_ptr<T> obj);
++	void push_finalizer(std::unique_ptr<T> obj);
+
+ 	void clear();
+
+@@ -109,7 +109,7 @@ inline void zone::push_finalizer(void (*func)(void*), void* data)
+ }
+
+ template <typename T>
+-inline void zone::push_finalizer(std::auto_ptr<T> obj)
++inline void zone::push_finalizer(std::unique_ptr<T> obj)
+ {
+ 	if(!msgpack_zone_push_finalizer(this, &zone::object_destructor<T>, obj.get())) {
+ 		throw std::bad_alloc();
+diff --git a/test/streaming.cc b/test/streaming.cc
+index e80c671b..64c7fe90 100644
+--- a/test/streaming.cc
++++ b/test/streaming.cc
+@@ -78,7 +78,7 @@ public:
+ 		}
+ 	}
+
+-	void on_message(msgpack::object obj, std::auto_ptr<msgpack::zone> z)
++	void on_message(msgpack::object obj, std::unique_ptr<msgpack::zone> z)
+ 	{
+ 		EXPECT_EQ(expect, obj.as<int>());
+ 	}
+@@ -133,7 +133,7 @@ TEST(streaming, basic_compat)
+ 		pac.buffer_consumed(len);
+
+ 		while(pac.execute()) {
+-			std::auto_ptr<msgpack::zone> z(pac.release_zone());
++			std::unique_ptr<msgpack::zone> z(pac.release_zone());
+ 			msgpack::object obj = pac.data();
+ 			pac.reset();
+
+@@ -174,7 +174,7 @@ public:
+ 			pac.buffer_consumed(len);
+
+ 			while(pac.execute()) {
+-				std::auto_ptr<msgpack::zone> z(pac.release_zone());
++				std::unique_ptr<msgpack::zone> z(pac.release_zone());
+ 				msgpack::object obj = pac.data();
+ 				pac.reset();
+ 				on_message(obj, z);
+@@ -186,7 +186,7 @@ public:
+ 		}
+ 	}
+
+-	void on_message(msgpack::object obj, std::auto_ptr<msgpack::zone> z)
++	void on_message(msgpack::object obj, std::unique_ptr<msgpack::zone> z)
+ 	{
+ 		EXPECT_EQ(expect, obj.as<int>());
+ 	}
+diff --git a/test/zone.cc b/test/zone.cc
+index 5274e9f0..742d3c28 100644
+--- a/test/zone.cc
++++ b/test/zone.cc
+@@ -60,10 +60,10 @@ TEST(zone, push_finalizer)
+ }
+
+
+-TEST(zone, push_finalizer_auto_ptr)
++TEST(zone, push_finalizer_unique_ptr)
+ {
+ 	msgpack::zone z;
+-	std::auto_ptr<myclass> am(new myclass());
++	std::unique_ptr<myclass> am(new myclass());
+ 	z.push_finalizer(am);
+ }
+

@@ -1,0 +1,13 @@
+diff --git a/src/msgpack/type/raw.hpp b/src/msgpack/type/raw.hpp
+index 87d188f6..dfa4f84e 100644
+--- a/src/msgpack/type/raw.hpp
++++ b/src/msgpack/type/raw.hpp
+@@ -42,7 +42,7 @@ struct raw_ref {
+
+ 	bool operator!= (const raw_ref& x) const
+ 	{
+-		return !(*this != x);
++		return !(*this == x);
+ 	}
+
+ 	bool operator< (const raw_ref& x) const

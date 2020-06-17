@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "log4cxx.h",
+    "log4cxx_private.h",
+])

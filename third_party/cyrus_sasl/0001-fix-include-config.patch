@@ -1,0 +1,117 @@
+diff --git a/saslauthd/auth_httpform.c b/saslauthd/auth_httpform.c
+index 5857dbe..5df696b 100644
+--- a/saslauthd/auth_httpform.c
++++ b/saslauthd/auth_httpform.c
+@@ -53,7 +53,7 @@
+  * Proxy authentication to a remote HTTP server.
+  * END SYNOPSIS */
+ 
+-#include <config.h>
++#include "config.h"
+ 
+ /* PUBLIC DEPENDENCIES */
+ #include <unistd.h>
+diff --git a/saslauthd/auth_pam.c b/saslauthd/auth_pam.c
+index c0f3ee5..4f1c01b 100644
+--- a/saslauthd/auth_pam.c
++++ b/saslauthd/auth_pam.c
+@@ -47,7 +47,7 @@
+ #include <stdio.h>
+ 
+ #ifdef HAVE_CONFIG_H
+-#include <config.h>
++#include "config.h"
+ #endif
+ 
+ #ifdef AUTH_PAM
+diff --git a/saslauthd/auth_sasldb.c b/saslauthd/auth_sasldb.c
+index 220afaf..26568d1 100644
+--- a/saslauthd/auth_sasldb.c
++++ b/saslauthd/auth_sasldb.c
+@@ -37,7 +37,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <pwd.h>
+-#include <config.h>
++#include "config.h"
+ #include <unistd.h>
+ /* END PUBLIC DEPENDENCIES */
+ 
+diff --git a/saslauthd/auth_shadow.c b/saslauthd/auth_shadow.c
+index 8a83092..ebcf8f1 100644
+--- a/saslauthd/auth_shadow.c
++++ b/saslauthd/auth_shadow.c
+@@ -27,7 +27,7 @@
+  * DAMAGE.
+  * END COPYRIGHT */
+ 
+-#include <config.h>
++#include "config.h"
+ 
+ /* PUBLIC DEPENDENCIES */
+ #include "mechanisms.h"
+diff --git a/saslauthd/cache.c b/saslauthd/cache.c
+index 0d78a73..465e3c5 100644
+--- a/saslauthd/cache.c
++++ b/saslauthd/cache.c
+@@ -37,7 +37,7 @@
+ /****************************************
+  * includes
+  *****************************************/
+-#include <config.h>
++#include "config.h"
+ 
+ #include <sys/stat.h>
+ #include <sys/types.h>
+diff --git a/saslauthd/cache.h b/saslauthd/cache.h
+index b8c8838..e54929d 100644
+--- a/saslauthd/cache.h
++++ b/saslauthd/cache.h
+@@ -41,7 +41,7 @@
+ 
+ 
+ /* constant includes */
+-#include <config.h>
++#include "config.h"
+ 
+ 
+ /****************************************************************
+diff --git a/saslauthd/md5.c b/saslauthd/md5.c
+index d38425d..92a67ee 100644
+--- a/saslauthd/md5.c
++++ b/saslauthd/md5.c
+@@ -25,7 +25,7 @@ These notices must be retained in any copies of any part of this
+ documentation and/or software.
+ */
+ 
+-#include <config.h>
++#include "config.h"
+ #include "md5global.h"
+ #include "md5.h"
+ #include "hmac-md5.h"
+diff --git a/saslauthd/mechanisms.h b/saslauthd/mechanisms.h
+index 59fb139..2d57934 100644
+--- a/saslauthd/mechanisms.h
++++ b/saslauthd/mechanisms.h
+@@ -28,7 +28,7 @@
+ #ifndef _MECHANISMS_H
+ #define _MECHANISMS_H
+ 
+-#include <config.h>
++#include "config.h"
+ 
+ /* PUBLIC DEPENDENCIES */
+ /* Authentication mechanism dispatch table definition */
+diff --git a/saslauthd/utils.h b/saslauthd/utils.h
+index dc3a9a3..f3e8022 100644
+--- a/saslauthd/utils.h
++++ b/saslauthd/utils.h
+@@ -45,7 +45,7 @@
+ #ifndef _UTILS_H
+ #define _UTILS_H
+ 
+-#include <config.h>
++#include "config.h"
+ 
+ #include <syslog.h>
+ #include <sys/types.h>
