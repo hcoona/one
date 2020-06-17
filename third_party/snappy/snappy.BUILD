@@ -1,5 +1,7 @@
 # Copied from https://github.com/tensorflow/tensorflow/blob/bdd8bf316e4ab7d699127d192d30eb614a158462/third_party/snappy.BUILD
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 cc_library(
     name = "snappy",
     srcs = [

@@ -1,13 +1,13 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("//bazel:repository_defs.bzl", "bazel_version_repository")
 
-######## Skylark libraries ########
+######## Starlark libraries ########
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "9245b0549e88e356cd6a25bf79f97aa19332083890b7ac6481a2affb6ada9752",
-    strip_prefix = "bazel-skylib-0.9.0",
-    url = "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",  # 2019-07-13
+    sha256 = "e5d90f0ec952883d56747b7604e2a15ee36e288bb556c3d0ed33e818a4d971f2",
+    strip_prefix = "bazel-skylib-1.0.2",
+    url = "https://github.com/bazelbuild/bazel-skylib/archive/1.0.2.tar.gz",  # 2019-10-10
 )
 
 http_archive(
@@ -30,6 +30,55 @@ http_archive(
     sha256 = "ef2578a50a4dae1debb42a41699a8a77d3f31814c097be8d594f7f4d7f9fce14",
     url = "https://github.com/bazelbuild/rules_swift/releases/download/0.13.0/rules_swift.0.13.0.tar.gz",  # 2019-10-09
 )
+
+######## Java toolchains ########
+
+RULES_JVM_EXTERNAL_TAG = "bad9e2501279aea5268b1b8a5463ccc1be8ddf65"  # 2020-03-28
+
+RULES_JVM_EXTERNAL_SHA = "8ba00db3da4c65a37050a95ca17551cf0956ef33b0c35f7cc058c5d8f33dd59c"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
+)
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+######## Go toolchains ########
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "a8d6b1b354d371a646d2f7927319974e0f9e52f73a2452d2b3877118169eb6bb",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.23.3/rules_go-v0.23.3.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.23.3/rules_go-v0.23.3.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+######## Python toolchains ########
+
+http_archive(
+    name = "rules_python",
+    sha256 = "b5668cde8bb6e3515057ef465a35ad712214962f0b3a314e551204266c7be90c",
+    strip_prefix = "rules_python-0.0.2",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.2/rules_python-0.0.2.tar.gz",
+)
+
+load("@rules_python//python:repositories.bzl", "py_repositories")
+
+py_repositories()
+
+load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
+
+pip_repositories()
 
 ######## Protobuf & Grpc C++ libraries ########
 
@@ -89,7 +138,7 @@ http_archive(
 
 # Required by upb, which is required by protobuf.
 bazel_version_repository(
-    name = "bazel_version",
+    name = "upb_bazel_version",
 )
 
 # proto_library, cc_proto_library, and java_proto_library rules implicitly
@@ -97,10 +146,10 @@ bazel_version_repository(
 http_archive(
     name = "com_google_protobuf",
     patch_args = ["-p1"],
-    patches = ["//third_party/protobuf:v3.10.0.patch"],
-    sha256 = "33cba8b89be6c81b1461f1c438424f7a1aa4e31998dbe9ed6f8319583daac8c7",
-    strip_prefix = "protobuf-3.10.0",
-    urls = ["https://github.com/google/protobuf/archive/v3.10.0.zip"],  # 2019-10-03
+    patches = ["//third_party/protobuf:0001-build-with-com_github_madler_zlib.patch"],
+    sha256 = "c90d9e13564c0af85fd2912545ee47b57deded6e5a97de80395b6d2d9be64854",
+    strip_prefix = "protobuf-3.9.1",
+    urls = ["https://github.com/google/protobuf/archive/v3.9.1.zip"],
 )
 
 # java_lite_proto_library rules implicitly depend on @com_google_protobuf_javalite//:javalite_toolchain,
@@ -119,10 +168,9 @@ protobuf_deps()
 http_archive(
     name = "com_github_grpc_grpc",
     patch_args = ["-p1"],
-    patches = ["//third_party/grpc:v1.24.2.patch"],
-    sha256 = "fd040f5238ff1e32b468d9d38e50f0d7f8da0828019948c9001e9a03093e1d8f",
-    strip_prefix = "grpc-1.24.2",
-    urls = ["https://github.com/grpc/grpc/archive/v1.24.2.tar.gz"],  # 2019-10-10
+    patches = ["//third_party/grpc:v1.29.1.patch"],
+    strip_prefix = "grpc-1.29.1",
+    urls = ["https://github.com/grpc/grpc/archive/v1.29.1.tar.gz"],  # 2020-05-21
 )
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
@@ -134,67 +182,13 @@ grpc_deps()
 # grpc-java
 http_archive(
     name = "io_grpc_grpc_java",
-    patch_args = ["-p1"],
-    patches = ["//third_party/grpc-java:0001-fix-build-with-grpc-1.22.0.patch"],
-    sha256 = "6e63bd6f5a82de0b84c802390adb8661013bad9ebf910ad7e1f3f72b5f798832",
-    strip_prefix = "grpc-java-1.22.1",
-    urls = ["https://github.com/grpc/grpc-java/archive/v1.22.1.tar.gz"],  # 2019-08-14
+    sha256 = "15f655349f174c9258b6dbb27a9bd1cdae211ee2bf8b27b7d56ef232c191ee26",
+    strip_prefix = "grpc-java-1.30.0",
+    urls = ["https://github.com/grpc/grpc-java/archive/v1.30.0.tar.gz"],  # 2020-06-09
 )
 
 # Load the grpc-java dependencies from the local bzl file.
-load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
-
-grpc_java_repositories(
-    omit_com_google_protobuf = True,
-    omit_com_google_protobuf_javalite = True,
-)
-
-######## Java toolchains ########
-
-# TODO(zhangshuai.ustc): Load it from a bzl script file for flexibility.
-MAVEN_REPOSITORY_URL = "http://repo1.maven.org/maven2/"
-
-# Default Maven Server to a near server
-maven_server(
-    name = "default",
-    url = MAVEN_REPOSITORY_URL,
-)
-
-######## Go toolchains ########
-
-http_archive(
-    name = "io_bazel_rules_go",
-    sha256 = "8df59f11fb697743cbb3f26cfb8750395f30471e9eabde0d174c3aebc7a1cd39",
-    urls = ["https://github.com/bazelbuild/rules_go/releases/download/0.19.1/rules_go-0.19.1.tar.gz"],  # 2019-06-20
-)
-
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains()
-
-######## Python toolchains ########
-
-# Copied from tensorflow, but removed the numpy dependency.
-load("//third_party/py:python_configure.bzl", "python_configure")
-
-python_configure(name = "local_config_python")
-
-http_archive(
-    name = "rules_python",
-    sha256 = "b5bab4c47e863e0fbb77df4a40c45ca85f98f5a2826939181585644c9f31b97b",
-    strip_prefix = "rules_python-9d68f24659e8ce8b736590ba1e4418af06ec2552",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/9d68f24659e8ce8b736590ba1e4418af06ec2552.tar.gz"],  # 2019-08-14
-)
-
-load("@rules_python//python:repositories.bzl", "py_repositories")
-
-py_repositories()
-
-load("@rules_python//python:pip.bzl", "pip_import", "pip_repositories")
-
-pip_repositories()
+load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS")
 
 ######## Ported Source Code Dependencies ########
 
@@ -304,24 +298,9 @@ http_archive(
 
 ######## Java External Dependencies ########
 
-load("//bazel:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
+MAVEN_REPOSITORY_URL = "https://maven.aliyun.com/repository/public"
 
-junit_jupiter_java_repositories()
-
-junit_platform_java_repositories()
-
-RULES_JVM_EXTERNAL_TAG = "2.7"  # 2019-08-15
-
-RULES_JVM_EXTERNAL_SHA = "f04b1466a00a2845106801e0c5cec96841f49ea4e7d1df88dc8e4bf31523df74"
-
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = RULES_JVM_EXTERNAL_SHA,
-    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
-)
-
-load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@//bazel:junit5.bzl", "JUNIT5_ARTIFACTS")
 
 # Generate with following commands:
 # 1. Copy `dev-support/bin/refresh_maven_dependencies.sh` results here in artifacts.
@@ -342,8 +321,9 @@ maven_install(
         # TODO(zhangshuai.ustc): Add it to Maven.
         "commons-codec:commons-codec:1.13",  # directory_manifest
         "com.google.googlejavaformat:google-java-format:1.7",  # tools/google-java-format
-    ],
-    maven_install_json = "@//:maven_install.json",
+    ] + JUNIT5_ARTIFACTS + IO_GRPC_GRPC_JAVA_ARTIFACTS,
+    maven_install_json = "//:maven_install.json",
+    override_targets = IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS,
     repositories = [MAVEN_REPOSITORY_URL],
 )
 
@@ -356,10 +336,9 @@ pinned_maven_install()
 # Generate BUILD files for Go project.
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "be9296bfd64882e3c08e3283c58fcb461fa6dd3c171764fcc4cf322f60615a9b",
+    sha256 = "cdb02a887a7187ea4d5a27452311a75ed8637379a1287d8eeb952138ea485f7d",
     urls = [
-        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/0.18.1/bazel-gazelle-0.18.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/0.18.1/bazel-gazelle-0.18.1.tar.gz",  # 2019-04-17
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.21.1/bazel-gazelle-v0.21.1.tar.gz",  # 2020-05-29
     ],
 )
 
@@ -370,7 +349,7 @@ gazelle_dependencies()
 
 ######## Python External Dependencies ########
 
-pip_import(
+pip3_import(
     name = "one_pip_deps",
     requirements = "//:requirements.txt",
 )
@@ -433,9 +412,8 @@ py_binary(
 # Buildifier tool
 http_archive(
     name = "com_github_bazelbuild_buildtools",
-    sha256 = "5ec71602e9b458b01717fab1d37492154c1c12ea83f881c745dbd88e9b2098d8",
-    strip_prefix = "buildtools-0.28.0",
-    url = "https://github.com/bazelbuild/buildtools/archive/0.28.0.tar.gz",  # 2019-07-16
+    strip_prefix = "buildtools-3.2.1",
+    url = "https://github.com/bazelbuild/buildtools/archive/3.2.1.tar.gz",  # 2020-06-17
 )
 
 load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")

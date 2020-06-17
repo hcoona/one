@@ -7,6 +7,9 @@
 
 ##### Utilities #####
 
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 def _get_repository_roots(ctx, files):
     """Returns abnormal root directories under which files reside.
 
@@ -151,8 +154,7 @@ def py_wrap_cc(
         toolchain_deps = ["@bazel_tools//tools/cpp:current_cc_toolchain"],
         deps = deps + extra_deps,
     )
-
-    native.cc_binary(
+    cc_binary(
         name = cc_library_name,
         srcs = [module_name + ".cc"],
         copts = copts + [
@@ -376,8 +378,7 @@ def java_wrap_cc(
         deps = deps,
         java_outputs = java_outputs,
     )
-
-    native.cc_binary(
+    cc_binary(
         name = cc_library_name,
         srcs = [module_name + ".cc"],
         copts = copts + [
@@ -390,7 +391,7 @@ def java_wrap_cc(
         deps = deps,
         **kwargs
     )
-    native.java_library(
+    java_library(
         name = name,
         srcs = [
             ":" + name + ".java",

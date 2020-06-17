@@ -1,5 +1,10 @@
 """External dependencies & java_junit5_test rule"""
 
+load("@rules_java//java:defs.bzl", "java_test")
+
+JUNIT_JUPITER_VERSION = "5.6.2"
+JUNIT_PLATFORM_VERSION = "1.6.2"
+
 JUNIT_JUPITER_GROUP_ID = "org.junit.jupiter"
 JUNIT_JUPITER_ARTIFACT_ID_LIST = [
     "junit-jupiter-api",
@@ -14,6 +19,22 @@ JUNIT_PLATFORM_ARTIFACT_ID_LIST = [
     "junit-platform-engine",
     "junit-platform-launcher",
     "junit-platform-suite-api",
+]
+
+JUNIT5_ARTIFACTS = [
+    "%s:%s:%s" % (
+        JUNIT_JUPITER_GROUP_ID,
+        artifact_id,
+        JUNIT_JUPITER_VERSION,
+    )
+    for artifact_id in JUNIT_JUPITER_ARTIFACT_ID_LIST
+] + [
+    "%s:%s:%s" % (
+        JUNIT_PLATFORM_GROUP_ID,
+        artifact_id,
+        JUNIT_PLATFORM_VERSION,
+    )
+    for artifact_id in JUNIT_PLATFORM_ARTIFACT_ID_LIST
 ]
 
 JUNIT_EXTRA_DEPENDENCIES = [
@@ -69,8 +90,7 @@ def java_junit5_test(name, srcs, test_class = None, deps = [], runtime_deps = []
         junit_console_args += ["--select-class", test_class]
     else:
         fail("must specific 'test_class'")
-
-    native.java_test(
+    java_test(
         name = name,
         srcs = srcs,
         use_testrunner = False,
@@ -98,4 +118,4 @@ def _format_maven_jar_name(group_id, artifact_id):
         .replace("-", "_")
 
 def _format_maven_jar_dep_name(group_id, artifact_id):
-    return "@%s//jar" % _format_maven_jar_name(group_id, artifact_id)
+    return "@maven//:%s" % _format_maven_jar_name(group_id, artifact_id)

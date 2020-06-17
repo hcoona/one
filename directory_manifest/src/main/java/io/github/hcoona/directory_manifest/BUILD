@@ -1,3 +1,5 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+
 package(
     default_visibility = ["//directory_manifest/src:__subpackages__"],
 )

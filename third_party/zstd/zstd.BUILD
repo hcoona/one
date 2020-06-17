@@ -1,5 +1,7 @@
 # Reference https://github.com/facebook/zstd/blob/v1.4.3/lib/BUCK
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 cc_library(
     name = "zstd",
     srcs = glob([

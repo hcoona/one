@@ -1,3 +1,4 @@
+load("@rules_python//python:defs.bzl", "py_binary")
 load("@one_pip_deps//:requirements.bzl", "requirement")
 
 py_binary(
@@ -5,6 +6,5 @@ py_binary(
     srcs = ["yapf_wrapper.py"],
     deps = [
         requirement("yapf"),
-        requirement("futures"),
     ],
 )

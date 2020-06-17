@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 # Generated from https://github.com/facebook/rocksdb/blob/v6.2.2/src.mk
 LIB_SOURCES = [
     "cache/clock_cache.cc",
@@ -230,6 +232,7 @@ cc_library(
         "-momit-leaf-frame-pointer",
         "-mpclmul",
         "-msse4.2",
+        "-Wno-sign-compare",
     ],
     defines = [
         "HAVE_PCLMUL",

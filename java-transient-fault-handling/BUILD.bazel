@@ -1,3 +1,5 @@
+load("@rules_java//java:defs.bzl", "java_library")
+
 # https://docs.bazel.build/versions/master/be/c-cpp.html#cc_library
 java_library(
     name = "transient_fault_handling",

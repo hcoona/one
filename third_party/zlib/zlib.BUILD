@@ -1,5 +1,7 @@
 # Copied from https://github.com/protocolbuffers/protobuf/blob/v3.9.1/third_party/zlib.BUILD
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 _ZLIB_HEADERS = [
     "crc32.h",
     "deflate.h",

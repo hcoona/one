@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 licenses(["restricted"])  # GPLv3
 
 exports_files(["LICENSE"])
