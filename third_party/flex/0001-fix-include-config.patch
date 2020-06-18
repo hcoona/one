@@ -1,0 +1,13 @@
+diff --git a/src/flexdef.h b/src/flexdef.h
+index 9dac654..dba51d0 100644
+--- a/src/flexdef.h
++++ b/src/flexdef.h
+@@ -36,7 +36,7 @@
+ #define FLEXDEF_H 1
+ 
+ #ifdef HAVE_CONFIG_H
+-#include <config.h>
++#include "config.h"
+ #endif
+ 
+ #include <stdio.h>

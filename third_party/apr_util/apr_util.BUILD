@@ -1,32 +1,33 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 copy_file(
     name = "apr_ldap_h",
-    src = "@inf_bmq//third_party/apr_util:apr_ldap.h",
+    src = "@//third_party/apr_util:apr_ldap.h",
     out = "include/apr_ldap.h",
 )
 
 copy_file(
     name = "apu_h",
-    src = "@inf_bmq//third_party/apr_util:apu.h",
+    src = "@//third_party/apr_util:apu.h",
     out = "include/apu.h",
 )
 
 copy_file(
     name = "apu_want_h",
-    src = "@inf_bmq//third_party/apr_util:apu_want.h",
+    src = "@//third_party/apr_util:apu_want.h",
     out = "include/apu_want.h",
 )
 
 copy_file(
     name = "apu_config_h",
-    src = "@inf_bmq//third_party/apr_util:apu_config.h",
+    src = "@//third_party/apr_util:apu_config.h",
     out = "include/private/apu_config.h",
 )
 
 copy_file(
     name = "apu_select_dbm_h",
-    src = "@inf_bmq//third_party/apr_util:apu_select_dbm.h",
+    src = "@//third_party/apr_util:apu_select_dbm.h",
     out = "include/private/apu_select_dbm.h",
 )
 

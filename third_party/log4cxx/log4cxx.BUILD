@@ -1,14 +1,15 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 copy_file(
     name = "log4cxx_h",
-    src = "@inf_bmq//third_party/log4cxx:log4cxx.h",
+    src = "@//third_party/log4cxx:log4cxx.h",
     out = "src/main/include/log4cxx/log4cxx.h",
 )
 
 copy_file(
     name = "log4cxx_private_h",
-    src = "@inf_bmq//third_party/log4cxx:log4cxx_private.h",
+    src = "@//third_party/log4cxx:log4cxx_private.h",
     out = "src/main/include/log4cxx/private/log4cxx_private.h",
 )
 

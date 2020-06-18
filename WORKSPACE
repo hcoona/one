@@ -297,6 +297,155 @@ http_archive(
     urls = ["https://github.com/facebook/rocksdb/archive/v6.2.2.tar.gz"],  # 2019-08-12
 )
 
+# required by brpc
+http_archive(
+    name = "com_github_google_leveldb",
+    build_file = "//third_party/leveldb:leveldb.BUILD",
+    sha256 = "3912ac36dbb264a62797d68687711c8024919640d89b6733f9342ada1d16cda1",
+    strip_prefix = "leveldb-a53934a3ae1244679f812d998a4f16f2c7f309a6",
+    url = "https://github.com/google/leveldb/archive/a53934a3ae1244679f812d998a4f16f2c7f309a6.tar.gz",
+)
+
+http_archive(
+    name = "com_github_brpc_brpc",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/brpc:0001-remove-system-libs.patch",
+    ],
+    sha256 = "722cd342baf3b05189ca78ecf6c56ea6ffec22e62fc2938335e4e5bab545a49c",
+    strip_prefix = "incubator-brpc-0.9.7",
+    url = "https://github.com/apache/incubator-brpc/archive/0.9.7.tar.gz",
+)
+
+# required by thrift
+http_archive(
+    name = "com_github_westes_flex",
+    build_file = "//third_party/flex:flex.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/flex:0001-fix-include-config.patch",
+    ],
+    sha256 = "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+    strip_prefix = "flex-2.6.4",
+    url = "https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz",
+)
+
+http_archive(
+    name = "org_apache_thrift",
+    build_file = "//third_party/thrift:thrift.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/thrift:0001-build-with-boringssl.patch",
+        "//third_party/thrift:0002-fix-include.patch",
+    ],
+    sha256 = "7ad348b88033af46ce49148097afe354d513c1fca7c607b59c33ebb6064b5179",
+    strip_prefix = "thrift-0.13.0",
+    url = "http://archive.apache.org/dist/thrift/0.13.0/thrift-0.13.0.tar.gz",
+)
+
+# msgpack-c
+http_archive(
+    name = "com_github_msgpack_msgpack_c",
+    build_file = "//third_party/msgpack-c:msgpack.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/msgpack-c:0001-add-version-h.patch",
+        "//third_party/msgpack-c:0002-fix-test-cmath.patch",
+        "//third_party/msgpack-c:0003-bugfix-raw-ne.patch",
+        "//third_party/msgpack-c:0004-use-unique-ptr-instead-of-auto-ptr.patch",
+    ],
+    sha256 = "f86bf09323770825cc1c8cc49790cd4eafef6e6f1c9e70cfb3f9159c3501c277",
+    strip_prefix = "msgpack-c-cpp-0.5.9",
+    urls = [
+        "https://github.com/msgpack/msgpack-c/archive/cpp-0.5.9.tar.gz",
+    ],
+)  # libcurl, required by consul
+
+http_archive(
+    name = "com_github_curl_curl",
+    build_file = "//third_party/curl:curl.BUILD",
+    sha256 = "01ae0c123dee45b01bbaef94c0bc00ed2aec89cb2ee0fd598e0d302a6b5e0a98",
+    strip_prefix = "curl-7.69.1",
+    urls = [
+        "https://curl.haxx.se/download/curl-7.69.1.tar.gz",
+    ],
+)
+
+# apr, required by log4cxx
+http_archive(
+    name = "org_apache_apr",
+    build_file = "//third_party/apr:apr.BUILD",
+    sha256 = "48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2",
+    strip_prefix = "apr-1.7.0",
+    urls = [
+        "https://downloads.apache.org/apr/apr-1.7.0.tar.gz",
+    ],
+)
+
+# apr-util, required by log4cxx
+http_archive(
+    name = "org_apache_apr_util",
+    build_file = "//third_party/apr_util:apr_util.BUILD",
+    sha256 = "b65e40713da57d004123b6319828be7f1273fbc6490e145874ee1177e112c459",
+    strip_prefix = "apr-util-1.6.1",
+    urls = [
+        "https://downloads.apache.org/apr/apr-util-1.6.1.tar.gz",
+    ],
+)
+
+# log4cxx, required by bmq
+http_archive(
+    name = "org_apache_logging_log4cxx",
+    build_file = "//third_party/log4cxx:log4cxx.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/log4cxx:0001-fix-cstring.patch",
+        "//third_party/log4cxx:0002-fix-narrowing.patch",
+    ],
+    sha256 = "0de0396220a9566a580166e66b39674cb40efd2176f52ad2c65486c99c920c8c",
+    strip_prefix = "apache-log4cxx-0.10.0",
+    urls = [
+        "https://downloads.apache.org/logging/log4cxx/0.10.0/apache-log4cxx-0.10.0.tar.gz",
+    ],
+)
+
+# hiredis
+http_archive(
+    name = "com_redis_hiredis",
+    build_file = "//third_party/hiredis:hiredis.BUILD",
+    sha256 = "ff7b2849e55bf3589eecced7125934feb9645c36a4d490d001dc08c93553eafd",
+    strip_prefix = "hiredis-0.11.0",
+    urls = [
+        "https://github.com/redis/hiredis/archive/v0.11.0.tar.gz",
+    ],
+)
+
+# sasl2
+http_archive(
+    name = "org_cyrusimap_sasl_sasl",
+    build_file = "//third_party/cyrus_sasl:sasl2.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/cyrus_sasl:0001-fix-include-config.patch",
+    ],
+    sha256 = "26866b1549b00ffd020f188a43c258017fa1c382b3ddadd8201536f72efb05d5",
+    strip_prefix = "cyrus-sasl-2.1.27",
+    urls = [
+        "https://github.com/cyrusimap/cyrus-sasl/releases/download/cyrus-sasl-2.1.27/cyrus-sasl-2.1.27.tar.gz",
+    ],
+)
+
+# libevent
+http_archive(
+    name = "com_github_libevent_libevent",
+    build_file = "//third_party/libevent:libevent.BUILD",
+    sha256 = "a65bac6202ea8c5609fd5c7e480e6d25de467ea1917c08290c521752f147283d",
+    strip_prefix = "libevent-2.1.11-stable",
+    urls = [
+        "https://github.com/libevent/libevent/releases/download/release-2.1.11-stable/libevent-2.1.11-stable.tar.gz",
+    ],
+)
+
 ######## Java External Dependencies ########
 
 MAVEN_REPOSITORY_URL = "https://maven.aliyun.com/repository/public"

@@ -3,7 +3,7 @@ load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 copy_file(
     name = "config_h",
-    src = "@inf_bmq//third_party/cyrus_sasl:config.h",
+    src = "@//third_party/cyrus_sasl:config.h",
     out = "config.h",
 )
 

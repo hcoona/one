@@ -1,0 +1,14 @@
+diff --git a/lib/cpp/src/thrift/thrift-config.h b/lib/cpp/src/thrift/thrift-config.h
+index d648706..0f9da48 100644
+--- a/lib/cpp/src/thrift/thrift-config.h
++++ b/lib/cpp/src/thrift/thrift-config.h
+@@ -18,7 +18,7 @@
+  */
+
+ #ifdef _WIN32
+-#include <thrift/windows/config.h>
++#include "thrift/windows/config.h"
+ #else
+-#include <thrift/config.h>
++#include "thrift/config.h"
+ #endif

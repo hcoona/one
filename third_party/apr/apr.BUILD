@@ -1,20 +1,21 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 copy_file(
     name = "apr_h",
-    src = "@inf_bmq//third_party/apr:apr.h",
+    src = "@//third_party/apr:apr.h",
     out = "include/apr.h",
 )
 
 copy_file(
     name = "apr_private_h",
-    src = "@inf_bmq//third_party/apr:apr_private.h",
+    src = "@//third_party/apr:apr_private.h",
     out = "include/arch/unix/apr_private.h",
 )
 
 copy_file(
     name = "apr_escape_test_char_h",
-    src = "@inf_bmq//third_party/apr:apr_escape_test_char.h",
+    src = "@//third_party/apr:apr_escape_test_char.h",
     out = "include/private/apr_escape_test_char.h",
 )
 

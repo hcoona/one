@@ -1,0 +1,21 @@
+diff --git a/lib/cpp/src/thrift/transport/TSSLSocket.cpp b/lib/cpp/src/thrift/transport/TSSLSocket.cpp
+index b413002..5bc6a7c 100644
+--- a/lib/cpp/src/thrift/transport/TSSLSocket.cpp
++++ b/lib/cpp/src/thrift/transport/TSSLSocket.cpp
+@@ -149,7 +149,6 @@ void cleanupOpenSSL() {
+ #if (OPENSSL_VERSION_NUMBER < OPENSSL_ENGINE_CLEANUP_REQUIRED_BEFORE)
+   ENGINE_cleanup();             // https://www.openssl.org/docs/man1.1.0/crypto/ENGINE_cleanup.html - cleanup call is needed before 1.1.0
+ #endif
+-  CONF_modules_unload(1);
+   EVP_cleanup();
+   CRYPTO_cleanup_all_ex_data();
+   ERR_remove_state(0);
+@@ -485,7 +484,7 @@ void TSSLSocket::write(const uint8_t* buf, uint32_t len) {
+               && (errno_copy != THRIFT_EAGAIN)) {
+             break;
+           }
+-        // fallthrough        
++        // fallthrough
+         case SSL_ERROR_WANT_READ:
+         case SSL_ERROR_WANT_WRITE:
+           if (isLibeventSafe()) {
