@@ -178,6 +178,7 @@ cc_library(
     textual_hdrs = glob(["**/*.tcc"]),
     visibility = ["//visibility:public"],
     deps = [
+        "@boringssl//:ssl",
         "@com_github_libevent_libevent//:libevent",
     ],
 )
