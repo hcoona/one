@@ -23,3 +23,18 @@ We would prefer to collect codes from Google's well-known open-source projects:
 . OR-Tools
 
 See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Google Open Source] for more projects.
+
+== Adopted utilities
+
+=== MapUtil
+
+Utility methods such as looking up & inserting for `std::map` & `std::unordered_map`.
+
+Found in following projects:
+
+* link:https://github.com/google/or-tools/blob/v7.7/ortools/base/map_util.h[OR-Tools]
+* https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/lib/gtl/map_util.h[TensorFlow]
+
+We adopted the one from TensorFlow because it's more active.
+
+=== StlUtil

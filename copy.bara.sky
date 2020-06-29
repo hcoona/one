@@ -1,0 +1,83 @@
+"""Maintaining files from external source.
+"""
+
+core.workflow(
+    name = "gtl_tensorflow",
+    origin = git.origin(
+        url = "https://github.com/tensorflow/tensorflow.git",
+        ref = "v2.2.0",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "tensorflow/core/lib/gtl/subtle/map_traits.h",
+            "tensorflow/core/lib/gtl/map_util.h",
+            "tensorflow/core/lib/gtl/map_util_test.cc",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "gtl/map_traits.h",
+            "gtl/map_util.h",
+            "gtl/map_util_test.cc",
+        ],
+        exclude = [
+            "**/BUILD.bazel",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("tensorflow/core/lib/gtl/subtle/map_traits.h", "gtl/map_traits.h"),
+        core.move("tensorflow/core/lib/gtl", "gtl"),
+        core.replace(
+            before = "#include \"tensorflow/core/lib/gtl/subtle/map_traits.h\"",
+            after = "#include \"gtl/map_traits.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"tensorflow/core/lib/gtl/${filename}.h\"",
+            after = "#include \"gtl/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "namespace tensorflow {",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "}  // namespace tensorflow",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "namespace subtle {",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "}  // namespace subtle",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "subtle::",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "TENSORFLOW_CORE_LIB_GTL_SUBTLE_MAP_TRAITS_H_",
+            after = "GTL_MAP_TRAITS_H_",
+            paths = glob(["gtl/map_traits.h"]),
+        ),
+        core.replace(
+            before = "TENSORFLOW_LIB_GTL_",
+            after = "GTL_",
+            paths = glob(["**/*.h"]),
+        ),
+        patch.apply(patches = [
+          "gtl/patches/tensorflow/map_util.patch",
+        ]),
+    ],
+)

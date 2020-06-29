@@ -1,0 +1,20 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "map_util",
+    hdrs = [
+        "map_traits.h",
+        "map_util.h",
+    ],
+)
+
+cc_test(
+    name = "map_util_test",
+    srcs = [
+        "map_util_test.cc",
+    ],
+    deps = [
+        ":map_util",
+        "@com_google_googletest//:gtest_main",
+    ],
+)

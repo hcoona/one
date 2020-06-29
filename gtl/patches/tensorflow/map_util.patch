@@ -1,0 +1,50 @@
+diff --git a/gtl/map_util_test.cc b/gtl/map_util_test.cc
+index 3282a81..e837efc 100644
+--- a/gtl/map_util_test.cc
++++ b/gtl/map_util_test.cc
+@@ -18,14 +18,11 @@ limitations under the License.
+ #include <map>
+ #include <set>
+ #include <string>
+-#include "tensorflow/core/platform/types.h"
+-
+-#include "tensorflow/core/platform/test.h"
+-
+ 
++#include "gtest/gtest.h"
+ 
+ TEST(MapUtil, Find) {
+-  typedef std::map<string, string> Map;
++  using Map = std::map<std::string, std::string>;
+   Map m;
+ 
+   // Check that I can use a type that's implicitly convertible to the
+@@ -34,12 +31,12 @@ TEST(MapUtil, Find) {
+   m["foo"] = "bar";
+   EXPECT_EQ("bar", gtl::FindWithDefault(m, "foo", ""));
+   EXPECT_EQ("bar", *gtl::FindOrNull(m, "foo"));
+-  EXPECT_TRUE(m.count("foo") > 0);
++  EXPECT_GT(m.count("foo"), 0);
+   EXPECT_EQ(m["foo"], "bar");
+ }
+ 
+ TEST(MapUtil, LookupOrInsert) {
+-  typedef std::map<string, string> Map;
++  using Map = std::map<std::string, std::string>;
+   Map m;
+ 
+   // Check that I can use a type that's implicitly convertible to the
+@@ -50,12 +47,10 @@ TEST(MapUtil, LookupOrInsert) {
+ 
+ TEST(MapUtil, InsertIfNotPresent) {
+   // Set operations
+-  typedef std::set<int> Set;
++  using Set = std::set<int>;
+   Set s;
+   EXPECT_TRUE(gtl::InsertIfNotPresent(&s, 0));
+   EXPECT_EQ(s.count(0), 1);
+   EXPECT_FALSE(gtl::InsertIfNotPresent(&s, 0));
+   EXPECT_EQ(s.count(0), 1);
+ }
+-
+-
