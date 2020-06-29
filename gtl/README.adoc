@@ -21,6 +21,8 @@ We would prefer to collect codes from Google's well-known open-source projects:
 . LevelDB
 . TensorFlow
 . OR-Tools
+. gRPC
+. Protocol Buffers
 
 See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Google Open Source] for more projects.
 
@@ -28,13 +30,17 @@ See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Googl
 
 === MapUtil
 
-Utility methods such as looking up & inserting for `std::map` & `std::unordered_map`.
+Helper methods such as looking up & inserting for `std::map` & `std::unordered_map`.
 
 Found in following projects:
 
+* link:https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/lib/gtl/map_util.h[TensorFlow]
 * link:https://github.com/google/or-tools/blob/v7.7/ortools/base/map_util.h[OR-Tools]
-* https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/lib/gtl/map_util.h[TensorFlow]
 
 We adopted the one from TensorFlow because it's more active.
 
-=== StlUtil
+=== StlUtil (Won't adopt)
+
+Won't adopt it because there are builtin methods since C++11.
+
+TensorFlow removed it since v2.1.0-rc0
