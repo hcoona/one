@@ -21,3 +21,5 @@ We would prefer to collect codes from Google's well-known open-source projects:
 . LevelDB
 . TensorFlow
 . OR-Tools
+
+See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Google Open Source] for more projects.
