@@ -17,6 +17,30 @@ http_archive(
     url = "https://github.com/bazelbuild/platforms/archive/43155b81d40765f0d13008bc77cd2cca8ba9fb2a.tar.gz",  # 2019-08-26
 )
 
+# Required by protobuf.
+http_archive(
+    name = "rules_cc",
+    sha256 = "9d48151ea71b3e225adfb6867e6d2c7d0dce46cbdc8710d9a9a628574dfd40a0",
+    strip_prefix = "rules_cc-818289e5613731ae410efb54218a4077fb9dbb03",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/818289e5613731ae410efb54218a4077fb9dbb03.tar.gz"],
+)
+
+# Required by protobuf.
+http_archive(
+    name = "rules_java",
+    sha256 = "f5a3e477e579231fca27bf202bb0e8fbe4fc6339d63b38ccb87c2760b533d1c3",
+    strip_prefix = "rules_java-981f06c3d2bd10225e85209904090eb7b5fb26bd",
+    urls = ["https://github.com/bazelbuild/rules_java/archive/981f06c3d2bd10225e85209904090eb7b5fb26bd.tar.gz"],
+)
+
+# Required by protobuf.
+http_archive(
+    name = "rules_proto",
+    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
+    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz"],
+)
+
 # Required by grpc.
 http_archive(
     name = "build_bazel_apple_support",
@@ -29,6 +53,17 @@ http_archive(
     name = "build_bazel_rules_swift",
     sha256 = "ef2578a50a4dae1debb42a41699a8a77d3f31814c097be8d594f7f4d7f9fce14",
     url = "https://github.com/bazelbuild/rules_swift/releases/download/0.13.0/rules_swift.0.13.0.tar.gz",  # 2019-10-09
+)
+
+# Required by grpc.
+http_archive(
+    name = "bazel_toolchains",
+    sha256 = "0b36eef8a66f39c8dbae88e522d5bbbef49d5e66e834a982402c79962281be10",
+    strip_prefix = "bazel-toolchains-1.0.1",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-toolchains/archive/1.0.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-toolchains/releases/download/1.0.1/bazel-toolchains-1.0.1.tar.gz",
+    ],
 )
 
 ######## Java toolchains ########
@@ -72,13 +107,7 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.2/rules_python-0.0.2.tar.gz",
 )
 
-load("@rules_python//python:repositories.bzl", "py_repositories")
-
-py_repositories()
-
-load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
-
-pip_repositories()
+load("@rules_python//python:pip.bzl", "pip3_import")
 
 ######## Protobuf & Grpc C++ libraries ########
 
@@ -136,6 +165,49 @@ http_archive(
     urls = ["https://github.com/google/benchmark/archive/v1.5.0.tar.gz"],  # 2019-05-28
 )
 
+# required by Grpc
+http_archive(
+    name = "com_github_cares_cares",
+    build_file = "@com_github_grpc_grpc//third_party:cares/cares.BUILD",
+    sha256 = "e8c2751ddc70fed9dc6f999acd92e232d5846f009ee1674f8aee81f19b2b915a",
+    strip_prefix = "c-ares-e982924acee7f7313b4baa4ee5ec000c5e373c30",
+    urls = [
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
+        "https://github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
+    ],
+)
+
+# required by Grpc
+http_archive(
+    name = "io_opencensus_cpp",
+    sha256 = "90d6fafa8b1a2ea613bf662731d3086e1c2ed286f458a95c81744df2dbae41b1",
+    strip_prefix = "opencensus-cpp-c9a4da319bc669a772928ffc55af4a61be1a1176",
+    urls = [
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/census-instrumentation/opencensus-cpp/archive/c9a4da319bc669a772928ffc55af4a61be1a1176.tar.gz",
+        "https://github.com/census-instrumentation/opencensus-cpp/archive/c9a4da319bc669a772928ffc55af4a61be1a1176.tar.gz",
+    ],
+)
+
+# required by Grpc
+http_archive(
+    name = "upb",
+    sha256 = "e9c136e56b98c8eb48ad1c9f8df4a6348e99f9f336ee6199c4259a312c2e3598",
+    strip_prefix = "upb-d8f3d6f9d415b31f3ce56d46791706c38fa311bc",
+    url = "https://github.com/protocolbuffers/upb/archive/d8f3d6f9d415b31f3ce56d46791706c38fa311bc.tar.gz",
+)
+
+# required by Grpc
+http_archive(
+    name = "libuv",
+    build_file = "@com_github_grpc_grpc//third_party:libuv.BUILD",
+    sha256 = "dfb4fe1ff0b47340978490a14bf253475159ecfcbad46ab2a350c78f9ce3360f",
+    strip_prefix = "libuv-15ae750151ac9341e5945eb38f8982d59fb99201",
+    urls = [
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/libuv/libuv/archive/15ae750151ac9341e5945eb38f8982d59fb99201.tar.gz",
+        "https://github.com/libuv/libuv/archive/15ae750151ac9341e5945eb38f8982d59fb99201.tar.gz",
+    ],
+)
+
 # Required by upb, which is required by protobuf.
 bazel_version_repository(
     name = "upb_bazel_version",
@@ -158,10 +230,6 @@ bind(
     name = "com_google_protobuf_javalite",
     actual = "@com_google_protobuf",
 )
-
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-
-protobuf_deps()
 
 # grpc
 # This needs to be placed after TensorFlow to resolve some bazel conflicts.
