@@ -35,6 +35,7 @@ Helper methods such as looking up & inserting for `std::map` & `std::unordered_m
 Found in following projects:
 
 * link:https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/lib/gtl/map_util.h[TensorFlow]
+* link:https://github.com/protocolbuffers/protobuf/blob/v3.12.3/src/google/protobuf/stubs/map_util.h[Protocol Buffers]
 * link:https://github.com/google/or-tools/blob/v7.7/ortools/base/map_util.h[OR-Tools]
 
 We adopted the one from TensorFlow because it's more active.
