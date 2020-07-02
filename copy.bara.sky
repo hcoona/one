@@ -144,6 +144,16 @@ core.workflow(
             after = "GTL_",
             paths = glob(["**/*.h"]),
         ),
+        core.replace(
+            before = "PLATFORM_WINDOWS",
+            after = "OS_WIN",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "PLATFORM_POSIX",
+            after = "OS_POSIX",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
         patch.apply(patches = [
             "gtl/patches/tensorflow/iterator_range.patch",
             "gtl/patches/tensorflow/map_util.patch",

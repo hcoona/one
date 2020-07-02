@@ -32,7 +32,7 @@ limitations under the License.
 #include "gtl/stringpiece.h"
 #include "gtl/types.h"
 
-#ifdef PLATFORM_WINDOWS
+#ifdef OS_WIN
 #undef DeleteFile
 #undef CopyFile
 #undef TranslateName

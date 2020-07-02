@@ -23,11 +23,11 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#if defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
+#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 #include <fnmatch.h>
 #else
 #include "gtl/regexp.h"
-#endif  // defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
+#endif  // defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 
 #include "gtl/env.h"
 #include "gtl/errors.h"
@@ -39,7 +39,7 @@ limitations under the License.
 
 
 bool FileSystem::Match(const string& filename, const string& pattern) {
-#if defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
+#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
   // We avoid relying on RE2 on mobile platforms, because it incurs a
   // significant binary size increase.
   // For POSIX platforms, there is no need to depend on RE2 if `fnmatch` can be
@@ -52,7 +52,7 @@ bool FileSystem::Match(const string& filename, const string& pattern) {
   regexp = str_util::StringReplace(regexp, "(", "\\(", true);
   regexp = str_util::StringReplace(regexp, ")", "\\)", true);
   return RE2::FullMatch(filename, regexp);
-#endif  // defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
+#endif  // defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 }
 
 string FileSystem::TranslateName(const string& name) const {
@@ -265,7 +265,7 @@ std::pair<absl::string_view, absl::string_view> FileSystem::SplitPath(
 
   // Our code assumes it is written for linux too many times. So, for windows
   // also check for '/'
-#ifdef PLATFORM_WINDOWS
+#ifdef OS_WIN
   size_t pos2 = path.rfind('/');
   // Pick the max value that is not string::npos.
   if (pos == string::npos) {
