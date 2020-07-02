@@ -324,3 +324,29 @@ index e64db62..dcf1655 100644
  
  
  #endif  // GTL_PATH_H_
+diff --git a/gtl/path_test.cc b/gtl/path_test.cc
+index b6b8a5e..596ebd4 100644
+--- a/gtl/path_test.cc
++++ b/gtl/path_test.cc
+@@ -13,11 +13,11 @@ See the License for the specific language governing permissions and
+ limitations under the License.
+ ==============================================================================*/
+ 
+-#include "tensorflow/core/lib/io/path.h"
+-#include "gtest/gtest.h"
++#include "gtl/path.h"
+ 
++#include "gtest/gtest.h"
+ 
+-namespace io {
++namespace gtl {
+ 
+ TEST(PathTest, JoinPath) {
+   EXPECT_EQ("/foo/bar", JoinPath("/foo", "bar"));
+@@ -141,5 +141,4 @@ TEST(PathTest, CreateParseURI) {
+ }
+ #undef EXPECT_PARSE_URI
+ 
+-}  // namespace io
+-
++}  // namespace gtl

@@ -30,6 +30,7 @@ core.workflow(
             "tensorflow/core/platform/scanner_test.cc",
             "tensorflow/core/platform/path.h",
             "tensorflow/core/platform/path.cc",
+            "tensorflow/core/lib/io/path_test.cc",
         ],
     ),
     destination_files = glob(
@@ -54,6 +55,7 @@ core.workflow(
             "gtl/scanner_test.cc",
             "gtl/path.h",
             "gtl/path.cc",
+            "gtl/path_test.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -63,6 +65,7 @@ core.workflow(
     mode = "SQUASH",
     transformations = [
         core.move("tensorflow/core/lib/gtl/subtle/map_traits.h", "gtl/map_traits.h"),
+        core.move("tensorflow/core/lib/io/path_test.cc", "gtl/path_test.cc"),
         core.move("tensorflow/core/lib/gtl", "gtl"),
         core.move("tensorflow/core/platform/default", "gtl"),
         core.move("tensorflow/core/platform", "gtl"),
