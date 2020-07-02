@@ -4,8 +4,9 @@ C++ STL is still not enough to cover daily development. Google has some great ut
 
 This project don't port well-known libraries features:
 
-. Abseil
-. GLOG
+. link:https://github.com/abseil/abseil-cpp/[Abseil]
+. link:https://github.com/google/glog[GLOG]
+. link:https://github.com/census-instrumentation/opencensus-cpp[OpenCensus]
 
 == Workflow
 
@@ -17,12 +18,12 @@ Please modify the `../copy.bara.sky` file for porting new files.
 
 We would prefer to collect codes from Google's well-known open-source projects:
 
-. Chromium
-. LevelDB
-. TensorFlow
-. OR-Tools
-. gRPC
-. Protocol Buffers
+. link:https://source.chromium.org/chromium/chromium/src?originalUrl=https:%2F%2Fcs.chromium.org%2F[Chromium]
+. link:https://github.com/google/leveldb/[LevelDB]
+. link:https://github.com/tensorflow/tensorflow/[TensorFlow]
+. link:https://github.com/google/or-tools/[OR-Tools]
+. link:https://github.com/grpc/grpc[gRPC]
+. link:https://github.com/protocolbuffers/protobuf[Protocol Buffers]
 
 See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Google Open Source] for more projects.
 
