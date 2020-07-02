@@ -1,6 +1,11 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
+    name = "iterator_range",
+    hdrs = ["iterator_range.h"],
+)
+
+cc_library(
     name = "map_util",
     hdrs = [
         "map_traits.h",

@@ -26,6 +26,8 @@ We would prefer to collect codes from Google's well-known open-source projects:
 
 See link:https://opensource.google/projects/list/featured?language=c%2B%2B[Google Open Source] for more projects.
 
+We prefer codes from other projects than Chromium because it has complex dependencies in usual.
+
 == Adopted utilities
 
 === MapUtil
