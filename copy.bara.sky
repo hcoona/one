@@ -28,6 +28,8 @@ core.workflow(
             "tensorflow/core/platform/scanner.h",
             "tensorflow/core/platform/scanner.cc",
             "tensorflow/core/platform/scanner_test.cc",
+            "tensorflow/core/platform/path.h",
+            "tensorflow/core/platform/path.cc",
         ],
     ),
     destination_files = glob(
@@ -50,6 +52,8 @@ core.workflow(
             "gtl/scanner.h",
             "gtl/scanner.cc",
             "gtl/scanner_test.cc",
+            "gtl/path.h",
+            "gtl/path.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -157,6 +161,7 @@ core.workflow(
         patch.apply(patches = [
             "gtl/patches/tensorflow/iterator_range.patch",
             "gtl/patches/tensorflow/map_util.patch",
+            "gtl/patches/tensorflow/path.patch",
             "gtl/patches/tensorflow/scanner.patch",
             "gtl/patches/tensorflow/top_n.patch",
         ]),

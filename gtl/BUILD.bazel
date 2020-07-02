@@ -65,6 +65,19 @@ cc_test(
 )
 
 cc_library(
+    name = "path",
+    srcs = ["path.cc"],
+    hdrs = ["path.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":scanner",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/synchronization",
+    ],
+)
+
+cc_library(
     name = "priority_queue_util",
     hdrs = ["priority_queue_util.h"],
     visibility = ["//visibility:public"],
