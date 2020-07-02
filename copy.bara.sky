@@ -18,6 +18,13 @@ core.workflow(
             "tensorflow/core/lib/gtl/priority_queue_util.h",
             "tensorflow/core/lib/gtl/top_n.h",
             "tensorflow/core/lib/gtl/top_n_test.cc",
+            "tensorflow/core/platform/file_statistics.h",
+            "tensorflow/core/platform/file_system.h",
+            "tensorflow/core/platform/file_system.cc",
+            "tensorflow/core/platform/file_system_test.cc",
+            "tensorflow/core/platform/null_file_system.h",
+            "tensorflow/core/platform/default/posix_file_system.h",
+            "tensorflow/core/platform/default/posix_file_system.cc",
         ],
     ),
     destination_files = glob(
@@ -30,6 +37,13 @@ core.workflow(
             "gtl/priority_queue_util.h",
             "gtl/top_n.h",
             "gtl/top_n_test.cc",
+            "gtl/file_statistics.h",
+            "gtl/file_system.h",
+            "gtl/file_system.cc",
+            "gtl/file_system_test.cc",
+            "gtl/null_file_system.h",
+            "gtl/posix_file_system.h",
+            "gtl/posix_file_system.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -40,6 +54,8 @@ core.workflow(
     transformations = [
         core.move("tensorflow/core/lib/gtl/subtle/map_traits.h", "gtl/map_traits.h"),
         core.move("tensorflow/core/lib/gtl", "gtl"),
+        core.move("tensorflow/core/platform/default", "gtl"),
+        core.move("tensorflow/core/platform", "gtl"),
         core.replace(
             before = "#include \"tensorflow/core/lib/gtl/subtle/map_traits.h\"",
             after = "#include \"gtl/map_traits.h\"",
@@ -54,6 +70,11 @@ core.workflow(
             before = "#include \"tensorflow/core/lib/gtl/${filename}.h\"",
             after = "#include \"gtl/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "StringPiece",
+            after = "absl::string_view",
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
@@ -93,6 +114,16 @@ core.workflow(
         ),
         core.replace(
             before = "TENSORFLOW_LIB_GTL_",
+            after = "GTL_",
+            paths = glob(["**/*.h"]),
+        ),
+        core.replace(
+            before = "TENSORFLOW_CORE_PLATFORM_POSIX_",
+            after = "GTL_",
+            paths = glob(["**/*.h"]),
+        ),
+        core.replace(
+            before = "TENSORFLOW_CORE_PLATFORM_",
             after = "GTL_",
             paths = glob(["**/*.h"]),
         ),

@@ -127,9 +127,9 @@ http_archive(
     name = "com_google_absl",
     patch_args = ["-p1"],
     patches = ["//third_party/abseil-cpp:0001-Rename-Valgrind-related-functions-to-avoid-conflicts.patch"],
-    sha256 = "15e1afcb57de3855941927cb0fb1c7cd6194b38a8d2f297e9a8e4e66ff66aa3d",
-    strip_prefix = "abseil-cpp-67222ffc4c83d918ce8395aa61769eeb77df4c4d",
-    urls = ["https://github.com/abseil/abseil-cpp/archive/67222ffc4c83d918ce8395aa61769eeb77df4c4d.tar.gz"],  # 2019-08-06
+    sha256 = "96163b88c5e00b137b12d9ae7d47ef33cf2f14d78ffdd91547e20bda01c1134d",
+    strip_prefix = "abseil-cpp-38db52adb2eabc0969195b33b30763e0a1285ef9",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/38db52adb2eabc0969195b33b30763e0a1285ef9.tar.gz"],  # 2020-07-02
 )
 
 # boringssl, required by Grpc.
@@ -512,6 +512,13 @@ http_archive(
     urls = [
         "https://github.com/libevent/libevent/releases/download/release-2.1.11-stable/libevent-2.1.11-stable.tar.gz",
     ],
+)
+
+http_archive(
+    name = "com_googlesource_code_re2",
+    sha256 = "428735aea6e8007c14d2e75c69f66cf5b71a009d9933ba6e51e3cbeb52f12f7d",
+    strip_prefix = "re2-b83705e2d297f21b0805202bac86c935670634f8",
+    url = "https://github.com/google/re2/archive/b83705e2d297f21b0805202bac86c935670634f8.tar.gz",  # 2020-07-01
 )
 
 ######## Java External Dependencies ########

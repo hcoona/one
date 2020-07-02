@@ -1,5 +1,19 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
+# cc_library(
+#     name = "file_system",
+#     srcs = ["file_system.cc"],
+#     hdrs = [
+#         "file_statistics.h",
+#         "file_system.h",
+#     ],
+#     deps = [
+#         "@com_google_absl//absl/status",
+#         "@com_google_absl//absl/strings",
+#         "@com_googlesource_code_re2//:re2",
+#     ],
+# )
+
 cc_library(
     name = "iterator_range",
     hdrs = ["iterator_range.h"],
