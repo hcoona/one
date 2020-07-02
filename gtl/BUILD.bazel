@@ -1,5 +1,14 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
+cc_library(
+    name = "compiler_specific",
+    hdrs = ["compiler_specific.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//config",
+    ],
+)
+
 # cc_library(
 #     name = "file_system",
 #     srcs = ["file_system.cc"],
@@ -17,6 +26,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 cc_library(
     name = "iterator_range",
     hdrs = ["iterator_range.h"],
+    visibility = ["//visibility:public"],
 )
 
 cc_test(
@@ -36,6 +46,7 @@ cc_library(
         "map_traits.h",
         "map_util.h",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_test(
@@ -43,6 +54,7 @@ cc_test(
     srcs = [
         "map_util_test.cc",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         ":map_util",
         "@com_google_googletest//:gtest_main",
@@ -52,12 +64,14 @@ cc_test(
 cc_library(
     name = "priority_queue_util",
     hdrs = ["priority_queue_util.h"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "scanner",
     srcs = ["scanner.cc"],
     hdrs = ["scanner.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_absl//absl/strings",
     ],
@@ -75,6 +89,7 @@ cc_test(
 cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_github_google_glog//:glog",
     ],

@@ -152,3 +152,43 @@ core.workflow(
         ]),
     ],
 )
+
+core.workflow(
+    name = "gtl_chromium",
+    origin = git.origin(
+        url = "https://github.com/chromium/chromium.git",
+        ref = "2dcb87aab462363932219cc2e9c6d11dcd2c8452",  # 2020-07-02
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "base/bits.h",
+            "base/compiler_specific.h",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "gtl/bits.h",
+            "gtl/compiler_specific.h",
+        ],
+        exclude = [
+            "**/BUILD.bazel",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("base", "gtl"),
+        core.replace(
+            before = "#include \"build/build_config.h\"",
+            after = "#include \"config/config.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"base/${filename}.h\"",
+            after = "#include \"gtl/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+    ],
+)
