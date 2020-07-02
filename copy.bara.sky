@@ -11,6 +11,7 @@ core.workflow(
     origin_files = glob(
         [
             "tensorflow/core/lib/gtl/iterator_range.h",
+            "tensorflow/core/lib/gtl/iterator_range_test.cc",
             "tensorflow/core/lib/gtl/subtle/map_traits.h",
             "tensorflow/core/lib/gtl/map_util.h",
             "tensorflow/core/lib/gtl/map_util_test.cc",
@@ -19,6 +20,7 @@ core.workflow(
     destination_files = glob(
         [
             "gtl/iterator_range.h",
+            "gtl/iterator_range_test.cc",
             "gtl/map_traits.h",
             "gtl/map_util.h",
             "gtl/map_util_test.cc",
@@ -79,7 +81,8 @@ core.workflow(
             paths = glob(["**/*.h"]),
         ),
         patch.apply(patches = [
-          "gtl/patches/tensorflow/map_util.patch",
+            "gtl/patches/tensorflow/iterator_range.patch",
+            "gtl/patches/tensorflow/map_util.patch",
         ]),
     ],
 )

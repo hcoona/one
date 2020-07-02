@@ -5,6 +5,17 @@ cc_library(
     hdrs = ["iterator_range.h"],
 )
 
+cc_test(
+    name = "iterator_range_test",
+    srcs = [
+        "iterator_range_test.cc",
+    ],
+    deps = [
+        ":iterator_range",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "map_util",
     hdrs = [

@@ -1,0 +1,36 @@
+diff --git a/gtl/iterator_range_test.cc b/gtl/iterator_range_test.cc
+index 45faa0b..a37563c 100644
+--- a/gtl/iterator_range_test.cc
++++ b/gtl/iterator_range_test.cc
+@@ -16,14 +16,20 @@ limitations under the License.
+ #include "gtl/iterator_range.h"
+ 
+ #include <vector>
+-#include "tensorflow/core/platform/macros.h"
+-#include "tensorflow/core/platform/test.h"
+-#include "tensorflow/core/platform/types.h"
+ 
++#include "gtest/gtest.h"
+ 
+ namespace gtl {
+ namespace {
+ 
++// The TF_ARRAYSIZE(arr) macro returns the # of elements in an array arr.
++//
++// The expression TF_ARRAYSIZE(a) is a compile-time constant of type
++// size_t.
++#define TF_ARRAYSIZE(a)         \
++  ((sizeof(a) / sizeof(*(a))) / \
++   static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))  // NOLINT
++
+ TEST(IteratorRange, WholeVector) {
+   std::vector<int> v = {2, 3, 5, 7, 11, 13};
+   iterator_range<std::vector<int>::iterator> range(v.begin(), v.end());
+@@ -71,6 +77,6 @@ TEST(IteratorRange, ArrayMakeRange) {
+   }
+   EXPECT_EQ(4, index);
+ }
++
+ }  // namespace
+ }  // namespace gtl
+-
