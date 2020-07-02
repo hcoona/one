@@ -50,8 +50,8 @@
     <version.logback>1.2.3</version.logback>
 
     <!-- Plugin versions, ordered lexicographically -->
-    <version.checkstyle>8.21</version.checkstyle>
-    <version.checkstyle.sevntu>1.32.0</version.checkstyle.sevntu>
+    <version.checkstyle>8.29</version.checkstyle>
+    <version.checkstyle.sevntu>1.37.1</version.checkstyle.sevntu>
   </properties>
 
   <build>
