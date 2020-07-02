@@ -15,17 +15,18 @@ limitations under the License.
 
 #include "gtl/scanner.h"
 
+#include <climits>
+
 #include "gtest/gtest.h"
 
-
-namespace strings {
+namespace gtl {
 
 class ScannerTest : public ::testing::Test {
  protected:
   // Returns a string with all chars that are in <clz>, in byte value order.
-  string ClassStr(Scanner::CharClass clz) {
-    string s;
-    for (int i = 0; i < 256; ++i) {
+  std::string ClassStr(Scanner::CharClass clz) {
+    std::string s;
+    for (char i = 0; i < CHAR_MAX; ++i) {
       char ch = i;
       if (Scanner::Matches(clz, ch)) {
         s += ch;
@@ -276,7 +277,7 @@ TEST_F(ScannerTest, DefaultCapturesAll) {
 }
 
 TEST_F(ScannerTest, AllCharClasses) {
-  EXPECT_EQ(256, ClassStr(Scanner::ALL).size());
+  EXPECT_EQ(CHAR_MAX, ClassStr(Scanner::ALL).size());
   EXPECT_EQ("0123456789", ClassStr(Scanner::DIGIT));
   EXPECT_EQ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
             ClassStr(Scanner::LETTER));
@@ -322,5 +323,4 @@ TEST_F(ScannerTest, Peek) {
   EXPECT_EQ('\0', Scanner("0123A").Any(Scanner::LETTER_DIGIT).Peek());
 }
 
-}  // namespace strings
-
+}  // namespace gtl

@@ -55,6 +55,24 @@ cc_library(
 )
 
 cc_library(
+    name = "scanner",
+    srcs = ["scanner.cc"],
+    hdrs = ["scanner.h"],
+    deps = [
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "scanner_test",
+    srcs = ["scanner_test.cc"],
+    deps = [
+        ":scanner",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
     deps = [

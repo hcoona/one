@@ -18,12 +18,10 @@ limitations under the License.
 
 #include <string>
 
-#include "gtl/macros.h"
-#include "gtl/str_util.h"
-#include "gtl/stringpiece.h"
+#include "absl/strings/string_view.h"
+#include "absl/strings/strip.h"
 
-
-namespace strings {
+namespace gtl {
 
 // Scanner provides simplified string parsing, in which a string is parsed as a
 // series of scanning calls (e.g. One, Any, Many, OneLiteral, Eos), and then
@@ -78,14 +76,14 @@ class Scanner {
   // Consume the next s.size() characters of the input, if they match <s>. If
   // they don't match <s>, this is a no-op.
   Scanner& ZeroOrOneLiteral(absl::string_view s) {
-    str_util::ConsumePrefix(&cur_, s);
+    absl::ConsumePrefix(&cur_, s);
     return *this;
   }
 
   // Consume the next s.size() characters of the input, if they match <s>. If
   // they don't match <s>, then GetResult will ultimately return false.
   Scanner& OneLiteral(absl::string_view s) {
-    if (!str_util::ConsumePrefix(&cur_, s)) {
+    if (!absl::ConsumePrefix(&cur_, s)) {
       error_ = true;
     }
     return *this;
@@ -236,10 +234,10 @@ class Scanner {
   bool error_ = false;
 
   friend class ScannerTest;
-  TF_DISALLOW_COPY_AND_ASSIGN(Scanner);
+  Scanner(const Scanner&) = delete;
+  Scanner& operator=(const Scanner&) = delete;
 };
 
-}  // namespace strings
-
+}  // namespace gtl
 
 #endif  // GTL_SCANNER_H_

@@ -15,8 +15,7 @@ limitations under the License.
 
 #include "gtl/scanner.h"
 
-
-namespace strings {
+namespace gtl {
 
 void Scanner::ScanUntilImpl(char end_ch, bool escaped) {
   for (;;) {
@@ -55,5 +54,5 @@ bool Scanner::GetResult(absl::string_view* remaining, absl::string_view* capture
   return true;
 }
 
-}  // namespace strings
+}  // namespace gtl
 

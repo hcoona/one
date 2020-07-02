@@ -147,6 +147,7 @@ core.workflow(
         patch.apply(patches = [
             "gtl/patches/tensorflow/iterator_range.patch",
             "gtl/patches/tensorflow/map_util.patch",
+            "gtl/patches/tensorflow/scanner.patch",
             "gtl/patches/tensorflow/top_n.patch",
         ]),
     ],
