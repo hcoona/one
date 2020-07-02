@@ -1,0 +1,69 @@
+diff --git a/gtl/top_n_test.cc b/gtl/top_n_test.cc
+index 74290b6..4836e18 100644
+--- a/gtl/top_n_test.cc
++++ b/gtl/top_n_test.cc
+@@ -20,17 +20,14 @@ limitations under the License.
+ #include <string>
+ #include <vector>
+ 
+-#include "tensorflow/core/lib/random/simple_philox.h"
++#include "absl/random/random.h"
+ #include "glog/logging.h"
+ #include "gtest/gtest.h"
+-#include "tensorflow/core/platform/types.h"
+ 
+ namespace {
+ 
+-using tensorflow::string;
+-using tensorflow::gtl::TopN;
+-using tensorflow::random::PhiloxRandom;
+-using tensorflow::random::SimplePhilox;
++using std::string;
++using gtl::TopN;
+ 
+ // Move the contents from an owned raw pointer, returning by value.
+ // Objects are easier to manage by value.
+@@ -43,14 +40,16 @@ T ConsumeRawPtr(T *p) {
+ 
+ template <class Cmp>
+ void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp &cmp,
+-                       SimplePhilox *random, bool test_peek,
++                       absl::BitGen *random, bool test_peek,
+                        bool test_extract_unsorted) {
+   LOG(INFO) << "Testing limit=" << limit << ", n_elements=" << n_elements
+             << ", test_peek=" << test_peek
+             << ", test_extract_unsorted=" << test_extract_unsorted;
+   TopN<int, Cmp> top(limit, cmp);
+   std::vector<int> shadow(n_elements);
+-  for (int i = 0; i != n_elements; ++i) shadow[i] = random->Uniform(limit);
++  for (int i = 0; i != n_elements; ++i) {
++    shadow[i] = absl::Uniform(*random, 0, static_cast<int>(limit));
++  }
+   for (int e : shadow) top.push(e);
+   std::sort(shadow.begin(), shadow.end(), cmp);
+   size_t top_size = std::min(limit, n_elements);
+@@ -74,7 +73,7 @@ void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp &cmp,
+ 
+ template <class Cmp>
+ void TestIntTopN(size_t limit, size_t n_elements, const Cmp &cmp,
+-                 SimplePhilox *random) {
++                 absl::BitGen *random) {
+   // Test peek_bottom() and Extract()
+   TestIntTopNHelper(limit, n_elements, cmp, random, true, false);
+   // Test Extract()
+@@ -86,8 +85,7 @@ void TestIntTopN(size_t limit, size_t n_elements, const Cmp &cmp,
+ }
+ 
+ TEST(TopNTest, Misc) {
+-  PhiloxRandom philox(1, 1);
+-  SimplePhilox random(&philox);
++  absl::BitGen random;
+ 
+   TestIntTopN(0, 5, std::greater<int>(), &random);
+   TestIntTopN(32, 0, std::greater<int>(), &random);
+@@ -263,4 +261,5 @@ TEST(TopNTest, Iteration) {
+   EXPECT_EQ(actual[2], 6);
+   EXPECT_EQ(actual[3], 7);
+ }
++
+ }  // namespace

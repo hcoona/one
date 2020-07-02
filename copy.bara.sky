@@ -16,6 +16,8 @@ core.workflow(
             "tensorflow/core/lib/gtl/map_util.h",
             "tensorflow/core/lib/gtl/map_util_test.cc",
             "tensorflow/core/lib/gtl/priority_queue_util.h",
+            "tensorflow/core/lib/gtl/top_n.h",
+            "tensorflow/core/lib/gtl/top_n_test.cc",
         ],
     ),
     destination_files = glob(
@@ -26,6 +28,8 @@ core.workflow(
             "gtl/map_util.h",
             "gtl/map_util_test.cc",
             "gtl/priority_queue_util.h",
+            "gtl/top_n.h",
+            "gtl/top_n_test.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -39,6 +43,11 @@ core.workflow(
         core.replace(
             before = "#include \"tensorflow/core/lib/gtl/subtle/map_traits.h\"",
             after = "#include \"gtl/map_traits.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"tensorflow/core/platform/logging.h\"",
+            after = "#include \"glog/logging.h\"",
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
@@ -90,6 +99,14 @@ core.workflow(
         patch.apply(patches = [
             "gtl/patches/tensorflow/iterator_range.patch",
             "gtl/patches/tensorflow/map_util.patch",
+        ]),
+        core.replace(
+            before = "#include \"tensorflow/core/platform/test.h\"",
+            after = "#include \"gtest/gtest.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        patch.apply(patches = [
+            "gtl/patches/tensorflow/top_n.patch",
         ]),
     ],
 )
