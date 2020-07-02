@@ -15,6 +15,7 @@ core.workflow(
             "tensorflow/core/lib/gtl/subtle/map_traits.h",
             "tensorflow/core/lib/gtl/map_util.h",
             "tensorflow/core/lib/gtl/map_util_test.cc",
+            "tensorflow/core/lib/gtl/priority_queue_util.h",
         ],
     ),
     destination_files = glob(
@@ -24,6 +25,7 @@ core.workflow(
             "gtl/map_traits.h",
             "gtl/map_util.h",
             "gtl/map_util_test.cc",
+            "gtl/priority_queue_util.h",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -74,6 +76,11 @@ core.workflow(
             before = "TENSORFLOW_CORE_LIB_GTL_SUBTLE_MAP_TRAITS_H_",
             after = "GTL_MAP_TRAITS_H_",
             paths = glob(["gtl/map_traits.h"]),
+        ),
+        core.replace(
+            before = "TENSORFLOW_CORE_LIB_GTL_",
+            after = "GTL_",
+            paths = glob(["**/*.h"]),
         ),
         core.replace(
             before = "TENSORFLOW_LIB_GTL_",

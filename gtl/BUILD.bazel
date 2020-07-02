@@ -34,3 +34,8 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "priority_queue_util",
+    hdrs = ["priority_queue_util.h"],
+)
