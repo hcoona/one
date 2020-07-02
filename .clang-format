@@ -2,8 +2,21 @@
 BasedOnStyle: Google
 ---
 Language: Cpp
+
 # Force pointers to the type for C++.
 DerivePointerAlignment: false
 PointerAlignment: Left
----
-Language: Java
+
+# Sort includes
+# Use dev-support/bin/clang-format for LLVM 11 SortPriority feature.
+# IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '<[^\.]+\.h>'  # C Standard Headers
+    Priority: 10
+  - Regex: '<.+>'  # C++ Standard Headers
+    Priority: 10
+  - Regex: '"(config|gtl)\/.*'  # Project Headers
+    Priority: 500
+  - Regex: '.*'  # Others
+    Priority: 50
+    SortPriority: 50
