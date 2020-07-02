@@ -1,18 +1,17 @@
 diff --git a/gtl/map_util_test.cc b/gtl/map_util_test.cc
-index 3282a81..e837efc 100644
+index 8268549..e837efc 100644
 --- a/gtl/map_util_test.cc
 +++ b/gtl/map_util_test.cc
 @@ -18,14 +18,11 @@ limitations under the License.
  #include <map>
  #include <set>
  #include <string>
--#include "tensorflow/core/platform/types.h"
--
--#include "tensorflow/core/platform/test.h"
--
+-#include "gtl/types.h"
  
-+#include "gtest/gtest.h"
+ #include "gtest/gtest.h"
  
+-
+-
  TEST(MapUtil, Find) {
 -  typedef std::map<string, string> Map;
 +  using Map = std::map<std::string, std::string>;

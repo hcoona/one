@@ -24,13 +24,13 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "tensorflow/core/platform/cord.h"
-#include "tensorflow/core/platform/errors.h"
-#include "tensorflow/core/platform/file_statistics.h"
-#include "tensorflow/core/platform/macros.h"
-#include "tensorflow/core/platform/platform.h"
-#include "tensorflow/core/platform/stringpiece.h"
-#include "tensorflow/core/platform/types.h"
+#include "gtl/cord.h"
+#include "gtl/errors.h"
+#include "gtl/file_statistics.h"
+#include "gtl/macros.h"
+#include "gtl/platform.h"
+#include "gtl/stringpiece.h"
+#include "gtl/types.h"
 
 #ifdef PLATFORM_WINDOWS
 #undef DeleteFile

@@ -17,7 +17,9 @@ limitations under the License.
 
 #include "gtl/top_n.h"
 
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/random/random.h"

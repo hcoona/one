@@ -18,7 +18,6 @@ limitations under the License.
 #include <vector>
 
 #include "gtest/gtest.h"
-
 namespace gtl {
 namespace {
 

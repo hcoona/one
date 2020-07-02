@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "tensorflow/core/platform/file_system.h"
+#include "gtl/file_system.h"
 
 #include <sys/stat.h>
 
@@ -26,15 +26,15 @@ limitations under the License.
 #if defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
 #include <fnmatch.h>
 #else
-#include "tensorflow/core/platform/regexp.h"
+#include "gtl/regexp.h"
 #endif  // defined(PLATFORM_POSIX) || defined(IS_MOBILE_PLATFORM)
 
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/errors.h"
-#include "tensorflow/core/platform/platform.h"
-#include "tensorflow/core/platform/scanner.h"
-#include "tensorflow/core/platform/str_util.h"
-#include "tensorflow/core/platform/strcat.h"
+#include "gtl/env.h"
+#include "gtl/errors.h"
+#include "gtl/platform.h"
+#include "gtl/scanner.h"
+#include "gtl/str_util.h"
+#include "gtl/strcat.h"
 
 
 

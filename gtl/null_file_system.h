@@ -20,9 +20,9 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/file_system.h"
-#include "tensorflow/core/platform/file_system_helper.h"
+#include "gtl/env.h"
+#include "gtl/file_system.h"
+#include "gtl/file_system_helper.h"
 
 
 

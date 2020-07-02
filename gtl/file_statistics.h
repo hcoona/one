@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef GTL_FILE_STATISTICS_H_
 #define GTL_FILE_STATISTICS_H_
 
-#include "tensorflow/core/platform/types.h"
+#include "gtl/types.h"
 
 
 

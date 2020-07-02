@@ -13,15 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "tensorflow/core/platform/file_system.h"
+#include "gtl/file_system.h"
 
 #include <sys/stat.h>
 
 #include "tensorflow/core/lib/core/status_test_util.h"
-#include "tensorflow/core/platform/null_file_system.h"
-#include "tensorflow/core/platform/path.h"
-#include "tensorflow/core/platform/str_util.h"
-#include "tensorflow/core/platform/strcat.h"
+#include "gtl/null_file_system.h"
+#include "gtl/path.h"
+#include "gtl/str_util.h"
+#include "gtl/strcat.h"
 #include "gtest/gtest.h"
 
 

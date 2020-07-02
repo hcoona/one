@@ -16,8 +16,8 @@ limitations under the License.
 #ifndef GTL_POSIX_FILE_SYSTEM_H_
 #define GTL_POSIX_FILE_SYSTEM_H_
 
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/path.h"
+#include "gtl/env.h"
+#include "gtl/path.h"
 
 
 

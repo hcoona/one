@@ -25,6 +25,9 @@ core.workflow(
             "tensorflow/core/platform/null_file_system.h",
             "tensorflow/core/platform/default/posix_file_system.h",
             "tensorflow/core/platform/default/posix_file_system.cc",
+            "tensorflow/core/platform/scanner.h",
+            "tensorflow/core/platform/scanner.cc",
+            "tensorflow/core/platform/scanner_test.cc",
         ],
     ),
     destination_files = glob(
@@ -44,6 +47,9 @@ core.workflow(
             "gtl/null_file_system.h",
             "gtl/posix_file_system.h",
             "gtl/posix_file_system.cc",
+            "gtl/scanner.h",
+            "gtl/scanner.cc",
+            "gtl/scanner_test.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -68,6 +74,17 @@ core.workflow(
         ),
         core.replace(
             before = "#include \"tensorflow/core/lib/gtl/${filename}.h\"",
+            after = "#include \"gtl/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"tensorflow/core/platform/test.h\"",
+            after = "#include \"gtest/gtest.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"tensorflow/core/platform/${filename}.h\"",
             after = "#include \"gtl/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
             paths = glob(["**/*.h", "**/*.cc"]),
@@ -130,13 +147,6 @@ core.workflow(
         patch.apply(patches = [
             "gtl/patches/tensorflow/iterator_range.patch",
             "gtl/patches/tensorflow/map_util.patch",
-        ]),
-        core.replace(
-            before = "#include \"tensorflow/core/platform/test.h\"",
-            after = "#include \"gtest/gtest.h\"",
-            paths = glob(["**/*.h", "**/*.cc"]),
-        ),
-        patch.apply(patches = [
             "gtl/patches/tensorflow/top_n.patch",
         ]),
     ],
