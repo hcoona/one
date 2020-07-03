@@ -1,0 +1,78 @@
+diff --git a/gtl/sequence_token.cc b/gtl/sequence_token.cc
+index 9e51c64..1eda26c 100644
+--- a/gtl/sequence_token.cc
++++ b/gtl/sequence_token.cc
+@@ -6,8 +6,6 @@
+ 
+ #include "gtl/atomic_sequence_num.h"
+ #include "glog/logging.h"
+-#include "gtl/no_destructor.h"
+-#include "gtl/threading/thread_local.h"
+ 
+ namespace gtl {
+ 
+@@ -17,14 +15,14 @@ gtl::AtomicSequenceNumber g_sequence_token_generator;
+ 
+ gtl::AtomicSequenceNumber g_task_token_generator;
+ 
+-ThreadLocalPointer<const SequenceToken>& GetTlsCurrentSequenceToken() {
+-  static gtl::NoDestructor<ThreadLocalPointer<const SequenceToken>> instance;
+-  return *instance;
++const SequenceToken** GetTlsCurrentSequenceToken() {
++  static thread_local const SequenceToken* instance;
++  return &instance;
+ }
+ 
+-ThreadLocalPointer<const TaskToken>& GetTlsCurrentTaskToken() {
+-  static gtl::NoDestructor<ThreadLocalPointer<const TaskToken>> instance;
+-  return *instance;
++const TaskToken** GetTlsCurrentTaskToken() {
++  static thread_local const TaskToken* instance;
++  return &instance;
+ }
+ 
+ }  // namespace
+@@ -51,7 +49,7 @@ SequenceToken SequenceToken::Create() {
+ 
+ SequenceToken SequenceToken::GetForCurrentThread() {
+   const SequenceToken* current_sequence_token =
+-      GetTlsCurrentSequenceToken().Get();
++      *(GetTlsCurrentSequenceToken());
+   return current_sequence_token ? *current_sequence_token : SequenceToken();
+ }
+ 
+@@ -72,25 +70,25 @@ TaskToken TaskToken::Create() {
+ }
+ 
+ TaskToken TaskToken::GetForCurrentThread() {
+-  const TaskToken* current_task_token = GetTlsCurrentTaskToken().Get();
++  const TaskToken* current_task_token = *(GetTlsCurrentTaskToken());
+   return current_task_token ? *current_task_token : TaskToken();
+ }
+ 
+ ScopedSetSequenceTokenForCurrentThread::ScopedSetSequenceTokenForCurrentThread(
+     const SequenceToken& sequence_token)
+     : sequence_token_(sequence_token), task_token_(TaskToken::Create()) {
+-  DCHECK(!GetTlsCurrentSequenceToken().Get());
+-  DCHECK(!GetTlsCurrentTaskToken().Get());
+-  GetTlsCurrentSequenceToken().Set(&sequence_token_);
+-  GetTlsCurrentTaskToken().Set(&task_token_);
++  DCHECK(!*(GetTlsCurrentSequenceToken()));
++  DCHECK(!*(GetTlsCurrentTaskToken()));
++  *(GetTlsCurrentSequenceToken()) = &sequence_token_;
++  *(GetTlsCurrentTaskToken()) = &task_token_;
+ }
+ 
+ ScopedSetSequenceTokenForCurrentThread::
+     ~ScopedSetSequenceTokenForCurrentThread() {
+-  DCHECK_EQ(GetTlsCurrentSequenceToken().Get(), &sequence_token_);
+-  DCHECK_EQ(GetTlsCurrentTaskToken().Get(), &task_token_);
+-  GetTlsCurrentSequenceToken().Set(nullptr);
+-  GetTlsCurrentTaskToken().Set(nullptr);
++  DCHECK_EQ(*(GetTlsCurrentSequenceToken()), &sequence_token_);
++  DCHECK_EQ(*(GetTlsCurrentTaskToken()), &task_token_);
++  *(GetTlsCurrentSequenceToken()) = nullptr;
++  *(GetTlsCurrentTaskToken()) = nullptr;
+ }
+ 
+ }  // namespace gtl

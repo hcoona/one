@@ -7,6 +7,17 @@ load(
 )
 
 cc_library(
+    name = "atomic_sequence_num",
+    hdrs = ["atomic_sequence_num.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":macros",
+    ],
+)
+
+cc_library(
     name = "auto_reset",
     hdrs = ["auto_reset.h"],
     copts = ONE_DEFAULT_COPTS,
@@ -248,6 +259,30 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":scanner",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "sequence_token",
+    srcs = ["sequence_token.cc"],
+    hdrs = ["sequence_token.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":atomic_sequence_num",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_test(
+    name = "sequence_token_test",
+    srcs = ["sequence_token_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":sequence_token",
         "@com_google_googletest//:gtest_main",
     ],
 )

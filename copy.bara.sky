@@ -186,6 +186,7 @@ core.workflow(
     destination = folder.destination(),
     origin_files = glob(
         [
+            "base/atomic_sequence_num.h",
             "base/auto_reset.h",
             "base/auto_reset_unittest.cc",
             "base/bits.h",
@@ -195,6 +196,13 @@ core.workflow(
             "base/guid.cc",
             "base/guid_unittest.cc",
             "base/macros.h",
+            "base/sequence_checker.h",
+            "base/sequence_checker_impl.h",
+            "base/sequence_checker_impl.cc",
+            "base/sequence_checker_unittest.cc",
+            "base/sequence_token.h",
+            "base/sequence_token.cc",
+            "base/sequence_token_unittest.cc",
             "base/thread_annotations.h",
             "base/thread_annotations_unittest.cc",
             "base/containers/ring_buffer.h",
@@ -202,6 +210,7 @@ core.workflow(
     ),
     destination_files = glob(
         [
+            "gtl/atomic_sequence_num.h",
             "gtl/auto_reset.h",
             "gtl/auto_reset_unittest.cc",
             "gtl/bits.h",
@@ -211,6 +220,13 @@ core.workflow(
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
             "gtl/macros.h",
+            "gtl/sequence_checker.h",
+            "gtl/sequence_checker_impl.h",
+            "gtl/sequence_checker_impl.cc",
+            "gtl/sequence_checker_unittest.cc",
+            "gtl/sequence_token.h",
+            "gtl/sequence_token.cc",
+            "gtl/sequence_token_unittest.cc",
             "gtl/thread_annotations.h",
             "gtl/thread_annotations_unittest.cc",
             "gtl/container/ring_buffer.h",
@@ -332,6 +348,7 @@ core.workflow(
         ),
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
+            "gtl/patches/chromium/sequence_token.patch",
             "gtl/patches/chromium/thread_annotations.patch",
         ]),
     ],
