@@ -194,6 +194,7 @@ core.workflow(
             "base/guid.h",
             "base/guid.cc",
             "base/guid_unittest.cc",
+            "base/macros.h",
             "base/thread_annotations.h",
             "base/thread_annotations_unittest.cc",
             "base/containers/ring_buffer.h",
@@ -209,6 +210,7 @@ core.workflow(
             "gtl/guid.h",
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
+            "gtl/macros.h",
             "gtl/thread_annotations.h",
             "gtl/thread_annotations_unittest.cc",
             "gtl/container/ring_buffer.h",
@@ -230,6 +232,11 @@ core.workflow(
         core.replace(
             before = "BASE_EXPORT ",
             after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"base/macros.h\"",
+            after = "#include \"gtl/macros.h\"",
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(

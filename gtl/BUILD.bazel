@@ -166,6 +166,14 @@ cc_test(
 )
 
 cc_library(
+    name = "macros",
+    hdrs = ["macros.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "map_util",
     hdrs = [
         "map_traits.h",
