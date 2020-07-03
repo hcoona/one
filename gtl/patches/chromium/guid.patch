@@ -1,5 +1,5 @@
 diff --git a/gtl/guid.cc b/gtl/guid.cc
-index 0d68ea5..d3ce992 100644
+index 05eaede..67e2fec 100644
 --- a/gtl/guid.cc
 +++ b/gtl/guid.cc
 @@ -7,9 +7,9 @@
@@ -42,7 +42,7 @@ index 0d68ea5..d3ce992 100644
  }
  
 +#ifdef ABSL_USES_STD_STRING_VIEW
- bool IsValidGUID(std::string_view<char16_t> guid) {
+ bool IsValidGUID(std::u16string_view guid) {
    return IsValidGUIDInternal(guid, false /* strict */);
  }
 +#endif  // ABSL_USES_STD_STRING_VIEW
@@ -58,7 +58,7 @@ index 0d68ea5..d3ce992 100644
                        static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
                        static_cast<unsigned int>(bytes[0] & 0x0000ffff),
 diff --git a/gtl/guid.h b/gtl/guid.h
-index f2c04cd..82b3edc 100644
+index 2c114c5..5f68303 100644
 --- a/gtl/guid.h
 +++ b/gtl/guid.h
 @@ -9,9 +9,7 @@
@@ -76,7 +76,7 @@ index f2c04cd..82b3edc 100644
  // given string is valid output string)
  bool IsValidGUID(absl::string_view guid);
 +#ifdef ABSL_USES_STD_STRING_VIEW
- bool IsValidGUID(std::string_view<char16_t> guid);
+ bool IsValidGUID(std::u16string_view guid);
 +#endif  // ABSL_USES_STD_STRING_VIEW
  
  // Returns true if the input string is valid version 4 GUID output string.

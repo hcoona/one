@@ -71,7 +71,7 @@ bool IsValidGUID(absl::string_view guid) {
 }
 
 #ifdef ABSL_USES_STD_STRING_VIEW
-bool IsValidGUID(std::string_view<char16_t> guid) {
+bool IsValidGUID(std::u16string_view guid) {
   return IsValidGUIDInternal(guid, false /* strict */);
 }
 #endif  // ABSL_USES_STD_STRING_VIEW

@@ -269,7 +269,7 @@ core.workflow(
         ),
         core.replace(
             before = "base::StringPiece16",
-            after = "std::string_view<char16_t>",
+            after = "std::u16string_view",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(

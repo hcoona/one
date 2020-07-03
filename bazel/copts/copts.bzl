@@ -82,7 +82,7 @@ ONE_GCC_EXCEPTIONS_FLAGS = [
 ]
 
 ONE_GCC_FLAGS = [
-    "-std=c++14",
+    "-std=c++17",
     "-Wall",
     "-Wextra",
     "-Wcast-qual",
