@@ -194,6 +194,7 @@ core.workflow(
             "base/guid.h",
             "base/guid.cc",
             "base/guid_unittest.cc",
+            "base/containers/ring_buffer.h",
         ],
     ),
     destination_files = glob(
@@ -206,6 +207,7 @@ core.workflow(
             "gtl/guid.h",
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
+            "gtl/container/ring_buffer.h",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -214,6 +216,7 @@ core.workflow(
     authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
     mode = "SQUASH",
     transformations = [
+        core.move("base/containers", "gtl/container"),
         core.move("base", "gtl"),
         core.replace(
             before = "#include \"base/base_export.h\"",
@@ -275,6 +278,11 @@ core.workflow(
             before = "}  // namespace base",
             after = "}  // namespace gtl",
             paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " BASE_CONTAINERS_",
+            after = " GTL_CONTAINER_",
+            paths = glob(["**/*.h"]),
         ),
         core.replace(
             before = " BASE_",
