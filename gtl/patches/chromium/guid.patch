@@ -1,5 +1,5 @@
 diff --git a/gtl/guid.cc b/gtl/guid.cc
-index 27c4af2..ad5cb28 100644
+index 551ce6b..d3ce992 100644
 --- a/gtl/guid.cc
 +++ b/gtl/guid.cc
 @@ -7,9 +7,9 @@
@@ -41,9 +41,8 @@ index 27c4af2..ad5cb28 100644
    return IsValidGUIDInternal(guid, false /* strict */);
  }
  
--bool IsValidGUID(absl::string_view16 guid) {
 +#ifdef ABSL_USES_STD_STRING_VIEW
-+bool IsValidGUID(std::string_view<wchar> guid) {
+ bool IsValidGUID(std::string_view<char16_t> guid) {
    return IsValidGUIDInternal(guid, false /* strict */);
  }
 +#endif  // ABSL_USES_STD_STRING_VIEW
@@ -59,7 +58,7 @@ index 27c4af2..ad5cb28 100644
                        static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
                        static_cast<unsigned int>(bytes[0] & 0x0000ffff),
 diff --git a/gtl/guid.h b/gtl/guid.h
-index 0740014..cb8d2b4 100644
+index f2c04cd..82b3edc 100644
 --- a/gtl/guid.h
 +++ b/gtl/guid.h
 @@ -9,9 +9,7 @@
@@ -76,9 +75,8 @@ index 0740014..cb8d2b4 100644
  // case insensitive. (Use IsValidGUIDOutputString for checking if the
  // given string is valid output string)
  bool IsValidGUID(absl::string_view guid);
--bool IsValidGUID(absl::string_view16 guid);
 +#ifdef ABSL_USES_STD_STRING_VIEW
-+bool IsValidGUID(std::string_view<wchar> guid);
+ bool IsValidGUID(std::string_view<char16_t> guid);
 +#endif  // ABSL_USES_STD_STRING_VIEW
  
  // Returns true if the input string is valid version 4 GUID output string.

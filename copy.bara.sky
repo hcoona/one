@@ -231,6 +231,16 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
+            before = "char16",
+            after = "char16_t",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "base::StringPiece16",
+            after = "std::string_view<char16_t>",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
             before = "base::StringPiece",
             after = "absl::string_view",
             paths = glob(["**/*.h", "**/*.cc"]),
