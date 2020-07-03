@@ -20,11 +20,12 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "gtl/env.h"
+#include "absl/status/status.h"
+#include "gtl/file_statistics.h"
 #include "gtl/file_system.h"
 #include "gtl/file_system_helper.h"
 
-
+namespace gtl {
 
 // START_SKIP_DOXYGEN
 
@@ -32,73 +33,73 @@ limitations under the License.
 // Degenerate file system that provides no implementations.
 class NullFileSystem : public FileSystem {
  public:
-  NullFileSystem() {}
+  NullFileSystem() = default;
 
   ~NullFileSystem() override = default;
 
-  Status NewRandomAccessFile(
-      const string& fname, std::unique_ptr<RandomAccessFile>* result) override {
-    return errors::Unimplemented("NewRandomAccessFile unimplemented");
+  absl::Status NewRandomAccessFile(
+      const std::string& fname, std::unique_ptr<RandomAccessFile>* result) override {
+    return absl::UnimplementedError("NewRandomAccessFile unimplemented");
   }
 
-  Status NewWritableFile(const string& fname,
+  absl::Status NewWritableFile(const std::string& fname,
                          std::unique_ptr<WritableFile>* result) override {
-    return errors::Unimplemented("NewWritableFile unimplemented");
+    return absl::UnimplementedError("NewWritableFile unimplemented");
   }
 
-  Status NewAppendableFile(const string& fname,
+  absl::Status NewAppendableFile(const std::string& fname,
                            std::unique_ptr<WritableFile>* result) override {
-    return errors::Unimplemented("NewAppendableFile unimplemented");
+    return absl::UnimplementedError("NewAppendableFile unimplemented");
   }
 
-  Status NewReadOnlyMemoryRegionFromFile(
-      const string& fname,
+  absl::Status NewReadOnlyMemoryRegionFromFile(
+      const std::string& fname,
       std::unique_ptr<ReadOnlyMemoryRegion>* result) override {
-    return errors::Unimplemented(
+    return absl::UnimplementedError(
         "NewReadOnlyMemoryRegionFromFile unimplemented");
   }
 
-  Status FileExists(const string& fname) override {
-    return errors::Unimplemented("FileExists unimplemented");
+  absl::Status FileExists(const std::string& fname) override {
+    return absl::UnimplementedError("FileExists unimplemented");
   }
 
-  Status GetChildren(const string& dir, std::vector<string>* result) override {
-    return errors::Unimplemented("GetChildren unimplemented");
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
+    return absl::UnimplementedError("GetChildren unimplemented");
   }
 
-  Status GetMatchingPaths(const string& pattern,
-                          std::vector<string>* results) override {
-    return internal::GetMatchingPaths(this, Env::Default(), pattern, results);
+  absl::Status GetMatchingPaths(const std::string& pattern,
+                          std::vector<std::string>* results) override {
+    return internal::GetMatchingPaths(this, pattern, results);
   }
 
-  Status DeleteFile(const string& fname) override {
-    return errors::Unimplemented("DeleteFile unimplemented");
+  absl::Status DeleteFile(const std::string& fname) override {
+    return absl::UnimplementedError("DeleteFile unimplemented");
   }
 
-  Status CreateDir(const string& dirname) override {
-    return errors::Unimplemented("CreateDir unimplemented");
+  absl::Status CreateDir(const std::string& dirname) override {
+    return absl::UnimplementedError("CreateDir unimplemented");
   }
 
-  Status DeleteDir(const string& dirname) override {
-    return errors::Unimplemented("DeleteDir unimplemented");
+  absl::Status DeleteDir(const std::string& dirname) override {
+    return absl::UnimplementedError("DeleteDir unimplemented");
   }
 
-  Status GetFileSize(const string& fname, uint64* file_size) override {
-    return errors::Unimplemented("GetFileSize unimplemented");
+  absl::Status GetFileSize(const std::string& fname, uint64_t* file_size) override {
+    return absl::UnimplementedError("GetFileSize unimplemented");
   }
 
-  Status RenameFile(const string& src, const string& target) override {
-    return errors::Unimplemented("RenameFile unimplemented");
+  absl::Status RenameFile(const std::string& src, const std::string& target) override {
+    return absl::UnimplementedError("RenameFile unimplemented");
   }
 
-  Status Stat(const string& fname, FileStatistics* stat) override {
-    return errors::Unimplemented("Stat unimplemented");
+  absl::Status Stat(const std::string& fname, FileStatistics* stat) override {
+    return absl::UnimplementedError("Stat unimplemented");
   }
 };
 #endif
 
 // END_SKIP_DOXYGEN
 
-
+}  // namespace gtl
 
 #endif  // GTL_NULL_FILE_SYSTEM_H_

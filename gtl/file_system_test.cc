@@ -17,151 +17,155 @@ limitations under the License.
 
 #include <sys/stat.h>
 
-#include "tensorflow/core/lib/core/status_test_util.h"
+#include "absl/status/status.h"
+#include "absl/strings/match.h"
+#include "absl/strings/str_join.h"
+#include "absl/strings/str_split.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 #include "gtl/null_file_system.h"
 #include "gtl/path.h"
-#include "gtl/str_util.h"
-#include "gtl/strcat.h"
-#include "gtest/gtest.h"
 
-
+// Macros for testing the results of functions that return tensorflow::Status.
+#define TF_EXPECT_OK(statement) \
+  EXPECT_TRUE((statement).ok())
 
 static const char* const kPrefix = "ipfs://solarsystem";
 
 // A file system that has Planets, Satellites and Sub Satellites. Sub satellites
 // cannot have children further.
-class InterPlanetaryFileSystem : public NullFileSystem {
+class InterPlanetaryFileSystem : public gtl::NullFileSystem {
  public:
-  Status FileExists(const string& fname) override {
-    string parsed_path;
+  absl::Status FileExists(const std::string& fname) override {
+    std::string parsed_path;
     ParsePath(fname, &parsed_path);
     if (BodyExists(parsed_path)) {
-      return Status::OK();
+      return absl::OkStatus();
     }
-    return Status(tensorflow::error::NOT_FOUND, "File does not exist");
+    return absl::NotFoundError("File does not exist");
   }
 
   // Adds the dir to the parent's children list and creates an entry for itself.
-  Status CreateDir(const string& dirname) override {
-    string parsed_path;
+  absl::Status CreateDir(const std::string& dirname) override {
+    std::string parsed_path;
     ParsePath(dirname, &parsed_path);
     // If the directory already exists, throw an error.
     if (celestial_bodies_.find(parsed_path) != celestial_bodies_.end()) {
-      return Status(tensorflow::error::ALREADY_EXISTS,
-                    "dirname already exists.");
+      return absl::AlreadyExistsError("dirname already exists.");
     }
-    std::vector<string> split_path = str_util::Split(parsed_path, '/');
+    std::vector<std::string> split_path = absl::StrSplit(parsed_path, '/');
     // If the path is too long then we don't support it.
     if (split_path.size() > 3) {
-      return Status(tensorflow::error::INVALID_ARGUMENT, "Bad dirname");
+      return absl::InvalidArgumentError("Bad dirname");
     }
     if (split_path.empty()) {
-      return Status::OK();
+      return absl::OkStatus();
     }
     if (split_path.size() == 1) {
       celestial_bodies_[""].insert(parsed_path);
       celestial_bodies_.insert(
-          std::pair<string, std::set<string>>(parsed_path, {}));
-      return Status::OK();
+          std::pair<std::string, std::set<std::string>>(parsed_path, {}));
+      return absl::OkStatus();
     }
     if (split_path.size() == 2) {
       if (!BodyExists(split_path[0])) {
-        return Status(tensorflow::error::FAILED_PRECONDITION,
-                      "Base dir not created");
+        return absl::FailedPreconditionError("Base dir not created");
       }
       celestial_bodies_[split_path[0]].insert(split_path[1]);
       celestial_bodies_.insert(
-          std::pair<string, std::set<string>>(parsed_path, {}));
-      return Status::OK();
+          std::pair<std::string, std::set<std::string>>(parsed_path, {}));
+      return absl::OkStatus();
     }
     if (split_path.size() == 3) {
-      const string& parent_path = this->JoinPath(split_path[0], split_path[1]);
+      const std::string& parent_path = this->JoinPath(split_path[0], split_path[1]);
       if (!BodyExists(parent_path)) {
-        return Status(tensorflow::error::FAILED_PRECONDITION,
-                      "Base dir not created");
+        return absl::FailedPreconditionError("Base dir not created");
       }
       celestial_bodies_[parent_path].insert(split_path[2]);
       celestial_bodies_.insert(
-          std::pair<string, std::set<string>>(parsed_path, {}));
-      return Status::OK();
+          std::pair<std::string, std::set<std::string>>(parsed_path, {}));
+      return absl::OkStatus();
     }
-    return Status(tensorflow::error::FAILED_PRECONDITION, "Failed to create");
+    return absl::FailedPreconditionError("Failed to create");
   }
 
-  Status IsDirectory(const string& dirname) override {
-    string parsed_path;
+  absl::Status IsDirectory(const std::string& dirname) override {
+    std::string parsed_path;
     ParsePath(dirname, &parsed_path);
     // Simulate evil_directory has bad permissions by throwing a LOG(FATAL)
     if (parsed_path == "evil_directory") {
       LOG(FATAL) << "evil_directory cannot be accessed";
     }
-    std::vector<string> split_path = str_util::Split(parsed_path, '/');
+    std::vector<std::string> split_path = absl::StrSplit(parsed_path, '/');
     if (split_path.size() > 2) {
-      return Status(tensorflow::error::FAILED_PRECONDITION, "Not a dir");
+      return absl::FailedPreconditionError("Not a dir");
     }
     if (celestial_bodies_.find(parsed_path) != celestial_bodies_.end()) {
-      return Status::OK();
+      return absl::OkStatus();
     }
-    return Status(tensorflow::error::FAILED_PRECONDITION, "Not a dir");
+    return absl::FailedPreconditionError("Not a dir");
   }
 
-  Status GetChildren(const string& dir, std::vector<string>* result) override {
-    TF_RETURN_IF_ERROR(IsDirectory(dir));
-    string parsed_path;
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
+    absl::Status s = IsDirectory(dir);
+    if (!s.ok()) {
+      return s;
+    }
+    std::string parsed_path;
     ParsePath(dir, &parsed_path);
     result->insert(result->begin(), celestial_bodies_[parsed_path].begin(),
                    celestial_bodies_[parsed_path].end());
-    return Status::OK();
+    return absl::OkStatus();
   }
 
  private:
-  bool BodyExists(const string& name) {
+  bool BodyExists(const std::string& name) {
     return celestial_bodies_.find(name) != celestial_bodies_.end();
   }
 
-  void ParsePath(const string& name, string* parsed_path) {
+  void ParsePath(const std::string& name, std::string* parsed_path) {
     absl::string_view scheme, host, path;
     this->ParseURI(name, &scheme, &host, &path);
     ASSERT_EQ(scheme, "ipfs");
     ASSERT_EQ(host, "solarsystem");
     absl::ConsumePrefix(&path, "/");
-    *parsed_path = string(path);
+    *parsed_path = std::string(path);
   }
 
-  std::map<string, std::set<string>> celestial_bodies_ = {
-      std::pair<string, std::set<string>>(
+  std::map<std::string, std::set<std::string>> celestial_bodies_ = {
+      std::pair<std::string, std::set<std::string>>(
           "", {"Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn",
                "Uranus", "Neptune"}),
-      std::pair<string, std::set<string>>("Mercury", {}),
-      std::pair<string, std::set<string>>("Venus", {}),
-      std::pair<string, std::set<string>>("Earth", {"Moon"}),
-      std::pair<string, std::set<string>>("Mars", {}),
-      std::pair<string, std::set<string>>("Jupiter",
+      std::pair<std::string, std::set<std::string>>("Mercury", {}),
+      std::pair<std::string, std::set<std::string>>("Venus", {}),
+      std::pair<std::string, std::set<std::string>>("Earth", {"Moon"}),
+      std::pair<std::string, std::set<std::string>>("Mars", {}),
+      std::pair<std::string, std::set<std::string>>("Jupiter",
                                           {"Europa", "Io", "Ganymede"}),
-      std::pair<string, std::set<string>>("Saturn", {}),
-      std::pair<string, std::set<string>>("Uranus", {}),
-      std::pair<string, std::set<string>>("Neptune", {}),
-      std::pair<string, std::set<string>>("Earth/Moon", {}),
-      std::pair<string, std::set<string>>("Jupiter/Europa", {}),
-      std::pair<string, std::set<string>>("Jupiter/Io", {}),
-      std::pair<string, std::set<string>>("Jupiter/Ganymede", {})};
+      std::pair<std::string, std::set<std::string>>("Saturn", {}),
+      std::pair<std::string, std::set<std::string>>("Uranus", {}),
+      std::pair<std::string, std::set<std::string>>("Neptune", {}),
+      std::pair<std::string, std::set<std::string>>("Earth/Moon", {}),
+      std::pair<std::string, std::set<std::string>>("Jupiter/Europa", {}),
+      std::pair<std::string, std::set<std::string>>("Jupiter/Io", {}),
+      std::pair<std::string, std::set<std::string>>("Jupiter/Ganymede", {})};
 };
 
-// Returns all the matched entries as a comma separated string removing the
+// Returns all the matched entries as a comma separated std::string removing the
 // common prefix of BaseDir().
-string Match(InterPlanetaryFileSystem* ipfs, const string& suffix_pattern) {
-  std::vector<string> results;
-  Status s =
+std::string Match(InterPlanetaryFileSystem* ipfs, const std::string& suffix_pattern) {
+  std::vector<std::string> results;
+  absl::Status s =
       ipfs->GetMatchingPaths(ipfs->JoinPath(kPrefix, suffix_pattern), &results);
   if (!s.ok()) {
     return s.ToString();
   } else {
     std::vector<absl::string_view> trimmed_results;
     std::sort(results.begin(), results.end());
-    for (const string& result : results) {
+    for (const std::string& result : results) {
       absl::string_view trimmed_result(result);
       EXPECT_TRUE(
-          absl::ConsumePrefix(&trimmed_result, strings::StrCat(kPrefix, "/")));
+          absl::ConsumePrefix(&trimmed_result, absl::StrCat(kPrefix, "/")));
       trimmed_results.push_back(trimmed_result);
     }
     return absl::StrJoin(trimmed_results, ",");
@@ -253,7 +257,7 @@ TEST(InterPlanetaryFileSystemTest, MatchMultipleWildcards) {
 
 TEST(InterPlanetaryFileSystemTest, RecursivelyCreateAlreadyExistingDir) {
   InterPlanetaryFileSystem ipfs;
-  const string dirname = ipfs.JoinPath(kPrefix, "match-00/abc/00");
+  const std::string dirname = ipfs.JoinPath(kPrefix, "match-00/abc/00");
   TF_EXPECT_OK(ipfs.RecursivelyCreateDir(dirname));
   // We no longer check for recursively creating the directory again because
   // `ipfs.IsDirectory` is badly implemented, fixing it will break other tests
@@ -263,36 +267,36 @@ TEST(InterPlanetaryFileSystemTest, RecursivelyCreateAlreadyExistingDir) {
 
 TEST(InterPlanetaryFileSystemTest, HasAtomicMove) {
   InterPlanetaryFileSystem ipfs;
-  const string dirname = io::JoinPath(kPrefix, "match-00/abc/00");
+  const std::string dirname = gtl::JoinPath(kPrefix, "match-00/abc/00");
   bool has_atomic_move;
   TF_EXPECT_OK(ipfs.HasAtomicMove(dirname, &has_atomic_move));
   EXPECT_EQ(has_atomic_move, true);
 }
 
 // A simple file system with a root directory and a single file underneath it.
-class TestFileSystem : public NullFileSystem {
+class TestFileSystem : public gtl::NullFileSystem {
  public:
   // Only allow for a single root directory.
-  Status IsDirectory(const string& dirname) override {
+  absl::Status IsDirectory(const std::string& dirname) override {
     if (dirname == "." || dirname.empty()) {
-      return Status::OK();
+      return absl::OkStatus();
     }
-    return Status(tensorflow::error::FAILED_PRECONDITION, "Not a dir");
+    return absl::FailedPreconditionError("Not a dir");
   }
 
   // Simulating a FS with a root dir and a single file underneath it.
-  Status GetChildren(const string& dir, std::vector<string>* result) override {
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
     if (dir == "." || dir.empty()) {
       result->push_back("test");
     }
-    return Status::OK();
+    return absl::OkStatus();
   }
 };
 
 // Making sure that ./<pattern> and <pattern> have the same result.
 TEST(TestFileSystemTest, RootDirectory) {
   TestFileSystem fs;
-  std::vector<string> results;
+  std::vector<std::string> results;
   auto ret = fs.GetMatchingPaths("./te*", &results);
   EXPECT_EQ(1, results.size());
   EXPECT_EQ("./test", results[0]);

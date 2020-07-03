@@ -19,43 +19,44 @@ limitations under the License.
 
 #include <algorithm>
 #include <deque>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_replace.h"
+#include "glog/logging.h"
+#include "config/config.h"
+#include "gtl/path.h"
+#include "gtl/scanner.h"
+
+#if defined(OS_POSIX)
 #include <fnmatch.h>
 #else
-#include "gtl/regexp.h"
-#endif  // defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
+#include "re2/re2.h"
+#endif  // defined(OS_POSIX)
 
-#include "gtl/env.h"
-#include "gtl/errors.h"
-#include "gtl/platform.h"
-#include "gtl/scanner.h"
-#include "gtl/str_util.h"
-#include "gtl/strcat.h"
+namespace gtl {
 
-
-
-bool FileSystem::Match(const string& filename, const string& pattern) {
-#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
+bool FileSystem::Match(const std::string& filename, const std::string& pattern) {
+#if defined(OS_POSIX)
   // We avoid relying on RE2 on mobile platforms, because it incurs a
   // significant binary size increase.
   // For POSIX platforms, there is no need to depend on RE2 if `fnmatch` can be
   // used safely.
   return fnmatch(pattern.c_str(), filename.c_str(), FNM_PATHNAME) == 0;
 #else
-  string regexp(pattern);
-  regexp = str_util::StringReplace(regexp, "*", "[^/]*", true);
-  regexp = str_util::StringReplace(regexp, "?", ".", true);
-  regexp = str_util::StringReplace(regexp, "(", "\\(", true);
-  regexp = str_util::StringReplace(regexp, ")", "\\)", true);
+  std::string regexp(pattern);
+  regexp = absl::StrReplaceAll(regexp, "*", "[^/]*");
+  regexp = absl::StrReplaceAll(regexp, "?", ".");
+  regexp = absl::StrReplaceAll(regexp, "(", "\\(");
+  regexp = absl::StrReplaceAll(regexp, ")", "\\)");
   return RE2::FullMatch(filename, regexp);
-#endif  // defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
+#endif
 }
 
-string FileSystem::TranslateName(const string& name) const {
+std::string FileSystem::TranslateName(const std::string& name) const {
   // If the name is empty, CleanPath returns "." which is incorrect and
   // we should return the empty path instead.
   if (name.empty()) return name;
@@ -70,29 +71,37 @@ string FileSystem::TranslateName(const string& name) const {
   return this->CleanPath(path);
 }
 
-Status FileSystem::IsDirectory(const string& name) {
+absl::Status FileSystem::IsDirectory(const std::string& name) {
   // Check if path exists.
-  TF_RETURN_IF_ERROR(FileExists(name));
-  FileStatistics stat;
-  TF_RETURN_IF_ERROR(Stat(name, &stat));
-  if (stat.is_directory) {
-    return Status::OK();
+  absl::Status s = FileExists(name);
+  if (!s.ok()) {
+    return s;
   }
-  return Status(tensorflow::error::FAILED_PRECONDITION, "Not a directory");
+
+  FileStatistics stat;
+  s = Stat(name, &stat);
+  if (!s.ok()) {
+    return s;
+  }
+
+  if (stat.is_directory) {
+    return absl::OkStatus();
+  }
+  return absl::FailedPreconditionError("Not a directory");
 }
 
-Status FileSystem::HasAtomicMove(const string& path, bool* has_atomic_move) {
+absl::Status FileSystem::HasAtomicMove(const std::string& path, bool* has_atomic_move) {
   *has_atomic_move = true;
-  return Status::OK();
+  return absl::OkStatus();
 }
 
 void FileSystem::FlushCaches() {}
 
-bool FileSystem::FilesExist(const std::vector<string>& files,
-                            std::vector<Status>* status) {
+bool FileSystem::FilesExist(const std::vector<std::string>& files,
+                            std::vector<absl::Status>* status) {
   bool result = true;
   for (const auto& file : files) {
-    Status s = FileExists(file);
+    absl::Status s = FileExists(file);
     result &= s.ok();
     if (status != nullptr) {
       status->push_back(s);
@@ -104,16 +113,16 @@ bool FileSystem::FilesExist(const std::vector<string>& files,
   return result;
 }
 
-Status FileSystem::DeleteRecursively(const string& dirname,
-                                     int64* undeleted_files,
-                                     int64* undeleted_dirs) {
+absl::Status FileSystem::DeleteRecursively(const std::string& dirname,
+                                           int64_t* undeleted_files,
+                                           int64_t* undeleted_dirs) {
   CHECK_NOTNULL(undeleted_files);
   CHECK_NOTNULL(undeleted_dirs);
 
   *undeleted_files = 0;
   *undeleted_dirs = 0;
   // Make sure that dirname exists;
-  Status exists_status = FileExists(dirname);
+  absl::Status exists_status = FileExists(dirname);
   if (!exists_status.ok()) {
     (*undeleted_dirs)++;
     return exists_status;
@@ -121,39 +130,39 @@ Status FileSystem::DeleteRecursively(const string& dirname,
 
   // If given path to a single file, we should just delete it.
   if (!IsDirectory(dirname).ok()) {
-    Status delete_root_status = DeleteFile(dirname);
+    absl::Status delete_root_status = DeleteFile(dirname);
     if (!delete_root_status.ok()) (*undeleted_files)++;
     return delete_root_status;
   }
 
-  std::deque<string> dir_q;      // Queue for the BFS
-  std::vector<string> dir_list;  // List of all dirs discovered
+  std::deque<std::string> dir_q;      // Queue for the BFS
+  std::vector<std::string> dir_list;  // List of all dirs discovered
   dir_q.push_back(dirname);
-  Status ret;  // Status to be returned.
+  absl::Status ret;  // absl::Status to be returned.
   // Do a BFS on the directory to discover all the sub-directories. Remove all
   // children that are files along the way. Then cleanup and remove the
   // directories in reverse order.;
   while (!dir_q.empty()) {
-    string dir = dir_q.front();
+    std::string dir = dir_q.front();
     dir_q.pop_front();
     dir_list.push_back(dir);
-    std::vector<string> children;
+    std::vector<std::string> children;
     // GetChildren might fail if we don't have appropriate permissions.
-    Status s = GetChildren(dir, &children);
+    absl::Status s = GetChildren(dir, &children);
     ret.Update(s);
     if (!s.ok()) {
       (*undeleted_dirs)++;
       continue;
     }
-    for (const string& child : children) {
-      const string child_path = this->JoinPath(dir, child);
+    for (const std::string& child : children) {
+      const std::string child_path = this->JoinPath(dir, child);
       // If the child is a directory add it to the queue, otherwise delete it.
       if (IsDirectory(child_path).ok()) {
         dir_q.push_back(child_path);
       } else {
         // Delete file might fail because of permissions issues or might be
         // unimplemented.
-        Status del_status = DeleteFile(child_path);
+        absl::Status del_status = DeleteFile(child_path);
         ret.Update(del_status);
         if (!del_status.ok()) {
           (*undeleted_files)++;
@@ -164,10 +173,10 @@ Status FileSystem::DeleteRecursively(const string& dirname,
   // Now reverse the list of directories and delete them. The BFS ensures that
   // we can delete the directories in this order.
   std::reverse(dir_list.begin(), dir_list.end());
-  for (const string& dir : dir_list) {
+  for (const std::string& dir : dir_list) {
     // Delete dir might fail because of permissions issues or might be
     // unimplemented.
-    Status s = DeleteDir(dir);
+    absl::Status s = DeleteDir(dir);
     ret.Update(s);
     if (!s.ok()) {
       (*undeleted_dirs)++;
@@ -176,31 +185,31 @@ Status FileSystem::DeleteRecursively(const string& dirname,
   return ret;
 }
 
-Status FileSystem::RecursivelyCreateDir(const string& dirname) {
+absl::Status FileSystem::RecursivelyCreateDir(const std::string& dirname) {
   absl::string_view scheme, host, remaining_dir;
   this->ParseURI(dirname, &scheme, &host, &remaining_dir);
   std::vector<absl::string_view> sub_dirs;
   while (!remaining_dir.empty()) {
     std::string current_entry = this->CreateURI(scheme, host, remaining_dir);
-    Status exists_status = FileExists(current_entry);
+    absl::Status exists_status = FileExists(current_entry);
     if (exists_status.ok()) {
       // FileExists cannot differentiate between existence of a file or a
       // directory, hence we need an additional test as we must not assume that
       // a path to a file is a path to a parent directory.
-      Status directory_status = IsDirectory(current_entry);
+      absl::Status directory_status = IsDirectory(current_entry);
       if (directory_status.ok()) {
         break;  // We need to start creating directories from here.
-      } else if (directory_status.code() == tensorflow::error::UNIMPLEMENTED) {
+      } else if (absl::IsUnimplemented(directory_status)) {
         return directory_status;
       } else {
-        return errors::FailedPrecondition(remaining_dir, " is not a directory");
+        return absl::FailedPreconditionError(absl::StrCat(remaining_dir, " is not a directory"));
       }
     }
-    if (exists_status.code() != error::Code::NOT_FOUND) {
+    if (!absl::IsNotFound(exists_status)) {
       return exists_status;
     }
     // Basename returns "" for / ending dirs.
-    if (!str_util::EndsWith(remaining_dir, "/")) {
+    if (!absl::EndsWith(remaining_dir, "/")) {
       sub_dirs.push_back(this->Basename(remaining_dir));
     }
     remaining_dir = this->Dirname(remaining_dir);
@@ -210,45 +219,45 @@ Status FileSystem::RecursivelyCreateDir(const string& dirname) {
   std::reverse(sub_dirs.begin(), sub_dirs.end());
 
   // Now create the directories.
-  string built_path(remaining_dir);
+  std::string built_path(remaining_dir);
   for (const absl::string_view sub_dir : sub_dirs) {
     built_path = this->JoinPath(built_path, sub_dir);
-    Status status = CreateDir(this->CreateURI(scheme, host, built_path));
-    if (!status.ok() && status.code() != tensorflow::error::ALREADY_EXISTS) {
+    absl::Status status = CreateDir(this->CreateURI(scheme, host, built_path));
+    if (!status.ok() && !absl::IsAlreadyExists(status)) {
       return status;
     }
   }
-  return Status::OK();
+  return absl::OkStatus();
 }
 
-Status FileSystem::CopyFile(const string& src, const string& target) {
+absl::Status FileSystem::CopyFile(const std::string& src, const std::string& target) {
   return FileSystemCopyFile(this, src, this, target);
 }
 
 char FileSystem::Separator() const { return '/'; }
 
-string FileSystem::JoinPathImpl(std::initializer_list<absl::string_view> paths) {
-  string result;
+std::string FileSystem::JoinPathImpl(std::initializer_list<absl::string_view> paths) {
+  std::string result;
 
   for (absl::string_view path : paths) {
     if (path.empty()) continue;
 
     if (result.empty()) {
-      result = string(path);
+      result = std::string(path);
       continue;
     }
 
     if (result[result.size() - 1] == '/') {
       if (this->IsAbsolutePath(path)) {
-        strings::StrAppend(&result, path.substr(1));
+        absl::StrAppend(&result, path.substr(1));
       } else {
-        strings::StrAppend(&result, path);
+        absl::StrAppend(&result, path);
       }
     } else {
       if (this->IsAbsolutePath(path)) {
-        strings::StrAppend(&result, path);
+        absl::StrAppend(&result, path);
       } else {
-        strings::StrAppend(&result, "/", path);
+        absl::StrAppend(&result, "/", path);
       }
     }
   }
@@ -267,11 +276,11 @@ std::pair<absl::string_view, absl::string_view> FileSystem::SplitPath(
   // also check for '/'
 #ifdef OS_WIN
   size_t pos2 = path.rfind('/');
-  // Pick the max value that is not string::npos.
-  if (pos == string::npos) {
+  // Pick the max value that is not std::string::npos.
+  if (pos == std::string::npos) {
     pos = pos2;
   } else {
-    if (pos2 != string::npos) {
+    if (pos2 != std::string::npos) {
       pos = pos > pos2 ? pos : pos2;
     }
   }
@@ -316,10 +325,10 @@ absl::string_view FileSystem::Extension(absl::string_view path) const {
   }
 }
 
-string FileSystem::CleanPath(absl::string_view unclean_path) const {
-  string path(unclean_path);
+std::string FileSystem::CleanPath(absl::string_view unclean_path) const {
+  std::string path(unclean_path);
   const char* src = path.c_str();
-  string::iterator dst = path.begin();
+  std::string::iterator dst = path.begin();
 
   // Check for absolute path and determine initial backtrack limit.
   const bool is_absolute_path = *src == '/';
@@ -327,7 +336,7 @@ string FileSystem::CleanPath(absl::string_view unclean_path) const {
     *dst++ = *src++;
     while (*src == '/') ++src;
   }
-  string::const_iterator backtrack_limit = dst;
+  std::string::const_iterator backtrack_limit = dst;
 
   // Process all parts
   while (*src) {
@@ -383,7 +392,7 @@ string FileSystem::CleanPath(absl::string_view unclean_path) const {
   }
 
   // Calculate and check the length of the cleaned path.
-  string::difference_type path_length = dst - path.begin();
+  std::string::difference_type path_length = dst - path.begin();
   if (path_length != 0) {
     // Remove trailing '/' except if it is root path ("/" ==> path_length := 1)
     if (path_length > 1 && path[path_length - 1] == '/') {
@@ -403,13 +412,13 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
   // Make sure scheme matches [a-zA-Z][0-9a-zA-Z.]*
   // TODO(keveman): Allow "+" and "-" in the scheme.
   // Keep URI pattern in tensorboard/backend/server.py updated accordingly
-  if (!strings::Scanner(remaining)
-           .One(strings::Scanner::LETTER)
-           .Many(strings::Scanner::LETTER_DIGIT_DOT)
+  if (!gtl::Scanner(remaining)
+           .One(gtl::Scanner::LETTER)
+           .Many(gtl::Scanner::LETTER_DIGIT_DOT)
            .StopCapture()
            .OneLiteral("://")
            .GetResult(&remaining, scheme)) {
-    // If there's no scheme, assume the entire string is a path.
+    // If there's no scheme, assume the entire std::string is a path.
     *scheme = absl::string_view(remaining.begin(), 0);
     *host = absl::string_view(remaining.begin(), 0);
     *path = remaining;
@@ -417,7 +426,7 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
   }
 
   // 1. Parse host
-  if (!strings::Scanner(remaining).ScanUntil('/').GetResult(&remaining, host)) {
+  if (!gtl::Scanner(remaining).ScanUntil('/').GetResult(&remaining, host)) {
     // No path, so the rest of the URI is the host.
     *host = remaining;
     *path = absl::string_view(remaining.end(), 0);
@@ -428,12 +437,58 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
   *path = remaining;
 }
 
-string FileSystem::CreateURI(absl::string_view scheme, absl::string_view host,
+std::string FileSystem::CreateURI(absl::string_view scheme, absl::string_view host,
                              absl::string_view path) const {
   if (scheme.empty()) {
-    return string(path);
+    return std::string(path);
   }
-  return strings::StrCat(scheme, "://", host, path);
+  return absl::StrCat(scheme, "://", host, path);
 }
 
+// Copied from
+// https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/platform/env.
 
+// 128KB copy buffer
+constexpr size_t kCopyFileBufferSize = 128 * 1024;
+
+absl::Status FileSystemCopyFile(FileSystem* src_fs, const std::string& src,
+                                FileSystem* target_fs, const std::string& target) {
+  std::unique_ptr<RandomAccessFile> src_file;
+  absl::Status s = src_fs->NewRandomAccessFile(src, &src_file);
+  if (!s.ok()) {
+    return s;
+  }
+
+  // When `target` points to a directory, we need to create a file within.
+  std::string target_name;
+  if (target_fs->IsDirectory(target).ok()) {
+    target_name = JoinPath(target, Basename(src));
+  } else {
+    target_name = target;
+  }
+
+  std::unique_ptr<WritableFile> target_file;
+  s = target_fs->NewWritableFile(target_name, &target_file);
+  if (!s.ok()) {
+    return s;
+  }
+
+  uint64_t offset = 0;
+  std::unique_ptr<char[]> scratch(new char[kCopyFileBufferSize]);
+  s = absl::OkStatus();
+  while (s.ok()) {
+    absl::string_view result;
+    s = src_file->Read(offset, kCopyFileBufferSize, &result, scratch.get());
+    if (!(s.ok() || absl::IsOutOfRange(s))) {
+      return s;
+    }
+    s = target_file->Append(result);
+    if (!s.ok()) {
+      return s;
+    }
+    offset += result.size();
+  }
+  return target_file->Close();
+}
+
+}  // namespace gtl

@@ -9,22 +9,41 @@ cc_library(
     ],
 )
 
-# cc_library(
-#     name = "file_system",
-#     srcs = ["file_system.cc"],
-#     hdrs = [
-#         "file_statistics.h",
-#         "file_system.h",
-#     ],
-#     deps = [
-#         ":scanner",
-#         "//config",
-#         "@com_github_google_glog//:glog",
-#         "@com_google_absl//absl/status",
-#         "@com_google_absl//absl/strings",
-#         "@com_googlesource_code_re2//:re2",
-#     ],
-# )
+cc_library(
+    name = "file_system",
+    srcs = [
+        "file_system.cc",
+        "file_system_helper.cc",
+    ],
+    hdrs = [
+        "file_statistics.h",
+        "file_system.h",
+        "file_system_helper.h",
+        "null_file_system.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":path",
+        ":scanner",
+        "//config",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_googlesource_code_re2//:re2",
+    ],
+)
+
+cc_test(
+    name = "file_system_test",
+    srcs = ["file_system_test.cc"],
+    deps = [
+        ":file_system",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
 
 cc_library(
     name = "iterator_range",
