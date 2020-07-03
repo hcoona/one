@@ -191,6 +191,9 @@ core.workflow(
             "base/bits.h",
             "base/bits_unittest.cc",
             "base/compiler_specific.h",
+            "base/guid.h",
+            "base/guid.cc",
+            "base/guid_unittest.cc",
         ],
     ),
     destination_files = glob(
@@ -200,6 +203,9 @@ core.workflow(
             "gtl/bits.h",
             "gtl/bits_unittest.cc",
             "gtl/compiler_specific.h",
+            "gtl/guid.h",
+            "gtl/guid.cc",
+            "gtl/guid_unittest.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -209,6 +215,26 @@ core.workflow(
     mode = "SQUASH",
     transformations = [
         core.move("base", "gtl"),
+        core.replace(
+            before = "#include \"base/base_export.h\"",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "BASE_EXPORT ",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"base/strings/string_piece.h\"",
+            after = "#include \"absl/strings/string_view.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "base::StringPiece",
+            after = "absl::string_view",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
         core.replace(
             before = "#include \"build/build_config.h\"",
             after = "#include \"config/config.h\"",
@@ -245,5 +271,8 @@ core.workflow(
             after = " GTL_",
             paths = glob(["**/*.h"]),
         ),
+        patch.apply(patches = [
+            "gtl/patches/chromium/guid.patch",
+        ]),
     ],
 )

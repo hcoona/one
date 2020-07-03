@@ -73,7 +73,7 @@ cc_library(
         "null_file_system.h",
     ],
     copts = ONE_DEFAULT_COPTS + [
-        "-Wno-unused-parameter"
+        "-Wno-unused-parameter",
     ],
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
@@ -113,6 +113,33 @@ cc_test(
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "guid",
+    srcs = ["guid.cc"],
+    hdrs = ["guid.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+cc_test(
+    name = "guid_test",
+    srcs = [
+        "guid_unittest.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":guid",
         "@com_google_googletest//:gtest_main",
     ],
 )

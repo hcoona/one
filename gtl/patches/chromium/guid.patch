@@ -1,0 +1,110 @@
+diff --git a/gtl/guid.cc b/gtl/guid.cc
+index 27c4af2..ad5cb28 100644
+--- a/gtl/guid.cc
++++ b/gtl/guid.cc
+@@ -7,9 +7,9 @@
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+-#include "gtl/rand_util.h"
+-#include "gtl/strings/string_util.h"
+-#include "gtl/strings/stringprintf.h"
++#include "absl/strings/ascii.h"
++#include "absl/strings/str_format.h"
++#include "absl/random/random.h"
+ 
+ namespace gtl {
+ 
+@@ -34,7 +34,7 @@ bool IsValidGUIDInternal(StringPieceType guid, bool strict) {
+       if (current != '-')
+         return false;
+     } else {
+-      if (strict ? !IsLowerHexDigit(current) : !IsHexDigit(current))
++      if (strict ? !IsLowerHexDigit(current) : !absl::ascii_isxdigit(current))
+         return false;
+     }
+   }
+@@ -46,9 +46,9 @@ bool IsValidGUIDInternal(StringPieceType guid, bool strict) {
+ 
+ std::string GenerateGUID() {
+   uint64_t sixteen_bytes[2];
+-  // Use base::RandBytes instead of crypto::RandBytes, because crypto calls the
+-  // base version directly, and to prevent the dependency from base/ to crypto/.
+-  base::RandBytes(&sixteen_bytes, sizeof(sixteen_bytes));
++  absl::BitGen bitgen;
++  sixteen_bytes[0] = bitgen.operator()();
++  sixteen_bytes[1] = bitgen.operator()();
+ 
+   // Set the GUID to version 4 as described in RFC 4122, section 4.4.
+   // The format of GUID version 4 must be xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx,
+@@ -70,16 +70,18 @@ bool IsValidGUID(absl::string_view guid) {
+   return IsValidGUIDInternal(guid, false /* strict */);
+ }
+ 
+-bool IsValidGUID(absl::string_view16 guid) {
++#ifdef ABSL_USES_STD_STRING_VIEW
++bool IsValidGUID(std::string_view<wchar> guid) {
+   return IsValidGUIDInternal(guid, false /* strict */);
+ }
++#endif  // ABSL_USES_STD_STRING_VIEW
+ 
+ bool IsValidGUIDOutputString(absl::string_view guid) {
+   return IsValidGUIDInternal(guid, true /* strict */);
+ }
+ 
+ std::string RandomDataToGUIDString(const uint64_t bytes[2]) {
+-  return StringPrintf("%08x-%04x-%04x-%04x-%012llx",
++  return absl::StrFormat("%08x-%04x-%04x-%04x-%012llx",
+                       static_cast<unsigned int>(bytes[0] >> 32),
+                       static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
+                       static_cast<unsigned int>(bytes[0] & 0x0000ffff),
+diff --git a/gtl/guid.h b/gtl/guid.h
+index 0740014..cb8d2b4 100644
+--- a/gtl/guid.h
++++ b/gtl/guid.h
+@@ -9,9 +9,7 @@
+ 
+ #include <string>
+ 
+-
+ #include "absl/strings/string_view.h"
+-#include "config/config.h"
+ 
+ namespace gtl {
+ 
+@@ -31,7 +29,9 @@ std::string GenerateGUID();
+ // case insensitive. (Use IsValidGUIDOutputString for checking if the
+ // given string is valid output string)
+ bool IsValidGUID(absl::string_view guid);
+-bool IsValidGUID(absl::string_view16 guid);
++#ifdef ABSL_USES_STD_STRING_VIEW
++bool IsValidGUID(std::string_view<wchar> guid);
++#endif  // ABSL_USES_STD_STRING_VIEW
+ 
+ // Returns true if the input string is valid version 4 GUID output string.
+ // This also checks if the hexadecimal values "a" through "f" are in lower
+diff --git a/gtl/guid_unittest.cc b/gtl/guid_unittest.cc
+index c0933fd..bbec398 100644
+--- a/gtl/guid_unittest.cc
++++ b/gtl/guid_unittest.cc
+@@ -8,8 +8,7 @@
+ 
+ #include <limits>
+ 
+-#include "gtl/strings/string_util.h"
+-#include "config/config.h"
++#include "absl/strings/ascii.h"
+ #include "gtest/gtest.h"
+ 
+ namespace gtl {
+@@ -44,8 +43,8 @@ TEST(GUIDTest, GUIDCorrectlyFormatted) {
+     std::string guid = GenerateGUID();
+     EXPECT_TRUE(IsValidGUID(guid));
+     EXPECT_TRUE(IsValidGUIDOutputString(guid));
+-    EXPECT_TRUE(IsValidGUID(ToLowerASCII(guid)));
+-    EXPECT_TRUE(IsValidGUID(ToUpperASCII(guid)));
++    EXPECT_TRUE(IsValidGUID(absl::AsciiStrToLower(guid)));
++    EXPECT_TRUE(IsValidGUID(absl::AsciiStrToUpper(guid)));
+   }
+ }
+ 
