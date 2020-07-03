@@ -7,14 +7,14 @@
 
 #include <utility>
 
-// base::AutoReset<> is useful for setting a variable to a new value only within
-// a particular scope. An base::AutoReset<> object resets a variable to its
+// gtl::AutoReset<> is useful for setting a variable to a new value only within
+// a particular scope. An gtl::AutoReset<> object resets a variable to its
 // original value upon destruction, making it an alternative to writing
 // "var = false;" or "var = old_val;" at all of a block's exit points.
 //
-// This should be obvious, but note that an base::AutoReset<> instance should
+// This should be obvious, but note that an gtl::AutoReset<> instance should
 // have a shorter lifetime than its scoped_variable, to prevent invalid memory
-// writes when the base::AutoReset<> object is destroyed.
+// writes when the gtl::AutoReset<> object is destroyed.
 
 namespace gtl {
 

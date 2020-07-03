@@ -52,7 +52,7 @@
 // To provide the complementary behavior (prevent the annotated function from
 // being omitted) look at NOINLINE. Also note that this doesn't prevent code
 // folding of multiple identical caller functions into a single signature. To
-// prevent code folding, see base::debug::Alias.
+// prevent code folding, see gtl::debug::Alias.
 // Use like:
 //   void NOT_TAIL_CALLED FooBar();
 #if defined(__clang__) && __has_attribute(not_tail_called)

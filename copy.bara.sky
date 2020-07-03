@@ -309,6 +309,11 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
+            before = "base::",
+            after = "gtl::",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
             before = " BASE_CONTAINERS_",
             after = " GTL_CONTAINER_",
             paths = glob(["**/*.h"]),

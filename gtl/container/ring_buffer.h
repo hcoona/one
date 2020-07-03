@@ -11,15 +11,15 @@
 
 namespace gtl {
 
-// base::RingBuffer uses a fixed-size array, unlike base::circular_deque and
+// gtl::RingBuffer uses a fixed-size array, unlike gtl::circular_deque and
 // std::deque, and so, one can access only the last |kSize| elements. Also, you
 // can add elements to the front and read/modify random elements, but cannot
 // remove elements from the back. Therefore, it does not have a |Size| method,
 // only |BufferSize|, which is a constant, and |CurrentIndex|, which is the
 // number of elements added so far.
 //
-// If the above is sufficient for your use case, base::RingBuffer should be more
-// efficient than base::circular_deque.
+// If the above is sufficient for your use case, gtl::RingBuffer should be more
+// efficient than gtl::circular_deque.
 template <typename T, size_t kSize>
 class RingBuffer {
  public:
