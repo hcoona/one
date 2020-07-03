@@ -83,9 +83,7 @@ cc_library(
         "file_system_helper.h",
         "null_file_system.h",
     ],
-    copts = ONE_DEFAULT_COPTS + [
-        "-Wno-unused-parameter",
-    ],
+    copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
@@ -304,7 +302,10 @@ cc_test(
     srcs = [
         "thread_annotations_unittest.cc",
     ],
-    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS + select({
+        "//bazel:llvm_compiler": ["-Werror=thread-safety-analysis"],
+        "//conditions:default": [],
+    }),
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":thread_annotations",
