@@ -124,7 +124,7 @@ class SCOPED_LOCKABLE ScopedValidateSequenceChecker {
   }
 
   explicit ScopedValidateSequenceChecker(const SequenceChecker& checker,
-                                         const StringPiece& msg)
+                                         const absl::string_view& msg)
       EXCLUSIVE_LOCK_FUNCTION(checker) {
     DCHECK(checker.CalledOnValidSequence()) << msg;
   }

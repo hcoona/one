@@ -278,6 +278,11 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
+            before = "StringPiece&",
+            after = "absl::string_view&",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
             before = "#include \"build/build_config.h\"",
             after = "#include \"config/config.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
