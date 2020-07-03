@@ -194,6 +194,8 @@ core.workflow(
             "base/guid.h",
             "base/guid.cc",
             "base/guid_unittest.cc",
+            "base/thread_annotations.h",
+            "base/thread_annotations_unittest.cc",
             "base/containers/ring_buffer.h",
         ],
     ),
@@ -207,6 +209,8 @@ core.workflow(
             "gtl/guid.h",
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
+            "gtl/thread_annotations.h",
+            "gtl/thread_annotations_unittest.cc",
             "gtl/container/ring_buffer.h",
         ],
         exclude = [
@@ -254,6 +258,11 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
+            before = "#include \"base/check_op.h\"",
+            after = "#include \"glog/logging.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
             before = "#include \"base/check.h\"",
             after = "#include \"glog/logging.h\"",
             paths = glob(["**/*.h", "**/*.cc"]),
@@ -267,6 +276,26 @@ core.workflow(
             before = "#include \"base/${filename}.h\"",
             after = "#include \"gtl/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " GUARDED_BY_CONTEXT",
+            after = " GTL_GUARDED_BY_CONTEXT",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " VALID_CONTEXT_REQUIRED",
+            after = " GTL_VALID_CONTEXT_REQUIRED",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " GUARDED_BY",
+            after = " ABSL_GUARDED_BY",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " EXCLUSIVE_LOCKS_REQUIRED",
+            after = " ABSL_EXCLUSIVE_LOCKS_REQUIRED",
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
@@ -291,6 +320,7 @@ core.workflow(
         ),
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
+            "gtl/patches/chromium/thread_annotations.patch",
         ]),
     ],
 )

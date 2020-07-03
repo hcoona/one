@@ -245,6 +245,32 @@ cc_test(
 )
 
 cc_library(
+    name = "thread_annotations",
+    hdrs = ["thread_annotations.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/base:core_headers",
+    ],
+)
+
+cc_test(
+    name = "thread_annotations_test",
+    srcs = [
+        "thread_annotations_unittest.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":thread_annotations",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
     copts = ONE_DEFAULT_COPTS,
