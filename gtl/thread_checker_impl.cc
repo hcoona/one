@@ -82,6 +82,7 @@ bool ThreadCheckerImpl::CalledOnValidThread() const {
 
 void ThreadCheckerImpl::DetachFromThread() {
   absl::MutexLock mutex_lock(&lock_);
+  thread_id_.reset();
   task_token_ = TaskToken();
   sequence_token_ = SequenceToken();
 }

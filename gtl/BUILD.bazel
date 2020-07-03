@@ -366,6 +366,19 @@ cc_library(
     ],
 )
 
+cc_test(
+    name = "thread_checker_test",
+    srcs = [
+        "thread_checker_unittest.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":thread_checker",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
