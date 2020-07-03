@@ -1,6 +1,26 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
+    name = "bits",
+    hdrs = ["bits.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":compiler_specific",
+        "//config",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_test(
+    name = "bits_test",
+    srcs = ["bits_unittest.cc"],
+    deps = [
+        ":bits",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "compiler_specific",
     hdrs = ["compiler_specific.h"],
     visibility = ["//visibility:public"],

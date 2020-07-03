@@ -178,20 +178,23 @@ core.workflow(
 
 core.workflow(
     name = "gtl_chromium",
-    origin = git.origin(
-        url = "https://github.com/chromium/chromium.git",
-        ref = "2dcb87aab462363932219cc2e9c6d11dcd2c8452",  # 2020-07-02
-    ),
+    # origin = git.origin(
+    #     url = "https://github.com/chromium/chromium.git",
+    #     ref = "2dcb87aab462363932219cc2e9c6d11dcd2c8452",  # 2020-07-02
+    # ),
+    origin = folder.origin(),
     destination = folder.destination(),
     origin_files = glob(
         [
             "base/bits.h",
+            "base/bits_unittest.cc",
             "base/compiler_specific.h",
         ],
     ),
     destination_files = glob(
         [
             "gtl/bits.h",
+            "gtl/bits_unittest.cc",
             "gtl/compiler_specific.h",
         ],
         exclude = [
@@ -208,9 +211,29 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
         core.replace(
+            before = "#include \"base/check.h\"",
+            after = "#include \"glog/logging.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "#include \"testing/gtest/include/gtest/gtest.h\"",
+            after = "#include \"gtest/gtest.h\"",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
             before = "#include \"base/${filename}.h\"",
             after = "#include \"gtl/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "namespace base {",
+            after = "namespace gtl {",
+            paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = "}  // namespace base",
+            after = "}  // namespace gtl",
             paths = glob(["**/*.h", "**/*.cc"]),
         ),
     ],
