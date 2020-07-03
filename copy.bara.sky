@@ -414,6 +414,7 @@ core.workflow(
             "gtl/patches/chromium/guid.patch",
             "gtl/patches/chromium/sequence_token.patch",
             "gtl/patches/chromium/thread_annotations.patch",
+            "gtl/patches/chromium/thread_checker.patch",
         ]),
     ],
 )

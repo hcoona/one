@@ -347,6 +347,26 @@ cc_test(
 )
 
 cc_library(
+    name = "thread_checker",
+    srcs = ["thread_checker_impl.cc"],
+    hdrs = [
+        "thread_checker.h",
+        "thread_checker_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":compiler_specific",
+        ":sequence_token",
+        ":thread_annotations",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/types:optional",
+    ],
+)
+
+cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
     copts = ONE_DEFAULT_COPTS,

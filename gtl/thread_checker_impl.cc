@@ -5,8 +5,6 @@
 #include "gtl/thread_checker_impl.h"
 
 #include "glog/logging.h"
-#include "gtl/thread_local.h"
-#include "gtl/thread_task_runner_handle.h"
 
 namespace gtl {
 
@@ -29,7 +27,7 @@ ThreadCheckerImpl::ThreadCheckerImpl(ThreadCheckerImpl&& other) {
   task_token_ = other.task_token_;
   sequence_token_ = other.sequence_token_;
 
-  other.thread_id_ = PlatformThreadRef();
+  other.thread_id_.reset();
   other.task_token_ = TaskToken();
   other.sequence_token_ = SequenceToken();
 }
@@ -47,7 +45,7 @@ ThreadCheckerImpl& ThreadCheckerImpl::operator=(ThreadCheckerImpl&& other) {
   TS_UNCHECKED_READ(task_token_) = TS_UNCHECKED_READ(other.task_token_);
   TS_UNCHECKED_READ(sequence_token_) = TS_UNCHECKED_READ(other.sequence_token_);
 
-  TS_UNCHECKED_READ(other.thread_id_) = PlatformThreadRef();
+  TS_UNCHECKED_READ(other.thread_id_).reset();
   TS_UNCHECKED_READ(other.task_token_) = TaskToken();
   TS_UNCHECKED_READ(other.sequence_token_) = SequenceToken();
 
@@ -55,7 +53,7 @@ ThreadCheckerImpl& ThreadCheckerImpl::operator=(ThreadCheckerImpl&& other) {
 }
 
 bool ThreadCheckerImpl::CalledOnValidThread() const {
-  const bool has_thread_been_destroyed = ThreadLocalStorage::HasBeenDestroyed();
+  const bool has_thread_been_destroyed = false;
 
   absl::MutexLock mutex_lock(&lock_);
   // TaskToken/SequenceToken access thread-local storage. During destruction
@@ -74,32 +72,25 @@ bool ThreadCheckerImpl::CalledOnValidThread() const {
     // ThreadTaskRunnerHandle. Otherwise, the fact that the current task runs on
     // the thread to which this ThreadCheckerImpl is bound is fortuitous.
     if (sequence_token_.IsValid() &&
-        (sequence_token_ != SequenceToken::GetForCurrentThread() ||
-         !ThreadTaskRunnerHandle::IsSet())) {
+        (sequence_token_ != SequenceToken::GetForCurrentThread())) {
       return false;
     }
-  } else if (thread_id_.is_null()) {
-    // We're in tls destruction but the |thread_id_| hasn't been assigned yet.
-    // Assign it now. This doesn't call EnsureAssigned() as to do so while in
-    // tls destruction may result in the wrong TaskToken/SequenceToken.
-    thread_id_ = PlatformThread::CurrentRef();
   }
 
-  return thread_id_ == PlatformThread::CurrentRef();
+  return thread_id_ == std::this_thread::get_id();
 }
 
 void ThreadCheckerImpl::DetachFromThread() {
   absl::MutexLock mutex_lock(&lock_);
-  thread_id_ = PlatformThreadRef();
   task_token_ = TaskToken();
   sequence_token_ = SequenceToken();
 }
 
 void ThreadCheckerImpl::EnsureAssignedLockRequired() const {
-  if (!thread_id_.is_null())
+  if (thread_id_.has_value())
     return;
 
-  thread_id_ = PlatformThread::CurrentRef();
+  thread_id_ = std::this_thread::get_id();
   task_token_ = TaskToken::GetForCurrentThread();
   sequence_token_ = SequenceToken::GetForCurrentThread();
 }

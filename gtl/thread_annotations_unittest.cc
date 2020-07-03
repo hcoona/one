@@ -42,7 +42,7 @@ void ThreadSafe::ExplicitIncrement() {
 }
 
 void ThreadSafe::ImplicitIncrement() {
-  absl::MutexLock mutex_lock(&lock_);
+  AutoLock auto_lock(lock_);
   counter_++;
 }
 

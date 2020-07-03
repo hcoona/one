@@ -5,12 +5,13 @@
 #ifndef GTL_THREAD_CHECKER_IMPL_H_
 #define GTL_THREAD_CHECKER_IMPL_H_
 
+#include <thread>
 
+#include "absl/synchronization/mutex.h"
+#include "absl/types/optional.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/sequence_token.h"
-#include "absl/synchronization/mutex.h"
 #include "gtl/thread_annotations.h"
-#include "gtl/platform_thread.h"
 
 namespace gtl {
 
@@ -52,7 +53,7 @@ class LOCKABLE ThreadCheckerImpl {
   mutable absl::Mutex lock_;
 
   // Thread on which CalledOnValidThread() may return true.
-  mutable PlatformThreadRef thread_id_ ABSL_GUARDED_BY(lock_);
+  mutable absl::optional<std::thread::id> thread_id_ ABSL_GUARDED_BY(lock_);
 
   // TaskToken for which CalledOnValidThread() always returns true. This allows
   // CalledOnValidThread() to return true when called multiple times from the
