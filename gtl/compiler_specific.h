@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_COMPILER_SPECIFIC_H_
-#define BASE_COMPILER_SPECIFIC_H_
+#ifndef GTL_COMPILER_SPECIFIC_H_
+#define GTL_COMPILER_SPECIFIC_H_
 
 #include "config/config.h"
 
@@ -292,4 +292,4 @@ inline constexpr bool AnalyzerAssumeTrue(bool arg) {
 
 #endif  // defined(__clang_analyzer__)
 
-#endif  // BASE_COMPILER_SPECIFIC_H_
+#endif  // GTL_COMPILER_SPECIFIC_H_

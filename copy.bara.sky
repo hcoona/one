@@ -186,6 +186,8 @@ core.workflow(
     destination = folder.destination(),
     origin_files = glob(
         [
+            "base/auto_reset.h",
+            "base/auto_reset_unittest.cc",
             "base/bits.h",
             "base/bits_unittest.cc",
             "base/compiler_specific.h",
@@ -193,6 +195,8 @@ core.workflow(
     ),
     destination_files = glob(
         [
+            "gtl/auto_reset.h",
+            "gtl/auto_reset_unittest.cc",
             "gtl/bits.h",
             "gtl/bits_unittest.cc",
             "gtl/compiler_specific.h",
@@ -235,6 +239,11 @@ core.workflow(
             before = "}  // namespace base",
             after = "}  // namespace gtl",
             paths = glob(["**/*.h", "**/*.cc"]),
+        ),
+        core.replace(
+            before = " BASE_",
+            after = " GTL_",
+            paths = glob(["**/*.h"]),
         ),
     ],
 )

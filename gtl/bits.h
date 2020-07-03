@@ -4,8 +4,8 @@
 
 // This file defines some bit utilities.
 
-#ifndef BASE_BITS_H_
-#define BASE_BITS_H_
+#ifndef GTL_BITS_H_
+#define GTL_BITS_H_
 
 #include <limits.h>
 #include <stddef.h>
@@ -217,4 +217,4 @@ constexpr T LeftmostBit() {
 }  // namespace bits
 }  // namespace gtl
 
-#endif  // BASE_BITS_H_
+#endif  // GTL_BITS_H_
