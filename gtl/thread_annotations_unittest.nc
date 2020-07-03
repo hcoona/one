@@ -52,7 +52,7 @@ void ThreadSafe::BuggyIncrement() {
 
 void ThreadSafe::BuggyIncrement() {
   {
-    AutoLock auto_lock(lock_);
+    absl::MutexLock mutex_lock(&lock_);
     // The AutoLock will go out of scope before the guarded member access.
   }
   ++counter_;

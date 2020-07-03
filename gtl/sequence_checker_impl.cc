@@ -7,8 +7,8 @@
 #include "glog/logging.h"
 #include "gtl/memory/ptr_util.h"
 #include "gtl/sequence_token.h"
-#include "gtl/threading/thread_checker_impl.h"
-#include "gtl/threading/thread_local_storage.h"
+#include "gtl/thread_checker_impl.h"
+#include "gtl/thread_local_storage.h"
 
 namespace gtl {
 
@@ -72,14 +72,14 @@ SequenceCheckerImpl& SequenceCheckerImpl::operator=(
 }
 
 bool SequenceCheckerImpl::CalledOnValidSequence() const {
-  AutoLock auto_lock(lock_);
+  absl::MutexLock mutex_lock(&lock_);
   if (!core_)
     core_ = std::make_unique<Core>();
   return core_->CalledOnValidSequence();
 }
 
 void SequenceCheckerImpl::DetachFromSequence() {
-  AutoLock auto_lock(lock_);
+  absl::MutexLock mutex_lock(&lock_);
   core_.reset();
 }
 

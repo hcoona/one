@@ -10,7 +10,7 @@
 
 #include "gtl/compiler_specific.h"
 #include "gtl/macros.h"
-#include "gtl/synchronization/lock.h"
+#include "absl/synchronization/mutex.h"
 #include "gtl/thread_annotations.h"
 
 namespace gtl {

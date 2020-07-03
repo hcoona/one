@@ -20,8 +20,8 @@
 #include "gtl/test/bind_test_util.h"
 #include "gtl/test/gtest_util.h"
 #include "gtl/test/task_environment.h"
-#include "gtl/threading/simple_thread.h"
-#include "gtl/threading/thread_local.h"
+#include "gtl/simple_thread.h"
+#include "gtl/thread_local.h"
 #include "gtest/gtest.h"
 
 namespace gtl {

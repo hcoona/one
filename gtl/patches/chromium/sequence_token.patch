@@ -1,5 +1,5 @@
 diff --git a/gtl/sequence_token.cc b/gtl/sequence_token.cc
-index 9e51c64..1eda26c 100644
+index 211da1c..1eda26c 100644
 --- a/gtl/sequence_token.cc
 +++ b/gtl/sequence_token.cc
 @@ -6,8 +6,6 @@
@@ -7,7 +7,7 @@ index 9e51c64..1eda26c 100644
  #include "gtl/atomic_sequence_num.h"
  #include "glog/logging.h"
 -#include "gtl/no_destructor.h"
--#include "gtl/threading/thread_local.h"
+-#include "gtl/thread_local.h"
  
  namespace gtl {
  

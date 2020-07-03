@@ -206,6 +206,10 @@ core.workflow(
             "base/thread_annotations.h",
             "base/thread_annotations_unittest.cc",
             "base/thread_annotations_unittest.nc",
+            "base/threading/thread_checker.h",
+            "base/threading/thread_checker_impl.h",
+            "base/threading/thread_checker_impl.cc",
+            "base/threading/thread_checker_unittest.cc",
             "base/containers/ring_buffer.h",
         ],
     ),
@@ -231,6 +235,10 @@ core.workflow(
             "gtl/thread_annotations.h",
             "gtl/thread_annotations_unittest.cc",
             "gtl/thread_annotations_unittest.nc",
+            "gtl/thread_checker.h",
+            "gtl/thread_checker_impl.h",
+            "gtl/thread_checker_impl.cc",
+            "gtl/thread_checker_unittest.cc",
             "gtl/container/ring_buffer.h",
         ],
         exclude = [
@@ -241,7 +249,9 @@ core.workflow(
     mode = "SQUASH",
     transformations = [
         core.move("base/containers", "gtl/container"),
+        core.move("base/threading", "gtl"),
         core.move("base", "gtl"),
+        # Remove BASE_EXPORT
         core.replace(
             before = "#include \"base/base_export.h\"",
             after = "",
@@ -252,16 +262,7 @@ core.workflow(
             after = "",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
-        core.replace(
-            before = "#include \"base/macros.h\"",
-            after = "#include \"gtl/macros.h\"",
-            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
-        ),
-        core.replace(
-            before = "#include \"base/strings/string_piece.h\"",
-            after = "#include \"absl/strings/string_view.h\"",
-            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
-        ),
+        # Code replacements
         core.replace(
             before = "char16",
             after = "char16_t",
@@ -283,10 +284,43 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
+            before = "base::Lock",
+            after = "absl::Mutex",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "base::AutoLock",
+            after = "absl::MutexLock",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "base::AutoLock auto_lock(lock_)",
+            after = "absl::MutexLock mutex_lock(&lock_)",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "AutoLock auto_lock(lock_)",
+            after = "absl::MutexLock mutex_lock(&lock_)",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        # build_config header path
+        core.replace(
             before = "#include \"build/build_config.h\"",
             after = "#include \"config/config.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # absl header paths
+        core.replace(
+            before = "#include \"base/strings/string_piece.h\"",
+            after = "#include \"absl/strings/string_view.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "#include \"base/synchronization/lock.h\"",
+            after = "#include \"absl/synchronization/mutex.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        # glog header paths
         core.replace(
             before = "#include \"base/check_op.h\"",
             after = "#include \"glog/logging.h\"",
@@ -297,9 +331,23 @@ core.workflow(
             after = "#include \"glog/logging.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # gtest header path
         core.replace(
             before = "#include \"testing/gtest/include/gtest/gtest.h\"",
             after = "#include \"gtest/gtest.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        # General header paths
+        core.replace(
+            before = "#include \"base/containers/${filename}.h\"",
+            after = "#include \"gtl/container/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "#include \"base/threading/${filename}.h\"",
+            after = "#include \"gtl/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
@@ -308,6 +356,7 @@ core.workflow(
             regex_groups = {"filename": "[^\\.>\"]*"},
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # GUARDED_BY -> ABSL_GUARDED_BY
         core.replace(
             before = " GUARDED_BY_CONTEXT",
             after = " GTL_GUARDED_BY_CONTEXT",
@@ -328,6 +377,7 @@ core.workflow(
             after = " ABSL_EXCLUSIVE_LOCKS_REQUIRED",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # Fix namespaces
         core.replace(
             before = "namespace base {",
             after = "namespace gtl {",
@@ -343,6 +393,12 @@ core.workflow(
             after = "gtl::",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # Fix header guards
+        core.replace(
+            before = " BASE_THREADING_",
+            after = " GTL_",
+            paths = glob(["**/*.h"]),
+        ),
         core.replace(
             before = " BASE_CONTAINERS_",
             after = " GTL_CONTAINER_",
@@ -353,6 +409,7 @@ core.workflow(
             after = " GTL_",
             paths = glob(["**/*.h"]),
         ),
+        # Finally patches
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
             "gtl/patches/chromium/sequence_token.patch",
