@@ -28,6 +28,8 @@ cc_test(
 cc_library(
     name = "bits",
     hdrs = ["bits.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         ":compiler_specific",
@@ -39,6 +41,8 @@ cc_library(
 cc_test(
     name = "bits_test",
     srcs = ["bits_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":bits",
         "@com_google_googletest//:gtest_main",
@@ -48,6 +52,8 @@ cc_test(
 cc_library(
     name = "compiler_specific",
     hdrs = ["compiler_specific.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         "//config",
@@ -66,6 +72,10 @@ cc_library(
         "file_system_helper.h",
         "null_file_system.h",
     ],
+    copts = ONE_DEFAULT_COPTS + [
+        "-Wno-unused-parameter"
+    ],
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         ":path",
@@ -82,6 +92,8 @@ cc_library(
     name = "posix_file_system",
     srcs = ["posix_file_system.cc"],
     hdrs = ["posix_file_system.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":file_system",
         "//config",
@@ -94,6 +106,8 @@ cc_library(
 cc_test(
     name = "file_system_test",
     srcs = ["file_system_test.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":file_system",
         "@com_github_google_glog//:glog",
@@ -106,6 +120,8 @@ cc_test(
 cc_library(
     name = "iterator_range",
     hdrs = ["iterator_range.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
 )
 
@@ -114,6 +130,8 @@ cc_test(
     srcs = [
         "iterator_range_test.cc",
     ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":iterator_range",
         "@com_google_googletest//:gtest_main",
@@ -126,6 +144,8 @@ cc_library(
         "map_traits.h",
         "map_util.h",
     ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
 )
 
@@ -134,6 +154,8 @@ cc_test(
     srcs = [
         "map_util_test.cc",
     ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":map_util",
         "@com_google_googletest//:gtest_main",
@@ -144,6 +166,8 @@ cc_library(
     name = "path",
     srcs = ["path.cc"],
     hdrs = ["path.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         ":scanner",
@@ -156,6 +180,8 @@ cc_library(
 cc_test(
     name = "path_test",
     srcs = ["path_test.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":path",
         "@com_google_googletest//:gtest_main",
@@ -172,6 +198,8 @@ cc_library(
     name = "scanner",
     srcs = ["scanner.cc"],
     hdrs = ["scanner.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_absl//absl/strings",
@@ -181,6 +209,8 @@ cc_library(
 cc_test(
     name = "scanner_test",
     srcs = ["scanner_test.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":scanner",
         "@com_google_googletest//:gtest_main",
@@ -190,6 +220,8 @@ cc_test(
 cc_library(
     name = "top_n",
     hdrs = ["top_n.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
         "@com_github_google_glog//:glog",
@@ -201,6 +233,8 @@ cc_test(
     srcs = [
         "top_n_test.cc",
     ],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":top_n",
         "@com_github_google_glog//:glog",
