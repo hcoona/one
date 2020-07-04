@@ -82,7 +82,6 @@ ONE_GCC_EXCEPTIONS_FLAGS = [
 ]
 
 ONE_GCC_FLAGS = [
-    "-std=c++17",
     "-Wall",
     "-Wextra",
     "-Wcast-qual",
@@ -114,7 +113,6 @@ ONE_LLVM_EXCEPTIONS_FLAGS = [
 ]
 
 ONE_LLVM_FLAGS = [
-    "-std=c++17",
     "-Wall",
     "-Wextra",
     "-Weverything",
@@ -189,7 +187,6 @@ ONE_MSVC_EXCEPTIONS_FLAGS = [
 ]
 
 ONE_MSVC_FLAGS = [
-    "/std:c++17",
     "/W3",
     "/DNOMINMAX",
     "/DWIN32_LEAN_AND_MEAN",
