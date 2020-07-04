@@ -372,10 +372,14 @@ cc_test(
     srcs = [
         "thread_checker_unittest.cc",
     ],
-    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS + select({
+        "//bazel:llvm_compiler": ["-Werror=thread-safety-analysis"],
+        "//conditions:default": [],
+    }),
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":thread_checker",
+        "//gtl/test:gtest_util",
         "@com_google_googletest//:gtest_main",
     ],
 )

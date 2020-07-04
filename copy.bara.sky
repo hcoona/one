@@ -214,6 +214,7 @@ core.workflow(
             "base/hash/sha1.h",
             "base/hash/sha1_boringssl.cc",
             "base/hash/sha1_unittest.cc",
+            "base/test/gtest_util.h",
         ],
     ),
     destination_files = glob(
@@ -246,6 +247,7 @@ core.workflow(
             "gtl/hash/sha1.h",
             "gtl/hash/sha1_boringssl.cc",
             "gtl/hash/sha1_unittest.cc",
+            "gtl/test/gtest_util.h",
         ],
         exclude = [
             "**/BUILD.bazel",
