@@ -106,7 +106,7 @@ index 6c2a1a3..cf710fb 100644
    // TaskToken for which CalledOnValidThread() always returns true. This allows
    // CalledOnValidThread() to return true when called multiple times from the
 diff --git a/gtl/thread_checker_unittest.cc b/gtl/thread_checker_unittest.cc
-index 714cc31..f5ded5b 100644
+index 714cc31..9e596f8 100644
 --- a/gtl/thread_checker_unittest.cc
 +++ b/gtl/thread_checker_unittest.cc
 @@ -4,44 +4,21 @@
@@ -231,7 +231,7 @@ index 714cc31..f5ded5b 100644
    ScopedSetSequenceTokenForCurrentThread
        scoped_set_sequence_token_for_current_thread(SequenceToken::Create());
    ThreadCheckerImpl thread_checker;
-@@ -191,161 +157,161 @@ TEST(ThreadCheckerTest, DetachFromThreadWithSequenceToken) {
+@@ -191,7 +157,7 @@ TEST(ThreadCheckerTest, DetachFromThreadWithSequenceToken) {
    // Verify that CalledOnValidThread() returns true when called on a different
    // thread after a call to DetachFromThread().
    RunCallbackOnNewThreadSynchronously(
@@ -240,253 +240,101 @@ index 714cc31..f5ded5b 100644
  
    EXPECT_FALSE(thread_checker.CalledOnValidThread());
  }
- 
--// Owns a ThreadCheckerImpl and asserts that CalledOnValidThread() is valid
--// in ~ThreadCheckerOwner.
--class ThreadCheckerOwner {
-- public:
--  explicit ThreadCheckerOwner(bool detach_from_thread) {
--    if (detach_from_thread)
--      checker_.DetachFromThread();
--  }
--  ~ThreadCheckerOwner() { EXPECT_TRUE(checker_.CalledOnValidThread()); }
--
-- private:
--  ThreadCheckerImpl checker_;
--
--  DISALLOW_COPY_AND_ASSIGN(ThreadCheckerOwner);
--};
--
--// Verifies ThreadCheckerImpl::CalledOnValidThread() returns true if called
--// during thread destruction.
--TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestruction) {
+@@ -215,19 +181,19 @@ class ThreadCheckerOwner {
+ // Verifies ThreadCheckerImpl::CalledOnValidThread() returns true if called
+ // during thread destruction.
+ TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestruction) {
 -  ThreadLocalOwnedPointer<ThreadCheckerOwner> thread_local_owner;
 -  RunCallbackOnNewThreadSynchronously(BindLambdaForTesting([&]() {
 -    thread_local_owner.Set(std::make_unique<ThreadCheckerOwner>(false));
 -  }));
--}
--
--// Variant of CalledOnValidThreadFromThreadDestruction that calls
--// ThreadCheckerImpl::DetachFromThread().
--TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestructionDetached) {
++  thread_local std::unique_ptr<ThreadCheckerOwner> thread_local_owner;
++  RunCallbackOnNewThreadSynchronously([&]() {
++    thread_local_owner = std::make_unique<ThreadCheckerOwner>(false);
++  });
+ }
+ 
+ // Variant of CalledOnValidThreadFromThreadDestruction that calls
+ // ThreadCheckerImpl::DetachFromThread().
+ TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestructionDetached) {
 -  ThreadLocalOwnedPointer<ThreadCheckerOwner> thread_local_owner;
 -  RunCallbackOnNewThreadSynchronously(BindLambdaForTesting([&]() {
 -    thread_local_owner.Set(std::make_unique<ThreadCheckerOwner>(true));
 -  }));
--}
--
--TEST(ThreadCheckerTest, Move) {
--  ThreadCheckerImpl initial;
--  EXPECT_TRUE(initial.CalledOnValidThread());
--
--  ThreadCheckerImpl move_constructed(std::move(initial));
--  EXPECT_TRUE(move_constructed.CalledOnValidThread());
--
--  ThreadCheckerImpl move_assigned;
--  move_assigned = std::move(move_constructed);
--  EXPECT_TRUE(move_assigned.CalledOnValidThread());
--
--  // The two ThreadCheckerImpls moved from should be able to rebind to another
--  // thread.
--  RunCallbackOnNewThreadSynchronously(
++  thread_local std::unique_ptr<ThreadCheckerOwner> thread_local_owner;
++  RunCallbackOnNewThreadSynchronously([&]() {
++    thread_local_owner = std::make_unique<ThreadCheckerOwner>(true);
++  });
+ }
+ 
+ TEST(ThreadCheckerTest, Move) {
+@@ -244,13 +210,13 @@ TEST(ThreadCheckerTest, Move) {
+   // The two ThreadCheckerImpls moved from should be able to rebind to another
+   // thread.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
--  RunCallbackOnNewThreadSynchronously(
++      [&initial]() { ExpectCalledOnValidThread(&initial); });
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&move_constructed)));
-+// // Owns a ThreadCheckerImpl and asserts that CalledOnValidThread() is valid
-+// // in ~ThreadCheckerOwner.
-+// class ThreadCheckerOwner {
-+//  public:
-+//   explicit ThreadCheckerOwner(bool detach_from_thread) {
-+//     if (detach_from_thread)
-+//       checker_.DetachFromThread();
-+//   }
-+//   ~ThreadCheckerOwner() { EXPECT_TRUE(checker_.CalledOnValidThread()); }
-+
-+//  private:
-+//   ThreadCheckerImpl checker_;
-+
-+//   DISALLOW_COPY_AND_ASSIGN(ThreadCheckerOwner);
-+// };
-+
-+// // Verifies ThreadCheckerImpl::CalledOnValidThread() returns true if called
-+// // during thread destruction.
-+// TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestruction) {
-+//   ThreadLocalOwnedPointer<ThreadCheckerOwner> thread_local_owner;
-+//   RunCallbackOnNewThreadSynchronously(BindLambdaForTesting([&]() {
-+//     thread_local_owner.Set(std::make_unique<ThreadCheckerOwner>(false));
-+//   }));
-+// }
-+
-+// // Variant of CalledOnValidThreadFromThreadDestruction that calls
-+// // ThreadCheckerImpl::DetachFromThread().
-+// TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestructionDetached) {
-+//   ThreadLocalOwnedPointer<ThreadCheckerOwner> thread_local_owner;
-+//   RunCallbackOnNewThreadSynchronously(BindLambdaForTesting([&]() {
-+//     thread_local_owner.Set(std::make_unique<ThreadCheckerOwner>(true));
-+//   }));
-+// }
-+
-+// TEST(ThreadCheckerTest, Move) {
-+//   ThreadCheckerImpl initial;
-+//   EXPECT_TRUE(initial.CalledOnValidThread());
-+
-+//   ThreadCheckerImpl move_constructed(std::move(initial));
-+//   EXPECT_TRUE(move_constructed.CalledOnValidThread());
-+
-+//   ThreadCheckerImpl move_assigned;
-+//   move_assigned = std::move(move_constructed);
-+//   EXPECT_TRUE(move_assigned.CalledOnValidThread());
-+
-+//   // The two ThreadCheckerImpls moved from should be able to rebind to another
-+//   // thread.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectCalledOnValidThread, Unretained(&move_constructed)));
-+
-+//   // But the latest one shouldn't be able to run on another thread.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
-+
-+//   EXPECT_TRUE(move_assigned.CalledOnValidThread());
-+// }
-+
-+// TEST(ThreadCheckerTest, MoveAssignIntoDetached) {
-+//   ThreadCheckerImpl initial;
-+
-+//   ThreadCheckerImpl move_assigned;
-+//   move_assigned.DetachFromThread();
-+//   move_assigned = std::move(initial);
-+
-+//   // |initial| is detached after move.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
-+
-+//   // |move_assigned| should be associated with the main thread.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
-+
-+//   EXPECT_TRUE(move_assigned.CalledOnValidThread());
-+// }
-+
-+// TEST(ThreadCheckerTest, MoveFromDetachedRebinds) {
-+//   ThreadCheckerImpl initial;
-+//   initial.DetachFromThread();
-+
-+//   ThreadCheckerImpl moved_into(std::move(initial));
-+
-+//   // |initial| is still detached after move.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
-+
-+//   // |moved_into| is bound to the current thread as part of the move.
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectNotCalledOnValidThread, Unretained(&moved_into)));
-+//   EXPECT_TRUE(moved_into.CalledOnValidThread());
-+// }
-+
-+// TEST(ThreadCheckerTest, MoveOffThreadBanned) {
-+//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
-+
-+//   ThreadCheckerImpl other_thread;
-+//   other_thread.DetachFromThread();
-+//   RunCallbackOnNewThreadSynchronously(
-+//       BindOnce(&ExpectCalledOnValidThread, Unretained(&other_thread)));
-+
-+//   EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
-+// }
-+
-+// namespace {
-+
-+// // This fixture is a helper for unit testing the thread checker macros as it is
-+// // not possible to inline ExpectDeathOnOtherThread() and
-+// // ExpectNoDeathOnOtherThreadAfterDetach() as lambdas since binding
-+// // |Unretained(&my_sequence_checker)| wouldn't compile on non-dcheck builds
-+// // where it won't be defined.
-+// class ThreadCheckerMacroTest : public testing::Test {
-+//  public:
-+//   ThreadCheckerMacroTest() = default;
-+
-+//   void ExpectDeathOnOtherThread() {
-+// #if DCHECK_IS_ON()
-+//     EXPECT_DCHECK_DEATH({ DCHECK_CALLED_ON_VALID_THREAD(thread_checker_); });
-+// #else
-+//     // Happily no-ops on non-dcheck builds.
-+//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-+// #endif
-+//   }
-+
-+//   void ExpectNoDeathOnOtherThreadAfterDetach() {
-+//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-+//   }
-+
-+//  protected:
-+//   THREAD_CHECKER(thread_checker_);
++      [&move_constructed]() { ExpectCalledOnValidThread(&move_constructed); });
  
--  // But the latest one shouldn't be able to run on another thread.
--  RunCallbackOnNewThreadSynchronously(
+   // But the latest one shouldn't be able to run on another thread.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
--
--  EXPECT_TRUE(move_assigned.CalledOnValidThread());
--}
-+//  private:
-+//   DISALLOW_COPY_AND_ASSIGN(ThreadCheckerMacroTest);
-+// };
++      [&move_assigned]() { ExpectNotCalledOnValidThread(&move_assigned); });
  
--TEST(ThreadCheckerTest, MoveAssignIntoDetached) {
--  ThreadCheckerImpl initial;
-+// }  // namespace
+   EXPECT_TRUE(move_assigned.CalledOnValidThread());
+ }
+@@ -264,11 +230,11 @@ TEST(ThreadCheckerTest, MoveAssignIntoDetached) {
  
--  ThreadCheckerImpl move_assigned;
--  move_assigned.DetachFromThread();
--  move_assigned = std::move(initial);
-+// TEST_F(ThreadCheckerMacroTest, Macros) {
-+//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
- 
--  // |initial| is detached after move.
--  RunCallbackOnNewThreadSynchronously(
+   // |initial| is detached after move.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
-+//   THREAD_CHECKER(my_thread_checker);
++      [&initial]() { ExpectCalledOnValidThread(&initial); });
  
--  // |move_assigned| should be associated with the main thread.
--  RunCallbackOnNewThreadSynchronously(
+   // |move_assigned| should be associated with the main thread.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
--
--  EXPECT_TRUE(move_assigned.CalledOnValidThread());
--}
-+//   RunCallbackOnNewThreadSynchronously(BindOnce(
-+//       &ThreadCheckerMacroTest::ExpectDeathOnOtherThread, Unretained(this)));
++      [&move_assigned]() { ExpectNotCalledOnValidThread(&move_assigned); });
  
--TEST(ThreadCheckerTest, MoveFromDetachedRebinds) {
--  ThreadCheckerImpl initial;
--  initial.DetachFromThread();
-+//   DETACH_FROM_THREAD(thread_checker_);
+   EXPECT_TRUE(move_assigned.CalledOnValidThread());
+ }
+@@ -281,71 +247,71 @@ TEST(ThreadCheckerTest, MoveFromDetachedRebinds) {
  
--  ThreadCheckerImpl moved_into(std::move(initial));
--
--  // |initial| is still detached after move.
--  RunCallbackOnNewThreadSynchronously(
+   // |initial| is still detached after move.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
--
--  // |moved_into| is bound to the current thread as part of the move.
--  RunCallbackOnNewThreadSynchronously(
++      [&initial]() { ExpectCalledOnValidThread(&initial); });
+ 
+   // |moved_into| is bound to the current thread as part of the move.
+   RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&moved_into)));
--  EXPECT_TRUE(moved_into.CalledOnValidThread());
--}
--
++      [&moved_into]() { ExpectNotCalledOnValidThread(&moved_into); });
+   EXPECT_TRUE(moved_into.CalledOnValidThread());
+ }
+ 
 -TEST(ThreadCheckerTest, MoveOffThreadBanned) {
 -  testing::GTEST_FLAG(death_test_style) = "threadsafe";
--
++// TEST(ThreadCheckerTest, MoveOffThreadBanned) {
++//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
+ 
 -  ThreadCheckerImpl other_thread;
 -  other_thread.DetachFromThread();
 -  RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&other_thread)));
--
++//   ThreadCheckerImpl other_thread;
++//   other_thread.DetachFromThread();
++//   RunCallbackOnNewThreadSynchronously(
++//       [&other_thread]() { ExpectCalledOnValidThread(&other_thread); });
+ 
 -  EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
 -}
--
++//   EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
++// }
+ 
 -namespace {
--
++// namespace {
+ 
 -// This fixture is a helper for unit testing the thread checker macros as it is
 -// not possible to inline ExpectDeathOnOtherThread() and
 -// ExpectNoDeathOnOtherThreadAfterDetach() as lambdas since binding
@@ -504,34 +352,66 @@ index 714cc31..f5ded5b 100644
 -    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 -#endif
 -  }
--
++// // This fixture is a helper for unit testing the thread checker macros as it is
++// // not possible to inline ExpectDeathOnOtherThread() and
++// // ExpectNoDeathOnOtherThreadAfterDetach() as lambdas since binding
++// // |Unretained(&my_sequence_checker)| wouldn't compile on non-dcheck builds
++// // where it won't be defined.
++// class ThreadCheckerMacroTest : public testing::Test {
++//  public:
++//   ThreadCheckerMacroTest() = default;
+ 
 -  void ExpectNoDeathOnOtherThreadAfterDetach() {
 -    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 -  }
--
++//   void ExpectDeathOnOtherThread() {
++// #if DCHECK_IS_ON()
++//     EXPECT_DCHECK_DEATH({ DCHECK_CALLED_ON_VALID_THREAD(thread_checker_); });
++// #else
++//     // Happily no-ops on non-dcheck builds.
++//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
++// #endif
++//   }
+ 
 - protected:
 -  THREAD_CHECKER(thread_checker_);
--
++//   void ExpectNoDeathOnOtherThreadAfterDetach() {
++//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
++//   }
+ 
 - private:
 -  DISALLOW_COPY_AND_ASSIGN(ThreadCheckerMacroTest);
 -};
--
++//  protected:
++//   THREAD_CHECKER(thread_checker_);
+ 
 -}  // namespace
--
++//  private:
++//   DISALLOW_COPY_AND_ASSIGN(ThreadCheckerMacroTest);
++// };
+ 
 -TEST_F(ThreadCheckerMacroTest, Macros) {
 -  testing::GTEST_FLAG(death_test_style) = "threadsafe";
--
++// }  // namespace
+ 
 -  THREAD_CHECKER(my_thread_checker);
--
++// TEST_F(ThreadCheckerMacroTest, Macros) {
++//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
+ 
 -  RunCallbackOnNewThreadSynchronously(BindOnce(
 -      &ThreadCheckerMacroTest::ExpectDeathOnOtherThread, Unretained(this)));
--
++//   THREAD_CHECKER(my_thread_checker);
+ 
 -  DETACH_FROM_THREAD(thread_checker_);
--
++//   RunCallbackOnNewThreadSynchronously(BindOnce(
++//       &ThreadCheckerMacroTest::ExpectDeathOnOtherThread, Unretained(this)));
+ 
 -  RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ThreadCheckerMacroTest::ExpectNoDeathOnOtherThreadAfterDetach,
 -               Unretained(this)));
 -}
++//   DETACH_FROM_THREAD(thread_checker_);
++
 +//   RunCallbackOnNewThreadSynchronously(
 +//       BindOnce(&ThreadCheckerMacroTest::ExpectNoDeathOnOtherThreadAfterDetach,
 +//                Unretained(this)));
