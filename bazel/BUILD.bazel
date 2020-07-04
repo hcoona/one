@@ -1,10 +1,10 @@
+load(":compiler_config_setting.bzl", "create_llvm_config")
+
 package(default_visibility = ["//visibility:public"])
 
-config_setting(
+create_llvm_config(
     name = "llvm_compiler",
-    flag_values = {
-        "@bazel_tools//tools/cpp:compiler": "llvm",
-    },
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
