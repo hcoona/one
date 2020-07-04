@@ -208,6 +208,27 @@ cc_test(
 )
 
 cc_library(
+    name = "no_destructor",
+    hdrs = ["no_destructor.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "no_destructor_test",
+    srcs = ["no_destructor_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":no_destructor",
+        "//config",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "path",
     srcs = ["path.cc"],
     hdrs = ["path.h"],

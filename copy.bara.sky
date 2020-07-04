@@ -196,6 +196,8 @@ core.workflow(
             "base/guid.cc",
             "base/guid_unittest.cc",
             "base/macros.h",
+            "base/no_destructor.h",
+            "base/no_destructor_unittest.cc",
             "base/sequence_checker.h",
             "base/sequence_checker_impl.h",
             "base/sequence_checker_impl.cc",
@@ -250,6 +252,8 @@ core.workflow(
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
             "gtl/macros.h",
+            "gtl/no_destructor.h",
+            "gtl/no_destructor_unittest.cc",
             "gtl/sequence_checker.h",
             "gtl/sequence_checker_impl.h",
             "gtl/sequence_checker_impl.cc",
@@ -536,6 +540,7 @@ core.workflow(
         # Finally patches
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
+            "gtl/patches/chromium/no_destructor.patch",
             "gtl/patches/chromium/sequence_token.patch",
             "gtl/patches/chromium/sequence_checker.patch",
             "gtl/patches/chromium/thread_annotations.patch",
