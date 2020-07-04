@@ -217,6 +217,16 @@ core.workflow(
             "base/hash/sha1.h",
             "base/hash/sha1_boringssl.cc",
             "base/hash/sha1_unittest.cc",
+            "base/numerics/checked_math.h",
+            "base/numerics/checked_math_impl.h",
+            "base/numerics/clamped_math.h",
+            "base/numerics/clamped_math_impl.h",
+            "base/numerics/ranges.h",
+            "base/numerics/safe_conversions.h",
+            "base/numerics/safe_conversions_impl.h",
+            "base/numerics/safe_math.h",
+            "base/numerics/safe_math_clang_gcc_impl.h",
+            "base/numerics/safe_math_shared_impl.h",
             "base/test/gtest_util.h",
         ],
     ),
@@ -253,6 +263,16 @@ core.workflow(
             "gtl/hash/sha1.h",
             "gtl/hash/sha1_boringssl.cc",
             "gtl/hash/sha1_unittest.cc",
+            "gtl/numeric/checked_math.h",
+            "gtl/numeric/checked_math_impl.h",
+            "gtl/numeric/clamped_math.h",
+            "gtl/numeric/clamped_math_impl.h",
+            "gtl/numeric/ranges.h",
+            "gtl/numeric/safe_conversions.h",
+            "gtl/numeric/safe_conversions_impl.h",
+            "gtl/numeric/safe_math.h",
+            "gtl/numeric/safe_math_clang_gcc_impl.h",
+            "gtl/numeric/safe_math_shared_impl.h",
             "gtl/test/gtest_util.h",
         ],
         exclude = [
@@ -263,6 +283,7 @@ core.workflow(
     mode = "SQUASH",
     transformations = [
         core.move("base/containers", "gtl/container"),
+        core.move("base/numerics", "gtl/numeric"),
         core.move("base/threading", "gtl"),
         core.move("base", "gtl"),
         # Remove BASE_EXPORT
@@ -397,6 +418,12 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
+            before = "#include \"base/numerics/${filename}.h\"",
+            after = "#include \"gtl/numeric/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
             before = "#include \"base/${filename}.h\"",
             after = "#include \"gtl/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
@@ -448,6 +475,11 @@ core.workflow(
         core.replace(
             before = " BASE_CONTAINERS_",
             after = " GTL_CONTAINER_",
+            paths = glob(["**/*.h"]),
+        ),
+        core.replace(
+            before = " BASE_NUMERICS_",
+            after = " GTL_NUMERIC_",
             paths = glob(["**/*.h"]),
         ),
         core.replace(

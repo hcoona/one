@@ -1,0 +1,83 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_library(
+    name = "checked_math",
+    hdrs = [
+        "checked_math.h",
+        "checked_math_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":safe_conversions",
+        ":safe_math_impl",
+    ],
+)
+
+cc_library(
+    name = "clamped_math",
+    hdrs = [
+        "clamped_math.h",
+        "clamped_math_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":checked_math",
+        ":safe_conversions",
+        ":safe_math_impl",
+    ],
+)
+
+cc_library(
+    name = "ranges",
+    hdrs = ["ranges.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "safe_conversions",
+    hdrs = [
+        "safe_conversions.h",
+        "safe_conversions_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "safe_math",
+    hdrs = ["safe_math.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":checked_math",
+        ":clamped_math",
+        ":safe_conversions",
+    ],
+)
+
+cc_library(
+    name = "safe_math_impl",
+    hdrs = [
+        "safe_math_clang_gcc_impl.h",
+        "safe_math_shared_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":safe_conversions",
+        "//config",
+    ],
+)
