@@ -211,6 +211,9 @@ core.workflow(
             "base/threading/thread_checker_impl.cc",
             "base/threading/thread_checker_unittest.cc",
             "base/containers/ring_buffer.h",
+            "base/hash/sha1.h",
+            "base/hash/sha1_boringssl.cc",
+            "base/hash/sha1_unittest.cc",
         ],
     ),
     destination_files = glob(
@@ -240,6 +243,9 @@ core.workflow(
             "gtl/thread_checker_impl.cc",
             "gtl/thread_checker_unittest.cc",
             "gtl/container/ring_buffer.h",
+            "gtl/hash/sha1.h",
+            "gtl/hash/sha1_boringssl.cc",
+            "gtl/hash/sha1_unittest.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -266,6 +272,11 @@ core.workflow(
         core.replace(
             before = "char16",
             after = "char16_t",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "base::span",
+            after = "absl::Span",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
@@ -320,6 +331,11 @@ core.workflow(
             after = "#include \"absl/synchronization/mutex.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        core.replace(
+            before = "#include \"base/containers/span.h\"",
+            after = "#include \"absl/types/span.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
         # glog header paths
         core.replace(
             before = "#include \"base/check_op.h\"",
@@ -337,10 +353,22 @@ core.workflow(
             after = "#include \"gtest/gtest.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # boringssl header path
+        core.replace(
+            before = "#include \"third_party/boringssl/src/include/openssl/",
+            after = "#include \"openssl/",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
         # General header paths
         core.replace(
             before = "#include \"base/containers/${filename}.h\"",
             after = "#include \"gtl/container/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "#include \"base/hash/${filename}.h\"",
+            after = "#include \"gtl/hash/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
@@ -415,6 +443,7 @@ core.workflow(
             "gtl/patches/chromium/sequence_token.patch",
             "gtl/patches/chromium/thread_annotations.patch",
             "gtl/patches/chromium/thread_checker.patch",
+            "gtl/patches/chromium/sha1.patch",
         ]),
     ],
 )

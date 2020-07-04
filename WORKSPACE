@@ -291,9 +291,9 @@ boost_deps()
 http_archive(
     name = "com_github_microsoft_gsl",
     build_file = "//third_party/gsl:gsl.BUILD",
-    sha256 = "b991e8b347b763f4b0e521b9687cdf8aebd6c5a831a6b6435b33fc11007e2c7f",
-    strip_prefix = "GSL-1212beae777dba02c230ece8c0c0ec12790047ea",
-    urls = ["https://github.com/microsoft/GSL/archive/1212beae777dba02c230ece8c0c0ec12790047ea.zip"],  # 2019-06-13
+    sha256 = "8216dbcecb54682c6a79b7faf171ce08631150f4559ab59dd6ec7dd3ea7e14e4",
+    strip_prefix = "GSL-98002ab60135fe70f4acd7e5b8a34f9ad1427807",
+    urls = ["https://github.com/microsoft/GSL/archive/98002ab60135fe70f4acd7e5b8a34f9ad1427807.zip"],  # 2020-06-11
 )
 
 # rapidjson, required by kythe.

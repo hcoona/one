@@ -11,6 +11,7 @@ cc_library(
         "include/gsl/multi_span",
         "include/gsl/pointers",
         "include/gsl/span",
+        "include/gsl/span_ext",
         "include/gsl/string_span",
     ],
     strip_include_prefix = "./include",
