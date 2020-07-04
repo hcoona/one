@@ -5,10 +5,8 @@
 #include "gtl/sequence_checker_impl.h"
 
 #include "glog/logging.h"
-#include "gtl/memory/ptr_util.h"
 #include "gtl/sequence_token.h"
 #include "gtl/thread_checker_impl.h"
-#include "gtl/thread_local_storage.h"
 
 namespace gtl {
 
@@ -24,8 +22,7 @@ class SequenceCheckerImpl::Core {
     // be in a consistent state. Further, task-runner only installs the
     // SequenceToken when running a task. For this reason, |sequence_token_| is
     // not checked during thread destruction.
-    if (!SequenceCheckerImpl::HasThreadLocalStorageBeenDestroyed() &&
-        sequence_token_.IsValid()) {
+    if (sequence_token_.IsValid()) {
       return sequence_token_ == SequenceToken::GetForCurrentThread();
     }
 
@@ -81,11 +78,6 @@ bool SequenceCheckerImpl::CalledOnValidSequence() const {
 void SequenceCheckerImpl::DetachFromSequence() {
   absl::MutexLock mutex_lock(&lock_);
   core_.reset();
-}
-
-// static
-bool SequenceCheckerImpl::HasThreadLocalStorageBeenDestroyed() {
-  return ThreadLocalStorage::HasBeenDestroyed();
 }
 
 }  // namespace gtl

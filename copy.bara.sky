@@ -443,6 +443,7 @@ core.workflow(
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
             "gtl/patches/chromium/sequence_token.patch",
+            "gtl/patches/chromium/sequence_checker.patch",
             "gtl/patches/chromium/thread_annotations.patch",
             "gtl/patches/chromium/thread_checker.patch",
             "gtl/patches/chromium/sha1.patch",
