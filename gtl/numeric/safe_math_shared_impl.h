@@ -38,7 +38,7 @@ namespace internal {
 
 // These are the non-functioning boilerplate implementations of the optimized
 // safe math routines.
-#if !BASE_HAS_OPTIMIZED_SAFE_MATH
+#if !GTL_HAS_OPTIMIZED_SAFE_MATH
 template <typename T, typename U>
 struct CheckedAddFastOp {
   static const bool is_supported = false;

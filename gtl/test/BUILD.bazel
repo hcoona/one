@@ -6,6 +6,18 @@ load(
 )
 
 cc_library(
+    name = "copy_only_int",
+    srcs = ["copy_only_int.cc"],
+    hdrs = ["copy_only_int.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//gtl:macros",
+    ],
+)
+
+cc_library(
     name = "gtest_util",
     hdrs = ["gtest_util.h"],
     copts = ONE_DEFAULT_COPTS,
@@ -16,5 +28,16 @@ cc_library(
         "//gtl:compiler_specific",
         "@com_github_google_glog//:glog",
         "@com_google_googletest//:gtest",
+    ],
+)
+
+cc_library(
+    name = "move_only_int",
+    hdrs = ["move_only_int.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//gtl:macros",
     ],
 )

@@ -214,6 +214,9 @@ core.workflow(
             "base/containers/ring_buffer.h",
             "base/containers/id_map.h",
             "base/containers/id_map_unittest.cc",
+            "base/containers/util.h",
+            "base/containers/vector_buffer.h",
+            "base/containers/vector_buffer_unittest.cc",
             "base/hash/sha1.h",
             "base/hash/sha1_boringssl.cc",
             "base/hash/sha1_unittest.cc",
@@ -227,7 +230,10 @@ core.workflow(
             "base/numerics/safe_math.h",
             "base/numerics/safe_math_clang_gcc_impl.h",
             "base/numerics/safe_math_shared_impl.h",
+            "base/test/copy_only_int.h",
+            "base/test/copy_only_int.cc",
             "base/test/gtest_util.h",
+            "base/test/move_only_int.h",
         ],
     ),
     destination_files = glob(
@@ -260,6 +266,9 @@ core.workflow(
             "gtl/container/ring_buffer.h",
             "gtl/container/id_map.h",
             "gtl/container/id_map_unittest.cc",
+            "gtl/container/util.h",
+            "gtl/container/vector_buffer.h",
+            "gtl/container/vector_buffer_unittest.cc",
             "gtl/hash/sha1.h",
             "gtl/hash/sha1_boringssl.cc",
             "gtl/hash/sha1_unittest.cc",
@@ -273,7 +282,10 @@ core.workflow(
             "gtl/numeric/safe_math.h",
             "gtl/numeric/safe_math_clang_gcc_impl.h",
             "gtl/numeric/safe_math_shared_impl.h",
+            "gtl/test/copy_only_int.h",
+            "gtl/test/copy_only_int.cc",
             "gtl/test/gtest_util.h",
+            "gtl/test/move_only_int.h",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -462,6 +474,11 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
+            before = "base::is_trivially_copyable",
+            after = "absl::type_traits_internal::is_trivially_copyable",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
             before = "base::",
             after = "gtl::",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
@@ -478,9 +495,39 @@ core.workflow(
             paths = glob(["**/*.h"]),
         ),
         core.replace(
+            before = "BASE_NUMERICS_UNLIKELY",
+            after = "GTL_NUMERIC_UNLIKELY",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
             before = " BASE_NUMERICS_",
             after = " GTL_NUMERIC_",
             paths = glob(["**/*.h"]),
+        ),
+        core.replace(
+            before = "BASE_NUMERIC_COMPARISON_OPERATORS",
+            after = "GTL_NUMERIC_COMPARISON_OPERATORS",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "BASE_HAS_OPTIMIZED_SAFE_MATH",
+            after = "GTL_HAS_OPTIMIZED_SAFE_MATH",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "BASE_NUMERIC_ARITHMETIC_OPERATORS",
+            after = "GTL_NUMERIC_ARITHMETIC_OPERATORS",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "BASE_NUMERIC_ARITHMETIC_VARIADIC",
+            after = "GTL_NUMERIC_ARITHMETIC_VARIADIC",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "BASE_FLOAT_ARITHMETIC_OPS",
+            after = "GTL_FLOAT_ARITHMETIC_OPS",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = " BASE_",
@@ -496,6 +543,7 @@ core.workflow(
             "gtl/patches/chromium/thread_checker.patch",
             "gtl/patches/chromium/sha1.patch",
             "gtl/patches/chromium/id_map.patch",
+            "gtl/patches/chromium/vector_buffer.patch",
         ]),
     ],
 )

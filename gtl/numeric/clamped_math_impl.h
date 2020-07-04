@@ -328,10 +328,10 @@ struct ClampedMinOp<
     }                                                                    \
   };
 
-BASE_FLOAT_ARITHMETIC_OPS(Add, +)
-BASE_FLOAT_ARITHMETIC_OPS(Sub, -)
-BASE_FLOAT_ARITHMETIC_OPS(Mul, *)
-BASE_FLOAT_ARITHMETIC_OPS(Div, /)
+GTL_FLOAT_ARITHMETIC_OPS(Add, +)
+GTL_FLOAT_ARITHMETIC_OPS(Sub, -)
+GTL_FLOAT_ARITHMETIC_OPS(Mul, *)
+GTL_FLOAT_ARITHMETIC_OPS(Div, /)
 
 #undef GTL_FLOAT_ARITHMETIC_OPS
 

@@ -336,18 +336,18 @@ CheckMathOp(const L lhs, const R rhs, const Args... args) {
   return CheckMathOp<M>(CheckMathOp<M>(lhs, rhs), args...);
 }
 
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Add, +, +=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Sub, -, -=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Mul, *, *=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Div, /, /=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Mod, %, %=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Lsh, <<, <<=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Rsh, >>, >>=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, And, &, &=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Or, |, |=)
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Xor, ^, ^=)
-BASE_NUMERIC_ARITHMETIC_VARIADIC(Checked, Check, Max)
-BASE_NUMERIC_ARITHMETIC_VARIADIC(Checked, Check, Min)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Add, +, +=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Sub, -, -=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Mul, *, *=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Div, /, /=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Mod, %, %=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Lsh, <<, <<=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Rsh, >>, >>=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, And, &, &=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Or, |, |=)
+GTL_NUMERIC_ARITHMETIC_OPERATORS(Checked, Check, Xor, ^, ^=)
+GTL_NUMERIC_ARITHMETIC_VARIADIC(Checked, Check, Max)
+GTL_NUMERIC_ARITHMETIC_VARIADIC(Checked, Check, Min)
 
 // These are some extra StrictNumeric operators to support simple pointer
 // arithmetic with our result types. Since wrapping on a pointer is always
