@@ -1,0 +1,25 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_binary(
+    name = "directory_manifest",
+    srcs = [
+        "generator.cc",
+        "generator.h",
+        "macros.h",
+        "main.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//gtl:file_system",
+        "//gtl:macros",
+        "//gtl:posix_file_system",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+    ],
+)

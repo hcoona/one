@@ -1,0 +1,6 @@
+#ifndef DIRECTORY_MANIFEST_TABLE_H_
+#define DIRECTORY_MANIFEST_TABLE_H_
+
+namespace hcoona {}
+
+#endif  // DIRECTORY_MANIFEST_TABLE_H_

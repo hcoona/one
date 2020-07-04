@@ -103,6 +103,7 @@ cc_library(
     hdrs = ["posix_file_system.h"],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         ":file_system",
         "//config",

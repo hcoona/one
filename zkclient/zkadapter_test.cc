@@ -18,7 +18,7 @@ TEST(ZookeeperAdapterTest, IdAnyoneEquality) {
 
 TEST(ZookeeperAdapterTest, AclOpenEquality) {
   const ACL* p1 =
-      reinterpret_cast<const ACL*>(&hcoona::zookeeper::Acl::kOpen.at(0));
+      reinterpret_cast<const ACL*>(&hcoona::zookeeper::Acl::kOpen.front());
   const ACL* p2 = &(ZOO_OPEN_ACL_UNSAFE.data[0]);
   EXPECT_EQ(p1->perms, p2->perms);
   EXPECT_EQ(std::string(p1->id.scheme), std::string(p2->id.scheme));
