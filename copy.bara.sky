@@ -478,11 +478,6 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
-            before = "base::is_trivially_copyable",
-            after = "absl::type_traits_internal::is_trivially_copyable",
-            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
-        ),
-        core.replace(
             before = "base::",
             after = "gtl::",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),

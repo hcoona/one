@@ -11,10 +11,10 @@
 #include <type_traits>
 #include <utility>
 
-#include "absl/meta/type_traits.h"
 #include "glog/logging.h"
 #include "gtl/container/util.h"
 #include "gtl/numeric/checked_math.h"
+#include "gtl/type_traits.h"
 
 namespace gtl {
 namespace internal {
@@ -125,7 +125,7 @@ class VectorBuffer {
   // Trivially copyable types can use memcpy. trivially copyable implies
   // that there is a trivial destructor as we don't have to call it.
   template <typename T2 = T,
-            typename std::enable_if<absl::type_traits_internal::is_trivially_copyable<T2>::value,
+            typename std::enable_if<gtl::is_trivially_copyable<T2>::value,
                                     int>::type = 0>
   static void MoveRange(T* from_begin, T* from_end, T* to) {
     CHECK(!RangesOverlap(from_begin, from_end, to));
@@ -138,7 +138,7 @@ class VectorBuffer {
   // destruct the original.
   template <typename T2 = T,
             typename std::enable_if<std::is_move_constructible<T2>::value &&
-                                        !absl::type_traits_internal::is_trivially_copyable<T2>::value,
+                                        !gtl::is_trivially_copyable<T2>::value,
                                     int>::type = 0>
   static void MoveRange(T* from_begin, T* from_end, T* to) {
     CHECK(!RangesOverlap(from_begin, from_end, to));
@@ -154,7 +154,7 @@ class VectorBuffer {
   // destruct the original.
   template <typename T2 = T,
             typename std::enable_if<!std::is_move_constructible<T2>::value &&
-                                        !absl::type_traits_internal::is_trivially_copyable<T2>::value,
+                                        !gtl::is_trivially_copyable<T2>::value,
                                     int>::type = 0>
   static void MoveRange(T* from_begin, T* from_end, T* to) {
     CHECK(!RangesOverlap(from_begin, from_end, to));
