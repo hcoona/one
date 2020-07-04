@@ -1,8 +1,9 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load(
     "//bazel/copts:configure.bzl",
     "ONE_DEFAULT_COPTS",
     "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
 )
 
 cc_library(
@@ -79,5 +80,20 @@ cc_library(
     deps = [
         ":safe_conversions",
         "//config",
+    ],
+)
+
+cc_test(
+    name = "safe_numerics_test",
+    srcs = ["safe_numerics_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":safe_math",
+        "//config",
+        "//gtl:compiler_specific",
+        "//gtl/test:gtest_util",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest_main",
     ],
 )

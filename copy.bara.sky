@@ -234,6 +234,7 @@ core.workflow(
             "base/numerics/safe_math.h",
             "base/numerics/safe_math_clang_gcc_impl.h",
             "base/numerics/safe_math_shared_impl.h",
+            "base/safe_numerics_unittest.cc",
             "base/test/copy_only_int.h",
             "base/test/copy_only_int.cc",
             "base/test/gtest_util.h",
@@ -290,6 +291,7 @@ core.workflow(
             "gtl/numeric/safe_math.h",
             "gtl/numeric/safe_math_clang_gcc_impl.h",
             "gtl/numeric/safe_math_shared_impl.h",
+            "gtl/numeric/safe_numerics_unittest.cc",
             "gtl/test/copy_only_int.h",
             "gtl/test/copy_only_int.cc",
             "gtl/test/gtest_util.h",
@@ -302,6 +304,7 @@ core.workflow(
     authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
     mode = "SQUASH",
     transformations = [
+        core.move("base/safe_numerics_unittest.cc", "gtl/numeric/safe_numerics_unittest.cc"),
         core.move("base/containers", "gtl/container"),
         core.move("base/numerics", "gtl/numeric"),
         core.move("base/threading", "gtl"),
@@ -402,6 +405,11 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
+            before = "#include \"base/logging.h\"",
+            after = "#include \"glog/logging.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
             before = "#include \"base/check.h\"",
             after = "#include \"glog/logging.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
@@ -496,6 +504,11 @@ core.workflow(
             before = " BASE_CONTAINERS_",
             after = " GTL_CONTAINER_",
             paths = glob(["**/*.h"]),
+        ),
+        core.replace(
+            before = "BASE_NUMERICS_LIKELY",
+            after = "GTL_NUMERIC_LIKELY",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "BASE_NUMERICS_UNLIKELY",

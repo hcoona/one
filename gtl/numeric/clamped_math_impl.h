@@ -157,7 +157,7 @@ struct ClampedDivOp<T,
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
     V result = {};
-    if (BASE_NUMERICS_LIKELY((CheckedDivOp<T, U>::Do(x, y, &result))))
+    if (GTL_NUMERIC_LIKELY((CheckedDivOp<T, U>::Do(x, y, &result))))
       return result;
     // Saturation goes to max, min, or NaN (if x is zero).
     return x ? CommonMaxOrMin<V>(IsValueNegative(x) ^ IsValueNegative(y))
@@ -197,11 +197,11 @@ struct ClampedLshOp<T,
   template <typename V = result_type>
   static constexpr V Do(T x, U shift) {
     static_assert(!std::is_signed<U>::value, "Shift value must be unsigned.");
-    if (BASE_NUMERICS_LIKELY(shift < std::numeric_limits<T>::digits)) {
+    if (GTL_NUMERIC_LIKELY(shift < std::numeric_limits<T>::digits)) {
       // Shift as unsigned to avoid undefined behavior.
       V result = static_cast<V>(as_unsigned(x) << shift);
       // If the shift can be reversed, we know it was valid.
-      if (BASE_NUMERICS_LIKELY(result >> shift == x))
+      if (GTL_NUMERIC_LIKELY(result >> shift == x))
         return result;
     }
     return x ? CommonMaxOrMin<V>(IsValueNegative(x)) : 0;

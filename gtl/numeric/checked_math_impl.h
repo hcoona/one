@@ -286,7 +286,7 @@ struct CheckedLshOp<T,
   template <typename V>
   static constexpr bool Do(T x, U shift, V* result) {
     // Disallow negative numbers and verify the shift is in bounds.
-    if (BASE_NUMERICS_LIKELY(!IsValueNegative(x) &&
+    if (GTL_NUMERIC_LIKELY(!IsValueNegative(x) &&
                              as_unsigned(shift) <
                                  as_unsigned(std::numeric_limits<T>::digits))) {
       // Shift as unsigned to avoid undefined behavior.
@@ -316,7 +316,7 @@ struct CheckedRshOp<T,
   template <typename V>
   static bool Do(T x, U shift, V* result) {
     // Use the type conversion push negative values out of range.
-    if (BASE_NUMERICS_LIKELY(as_unsigned(shift) <
+    if (GTL_NUMERIC_LIKELY(as_unsigned(shift) <
                              IntegerBitsPlusSign<T>::value)) {
       T tmp = x >> shift;
       *result = static_cast<V>(tmp);
