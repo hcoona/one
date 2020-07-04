@@ -11,6 +11,7 @@
 #include "gtest/gtest.h"
 #include "gtl/macros.h"
 #include "gtl/sequence_token.h"
+#include "gtl/test/gtest_util.h"
 
 namespace gtl {
 namespace {
@@ -255,63 +256,62 @@ TEST(ThreadCheckerTest, MoveFromDetachedRebinds) {
   EXPECT_TRUE(moved_into.CalledOnValidThread());
 }
 
-// TEST(ThreadCheckerTest, MoveOffThreadBanned) {
-//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
+TEST(ThreadCheckerTest, MoveOffThreadBanned) {
+  testing::GTEST_FLAG(death_test_style) = "threadsafe";
 
-//   ThreadCheckerImpl other_thread;
-//   other_thread.DetachFromThread();
-//   RunCallbackOnNewThreadSynchronously(
-//       [&other_thread]() { ExpectCalledOnValidThread(&other_thread); });
+  ThreadCheckerImpl other_thread;
+  other_thread.DetachFromThread();
+  RunCallbackOnNewThreadSynchronously(
+      [&other_thread]() { ExpectCalledOnValidThread(&other_thread); });
 
-//   EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
-// }
+  EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
+}
 
-// namespace {
+namespace {
 
-// // This fixture is a helper for unit testing the thread checker macros as it is
-// // not possible to inline ExpectDeathOnOtherThread() and
-// // ExpectNoDeathOnOtherThreadAfterDetach() as lambdas since binding
-// // |Unretained(&my_sequence_checker)| wouldn't compile on non-dcheck builds
-// // where it won't be defined.
-// class ThreadCheckerMacroTest : public testing::Test {
-//  public:
-//   ThreadCheckerMacroTest() = default;
+// This fixture is a helper for unit testing the thread checker macros as it is
+// not possible to inline ExpectDeathOnOtherThread() and
+// ExpectNoDeathOnOtherThreadAfterDetach() as lambdas since binding
+// |Unretained(&my_sequence_checker)| wouldn't compile on non-dcheck builds
+// where it won't be defined.
+class ThreadCheckerMacroTest : public testing::Test {
+ public:
+  ThreadCheckerMacroTest() = default;
 
-//   void ExpectDeathOnOtherThread() {
-// #if DCHECK_IS_ON()
-//     EXPECT_DCHECK_DEATH({ DCHECK_CALLED_ON_VALID_THREAD(thread_checker_); });
-// #else
-//     // Happily no-ops on non-dcheck builds.
-//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-// #endif
-//   }
+  void ExpectDeathOnOtherThread() {
+#if DCHECK_IS_ON()
+    EXPECT_DCHECK_DEATH({ DCHECK_CALLED_ON_VALID_THREAD(thread_checker_); });
+#else
+    // Happily no-ops on non-dcheck builds.
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+#endif
+  }
 
-//   void ExpectNoDeathOnOtherThreadAfterDetach() {
-//     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-//   }
+  void ExpectNoDeathOnOtherThreadAfterDetach() {
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+  }
 
-//  protected:
-//   THREAD_CHECKER(thread_checker_);
+ protected:
+  THREAD_CHECKER(thread_checker_);
 
-//  private:
-//   DISALLOW_COPY_AND_ASSIGN(ThreadCheckerMacroTest);
-// };
+ private:
+  DISALLOW_COPY_AND_ASSIGN(ThreadCheckerMacroTest);
+};
 
-// }  // namespace
+}  // namespace
 
-// TEST_F(ThreadCheckerMacroTest, Macros) {
-//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
+TEST_F(ThreadCheckerMacroTest, Macros) {
+  testing::GTEST_FLAG(death_test_style) = "threadsafe";
 
-//   THREAD_CHECKER(my_thread_checker);
+  THREAD_CHECKER(my_thread_checker);
 
-//   RunCallbackOnNewThreadSynchronously(BindOnce(
-//       &ThreadCheckerMacroTest::ExpectDeathOnOtherThread, Unretained(this)));
+  RunCallbackOnNewThreadSynchronously(
+      [this]() { ExpectDeathOnOtherThread(); });
 
-//   DETACH_FROM_THREAD(thread_checker_);
+  DETACH_FROM_THREAD(thread_checker_);
 
-//   RunCallbackOnNewThreadSynchronously(
-//       BindOnce(&ThreadCheckerMacroTest::ExpectNoDeathOnOtherThreadAfterDetach,
-//                Unretained(this)));
-// }
+  RunCallbackOnNewThreadSynchronously(
+      [this]() { ExpectNoDeathOnOtherThreadAfterDetach(); });
+}
 
 }  // namespace gtl
