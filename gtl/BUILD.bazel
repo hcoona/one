@@ -414,3 +414,14 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "type_traits",
+    hdrs = ["type_traits.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_absl//absl/meta:type_traits",
+    ],
+)
