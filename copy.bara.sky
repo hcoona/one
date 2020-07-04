@@ -212,6 +212,8 @@ core.workflow(
             "base/threading/thread_checker_impl.cc",
             "base/threading/thread_checker_unittest.cc",
             "base/containers/ring_buffer.h",
+            "base/containers/id_map.h",
+            "base/containers/id_map_unittest.cc",
             "base/hash/sha1.h",
             "base/hash/sha1_boringssl.cc",
             "base/hash/sha1_unittest.cc",
@@ -246,6 +248,8 @@ core.workflow(
             "gtl/thread_checker_impl.cc",
             "gtl/thread_checker_unittest.cc",
             "gtl/container/ring_buffer.h",
+            "gtl/container/id_map.h",
+            "gtl/container/id_map_unittest.cc",
             "gtl/hash/sha1.h",
             "gtl/hash/sha1_boringssl.cc",
             "gtl/hash/sha1_unittest.cc",
@@ -318,6 +322,11 @@ core.workflow(
             after = "absl::MutexLock mutex_lock(&lock_)",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        core.replace(
+            before = "base::flat_set",
+            after = "absl::flat_hash_set",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
         # build_config header path
         core.replace(
             before = "#include \"build/build_config.h\"",
@@ -338,6 +347,11 @@ core.workflow(
         core.replace(
             before = "#include \"base/containers/span.h\"",
             after = "#include \"absl/types/span.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "#include \"base/containers/flat_set.h\"",
+            after = "#include \"absl/container/flat_hash_set.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         # glog header paths
@@ -449,6 +463,7 @@ core.workflow(
             "gtl/patches/chromium/thread_annotations.patch",
             "gtl/patches/chromium/thread_checker.patch",
             "gtl/patches/chromium/sha1.patch",
+            "gtl/patches/chromium/id_map.patch",
         ]),
     ],
 )

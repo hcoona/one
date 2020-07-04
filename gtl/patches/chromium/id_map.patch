@@ -1,0 +1,21 @@
+diff --git a/gtl/container/id_map.h b/gtl/container/id_map.h
+index 06b1f31..fc381b7 100644
+--- a/gtl/container/id_map.h
++++ b/gtl/container/id_map.h
+@@ -16,7 +16,6 @@
+ 
+ #include "glog/logging.h"
+ #include "absl/container/flat_hash_set.h"
+-#include "gtl/notreached.h"
+ #include "gtl/sequence_checker.h"
+ 
+ namespace gtl {
+@@ -78,7 +77,7 @@ class IDMap final {
+     DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+     typename HashTable::iterator i = data_.find(id);
+     if (i == data_.end() || IsRemoved(id)) {
+-      NOTREACHED() << "Attempting to remove an item not in the list";
++      DCHECK(false) << "Attempting to remove an item not in the list";
+       return;
+     }
+ 

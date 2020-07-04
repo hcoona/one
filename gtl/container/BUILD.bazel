@@ -1,8 +1,38 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load(
     "//bazel/copts:configure.bzl",
     "ONE_DEFAULT_COPTS",
     "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
+)
+
+cc_library(
+    name = "id_map",
+    hdrs = ["id_map.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//gtl:sequence_checker",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/container:flat_hash_set",
+    ],
+)
+
+cc_test(
+    name = "id_map_test",
+    srcs = ["id_map_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS + select({
+        "//bazel:llvm_compiler": ["-Werror=thread-safety-analysis"],
+        "//conditions:default": [],
+    }),
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":id_map",
+        "//gtl/test:gtest_util",
+        "@com_google_googletest//:gtest_main",
+    ],
+    defines = ["UNIT_TEST"],
 )
 
 cc_library(
