@@ -217,4 +217,6 @@
 // not been included.
 #define BUILDFLAG(flag) (BUILDFLAG_CAT(BUILDFLAG_INTERNAL_, flag))
 
+#define BUILDFLAG_INTERNAL_ENABLE_LOCATION_SOURCE 1
+
 #endif  // CONFIG_CONFIG_H
