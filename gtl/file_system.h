@@ -26,6 +26,7 @@ limitations under the License.
 
 #include "absl/status/status.h"
 #include "gtl/file_statistics.h"
+#include "gtl/macros.h"
 
 #ifdef OS_WIN
 #undef DeleteFile
@@ -350,6 +351,7 @@ class RandomAccessFile {
   /// This is an optional operation that may not be implemented by every
   /// filesystem.
   virtual absl::Status Name(absl::string_view* result) const {
+    ignore_result(result);
     return absl::UnimplementedError("This filesystem does not support Name()");
   }
 
@@ -374,6 +376,10 @@ class RandomAccessFile {
   /// \brief Read up to `n` bytes from the file starting at `offset`.
   virtual absl::Status Read(uint64_t offset, size_t n,
                                   absl::Cord* cord) const {
+    ignore_result(offset);
+    ignore_result(n);
+    ignore_result(cord);
+
     return absl::UnimplementedError(
         "Read(uint64_t, size_t, absl::Cord*) is not "
         "implemented");
@@ -398,6 +404,7 @@ class WritableFile {
 
   // \brief Append 'data' to the file.
   virtual absl::Status Append(const absl::Cord& cord) {
+    ignore_result(cord);
     return absl::UnimplementedError("Append(absl::Cord) is not implemented");
   }
 
@@ -427,6 +434,7 @@ class WritableFile {
   /// This is an optional operation that may not be implemented by every
   /// filesystem.
   virtual absl::Status Name(absl::string_view* result) const {
+    ignore_result(result);
     return absl::UnimplementedError("This filesystem does not support Name()");
   }
 

@@ -172,6 +172,7 @@ core.workflow(
             "gtl/patches/tensorflow/path.patch",
             "gtl/patches/tensorflow/scanner.patch",
             "gtl/patches/tensorflow/top_n.patch",
+            "gtl/patches/tensorflow/file_system_fix_warning.patch",
         ]),
     ],
 )

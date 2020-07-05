@@ -91,6 +91,7 @@ absl::Status FileSystem::IsDirectory(const std::string& name) {
 }
 
 absl::Status FileSystem::HasAtomicMove(const std::string& path, bool* has_atomic_move) {
+  ignore_result(path);
   *has_atomic_move = true;
   return absl::OkStatus();
 }

@@ -77,6 +77,8 @@ class LocalPosixFileSystem : public PosixFileSystem {
   }
 };
 
+absl::Status IOError(const std::string& context, int err_number);
+
 }  // namespace gtl
 
 #endif  // GTL_POSIX_FILE_SYSTEM_H_

@@ -192,6 +192,7 @@ absl::StatusCode ErrnoToCode(int err_number) {
 }  // namespace
 
 absl::Status IOError(const std::string& context, int err_number) {
+  ignore_result(context);
   auto code = ErrnoToCode(err_number);
   return absl::Status(code, absl::StrCat(context, "; ", strerror(err_number)));
 }
