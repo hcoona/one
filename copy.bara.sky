@@ -196,6 +196,9 @@ core.workflow(
             "base/guid.h",
             "base/guid.cc",
             "base/guid_unittest.cc",
+            "base/location.h",
+            "base/location.cc",
+            "base/location_unittest.cc",
             "base/macros.h",
             "base/no_destructor.h",
             "base/no_destructor_unittest.cc",
@@ -253,6 +256,9 @@ core.workflow(
             "gtl/guid.h",
             "gtl/guid.cc",
             "gtl/guid_unittest.cc",
+            "gtl/location.h",
+            "gtl/location.cc",
+            "gtl/location_unittest.cc",
             "gtl/macros.h",
             "gtl/no_destructor.h",
             "gtl/no_destructor_unittest.cc",
@@ -421,6 +427,12 @@ core.workflow(
             after = "#include \"gtest/gtest.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        # gmock header path
+        core.replace(
+            before = "#include \"testing/gmock/include/gmock/gmock.h\"",
+            after = "#include \"gmock/gmock.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
         # boringssl header path
         core.replace(
             before = "#include \"third_party/boringssl/src/include/openssl/",
@@ -563,6 +575,7 @@ core.workflow(
             "gtl/patches/chromium/id_map.patch",
             "gtl/patches/chromium/circular_deque.patch",
             "gtl/patches/chromium/vector_buffer.patch",
+            "gtl/patches/chromium/location.patch",
         ]),
     ],
 )

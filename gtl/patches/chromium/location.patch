@@ -1,0 +1,77 @@
+diff --git a/gtl/location.cc b/gtl/location.cc
+index 39ddb61..c8e7510 100644
+--- a/gtl/location.cc
++++ b/gtl/location.cc
+@@ -4,15 +4,16 @@
+ 
+ #include "gtl/location.h"
+ 
++#include "absl/strings/str_cat.h"
++#include "absl/strings/str_format.h"
++#include "glog/logging.h"
++#include "config/config.h"
++#include "gtl/compiler_specific.h"
++
+ #if defined(COMPILER_MSVC)
+ #include <intrin.h>
+ #endif
+ 
+-#include "gtl/compiler_specific.h"
+-#include "gtl/strings/string_number_conversions.h"
+-#include "gtl/strings/stringprintf.h"
+-#include "config/config.h"
+-
+ namespace gtl {
+ 
+ Location::Location() = default;
+@@ -42,10 +43,9 @@ Location::Location(const char* function_name,
+ 
+ std::string Location::ToString() const {
+   if (has_source_info()) {
+-    return std::string(function_name_) + "@" + file_name_ + ":" +
+-           NumberToString(line_number_);
++    return absl::StrCat(function_name_, "@", file_name_, ":", line_number_);
+   }
+-  return StringPrintf("pc:%p", program_counter_);
++  return absl::StrFormat("pc:%p", program_counter_);
+ }
+ 
+ #if defined(COMPILER_MSVC)
+diff --git a/gtl/location.h b/gtl/location.h
+index 6ea4c27..63dd751 100644
+--- a/gtl/location.h
++++ b/gtl/location.h
+@@ -11,9 +11,8 @@
+ #include <functional>
+ #include <string>
+ 
+-
+-#include "gtl/debug/debugging_buildflags.h"
+-#include "gtl/hash/hash.h"
++#include "absl/hash/hash.h"
++#include "absl/types/span.h"
+ #include "config/config.h"
+ 
+ namespace gtl {
+@@ -138,7 +137,8 @@ template <>
+ struct hash<::gtl::Location> {
+   std::size_t operator()(const ::gtl::Location& loc) const {
+     const void* program_counter = loc.program_counter();
+-    return gtl::FastHash(gtl::as_bytes(gtl::make_span(&program_counter, 1)));
++    return absl::Hash<absl::Span<const void*>>()(
++        absl::MakeSpan(&program_counter, 1));
+   }
+ };
+ 
+diff --git a/gtl/location_unittest.cc b/gtl/location_unittest.cc
+index a8d8e6d..f946218 100644
+--- a/gtl/location_unittest.cc
++++ b/gtl/location_unittest.cc
+@@ -5,7 +5,6 @@
+ #include "gtl/location.h"
+ 
+ #include "gtl/compiler_specific.h"
+-#include "gtl/debug/debugging_buildflags.h"
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+ 
