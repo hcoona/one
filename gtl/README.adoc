@@ -4,9 +4,9 @@ C++ STL is still not enough to cover daily development. Google has some great ut
 
 This project don't port well-known libraries features:
 
-. link:https://github.com/abseil/abseil-cpp/[Abseil]
-. link:https://github.com/google/glog[GLOG]
-. link:https://github.com/census-instrumentation/opencensus-cpp[OpenCensus]
+. link:https://github.com/abseil/abseil-cpp/[Abseil] for many common libraries such as higher C++ standard backports, string utilities, time & synchronization, etc.
+. link:https://github.com/google/glog[GLOG] for logging
+. link:https://github.com/census-instrumentation/opencensus-cpp[OpenCensus] for metrics
 
 == Workflow
 
