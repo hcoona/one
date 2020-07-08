@@ -1,4 +1,9 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
 
 cc_library(
     name = "arrow",
@@ -81,7 +86,16 @@ cc_library(
         "vendored/double-conversion/fixed-dtoa.cc",
         "vendored/double-conversion/strtod.cc",
         "visitor.cc",
-    ] + glob(["**/*.h"]) + glob(["**/*.hpp"]),
+    ] + [
+        "util/compression_lz4.cc",
+    ] + [
+        "util/compression_snappy.cc",
+    ] + [
+        "util/compression_zlib.cc",
+    ] + glob([
+        "**/*.h",
+    ]) + glob(["**/*.hpp"]),
+    copts = ONE_DEFAULT_COPTS,
     defines = [
         "URI_STATIC_BUILD",
         "ARROW_WITH_LZ4",
@@ -91,10 +105,17 @@ cc_library(
         "HAS_VOID_T=0",
         "HAS_DEDUCTION_GUIDES=0",
     ],
+    linkopts = ONE_DEFAULT_LINKOPTS + [
+        "-ldl",
+    ],
     textual_hdrs = ["vendored/xxhash/xxhash.c"],
+    visibility = ["//visibility:public"],
     deps = [
         ":uri",
         "//third_party/hadoop:hdfs",
+        "@com_github_google_snappy//:snappy",
+        "@com_github_lz4_lz4//:lz4",
+        "@com_github_madler_zlib//:zlib",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:optional",
     ],
@@ -120,7 +141,9 @@ cc_library(
         "vendored/uriparser/UriShorten.c",
     ],
     hdrs = glob(["vendored/uriparser/*.h"]),
+    copts = ONE_DEFAULT_COPTS,
     defines = [
         "URI_STATIC_BUILD",
     ],
+    linkopts = ONE_DEFAULT_LINKOPTS,
 )
