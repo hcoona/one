@@ -8,15 +8,25 @@ core.workflow(
         ref = "apache-arrow-0.17.1",
     ),
     destination = folder.destination(),
-    origin_files = glob(["cpp/src/arrow/**"]),
+    origin_files = glob([
+        "cpp/src/arrow/**",
+        "cpp/src/parquet/**",
+    ]),
     destination_files = glob(
-        ["arrow/**"],
-        exclude = ["arrow/BUILD.bazel"],
+        [
+            "arrow/**",
+            "parquet/**",
+        ],
+        exclude = [
+            "arrow/BUILD.bazel",
+            "parquet/BUILD.bazel",
+        ],
     ),
     authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
     mode = "SQUASH",
     transformations = [
         core.move("cpp/src/arrow", "arrow"),
+        core.move("cpp/src/parquet", "parquet"),
         patch.apply(patches = [
             "third_party/arrow/0000-build.patch",
         ]),
