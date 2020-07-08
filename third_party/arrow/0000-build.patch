@@ -1,0 +1,148 @@
+diff --git a/arrow/io/hdfs_internal.h b/arrow/io/hdfs_internal.h
+index 6249382..3410bfb 100644
+--- a/arrow/io/hdfs_internal.h
++++ b/arrow/io/hdfs_internal.h
+@@ -20,7 +20,7 @@
+ #include <cstddef>
+ #include <cstdint>
+ 
+-#include <hdfs.h>
++#include "third_party/hadoop/hdfs.h"
+ 
+ #include "arrow/util/visibility.h"
+ #include "arrow/util/windows_compatibility.h"  // IWYU pragma: keep
+diff --git a/arrow/result.h b/arrow/result.h
+index b492057..5fde82b 100644
+--- a/arrow/result.h
++++ b/arrow/result.h
+@@ -30,7 +30,7 @@ namespace arrow {
+ 
+ namespace internal {
+ 
+-#if __cplusplus >= 201703L
++#if false
+ using std::launder;
+ #else
+ template <class T>
+diff --git a/arrow/util/atomic_shared_ptr.h b/arrow/util/atomic_shared_ptr.h
+index 9f3152b..08f12b3 100644
+--- a/arrow/util/atomic_shared_ptr.h
++++ b/arrow/util/atomic_shared_ptr.h
+@@ -21,37 +21,73 @@
+ #include <memory>
+ #include <utility>
+ 
++#include "arrow/type_traits.h"
++
+ namespace arrow {
+ namespace internal {
+ 
+-#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ < 5
++// Atomic shared_ptr operations only appeared in libstdc++ since GCC 5,
++// emulate them with unsafe ops if unavailable.
++// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=57250
++
++template <typename T, typename = void>
++struct is_atomic_load_shared_ptr_available : std::false_type {};
++
++template <typename T>
++struct is_atomic_load_shared_ptr_available<
++    T, void_t<decltype(std::atomic_load(std::declval<const std::shared_ptr<T>*>()))>>
++    : std::true_type {};
++
++template <typename T>
++using enable_if_atomic_load_shared_ptr_available =
++    enable_if_t<is_atomic_load_shared_ptr_available<T>::value, T>;
+ 
+-// atomic shared_ptr operations only appeared in gcc 5,
+-// emulate them with unsafe ops on gcc 4.x.
++template <typename T>
++using enable_if_atomic_load_shared_ptr_unavailable =
++    enable_if_t<!is_atomic_load_shared_ptr_available<T>::value, T>;
+ 
+ template <class T>
+-inline std::shared_ptr<T> atomic_load(const std::shared_ptr<T>* p) {
+-  return *p;
++inline enable_if_atomic_load_shared_ptr_available<std::shared_ptr<T>> atomic_load(
++    const std::shared_ptr<T>* p) {
++  return std::atomic_load(p);
+ }
+ 
+ template <class T>
+-inline void atomic_store(std::shared_ptr<T>* p, std::shared_ptr<T> r) {
+-  *p = r;
++inline enable_if_atomic_load_shared_ptr_unavailable<std::shared_ptr<T>> atomic_load(
++    const std::shared_ptr<T>* p) {
++  return *p;
+ }
+ 
+-#else
++template <typename T, typename = void>
++struct is_atomic_store_shared_ptr_available : std::false_type {};
+ 
+-template <class T>
+-inline std::shared_ptr<T> atomic_load(const std::shared_ptr<T>* p) {
+-  return std::atomic_load(p);
+-}
++template <typename T>
++struct is_atomic_store_shared_ptr_available<
++    T, void_t<decltype(std::atomic_store(std::declval<std::shared_ptr<T>*>(),
++                                         std::declval<std::shared_ptr<T>>()))>>
++    : std::true_type {};
++
++template <typename T>
++using enable_if_atomic_store_shared_ptr_available =
++    enable_if_t<is_atomic_store_shared_ptr_available<T>::value, T>;
++
++template <typename T>
++using enable_if_atomic_store_shared_ptr_unavailable =
++    enable_if_t<!is_atomic_store_shared_ptr_available<T>::value, T>;
+ 
+ template <class T>
+-inline void atomic_store(std::shared_ptr<T>* p, std::shared_ptr<T> r) {
++inline void atomic_store(
++    enable_if_atomic_store_shared_ptr_available<std::shared_ptr<T>*> p,
++    std::shared_ptr<T> r) {
+   std::atomic_store(p, std::move(r));
+ }
+ 
+-#endif
++template <class T>
++inline void atomic_store(
++    enable_if_atomic_store_shared_ptr_unavailable<std::shared_ptr<T>*> p,
++    std::shared_ptr<T> r) {
++  *p = r;
++}
+ 
+ }  // namespace internal
+ }  // namespace arrow
+diff --git a/arrow/util/config.h b/arrow/util/config.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/arrow/util/optional.h b/arrow/util/optional.h
+index e1c32e7..f4a86fc 100644
+--- a/arrow/util/optional.h
++++ b/arrow/util/optional.h
+@@ -19,17 +19,17 @@
+ 
+ #define optional_CONFIG_SELECT_OPTIONAL optional_OPTIONAL_NONSTD
+ 
+-#include "arrow/vendored/optional.hpp"  // IWYU pragma: export
++#include "absl/types/optional.h"  // IWYU pragma: export
+ 
+ namespace arrow {
+ namespace util {
+ 
+ template <typename T>
+-using optional = nonstd::optional<T>;
++using optional = absl::optional<T>;
+ 
+-using nonstd::bad_optional_access;
+-using nonstd::make_optional;
+-using nonstd::nullopt;
++using absl::bad_optional_access;
++using absl::make_optional;
++using absl::nullopt;
+ 
+ }  // namespace util
+ }  // namespace arrow

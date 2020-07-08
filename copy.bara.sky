@@ -2,6 +2,28 @@
 """
 
 core.workflow(
+    name = "org_apache_arrow",
+    origin = git.origin(
+        url = "https://github.com/apache/arrow.git",
+        ref = "apache-arrow-0.17.1",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(["cpp/src/arrow/**"]),
+    destination_files = glob(
+        ["arrow/**"],
+        exclude = ["arrow/BUILD.bazel"],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("cpp/src/arrow", "arrow"),
+        patch.apply(patches = [
+            "third_party/arrow/0000-build.patch",
+        ]),
+    ],
+)
+
+core.workflow(
     name = "gtl_tensorflow",
     origin = git.origin(
         url = "https://github.com/tensorflow/tensorflow.git",
