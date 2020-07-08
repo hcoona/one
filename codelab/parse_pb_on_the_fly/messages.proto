@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package codelab;
+
+enum EnumA {
+  ENUMA_UNSPECIFIED = 0;
+  ENUMA_X = 1;
+  ENUMA_Y = 2;
+}
+
+message MessageA {
+  int32 my_int32_value = 1;
+  int64 my_int64_value = 2;
+  uint64 my_uint64_value = 3;
+  bool my_bool_value = 4;
+  double my_double_value = 5;
+  string my_string_value = 6;
+  bytes my_bytes_value = 7;
+  EnumA my_enum_value = 8;
+  repeated int32 id = 100;
+  map<int32, int32> my_map = 101;
+}
