@@ -6,16 +6,18 @@ load(
 )
 
 cc_binary(
-    name = "parse_pb_on_the_fly",
+    name = "read_bazel_runfiles",
     srcs = ["main.cc"],
     copts = ONE_DEFAULT_COPTS,
+    data = ["lipsum.txt"],
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         "//gtl:macros",
         "//gtl:posix_file_system",
+        "@bazel_tools//tools/cpp/runfiles",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/status",
-        "@com_google_protobuf//:protobuf",
+        "@com_google_absl//absl/strings",
     ],
 )
