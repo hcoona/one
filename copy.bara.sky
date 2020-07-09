@@ -20,6 +20,7 @@ core.workflow(
         exclude = [
             "arrow/BUILD.bazel",
             "parquet/BUILD.bazel",
+            "parquet/parquet_version.h",
         ],
     ),
     authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
@@ -29,6 +30,7 @@ core.workflow(
         core.move("cpp/src/parquet", "parquet"),
         patch.apply(patches = [
             "third_party/arrow/0000-build.patch",
+            "third_party/parquet/0000-build.patch",
         ]),
     ],
 )
