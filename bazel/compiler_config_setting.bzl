@@ -26,7 +26,7 @@ def create_llvm_config(name, visibility):
         native.config_setting(
             name = name,
             flag_values = {
-                "@bazel_tools//tools/cpp:compiler": "llvm",
+                "@bazel_tools//tools/cpp:compiler": "clang",
             },
             visibility = visibility,
         )
