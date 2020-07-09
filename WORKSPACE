@@ -429,8 +429,16 @@ http_archive(
     urls = [
         "https://github.com/msgpack/msgpack-c/archive/cpp-0.5.9.tar.gz",
     ],
-)  # libcurl, required by consul
+)
 
+http_archive(
+    name = "com_github_google_flatbuffers",
+    sha256 = "62f2223fb9181d1d6338451375628975775f7522185266cd5296571ac152bc45",
+    strip_prefix = "flatbuffers-1.12.0",
+    urls = ["https://github.com/google/flatbuffers/archive/v1.12.0.tar.gz"],  # 2020-03-13
+)
+
+# libcurl, required by consul
 http_archive(
     name = "com_github_curl_curl",
     build_file = "//third_party/curl:curl.BUILD",

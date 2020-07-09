@@ -1,0 +1,58 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_test(
+    name = "encryption-reader-writer",
+    srcs = [
+        "encryption-reader-writer.cc",
+        "reader_writer.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//parquet",
+    ],
+)
+
+cc_binary(
+    name = "encryption-reader-writer-all-crypto-options",
+    srcs = [
+        "encryption-reader-writer-all-crypto-options.cc",
+        "reader_writer.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//parquet",
+    ],
+)
+
+cc_test(
+    name = "reader_writer1",
+    srcs = [
+        "reader-writer.cc",
+        "reader_writer.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//parquet",
+    ],
+)
+
+cc_test(
+    name = "reader_writer2",
+    srcs = [
+        "reader-writer2.cc",
+        "reader_writer.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//parquet",
+    ],
+)
