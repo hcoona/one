@@ -297,6 +297,14 @@ core.workflow(
             "base/test/copy_only_int.cc",
             "base/test/gtest_util.h",
             "base/test/move_only_int.h",
+            "crypto/openssl_util.h",
+            "crypto/openssl_util.cc",
+            "crypto/secure_hash.h",
+            "crypto/secure_hash.cc",
+            "crypto/secure_hash_unittest.cc",
+            "crypto/sha2.h",
+            "crypto/sha2.cc",
+            "crypto/sha2_unittest.cc",
         ],
     ),
     destination_files = glob(
@@ -331,6 +339,14 @@ core.workflow(
             "gtl/thread_checker_impl.h",
             "gtl/thread_checker_impl.cc",
             "gtl/thread_checker_unittest.cc",
+            "gtl/crypto/openssl_util.h",
+            "gtl/crypto/openssl_util.cc",
+            "gtl/crypto/secure_hash.h",
+            "gtl/crypto/secure_hash.cc",
+            "gtl/crypto/secure_hash_unittest.cc",
+            "gtl/crypto/sha2.h",
+            "gtl/crypto/sha2.cc",
+            "gtl/crypto/sha2_unittest.cc",
             "gtl/container/circular_deque.h",
             "gtl/container/circular_deque_unittest.cc",
             "gtl/container/ring_buffer.h",
@@ -370,6 +386,7 @@ core.workflow(
         core.move("base/numerics", "gtl/numeric"),
         core.move("base/threading", "gtl"),
         core.move("base", "gtl"),
+        core.move("crypto", "gtl/crypto"),
         # Remove BASE_EXPORT
         core.replace(
             before = "#include \"base/base_export.h\"",
@@ -378,6 +395,17 @@ core.workflow(
         ),
         core.replace(
             before = "BASE_EXPORT ",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        # Remove BASE_EXPORT
+        core.replace(
+            before = "#include \"crypto/crypto_export.h\"",
+            after = "",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "CRYPTO_EXPORT ",
             after = "",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
@@ -497,6 +525,12 @@ core.workflow(
         core.replace(
             before = "#include \"base/containers/${filename}.h\"",
             after = "#include \"gtl/container/${filename}.h\"",
+            regex_groups = {"filename": "[^\\.>\"]*"},
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "#include \"crypto/${filename}.h\"",
+            after = "#include \"gtl/crypto/${filename}.h\"",
             regex_groups = {"filename": "[^\\.>\"]*"},
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
@@ -630,6 +664,7 @@ core.workflow(
             "gtl/patches/chromium/circular_deque.patch",
             "gtl/patches/chromium/vector_buffer.patch",
             "gtl/patches/chromium/location.patch",
+            "gtl/patches/chromium/secure_hash.patch",
         ]),
     ],
 )

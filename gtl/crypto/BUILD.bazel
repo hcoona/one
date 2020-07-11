@@ -1,0 +1,78 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+    "ONE_TEST_COPTS",
+)
+
+cc_library(
+    name = "openssl_util",
+    srcs = ["openssl_util.cc"],
+    hdrs = ["openssl_util.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//gtl:location",
+        "//gtl:macros",
+        "@boringssl//:crypto",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_library(
+    name = "secure_hash",
+    srcs = ["secure_hash.cc"],
+    hdrs = ["secure_hash.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":openssl_util",
+        "//gtl:macros",
+        "@boringssl//:crypto",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_test(
+    name = "secure_hash_test",
+    srcs = ["secure_hash_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":secure_hash",
+        ":sha2",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "sha2",
+    srcs = ["sha2.cc"],
+    hdrs = ["sha2.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":secure_hash",
+        "//gtl:macros",
+        "@boringssl//:crypto",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_test(
+    name = "sha2_test",
+    srcs = ["sha2_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":sha2",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
