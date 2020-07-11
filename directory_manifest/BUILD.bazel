@@ -19,6 +19,7 @@ cc_binary(
         "//gtl:file_system",
         "//gtl:macros",
         "//gtl:posix_file_system",
+        "//gtl/container:circular_deque",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
     ],

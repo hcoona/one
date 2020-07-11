@@ -17,10 +17,11 @@ namespace hcoona {
 class Generator {
  public:
   explicit Generator(gtl::FileSystem* file_system, std::string root_directory,
-                     std::string output_file)
+                     std::string output_file, bool overwrite)
       : file_system_(file_system),
         root_directory_(std::move(root_directory)),
-        output_file_(std::move(output_file)) {}
+        output_file_(std::move(output_file)),
+        overwrite_(overwrite) {}
 
   absl::Status Init();
 
@@ -32,6 +33,7 @@ class Generator {
   gtl::FileSystem* file_system_;
   std::string root_directory_;
   std::string output_file_;
+  bool overwrite_;
 
   std::unique_ptr<gtl::WritableFile> output_writable_file_
       ABSL_GUARDED_BY(mutex_);

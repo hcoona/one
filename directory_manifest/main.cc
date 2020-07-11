@@ -24,12 +24,15 @@ DEFINE_validator(directory, &StringFlagNotEmpty);
 DEFINE_string(output, "manifest.csv", "The generated manifest file.");
 DEFINE_validator(output, &StringFlagNotEmpty);
 
+DEFINE_bool(overwrite, false, "Overwrite output manifest file.");
+
 int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
 
   gtl::LocalPosixFileSystem file_system;
-  hcoona::Generator generator(&file_system, FLAGS_directory, FLAGS_output);
+  hcoona::Generator generator(&file_system, FLAGS_directory, FLAGS_output,
+                              FLAGS_overwrite);
   absl::Status s = generator.Init();
   if (!s.ok()) {
     LOG(ERROR) << s.ToString();
