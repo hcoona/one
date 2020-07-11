@@ -1,19 +1,16 @@
-# Copied from https://github.com/abseil/abseil-cpp/blob/e6b050212c859fbaf67abac76105da10ec348274/absl/copts/configure_copts.bzl
+# Copied from https://github.com/abseil/abseil-cpp/blob/518f175/absl/copts/configure_copts.bzl
 
-"""Global copts.
+"""absl specific copts.
 This file simply selects the correct options from the generated files.  To
-change global copts, edit bazel/copts/copts.bzl
+change Abseil copts, edit absl/copts/copts.py
 """
 
 load(
     "//bazel/copts:copts.bzl",
-    "ONE_GCC_EXCEPTIONS_FLAGS",
     "ONE_GCC_FLAGS",
     "ONE_GCC_TEST_FLAGS",
-    "ONE_LLVM_EXCEPTIONS_FLAGS",
     "ONE_LLVM_FLAGS",
     "ONE_LLVM_TEST_FLAGS",
-    "ONE_MSVC_EXCEPTIONS_FLAGS",
     "ONE_MSVC_FLAGS",
     "ONE_MSVC_LINKOPTS",
     "ONE_MSVC_TEST_FLAGS",
@@ -28,21 +25,11 @@ ONE_DEFAULT_COPTS = select({
 })
 
 # in absence of modules (--compiler=gcc or -c opt), cc_tests leak their copts
-# to their (included header) dependencies and fail to build outside
+# to their (included header) dependencies and fail to build outside absl
 ONE_TEST_COPTS = ONE_DEFAULT_COPTS + select({
     "//bazel:windows": ONE_MSVC_TEST_FLAGS,
     "//bazel:llvm_compiler": ONE_LLVM_TEST_FLAGS,
     "//conditions:default": ONE_GCC_TEST_FLAGS,
-})
-
-ONE_EXCEPTIONS_FLAG = select({
-    "//bazel:windows": ONE_MSVC_EXCEPTIONS_FLAGS,
-    "//bazel:llvm_compiler": ONE_LLVM_EXCEPTIONS_FLAGS,
-    "//conditions:default": ONE_GCC_EXCEPTIONS_FLAGS,
-})
-
-ONE_EXCEPTIONS_FLAG_LINKOPTS = select({
-    "//conditions:default": [],
 })
 
 ONE_DEFAULT_LINKOPTS = select({
@@ -58,7 +45,7 @@ ONE_RANDOM_RANDEN_COPTS = select({
     ":cpu_darwin": ONE_RANDOM_HWAES_X64_FLAGS,
     ":cpu_x64_windows_msvc": ONE_RANDOM_HWAES_MSVC_X64_FLAGS,
     ":cpu_x64_windows": ONE_RANDOM_HWAES_MSVC_X64_FLAGS,
-    ":cpu_haswell": ONE_RANDOM_HWAES_X64_FLAGS,
+    ":cpu_k8": ONE_RANDOM_HWAES_X64_FLAGS,
     ":cpu_ppc": ["-mcrypto"],
 
     # Supported by default or unsupported.
@@ -75,7 +62,7 @@ def absl_random_randen_copts_init():
     # These configs have consistent flags to enable HWAES intsructions.
     cpu_configs = [
         "ppc",
-        "haswell",
+        "k8",
         "darwin_x86_64",
         "darwin",
         "x64_windows_msvc",

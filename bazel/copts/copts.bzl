@@ -1,10 +1,4 @@
-# Copied from https://github.com/abseil/abseil-cpp/blob/e6b050212c859fbaf67abac76105da10ec348274/absl/copts/copts.py
-
-ONE_CLANG_CL_EXCEPTIONS_FLAGS = [
-    "/U_HAS_EXCEPTIONS",
-    "/D_HAS_EXCEPTIONS=1",
-    "/EHsc",
-]
+# Copied from https://github.com/abseil/abseil-cpp/blob/e96ae22/absl/copts/GENERATED_copts.bzl
 
 ONE_CLANG_CL_FLAGS = [
     "/W3",
@@ -26,13 +20,13 @@ ONE_CLANG_CL_FLAGS = [
     "-Wno-gcc-compat",
     "-Wno-global-constructors",
     "-Wno-exit-time-destructors",
-    "-Wno-nested-anon-types",
     "-Wno-non-modular-include-in-module",
     "-Wno-old-style-cast",
     "-Wno-range-loop-analysis",
     "-Wno-reserved-id-macro",
     "-Wno-shorten-64-to-32",
     "-Wno-switch-enum",
+    "-Wno-thread-safety-negative",
     "-Wno-unknown-warning-option",
     "-Wno-unreachable-code",
     "-Wno-unused-macros",
@@ -76,10 +70,6 @@ ONE_CLANG_CL_TEST_FLAGS = [
     "-Wno-gnu-zero-variadic-macro-arguments",
 ]
 
-ONE_GCC_EXCEPTIONS_FLAGS = [
-    "-fexceptions",
-]
-
 ONE_GCC_FLAGS = [
     "-Wall",
     "-Wextra",
@@ -107,10 +97,6 @@ ONE_GCC_TEST_FLAGS = [
     "-Wno-unused-private-field",
 ]
 
-ONE_LLVM_EXCEPTIONS_FLAGS = [
-    "-fexceptions",
-]
-
 ONE_LLVM_FLAGS = [
     "-Wall",
     "-Wextra",
@@ -133,13 +119,13 @@ ONE_LLVM_FLAGS = [
     "-Wno-gcc-compat",
     "-Wno-global-constructors",
     "-Wno-exit-time-destructors",
-    "-Wno-nested-anon-types",
     "-Wno-non-modular-include-in-module",
     "-Wno-old-style-cast",
     "-Wno-range-loop-analysis",
     "-Wno-reserved-id-macro",
     "-Wno-shorten-64-to-32",
     "-Wno-switch-enum",
+    "-Wno-thread-safety-negative",
     "-Wno-unknown-warning-option",
     "-Wno-unreachable-code",
     "-Wno-unused-macros",
@@ -178,12 +164,6 @@ ONE_LLVM_TEST_FLAGS = [
     "-Wno-gnu-zero-variadic-macro-arguments",
 ]
 
-ONE_MSVC_EXCEPTIONS_FLAGS = [
-    "/U_HAS_EXCEPTIONS",
-    "/D_HAS_EXCEPTIONS=1",
-    "/EHsc",
-]
-
 ONE_MSVC_FLAGS = [
     "/W3",
     "/DNOMINMAX",
@@ -191,6 +171,7 @@ ONE_MSVC_FLAGS = [
     "/D_CRT_SECURE_NO_WARNINGS",
     "/D_SCL_SECURE_NO_WARNINGS",
     "/D_ENABLE_EXTENDED_ALIGNED_STORAGE",
+    "/bigobj",
     "/wd4005",
     "/wd4068",
     "/wd4180",
@@ -221,8 +202,6 @@ ONE_RANDOM_HWAES_ARM64_FLAGS = [
 ]
 
 ONE_RANDOM_HWAES_MSVC_X64_FLAGS = [
-    "/O2",
-    "/Ob2",
 ]
 
 ONE_RANDOM_HWAES_X64_FLAGS = [
