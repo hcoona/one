@@ -28,7 +28,7 @@ namespace gtl {
 // const std::string& GetSessionNonce() {
 //   static const gtl::NoDestructor<std::string> nonce([] {
 //     std::string s(16);
-//     crypto::RandString(s.data(), s.size());
+//     gtl::crypto::RandString(s.data(), s.size());
 //     return s;
 //   }());
 //   return *nonce;

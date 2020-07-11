@@ -21,13 +21,13 @@ TEST(Sha256Test, Test1) {
                       0xb4, 0x10, 0xff, 0x61,
                       0xf2, 0x00, 0x15, 0xad };
 
-  uint8_t output1[crypto::kSHA256Length];
-  crypto::SHA256HashString(input1, output1, sizeof(output1));
-  for (size_t i = 0; i < crypto::kSHA256Length; i++)
+  uint8_t output1[gtl::crypto::kSHA256Length];
+  gtl::crypto::SHA256HashString(input1, output1, sizeof(output1));
+  for (size_t i = 0; i < gtl::crypto::kSHA256Length; i++)
     EXPECT_EQ(expected1[i], static_cast<int>(output1[i]));
 
   uint8_t output_truncated1[4];  // 4 bytes == 32 bits
-  crypto::SHA256HashString(input1,
+  gtl::crypto::SHA256HashString(input1,
                            output_truncated1, sizeof(output_truncated1));
   for (size_t i = 0; i < sizeof(output_truncated1); i++)
     EXPECT_EQ(expected1[i], static_cast<int>(output_truncated1[i]));
@@ -46,9 +46,9 @@ TEST(Sha256Test, Test1_String) {
                       0xb4, 0x10, 0xff, 0x61,
                       0xf2, 0x00, 0x15, 0xad };
 
-  std::string output1 = crypto::SHA256HashString(input1);
-  ASSERT_EQ(crypto::kSHA256Length, output1.size());
-  for (size_t i = 0; i < crypto::kSHA256Length; i++)
+  std::string output1 = gtl::crypto::SHA256HashString(input1);
+  ASSERT_EQ(gtl::crypto::kSHA256Length, output1.size());
+  for (size_t i = 0; i < gtl::crypto::kSHA256Length; i++)
     EXPECT_EQ(expected1[i], static_cast<uint8_t>(output1[i]));
 }
 
@@ -65,13 +65,13 @@ TEST(Sha256Test, Test2) {
                       0xf6, 0xec, 0xed, 0xd4,
                       0x19, 0xdb, 0x06, 0xc1 };
 
-  uint8_t output2[crypto::kSHA256Length];
-  crypto::SHA256HashString(input2, output2, sizeof(output2));
-  for (size_t i = 0; i < crypto::kSHA256Length; i++)
+  uint8_t output2[gtl::crypto::kSHA256Length];
+  gtl::crypto::SHA256HashString(input2, output2, sizeof(output2));
+  for (size_t i = 0; i < gtl::crypto::kSHA256Length; i++)
     EXPECT_EQ(expected2[i], static_cast<int>(output2[i]));
 
   uint8_t output_truncated2[6];
-  crypto::SHA256HashString(input2,
+  gtl::crypto::SHA256HashString(input2,
                            output_truncated2, sizeof(output_truncated2));
   for (size_t i = 0; i < sizeof(output_truncated2); i++)
     EXPECT_EQ(expected2[i], static_cast<int>(output_truncated2[i]));
@@ -89,13 +89,13 @@ TEST(Sha256Test, Test3) {
                       0x04, 0x6d, 0x39, 0xcc,
                       0xc7, 0x11, 0x2c, 0xd0 };
 
-  uint8_t output3[crypto::kSHA256Length];
-  crypto::SHA256HashString(input3, output3, sizeof(output3));
-  for (size_t i = 0; i < crypto::kSHA256Length; i++)
+  uint8_t output3[gtl::crypto::kSHA256Length];
+  gtl::crypto::SHA256HashString(input3, output3, sizeof(output3));
+  for (size_t i = 0; i < gtl::crypto::kSHA256Length; i++)
     EXPECT_EQ(expected3[i], static_cast<int>(output3[i]));
 
   uint8_t output_truncated3[12];
-  crypto::SHA256HashString(input3,
+  gtl::crypto::SHA256HashString(input3,
                            output_truncated3, sizeof(output_truncated3));
   for (size_t i = 0; i < sizeof(output_truncated3); i++)
     EXPECT_EQ(expected3[i], static_cast<int>(output_truncated3[i]));

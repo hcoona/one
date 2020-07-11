@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CRYPTO_SHA2_H_
-#define CRYPTO_SHA2_H_
+#ifndef GTL_CRYPTO_SHA2_H_
+#define GTL_CRYPTO_SHA2_H_
 
 #include <stddef.h>
 
@@ -13,7 +13,7 @@
 #include "absl/types/span.h"
 #include "absl/strings/string_view.h"
 
-
+namespace gtl {
 namespace crypto {
 
 // These functions perform SHA-256 operations.
@@ -38,5 +38,6 @@ void SHA256HashString(absl::string_view str,
                                     size_t len);
 
 }  // namespace crypto
+}  // namespace gtl
 
-#endif  // CRYPTO_SHA2_H_
+#endif  // GTL_CRYPTO_SHA2_H_

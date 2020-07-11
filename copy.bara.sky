@@ -595,6 +595,11 @@ core.workflow(
             after = "gtl::",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
+        core.replace(
+            before = "crypto::",
+            after = "gtl::crypto::",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
         # Fix header guards
         core.replace(
             before = " BASE_THREADING_",
@@ -651,6 +656,11 @@ core.workflow(
             after = " GTL_",
             paths = glob(["**/*.h"]),
         ),
+        core.replace(
+            before = " CRYPTO_",
+            after = " GTL_CRYPTO_",
+            paths = glob(["**/*.h"]),
+        ),
         # Finally patches
         patch.apply(patches = [
             "gtl/patches/chromium/guid.patch",
@@ -665,6 +675,7 @@ core.workflow(
             "gtl/patches/chromium/vector_buffer.patch",
             "gtl/patches/chromium/location.patch",
             "gtl/patches/chromium/secure_hash.patch",
+            "gtl/patches/chromium/crypto_gtl_namespace.patch",
         ]),
     ],
 )

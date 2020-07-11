@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CRYPTO_SECURE_HASH_H_
-#define CRYPTO_SECURE_HASH_H_
+#ifndef GTL_CRYPTO_SECURE_HASH_H_
+#define GTL_CRYPTO_SECURE_HASH_H_
 
 #include <stddef.h>
 
@@ -11,7 +11,7 @@
 
 #include "gtl/macros.h"
 
-
+namespace gtl {
 namespace crypto {
 
 // A wrapper to calculate secure hashes incrementally, allowing to
@@ -43,5 +43,6 @@ class SecureHash {
 };
 
 }  // namespace crypto
+}  // namespace gtl
 
-#endif  // CRYPTO_SECURE_HASH_H_
+#endif  // GTL_CRYPTO_SECURE_HASH_H_

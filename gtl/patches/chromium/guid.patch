@@ -1,5 +1,5 @@
 diff --git a/gtl/guid.cc b/gtl/guid.cc
-index 05eaede..67e2fec 100644
+index 4fb3987..67e2fec 100644
 --- a/gtl/guid.cc
 +++ b/gtl/guid.cc
 @@ -7,9 +7,9 @@
@@ -28,7 +28,7 @@ index 05eaede..67e2fec 100644
  
  std::string GenerateGUID() {
    uint64_t sixteen_bytes[2];
--  // Use gtl::RandBytes instead of crypto::RandBytes, because crypto calls the
+-  // Use gtl::RandBytes instead of gtl::crypto::RandBytes, because crypto calls the
 -  // base version directly, and to prevent the dependency from base/ to crypto/.
 -  gtl::RandBytes(&sixteen_bytes, sizeof(sixteen_bytes));
 +  absl::BitGen bitgen;

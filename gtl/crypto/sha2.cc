@@ -11,6 +11,7 @@
 #include "gtl/crypto/secure_hash.h"
 #include "openssl/sha.h"
 
+namespace gtl {
 namespace crypto {
 
 std::array<uint8_t, kSHA256Length> SHA256Hash(absl::Span<const uint8_t> input) {
@@ -32,3 +33,4 @@ std::string SHA256HashString(absl::string_view str) {
 }
 
 }  // namespace crypto
+}  // namespace gtl

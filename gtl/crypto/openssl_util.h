@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CRYPTO_OPENSSL_UTIL_H_
-#define CRYPTO_OPENSSL_UTIL_H_
+#ifndef GTL_CRYPTO_OPENSSL_UTIL_H_
+#define GTL_CRYPTO_OPENSSL_UTIL_H_
 
 #include <stddef.h>
 #include <string.h>
@@ -11,7 +11,7 @@
 #include "gtl/location.h"
 #include "gtl/macros.h"
 
-
+namespace gtl {
 namespace crypto {
 
 // Provides a buffer of at least MIN_SIZE bytes, for use when calling OpenSSL's
@@ -88,5 +88,6 @@ class OpenSSLErrStackTracer {
 };
 
 }  // namespace crypto
+}  // namespace gtl
 
-#endif  // CRYPTO_OPENSSL_UTIL_H_
+#endif  // GTL_CRYPTO_OPENSSL_UTIL_H_

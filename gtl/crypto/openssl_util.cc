@@ -14,6 +14,7 @@
 #include "openssl/crypto.h"
 #include "openssl/err.h"
 
+namespace gtl {
 namespace crypto {
 
 namespace {
@@ -53,3 +54,4 @@ void ClearOpenSSLERRStack(const gtl::Location& location) {
 }
 
 }  // namespace crypto
+}  // namespace gtl

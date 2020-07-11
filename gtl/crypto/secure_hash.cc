@@ -11,6 +11,7 @@
 #include "openssl/sha.h"
 #include "gtl/crypto/openssl_util.h"
 
+namespace gtl {
 namespace crypto {
 
 namespace {
@@ -65,3 +66,4 @@ std::unique_ptr<SecureHash> SecureHash::Create(Algorithm algorithm) {
 }
 
 }  // namespace crypto
+}  // namespace gtl
