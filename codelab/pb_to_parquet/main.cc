@@ -8,6 +8,9 @@
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/dynamic_message.h"
+#include "google/protobuf/message.h"
+#include "google/protobuf/reflection.h"
+#include "google/protobuf/repeated_field.h"
 #include "parquet/api/io.h"
 #include "parquet/api/schema.h"
 #include "parquet/api/writer.h"
@@ -83,9 +86,23 @@ int main(int argc, char** argv) {
   LOG(INFO) << "Parquet Schema: " << schema.ToString();
 
   google::protobuf::DynamicMessageFactory dynamic_message_factory;
-  const google::protobuf::Message* message =
+  const google::protobuf::Message* message_prototype =
       dynamic_message_factory.GetPrototype(descriptor);
-  DCHECK_NOTNULL(message);
+  DCHECK_NOTNULL(message_prototype);
+
+  google::protobuf::Message* message = message_prototype->New();
+  message_prototype->GetReflection()->SetInt32(
+      message, descriptor->FindFieldByNumber(1), 2);
+  message_prototype->GetReflection()->SetInt64(
+      message, descriptor->FindFieldByNumber(2), 3);
+  google::protobuf::MutableRepeatedFieldRef<int32_t> ids =
+      message_prototype->GetReflection()->GetMutableRepeatedFieldRef<int32_t>(
+          message, descriptor->FindFieldByNumber(100));
+  ids.Add(2);
+  ids.Add(3);
+  ids.Add(5);
+  ids.Add(7);
+  LOG(INFO) << message->Utf8DebugString();
 
   return 0;
 }

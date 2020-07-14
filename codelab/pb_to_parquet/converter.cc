@@ -193,6 +193,83 @@ GetFieldMakerTable() {
   return table.get();
 }
 
+const absl::flat_hash_map<
+    google::protobuf::FieldDescriptor::Type /* protobuf_type */,
+    parquet::Type::type /* parquet_type */>*
+GetPrimitiveTypeTable() {
+  static const gtl::NoDestructor<absl::flat_hash_map<
+      google::protobuf::FieldDescriptor::Type /* protobuf_type */,
+      parquet::Type::type /* parquet_type */>>
+      table({
+          // Ordered by google::protobuf::FieldDescriptor::Type
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE,
+              parquet::Type::DOUBLE,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_FLOAT,
+              parquet::Type::FLOAT,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_INT64,
+              parquet::Type::INT64,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_UINT64,
+              parquet::Type::INT64,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_INT32,
+              parquet::Type::INT32,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_FIXED64,
+              parquet::Type::INT64,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_FIXED32,
+              parquet::Type::INT32,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_BOOL,
+              parquet::Type::BOOLEAN,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_STRING,
+              parquet::Type::BYTE_ARRAY,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_BYTES,
+              parquet::Type::BYTE_ARRAY,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_UINT32,
+              parquet::Type::INT32,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_ENUM,
+              parquet::Type::BYTE_ARRAY,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32,
+              parquet::Type::INT32,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64,
+              parquet::Type::INT64,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_SINT32,
+              parquet::Type::INT32,
+          },
+          {
+              google::protobuf::FieldDescriptor::Type::TYPE_SINT64,
+              parquet::Type::INT64,
+          },
+      });
+  return table.get();
+}
+
 parquet::Repetition::type ComputeRepetitionType(
     const google::protobuf::FieldDescriptor* field_descriptor) {
   if (field_descriptor->is_required()) {
@@ -258,6 +335,30 @@ absl::Status ConvertFieldDescriptor(
         field_descriptor->number());
     fields->emplace_back(std::move(node));
   }
+  return absl::OkStatus();
+}
+
+absl::Status WriteMessages(
+    const google::protobuf::Descriptor* descriptor,
+    absl::Span<const google::protobuf::Message*> messages,
+    parquet::RowGroupWriter* row_group_writer) {
+  for (int i = 0; i < descriptor->field_count(); i++) {
+    const google::protobuf::FieldDescriptor* field_descriptor =
+        descriptor->field(i);
+
+    const parquet::Type::type* parquet_type =
+        gtl::FindOrNull(*GetPrimitiveTypeTable(), field_descriptor->type());
+    if (parquet_type == nullptr) {
+      return absl::UnimplementedError(absl::StrCat(
+          "Failed to convert '", field_descriptor->name(),
+          "', not implemented for primitive type '",
+          field_descriptor->type_name(), "(", field_descriptor->type(), ")'"));
+    }
+
+    parquet::ColumnWriter* column_writer = row_group_writer->column(i);
+    const google::protobuf::Reflection* r = messages[0]->GetReflection();
+  }
+
   return absl::OkStatus();
 }
 
