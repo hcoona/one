@@ -47,3 +47,18 @@ cc_library(
         "@com_google_protobuf//:protobuf",
     ],
 )
+
+cc_binary(
+    name = "parquet_write_repeated",
+    srcs = [
+        "parquet_write_repeated.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//parquet",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+    ],
+)
