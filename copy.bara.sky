@@ -27,7 +27,7 @@ core.workflow(
             "codelab/parquet_examples/low_level_api/BUILD.bazel",
         ],
     ),
-    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
     mode = "SQUASH",
     transformations = [
         core.move("cpp/src/generated", "arrow/generated"),
@@ -119,7 +119,7 @@ core.workflow(
             "**/BUILD.bazel",
         ],
     ),
-    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
     mode = "SQUASH",
     transformations = [
         core.move("tensorflow/core/lib/gtl/subtle/map_traits.h", "gtl/map_traits.h"),
@@ -378,7 +378,7 @@ core.workflow(
             "**/BUILD.bazel",
         ],
     ),
-    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ds@bytedance.com>"),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
     mode = "SQUASH",
     transformations = [
         core.move("base/safe_numerics_unittest.cc", "gtl/numeric/safe_numerics_unittest.cc"),
