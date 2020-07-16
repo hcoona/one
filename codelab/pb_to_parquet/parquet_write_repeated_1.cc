@@ -1,0 +1,116 @@
+#include <algorithm>
+#include <array>
+#include <memory>
+#include <string>
+
+#include "absl/status/status.h"
+#include "arrow/api.h"
+#include "arrow/io/api.h"
+#include "arrow/io/file.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+#include "parquet/api/io.h"
+#include "parquet/api/schema.h"
+#include "parquet/api/writer.h"
+#include "parquet/arrow/writer.h"
+#include "gtl/macros.h"
+
+#define ARROW_CHECK_OK(status)                                        \
+  do {                                                                \
+    ::arrow::Status __s = ::arrow::internal::GenericToStatus(status); \
+    CHECK(__s.ok()) << __s.ToString();                                \
+  } while (false)
+
+namespace {
+
+bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
+  ignore_result(flag_name);
+  return !value.empty();
+}
+
+}  // namespace
+
+DEFINE_string(output, "parquet_test_1.parquet", "Output file.");
+DEFINE_validator(output, &FlagStringNotEmpty);
+
+int main(int argc, char** argv) {
+  google::ParseCommandLineFlags(&argc, &argv, true);
+  google::InitGoogleLogging(argv[0]);
+
+  // Parquet-CLI cannot read repeated field directly. This is a by-design
+  // behaviour. See further details in
+  // https://github.com/apache/parquet-mr/blob/apache-parquet-1.11.0/parquet-protobuf/src/main/java/org/apache/parquet/proto/ProtoMessageConverter.java#L382
+
+  // See further details about definition level & repetition level in
+  // https://blog.twitter.com/engineering/en_us/a/2013/dremel-made-simple-with-parquet.html
+
+  parquet::schema::NodeVector fields;
+  // fields.emplace_back(parquet::schema::PrimitiveNode::Make(
+  //     "my_int32_array", parquet::Repetition::REPEATED,
+  //     parquet::LogicalType::None(), parquet::Type::INT32, -1, 1));
+
+  parquet::schema::NodeVector subfields2;
+  subfields2.emplace_back(parquet::schema::PrimitiveNode::Make(
+      "element", parquet::Repetition::OPTIONAL, parquet::LogicalType::None(),
+      parquet::Type::INT32, -1, 1));
+  parquet::schema::NodeVector subfields1;
+  subfields1.emplace_back(parquet::schema::GroupNode::Make(
+      "list", parquet::Repetition::REPEATED, subfields2, nullptr, 1));
+  fields.emplace_back(parquet::schema::GroupNode::Make(
+      "my_int32_array", parquet::Repetition::OPTIONAL, subfields1,
+      parquet::LogicalType::List(), 1));
+
+  std::shared_ptr<arrow::io::FileOutputStream> output_file =
+      arrow::io::FileOutputStream::Open(FLAGS_output).ValueOrDie();
+  std::unique_ptr<parquet::ParquetFileWriter> file_writer =
+      parquet::ParquetFileWriter::Open(
+          output_file,
+          std::static_pointer_cast<parquet::schema::GroupNode>(
+              parquet::schema::GroupNode::Make(
+                  "__schema", parquet::Repetition::REQUIRED, fields)));
+  CHECK(file_writer);
+
+  LOG(INFO) << "Schema: " << file_writer->schema()->ToString();
+
+  parquet::RowGroupWriter* row_group_writer = file_writer->AppendRowGroup(2);
+  CHECK(row_group_writer);
+
+  parquet::Int32Writer* column_writer =
+      static_cast<parquet::Int32Writer*>(row_group_writer->NextColumn());
+  CHECK(column_writer);
+
+  LOG(INFO) << column_writer->descr()->ToString();
+  std::array<int32_t, 6> values = {17, 19, 23, 27, 31, 37};
+
+  // Row 1
+  int16_t definition_level = 3;
+  int16_t repetition_level = 0;
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[0]);
+
+  definition_level = 3;
+  repetition_level = 1;
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[1]);
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[2]);
+
+  // Row 2
+  definition_level = 3;
+  repetition_level = 0;
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[3]);
+
+  definition_level = 3;
+  repetition_level = 1;
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[4]);
+  column_writer->WriteBatch(1, &definition_level, &repetition_level,
+                            &values[5]);
+
+  file_writer->Close();
+  arrow::Status arrow_status = output_file->Close();
+  LOG_IF(FATAL, !arrow_status.ok()) << arrow_status.ToString();
+
+  return 0;
+}

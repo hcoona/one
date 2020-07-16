@@ -19,6 +19,7 @@
 #include "gtl/macros.h"
 #include "gtl/map_util.h"
 #include "gtl/posix_file_system.h"
+#include "status/status_util.h"
 
 namespace {
 
@@ -99,7 +100,36 @@ int main(int argc, char** argv) {
   ids.Add(7);
   message_prototype->GetReflection()->SetEnumValue(
       message, descriptor->FindFieldByNumber(8), 2);
-  LOG(INFO) << message->Utf8DebugString();
+  google::protobuf::Message* message_c =
+      message_prototype->GetReflection()->MutableMessage(
+          message, descriptor->FindFieldByNumber(103));
+  google::protobuf::MutableRepeatedFieldRef<int64_t> my_sint64_value =
+      message_c->GetReflection()->GetMutableRepeatedFieldRef<int64_t>(
+          message_c, message_c->GetDescriptor()->FindFieldByNumber(1));
+  my_sint64_value.Add(23);
+  my_sint64_value.Add(29);
+  LOG(INFO) << "Constructed protobuf message: " << message->Utf8DebugString();
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  arrow::StructBuilder message_c_builder(
+      arrow::struct_(
+          {arrow::field("my_sint64_value", arrow::list(arrow::int64()))}),
+      pool,
+      {std::make_shared<arrow::ListBuilder>(
+          pool, std::make_shared<arrow::Int64Builder>(pool))});
+  arrow::ListBuilder* inner_builder =
+      static_cast<arrow::ListBuilder*>(message_c_builder.field_builder(0));
+  arrow::Int64Builder* inner_inner_builder =
+      static_cast<arrow::Int64Builder*>(inner_builder->value_builder());
+  CHECK_STATUS_OK(message_c_builder.Append());
+  CHECK_STATUS_OK(inner_builder->Append());
+  CHECK_STATUS_OK(inner_inner_builder->Append(23));
+  CHECK_STATUS_OK(inner_inner_builder->Append(29));
+  CHECK_STATUS_OK(inner_inner_builder->Append(31));
+
+  std::shared_ptr<arrow::StructArray> message_c_column_trunk;
+  message_c_builder.Finish(&message_c_column_trunk);
+  LOG(INFO) << "message_c_column_trunk: " << message_c_column_trunk->ToString();
 
   // const google::protobuf::EnumValueDescriptor* enum_value_descriptor =
   //     message_prototype->GetReflection()->GetEnum(
@@ -108,6 +138,7 @@ int main(int argc, char** argv) {
 
   absl::Span<const google::protobuf::Message*> messages = absl::MakeSpan(
       const_cast<const google::protobuf::Message**>(&message), 1);
+  ignore_result(messages);
 
   return 0;
 }

@@ -49,13 +49,46 @@ cc_library(
 )
 
 cc_binary(
-    name = "parquet_write_repeated",
+    name = "arrow_parquet_write_repeated",
     srcs = [
-        "parquet_write_repeated.cc",
+        "arrow_parquet_write_repeated.cc",
     ],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
+        "//gtl:macros",
+        "//parquet",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_binary(
+    name = "parquet_write_repeated_1",
+    srcs = [
+        "parquet_write_repeated_1.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//gtl:macros",
+        "//parquet",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_binary(
+    name = "parquet_write_repeated_2",
+    srcs = [
+        "parquet_write_repeated_2.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//gtl:macros",
         "//parquet",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",

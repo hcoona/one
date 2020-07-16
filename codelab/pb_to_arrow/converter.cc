@@ -138,7 +138,6 @@ absl::Status ConvertFieldDescriptor(
     const google::protobuf::FieldDescriptor* field_descriptor,
     std::shared_ptr<arrow::Field>* field) {
   // TODO(zhangshuai.ustc): Distinguish map/list type for message/group.
-  // TODO(zhangshuai.ustc): Convert enum into strings.
   if (field_descriptor->type() ==
           google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
       field_descriptor->type() ==
@@ -191,17 +190,61 @@ absl::Status ConvertSchema(const google::protobuf::Descriptor* descriptor,
   return absl::OkStatus();
 }
 
-absl::Status ConvertTable(const google::protobuf::Descriptor* descriptor,
-                          absl::Span<const google::protobuf::Message*> messages,
-                          arrow::MemoryPool* pool,
-                          std::shared_ptr<arrow::Table>* table) {
-  return absl::UnimplementedError("");
+absl::Status ConvertFieldData(
+    absl::Span<const google::protobuf::Message* const> messages,
+    const google::protobuf::FieldDescriptor* field_descriptor,
+    arrow::MemoryPool* pool,
+    std::shared_ptr<arrow::Array>* messages_column_data_vector) {
+  // TODO(zhangshuai.ustc): Distinguish map/list type for message/group.
+  // if (field_descriptor->type() ==
+  //         google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
+  //     field_descriptor->type() ==
+  //         google::protobuf::FieldDescriptor::TYPE_GROUP) {
+
+  //   arrow::FieldVector fields;
+  //   absl::Status s =
+  //       ConvertDescriptor(field_descriptor->message_type(), &fields);
+  //   if (!s.ok()) {
+  //     return s;
+  //   }
+
+  //   std::shared_ptr<arrow::Field> arrow_field =
+  //       arrow::field(field_descriptor->name(), arrow::struct_(fields));
+  //   if (field_descriptor->is_repeated()) {
+  //     *field = arrow::field(field_descriptor->name(),
+  //                           arrow::list(std::move(arrow_field)));
+  //   } else {
+  //     arrow::StructBuilder builder(pool);
+  //   }
+  // } else {
+  //   const std::function<std::shared_ptr<arrow::DataType>()>*
+  //       arrow_type_factory =
+  //           gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor->type());
+  //   if (arrow_type_factory == nullptr) {
+  //     return absl::UnimplementedError(absl::StrCat(
+  //         "Failed to convert '", field_descriptor->name(),
+  //         "', not implemented for primitive type '",
+  //         field_descriptor->type_name(), "(", field_descriptor->type(), ")'"));
+  //   }
+
+  //   if (field_descriptor->is_repeated()) {
+  //     *field = arrow::field(field_descriptor->name(),
+  //                           arrow::list(arrow_type_factory->operator()()),
+  //                           true /* nullable */);
+  //   } else {
+  //     *field = arrow::field(field_descriptor->name(),
+  //                           arrow_type_factory->operator()(),
+  //                           field_descriptor->is_optional() /* nullable */);
+  //   }
+  // }
+
+  return absl::OkStatus();
 }
 
-absl::Status WriteMessages(
+absl::Status ConvertTable(
     const google::protobuf::Descriptor* descriptor,
-    absl::Span<const google::protobuf::Message*> messages,
-    parquet::arrow::FileWriter* file_writer) {
+    absl::Span<const google::protobuf::Message* const> messages,
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Table>* table) {
   return absl::UnimplementedError("");
 }
 

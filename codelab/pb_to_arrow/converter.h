@@ -25,15 +25,16 @@ absl::Status ConvertFieldDescriptor(
 absl::Status ConvertSchema(const google::protobuf::Descriptor* descriptor,
                            std::shared_ptr<arrow::Schema>* schema);
 
-absl::Status ConvertTable(const google::protobuf::Descriptor* descriptor,
-                          absl::Span<const google::protobuf::Message*> messages,
-                          arrow::MemoryPool* pool,
-                          std::shared_ptr<arrow::Table>* table);
+absl::Status ConvertFieldData(
+    absl::Span<const google::protobuf::Message* const> messages,
+    const google::protobuf::FieldDescriptor* field_descriptor,
+    arrow::MemoryPool* pool,
+    std::shared_ptr<arrow::Array>* messages_column_data_vector);
 
-absl::Status WriteMessages(
+absl::Status ConvertTable(
     const google::protobuf::Descriptor* descriptor,
-    absl::Span<const google::protobuf::Message*> messages,
-    parquet::arrow::FileWriter* file_writer);
+    absl::Span<const google::protobuf::Message* const> messages,
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Table>* table);
 
 }  // namespace codelab
 }  // namespace hcoona
