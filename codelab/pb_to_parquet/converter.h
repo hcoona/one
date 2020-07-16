@@ -24,7 +24,7 @@ absl::Status ConvertFieldDescriptor(
 
 absl::Status WriteMessages(
     const google::protobuf::Descriptor* descriptor,
-    absl::Span<const google::protobuf::Message> messages,
+    absl::Span<const google::protobuf::Message*> messages,
     parquet::RowGroupWriter* row_group_writer);
 
 }  // namespace codelab

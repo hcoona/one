@@ -1,0 +1,18 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_library(
+    name = "protobuf_util",
+    srcs = ["protobuf_util.cc"],
+    hdrs = ["protobuf_util.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:protobuf",
+    ],
+)

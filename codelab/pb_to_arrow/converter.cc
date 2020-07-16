@@ -5,6 +5,7 @@
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/str_cat.h"
 #include "glog/logging.h"
+#include "google/protobuf/message.h"
 #include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
@@ -151,6 +152,28 @@ absl::Status ConvertFieldDescriptor(
   }
 
   return absl::OkStatus();
+}
+
+absl::Status ConvertSchema(const google::protobuf::Descriptor* descriptor,
+                           std::shared_ptr<arrow::Schema>* schema) {
+  arrow::FieldVector fields;
+  RETURN_STATUS_IF_NOT_OK(ConvertDescriptor(descriptor, &fields));
+  *schema = arrow::schema(fields);
+  return absl::OkStatus();
+}
+
+absl::Status ConvertTable(const google::protobuf::Descriptor* descriptor,
+                          absl::Span<const google::protobuf::Message*> messages,
+                          arrow::MemoryPool* pool,
+                          std::shared_ptr<arrow::Table>* table) {
+  return absl::UnimplementedError("");
+}
+
+absl::Status WriteMessages(
+    const google::protobuf::Descriptor* descriptor,
+    absl::Span<const google::protobuf::Message*> messages,
+    parquet::arrow::FileWriter* file_writer) {
+  return absl::UnimplementedError("");
 }
 
 }  // namespace codelab

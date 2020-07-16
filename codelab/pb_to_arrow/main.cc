@@ -69,13 +69,12 @@ int main(int argc, char** argv) {
   CHECK(descriptor) << "Failed to find '" << message_name << "' in '"
                     << proto_file << "'";
 
-  arrow::FieldVector fields;
-  s = hcoona::codelab::ConvertDescriptor(descriptor, &fields);
+  std::shared_ptr<arrow::Schema> schema;
+  s = hcoona::codelab::ConvertSchema(descriptor, &schema);
   if (!s.ok()) {
     LOG(FATAL) << "Failed to convert protobuf descriptor, descriptor="
                << descriptor->DebugString() << ", message=" << s.ToString();
   }
-  std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
 
   LOG(INFO) << "Protobuf Schema: " << descriptor->DebugString();
   LOG(INFO) << "Arrow Schema: " << schema->ToString();
@@ -97,7 +96,14 @@ int main(int argc, char** argv) {
   ids.Add(3);
   ids.Add(5);
   ids.Add(7);
+  message_prototype->GetReflection()->SetEnumValue(
+      message, descriptor->FindFieldByNumber(8), 2);
   LOG(INFO) << message->Utf8DebugString();
+
+  const google::protobuf::EnumValueDescriptor* enum_value_descriptor =
+      message_prototype->GetReflection()->GetEnum(
+          *message, descriptor->FindFieldByNumber(8));
+  LOG(INFO) << enum_value_descriptor->name();
 
   return 0;
 }

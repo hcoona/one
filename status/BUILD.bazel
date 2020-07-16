@@ -32,3 +32,15 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "status_util",
+    hdrs = ["status_util.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//gtl:compiler_specific",
+        "@com_google_absl//absl/status",
+    ],
+)

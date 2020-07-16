@@ -4,7 +4,9 @@
 #include "absl/status/status.h"
 #include "arrow/result.h"
 #include "arrow/status.h"
+#include "gtl/compiler_specific.h"
 #include "status/status_or.h"
+#include "status/status_util.h"
 
 namespace hcoona {
 namespace codelab {

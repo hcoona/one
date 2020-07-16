@@ -59,5 +59,6 @@ cc_library(
     deps = [
         "//arrow",
         "//status:status_or",
+        "//status:status_util",
     ],
 )
