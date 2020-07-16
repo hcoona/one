@@ -15,7 +15,7 @@ IncludeCategories:
     Priority: 10
   - Regex: '<.+>'  # C++ Standard Headers
     Priority: 10
-  - Regex: '"(codelab|config|directory_manifest|gtl|nail|redirect_launcher|status|zkclient)\/.*'  # Project Headers
+  - Regex: '"(codelab|config|directory_manifest|gtl|nail|redirect_launcher|status|util|zkclient)\/.*'  # Project Headers
     Priority: 500
   - Regex: '.*'  # Others
     Priority: 50
