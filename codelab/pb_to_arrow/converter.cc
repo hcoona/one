@@ -202,20 +202,31 @@ absl::Status ConvertFieldDescriptor(
       return s;
     }
 
-    std::shared_ptr<arrow::Field> arrow_field =
-        arrow::field(field_descriptor.name(), arrow::struct_(fields));
-    auto struct_builder = std::make_shared<arrow::StructBuilder>(
-        arrow::struct_(fields), pool, fields_builders);
-    if (field_descriptor.is_repeated()) {
+    if (field_descriptor.is_map()) {
+      DCHECK_EQ(fields.size(), 2);
+      DCHECK_EQ(fields_builders.size(), 2);
+
       *field = arrow::field(field_descriptor.name(),
-                            arrow::list(std::move(arrow_field)));
-      *field_builder = std::make_shared<arrow::ListBuilder>(
-          pool, std::move(struct_builder), arrow::struct_(fields));
-    } else if (field_descriptor.is_map()) {
-      return absl::UnimplementedError("Not implemented for map");
+                            arrow::map(fields[0]->type(), fields[1]->type()));
+      *field_builder = std::make_shared<arrow::MapBuilder>(
+          pool, fields_builders[0], fields_builders[1],
+          arrow::map(fields[0]->type(), fields[1]->type()));
     } else {
-      *field = std::move(arrow_field);
-      *field_builder = std::move(struct_builder);
+      std::shared_ptr<arrow::DataType> arrow_struct_type =
+          arrow::struct_(fields);
+      auto struct_builder = std::make_shared<arrow::StructBuilder>(
+          arrow_struct_type, pool, fields_builders);
+      if (field_descriptor.is_repeated()) {
+        *field = arrow::field(field_descriptor.name(),
+                              arrow::list(arrow::struct_(fields)));
+        *field_builder = std::make_shared<arrow::ListBuilder>(
+            pool, std::move(struct_builder),
+            arrow::list(std::move(arrow_struct_type)));
+      } else {
+        *field =
+            arrow::field(field_descriptor.name(), std::move(arrow_struct_type));
+        *field_builder = std::move(struct_builder);
+      }
     }
   } else {
     const ArrowTypeAndBuilder* arrow_type_and_builder =
@@ -227,17 +238,20 @@ absl::Status ConvertFieldDescriptor(
           field_descriptor.type_name(), "(", field_descriptor.type(), ")'"));
     }
 
-    if (field_descriptor.is_repeated()) {
+    if (field_descriptor.is_map()) {
+      return absl::UnimplementedError(absl::StrCat(
+          __LINE__,
+          "Not implemented for map: ", field_descriptor.DebugString()));
+    } else if (field_descriptor.is_repeated()) {
       DCHECK_EQ(arrow_type_and_builder->builder_factory(pool)->type(),
                 arrow_type_and_builder->type_factory());
+
       *field = arrow::field(field_descriptor.name(),
                             arrow::list(arrow_type_and_builder->type_factory()),
                             true /* nullable */);
       *field_builder = std::make_shared<arrow::ListBuilder>(
-          pool, arrow_type_and_builder->builder_factory(pool)
-          /*, arrow_type_and_builder->type_factory() */);
-    } else if (field_descriptor.is_map()) {
-      return absl::UnimplementedError("Not implemented for map");
+          pool, arrow_type_and_builder->builder_factory(pool),
+          arrow::list(arrow_type_and_builder->type_factory()));
     } else {
       *field = arrow::field(field_descriptor.name(),
                             arrow_type_and_builder->type_factory(),
@@ -263,7 +277,30 @@ absl::Status ConvertData(
   for (int i = 0; i < descriptor.field_count(); i++) {
     const google::protobuf::FieldDescriptor* field_descriptor =
         descriptor.field(i);
-    if (field_descriptor->is_repeated()) {
+    if (field_descriptor->is_map()) {
+      auto field_builder =
+          std::static_pointer_cast<arrow::MapBuilder>(fields_builders[i]);
+      arrow::ArrayBuilder* key_builder = field_builder->key_builder();
+      arrow::ArrayBuilder* value_builder = field_builder->value_builder();
+      for (int j = 0;
+           j < message.GetReflection()->FieldSize(message, field_descriptor);
+           j++) {
+        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
+        // Extract into key & value fields.
+        const google::protobuf::Message& inner_message =
+            message.GetReflection()->GetRepeatedMessage(message,
+                                                        field_descriptor, j);
+        LOG(INFO) << "Inner message: " << inner_message.DebugString();
+        return absl::UnimplementedError(absl::StrCat(
+            __LINE__,
+            "Not implemented for map: ", field_descriptor->DebugString()));
+        // RETURN_STATUS_IF_NOT_OK(
+        //     ConvertFieldData(*field_descriptor, message, j, value_builder));
+      }
+      // return absl::UnimplementedError(absl::StrCat(
+      //     __LINE__,
+      //     "Not implemented for map: ", field_descriptor->DebugString()));
+    } else if (field_descriptor->is_repeated()) {
       auto field_builder =
           std::static_pointer_cast<arrow::ListBuilder>(fields_builders[i]);
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
@@ -274,8 +311,6 @@ absl::Status ConvertData(
         RETURN_STATUS_IF_NOT_OK(
             ConvertFieldData(*field_descriptor, message, j, value_builder));
       }
-    } else if (field_descriptor->is_map()) {
-      return absl::UnimplementedError("Not implemented for map");
     } else {
       const std::shared_ptr<arrow::ArrayBuilder>& field_builder =
           fields_builders[i];

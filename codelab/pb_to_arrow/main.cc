@@ -103,14 +103,14 @@ int main(int argc, char** argv) {
   ids.Add(7);
   message_prototype->GetReflection()->SetEnumValue(
       message, descriptor->FindFieldByNumber(8), 2);
-  google::protobuf::Message* message_c =
-      message_prototype->GetReflection()->MutableMessage(
-          message, descriptor->FindFieldByNumber(103));
-  google::protobuf::MutableRepeatedFieldRef<int64_t> my_sint64_value =
-      message_c->GetReflection()->GetMutableRepeatedFieldRef<int64_t>(
-          message_c, message_c->GetDescriptor()->FindFieldByNumber(1));
-  my_sint64_value.Add(23);
-  my_sint64_value.Add(29);
+  // google::protobuf::Message* message_c =
+  //     message_prototype->GetReflection()->MutableMessage(
+  //         message, descriptor->FindFieldByNumber(103));
+  // google::protobuf::MutableRepeatedFieldRef<int64_t> my_sint64_value =
+  //     message_c->GetReflection()->GetMutableRepeatedFieldRef<int64_t>(
+  //         message_c, message_c->GetDescriptor()->FindFieldByNumber(1));
+  // my_sint64_value.Add(23);
+  // my_sint64_value.Add(29);
   LOG(INFO) << "Constructed protobuf message: " << message->Utf8DebugString();
 
   arrow::StructBuilder message_c_builder(
@@ -148,6 +148,7 @@ int main(int argc, char** argv) {
   std::shared_ptr<arrow::Table> table;
   CHECK_STATUS_OK(
       hcoona::codelab::ConvertTable(*descriptor, messages, pool, &table));
+  LOG(INFO) << "Table: " << table->ToString();
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
 
   return 0;

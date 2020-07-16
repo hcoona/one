@@ -8,14 +8,10 @@ enum EnumA {
   ENUMA_Y = 2;
 }
 
-message MessageC {
-  repeated sint64 my_sint64_value = 1;
-}
+message MessageC { repeated sint64 my_sint64_value = 1; }
 
 message MessageA {
-  message NestedMessageB {
-    repeated sfixed64 my_sfixed64_value = 1;
-  }
+  message NestedMessageB { repeated sfixed64 my_sfixed64_value = 1; }
   int32 my_int32_value = 1;
   int64 my_int64_value = 2;
   uint64 my_uint64_value = 3;
@@ -28,6 +24,7 @@ message MessageA {
   map<int32, int32> my_map = 101;
   repeated NestedMessageB my_message_b_value = 102;
   MessageC my_message_c_value = 103;
+  map<int64, MessageC> my_message_c_map = 104;
   oneof my_oneof_value {
     string my_oneof_string_value = 150;
     int64 my_oneof_int64_value = 151;
