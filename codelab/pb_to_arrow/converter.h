@@ -1,13 +1,12 @@
 #ifndef CODELAB_PB_TO_PARQUET_CONVERTER_H_
 #define CODELAB_PB_TO_PARQUET_CONVERTER_H_
 
-#include <functional>
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "arrow/schema.h"
+#include "arrow/api.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
 #include "parquet/arrow/writer.h"
@@ -15,21 +14,25 @@
 namespace hcoona {
 namespace codelab {
 
-absl::Status ConvertDescriptor(const google::protobuf::Descriptor* descriptor,
-                               arrow::FieldVector* fields);
+absl::Status ConvertDescriptor(
+    const google::protobuf::Descriptor* descriptor, arrow::MemoryPool* pool,
+    std::vector<std::shared_ptr<arrow::Field>>* fields,
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders);
 
 absl::Status ConvertFieldDescriptor(
     const google::protobuf::FieldDescriptor* field_descriptor,
-    std::shared_ptr<arrow::Field>* field);
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
+    std::shared_ptr<arrow::ArrayBuilder>* field_builder);
 
-absl::Status ConvertSchema(const google::protobuf::Descriptor* descriptor,
-                           std::shared_ptr<arrow::Schema>* schema);
+absl::Status ConvertData(
+    const google::protobuf::Descriptor* descriptor,
+    const google::protobuf::Message* const message,
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders);
 
 absl::Status ConvertFieldData(
-    absl::Span<const google::protobuf::Message* const> messages,
     const google::protobuf::FieldDescriptor* field_descriptor,
-    arrow::MemoryPool* pool,
-    std::shared_ptr<arrow::Array>* messages_column_data_vector);
+    const google::protobuf::Message* const message, int repeated_field_index,
+    arrow::ArrayBuilder* field_builder);
 
 absl::Status ConvertTable(
     const google::protobuf::Descriptor* descriptor,

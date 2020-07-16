@@ -142,6 +142,7 @@ ONE_LLVM_FLAGS = [
     "-Wobjc-literal-conversion",
     "-Wno-sign-conversion",
     "-Wstring-conversion",
+    "-Wno-shadow-field-in-constructor",
 ]
 
 ONE_LLVM_TEST_FLAGS = [

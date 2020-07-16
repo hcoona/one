@@ -1,6 +1,6 @@
 #include "codelab/pb_to_arrow/converter.h"
 
-#include <queue>
+#include <string>
 #include <utility>
 
 #include "absl/container/flat_hash_map.h"
@@ -10,106 +10,145 @@
 #include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
+#include "util/casts.h"
 
 namespace hcoona {
 namespace codelab {
 
 namespace {
 
-// Provides a definition of base::queue that's like std::queue but uses a
-// base::circular_deque instead of std::deque. Since std::queue is just a
-// wrapper for an underlying type, we can just provide a typedef for it that
-// defaults to the base circular_deque.
-// template <class T, class Container = gtl::circular_deque<T>>
-// using CircularQueue = std::queue<T, Container>;
-
-// Implementation of C++20's std::identity.
-//
-// Reference:
-// - https://en.cppreference.com/w/cpp/utility/functional/identity
-// - https://wg21.link/func.identity
-struct identity {
-  template <typename T>
-  constexpr T&& operator()(T&& t) const noexcept {
-    return std::forward<T>(t);
-  }
-
-  using is_transparent = void;
+struct ArrowTypeAndBuilder {
+  std::function<std::shared_ptr<arrow::DataType>()> type_factory;
+  std::function<std::shared_ptr<arrow::ArrayBuilder>(arrow::MemoryPool*)>
+      builder_factory;
 };
 
+template <typename T>
+std::function<std::shared_ptr<arrow::ArrayBuilder>(arrow::MemoryPool*)>
+MakeArrayBuilder() {
+  return [](arrow::MemoryPool* pool) { return std::make_shared<T>(pool); };
+}
+
 const absl::flat_hash_map<google::protobuf::FieldDescriptor::Type,
-                          std::function<std::shared_ptr<arrow::DataType>()>>*
+                          ArrowTypeAndBuilder>*
 GetArrowTypeTable() {
-  static const gtl::NoDestructor<
-      absl::flat_hash_map<google::protobuf::FieldDescriptor::Type,
-                          std::function<std::shared_ptr<arrow::DataType>()>>>
+  static const gtl::NoDestructor<absl::flat_hash_map<
+      google::protobuf::FieldDescriptor::Type, ArrowTypeAndBuilder>>
       table({
           // Ordered by google::protobuf::FieldDescriptor::Type
           {
               google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE,
-              &arrow::float64,
+              {
+                  &arrow::float64,
+                  MakeArrayBuilder<arrow::DoubleBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_FLOAT,
-              &arrow::float32,
+              {
+                  &arrow::float32,
+                  MakeArrayBuilder<arrow::FloatBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_INT64,
-              &arrow::int64,
+              {
+                  &arrow::int64,
+                  MakeArrayBuilder<arrow::Int64Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_UINT64,
-              &arrow::uint64,
+              {
+                  &arrow::uint64,
+                  MakeArrayBuilder<arrow::UInt64Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_INT32,
-              &arrow::int32,
+              {
+                  &arrow::int32,
+                  MakeArrayBuilder<arrow::Int32Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_FIXED64,
-              &arrow::uint64,
+              {
+                  &arrow::uint64,
+                  MakeArrayBuilder<arrow::UInt64Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_FIXED32,
-              &arrow::uint32,
+              {
+                  &arrow::uint32,
+                  MakeArrayBuilder<arrow::UInt32Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_BOOL,
-              &arrow::boolean,
+              {
+                  &arrow::boolean,
+                  MakeArrayBuilder<arrow::BooleanBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_STRING,
-              &arrow::utf8,
+              {
+                  &arrow::utf8,
+                  MakeArrayBuilder<arrow::StringBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_BYTES,
-              &arrow::binary,
+              {
+                  &arrow::binary,
+                  MakeArrayBuilder<arrow::BinaryBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_UINT32,
-              &arrow::uint32,
+              {
+                  &arrow::uint32,
+                  MakeArrayBuilder<arrow::UInt32Builder>(),
+              },
           },
           {
               // Convert enum into string according to ProtoEnumConverter in
               // https://github.com/apache/parquet-mr/blob/2589cc821d2d470be1e79b86f511eb1f5fee4e5c/parquet-protobuf/src/main/java/org/apache/parquet/proto/ProtoMessageConverter.java#L187
               google::protobuf::FieldDescriptor::Type::TYPE_ENUM,
-              &arrow::utf8,
+              {
+                  &arrow::utf8,
+                  MakeArrayBuilder<arrow::StringBuilder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32,
-              &arrow::int32,
+              {
+                  &arrow::int32,
+                  MakeArrayBuilder<arrow::Int32Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64,
-              &arrow::int64,
+              {
+                  &arrow::int64,
+                  MakeArrayBuilder<arrow::Int64Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_SINT32,
-              &arrow::int32,
+              {
+                  &arrow::int32,
+                  MakeArrayBuilder<arrow::Int32Builder>(),
+              },
           },
           {
               google::protobuf::FieldDescriptor::Type::TYPE_SINT64,
-              &arrow::int64,
+              {
+                  &arrow::int64,
+                  MakeArrayBuilder<arrow::Int64Builder>(),
+              },
           },
       });
   return table.get();
@@ -117,18 +156,23 @@ GetArrowTypeTable() {
 
 }  // namespace
 
-absl::Status ConvertDescriptor(const google::protobuf::Descriptor* descriptor,
-                               arrow::FieldVector* fields) {
+absl::Status ConvertDescriptor(
+    const google::protobuf::Descriptor* descriptor, arrow::MemoryPool* pool,
+    std::vector<std::shared_ptr<arrow::Field>>* fields,
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders) {
   for (int i = 0; i < descriptor->field_count(); i++) {
     const google::protobuf::FieldDescriptor* field_descriptor =
         descriptor->field(i);
     std::shared_ptr<arrow::Field> field;
-    absl::Status s = ConvertFieldDescriptor(field_descriptor, &field);
+    std::shared_ptr<arrow::ArrayBuilder> field_builder;
+    absl::Status s =
+        ConvertFieldDescriptor(field_descriptor, pool, &field, &field_builder);
     if (!s.ok()) {
       return s;
     }
 
     fields->emplace_back(std::move(field));
+    fields_builders->emplace_back(std::move(field_builder));
   }
 
   return absl::OkStatus();
@@ -136,32 +180,39 @@ absl::Status ConvertDescriptor(const google::protobuf::Descriptor* descriptor,
 
 absl::Status ConvertFieldDescriptor(
     const google::protobuf::FieldDescriptor* field_descriptor,
-    std::shared_ptr<arrow::Field>* field) {
-  // TODO(zhangshuai.ustc): Distinguish map/list type for message/group.
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
+    std::shared_ptr<arrow::ArrayBuilder>* field_builder) {
   if (field_descriptor->type() ==
           google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
       field_descriptor->type() ==
           google::protobuf::FieldDescriptor::TYPE_GROUP) {
-    arrow::FieldVector fields;
-    absl::Status s =
-        ConvertDescriptor(field_descriptor->message_type(), &fields);
+    std::vector<std::shared_ptr<arrow::Field>> fields;
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
+    absl::Status s = ConvertDescriptor(field_descriptor->message_type(), pool,
+                                       &fields, &fields_builders);
     if (!s.ok()) {
       return s;
     }
 
     std::shared_ptr<arrow::Field> arrow_field =
         arrow::field(field_descriptor->name(), arrow::struct_(fields));
+    auto struct_builder = std::make_shared<arrow::StructBuilder>(
+        arrow::struct_(fields), pool, fields_builders);
     if (field_descriptor->is_repeated()) {
       *field = arrow::field(field_descriptor->name(),
                             arrow::list(std::move(arrow_field)));
+      *field_builder = std::make_shared<arrow::ListBuilder>(
+          pool, std::move(struct_builder), arrow::struct_(fields));
+    } else if (field_descriptor->is_map()) {
+      return absl::UnimplementedError("Not implemented for map");
     } else {
       *field = std::move(arrow_field);
+      *field_builder = std::move(struct_builder);
     }
   } else {
-    const std::function<std::shared_ptr<arrow::DataType>()>*
-        arrow_type_factory =
-            gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor->type());
-    if (arrow_type_factory == nullptr) {
+    const ArrowTypeAndBuilder* arrow_type_and_builder =
+        gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor->type());
+    if (arrow_type_and_builder == nullptr) {
       return absl::UnimplementedError(absl::StrCat(
           "Failed to convert '", field_descriptor->name(),
           "', not implemented for primitive type '",
@@ -170,73 +221,142 @@ absl::Status ConvertFieldDescriptor(
 
     if (field_descriptor->is_repeated()) {
       *field = arrow::field(field_descriptor->name(),
-                            arrow::list(arrow_type_factory->operator()()),
+                            arrow::list(arrow_type_and_builder->type_factory()),
                             true /* nullable */);
+      *field_builder = std::make_shared<arrow::ListBuilder>(
+          pool, arrow_type_and_builder->builder_factory(pool)
+          /*, arrow_type_and_builder->type_factory() */);
+      DCHECK(arrow_type_and_builder->builder_factory(pool)->type() ==
+             arrow_type_and_builder->type_factory());
+    } else if (field_descriptor->is_map()) {
+      return absl::UnimplementedError("Not implemented for map");
     } else {
       *field = arrow::field(field_descriptor->name(),
-                            arrow_type_factory->operator()(),
+                            arrow_type_and_builder->type_factory(),
                             field_descriptor->is_optional() /* nullable */);
+      *field_builder = arrow_type_and_builder->builder_factory(pool);
     }
   }
 
   return absl::OkStatus();
 }
 
-absl::Status ConvertSchema(const google::protobuf::Descriptor* descriptor,
-                           std::shared_ptr<arrow::Schema>* schema) {
-  arrow::FieldVector fields;
-  RETURN_STATUS_IF_NOT_OK(ConvertDescriptor(descriptor, &fields));
-  *schema = arrow::schema(fields);
+absl::Status ConvertData(
+    const google::protobuf::Descriptor* descriptor,
+    const google::protobuf::Message* const message,
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders) {
+  DCHECK(descriptor);
+  DCHECK(message);
+  DCHECK(fields_builders);
+  DCHECK(fields_builders->size() == descriptor->field_count());
+#if DCHECK_IS_ON()
+  for (const std::shared_ptr<arrow::ArrayBuilder>& builder : *fields_builders) {
+    CHECK(static_cast<bool>(builder));
+  }
+#endif  // DCHECK_IS_ON()
+
+  for (int i = 0; i < descriptor->field_count(); i++) {
+    const google::protobuf::FieldDescriptor* field_descriptor =
+        descriptor->field(i);
+    if (field_descriptor->is_repeated()) {
+      auto field_builder = std::static_pointer_cast<arrow::ListBuilder>(
+          fields_builders->operator[](i));
+      arrow::ArrayBuilder* value_builder = field_builder->value_builder();
+      for (int i = 0;
+           i < message->GetReflection()->FieldSize(*message, field_descriptor);
+           i++) {
+        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
+        RETURN_STATUS_IF_NOT_OK(
+            ConvertFieldData(field_descriptor, message, i, value_builder));
+      }
+    } else if (field_descriptor->is_map()) {
+      return absl::UnimplementedError("Not implemented for map");
+    } else {
+      std::shared_ptr<arrow::ArrayBuilder>& field_builder =
+          fields_builders->operator[](i);
+      if (field_descriptor->is_optional() &&
+          !message->GetReflection()->HasField(*message, field_descriptor)) {
+        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
+      } else {
+        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(field_descriptor, message, -1,
+                                                 field_builder.get()));
+      }
+    }
+  }
+
   return absl::OkStatus();
 }
 
 absl::Status ConvertFieldData(
-    absl::Span<const google::protobuf::Message* const> messages,
     const google::protobuf::FieldDescriptor* field_descriptor,
-    arrow::MemoryPool* pool,
-    std::shared_ptr<arrow::Array>* messages_column_data_vector) {
-  // TODO(zhangshuai.ustc): Distinguish map/list type for message/group.
-  // if (field_descriptor->type() ==
-  //         google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
-  //     field_descriptor->type() ==
-  //         google::protobuf::FieldDescriptor::TYPE_GROUP) {
+    const google::protobuf::Message* const message, int repeated_field_index,
+    arrow::ArrayBuilder* field_builder) {
+  DCHECK(field_descriptor);
+  DCHECK(message);
+  DCHECK(field_builder);
 
-  //   arrow::FieldVector fields;
-  //   absl::Status s =
-  //       ConvertDescriptor(field_descriptor->message_type(), &fields);
-  //   if (!s.ok()) {
-  //     return s;
-  //   }
-
-  //   std::shared_ptr<arrow::Field> arrow_field =
-  //       arrow::field(field_descriptor->name(), arrow::struct_(fields));
-  //   if (field_descriptor->is_repeated()) {
-  //     *field = arrow::field(field_descriptor->name(),
-  //                           arrow::list(std::move(arrow_field)));
-  //   } else {
-  //     arrow::StructBuilder builder(pool);
-  //   }
-  // } else {
-  //   const std::function<std::shared_ptr<arrow::DataType>()>*
-  //       arrow_type_factory =
-  //           gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor->type());
-  //   if (arrow_type_factory == nullptr) {
-  //     return absl::UnimplementedError(absl::StrCat(
-  //         "Failed to convert '", field_descriptor->name(),
-  //         "', not implemented for primitive type '",
-  //         field_descriptor->type_name(), "(", field_descriptor->type(), ")'"));
-  //   }
-
-  //   if (field_descriptor->is_repeated()) {
-  //     *field = arrow::field(field_descriptor->name(),
-  //                           arrow::list(arrow_type_factory->operator()()),
-  //                           true /* nullable */);
-  //   } else {
-  //     *field = arrow::field(field_descriptor->name(),
-  //                           arrow_type_factory->operator()(),
-  //                           field_descriptor->is_optional() /* nullable */);
-  //   }
-  // }
+  switch (field_descriptor->type()) {
+    case google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE: {
+      auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
+      double value =
+          repeated_field_index == -1
+              ? message->GetReflection()->GetDouble(*message, field_descriptor)
+              : message->GetReflection()->GetRepeatedDouble(
+                    *message, field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_FLOAT:
+      return absl::UnimplementedError(absl::StrCat(
+          "Not implemented for other types converting field data: ",
+          field_descriptor->type_name()));
+    case google::protobuf::FieldDescriptor::Type::TYPE_INT64: {
+      auto builder = down_cast<arrow::Int64Builder*>(field_builder);
+      int64_t value =
+          repeated_field_index == -1
+              ? message->GetReflection()->GetInt64(*message, field_descriptor)
+              : message->GetReflection()->GetRepeatedInt64(
+                    *message, field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_UINT64:
+      return absl::UnimplementedError(absl::StrCat(
+          "Not implemented for other types converting field data: ",
+          field_descriptor->type_name()));
+    case google::protobuf::FieldDescriptor::Type::TYPE_INT32: {
+      auto builder = down_cast<arrow::Int32Builder*>(field_builder);
+      int32_t value =
+          repeated_field_index == -1
+              ? message->GetReflection()->GetInt32(*message, field_descriptor)
+              : message->GetReflection()->GetRepeatedInt32(
+                    *message, field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_ENUM: {
+      auto builder = down_cast<arrow::StringBuilder*>(field_builder);
+      std::string value =
+          repeated_field_index == -1
+              ? message->GetReflection()
+                    ->GetEnum(*message, field_descriptor)
+                    ->name()
+              : message->GetReflection()
+                    ->GetRepeatedEnum(*message, field_descriptor,
+                                      repeated_field_index)
+                    ->name();
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    default:
+      return absl::UnimplementedError(absl::StrCat(
+          "Not implemented for other types converting field data: ",
+          field_descriptor->type_name()));
+  }
 
   return absl::OkStatus();
 }
@@ -245,7 +365,27 @@ absl::Status ConvertTable(
     const google::protobuf::Descriptor* descriptor,
     absl::Span<const google::protobuf::Message* const> messages,
     arrow::MemoryPool* pool, std::shared_ptr<arrow::Table>* table) {
-  return absl::UnimplementedError("");
+  std::vector<std::shared_ptr<arrow::Field>> fields;
+  std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
+  RETURN_STATUS_IF_NOT_OK(
+      ConvertDescriptor(descriptor, pool, &fields, &fields_builders));
+  std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
+
+  for (const google::protobuf::Message* const message : messages) {
+    RETURN_STATUS_IF_NOT_OK(ConvertData(descriptor, message, &fields_builders));
+  }
+
+  std::vector<std::shared_ptr<arrow::Array>> arrays;
+  arrays.reserve(fields_builders.size());
+  for (std::size_t i = 0; i < fields_builders.size(); i++) {
+    std::shared_ptr<arrow::Array> array;
+    RETURN_STATUS_IF_NOT_OK(
+        FromArrowStatus(fields_builders[i]->Finish(&array)));
+    arrays.emplace_back(std::move(array));
+  }
+  *table = arrow::Table::Make(schema, arrays, messages.size());
+
+  return absl::OkStatus();
 }
 
 }  // namespace codelab

@@ -15,11 +15,11 @@
 #include "google/protobuf/repeated_field.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "codelab/pb_to_arrow/converter.h"
+#include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"
 #include "gtl/map_util.h"
 #include "gtl/posix_file_system.h"
-#include "status/status_util.h"
 
 namespace {
 
@@ -71,12 +71,15 @@ int main(int argc, char** argv) {
   CHECK(descriptor) << "Failed to find '" << message_name << "' in '"
                     << proto_file << "'";
 
-  std::shared_ptr<arrow::Schema> schema;
-  s = hcoona::codelab::ConvertSchema(descriptor, &schema);
-  if (!s.ok()) {
-    LOG(FATAL) << "Failed to convert protobuf descriptor, descriptor="
-               << descriptor->DebugString() << ", message=" << s.ToString();
-  }
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+
+  std::vector<std::shared_ptr<arrow::Field>> fields;
+  std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
+  s = hcoona::codelab::ConvertDescriptor(descriptor, pool, &fields,
+                                         &fields_builders);
+  CHECK(s.ok()) << "Failed to convert protobuf descriptor, descriptor="
+                << descriptor->DebugString() << ", message=" << s.ToString();
+  std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
 
   LOG(INFO) << "Protobuf Schema: " << descriptor->DebugString();
   LOG(INFO) << "Arrow Schema: " << schema->ToString();
@@ -110,7 +113,6 @@ int main(int argc, char** argv) {
   my_sint64_value.Add(29);
   LOG(INFO) << "Constructed protobuf message: " << message->Utf8DebugString();
 
-  arrow::MemoryPool* pool = arrow::default_memory_pool();
   arrow::StructBuilder message_c_builder(
       arrow::struct_(
           {arrow::field("my_sint64_value", arrow::list(arrow::int64()))}),
@@ -121,14 +123,18 @@ int main(int argc, char** argv) {
       static_cast<arrow::ListBuilder*>(message_c_builder.field_builder(0));
   arrow::Int64Builder* inner_inner_builder =
       static_cast<arrow::Int64Builder*>(inner_builder->value_builder());
-  CHECK_STATUS_OK(message_c_builder.Append());
-  CHECK_STATUS_OK(inner_builder->Append());
-  CHECK_STATUS_OK(inner_inner_builder->Append(23));
-  CHECK_STATUS_OK(inner_inner_builder->Append(29));
-  CHECK_STATUS_OK(inner_inner_builder->Append(31));
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(message_c_builder.Append()));
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(inner_builder->Append()));
+  CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(23)));
+  CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(29)));
+  CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(31)));
 
   std::shared_ptr<arrow::StructArray> message_c_column_trunk;
-  message_c_builder.Finish(&message_c_column_trunk);
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+      message_c_builder.Finish(&message_c_column_trunk)));
   LOG(INFO) << "message_c_column_trunk: " << message_c_column_trunk->ToString();
 
   // const google::protobuf::EnumValueDescriptor* enum_value_descriptor =
@@ -136,9 +142,13 @@ int main(int argc, char** argv) {
   //         *message, descriptor->FindFieldByNumber(8));
   // LOG(INFO) << enum_value_descriptor->name();
 
-  absl::Span<const google::protobuf::Message*> messages = absl::MakeSpan(
-      const_cast<const google::protobuf::Message**>(&message), 1);
-  ignore_result(messages);
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(&message, 1);
+
+  std::shared_ptr<arrow::Table> table;
+  CHECK_STATUS_OK(
+      hcoona::codelab::ConvertTable(descriptor, messages, pool, &table));
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
 
   return 0;
 }

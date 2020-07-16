@@ -13,6 +13,10 @@
     }                                   \
   } while (false)
 
-#define CHECK_STATUS_OK(status) CHECK((status).ok())
+#define CHECK_STATUS_OK(status)        \
+  do {                                 \
+    ::absl::Status __s = (status);     \
+    CHECK(__s.ok()) << __s.ToString(); \
+  } while (false)
 
 #endif  // STATUS_STATUS_UTIL_H_
