@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
 
   std::vector<std::shared_ptr<arrow::Field>> fields;
   std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
-  s = hcoona::codelab::ConvertDescriptor(descriptor, pool, &fields,
+  s = hcoona::codelab::ConvertDescriptor(*descriptor, pool, &fields,
                                          &fields_builders);
   CHECK(s.ok()) << "Failed to convert protobuf descriptor, descriptor="
                 << descriptor->DebugString() << ", message=" << s.ToString();
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
 
   std::shared_ptr<arrow::Table> table;
   CHECK_STATUS_OK(
-      hcoona::codelab::ConvertTable(descriptor, messages, pool, &table));
+      hcoona::codelab::ConvertTable(*descriptor, messages, pool, &table));
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
 
   return 0;

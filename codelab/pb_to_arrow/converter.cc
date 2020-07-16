@@ -157,16 +157,20 @@ GetArrowTypeTable() {
 }  // namespace
 
 absl::Status ConvertDescriptor(
-    const google::protobuf::Descriptor* descriptor, arrow::MemoryPool* pool,
+    const google::protobuf::Descriptor& descriptor, arrow::MemoryPool* pool,
     std::vector<std::shared_ptr<arrow::Field>>* fields,
     std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders) {
-  for (int i = 0; i < descriptor->field_count(); i++) {
+  DCHECK_NOTNULL(pool);
+  DCHECK_NOTNULL(fields);
+  DCHECK_NOTNULL(fields_builders);
+
+  for (int i = 0; i < descriptor.field_count(); i++) {
     const google::protobuf::FieldDescriptor* field_descriptor =
-        descriptor->field(i);
+        descriptor.field(i);
     std::shared_ptr<arrow::Field> field;
     std::shared_ptr<arrow::ArrayBuilder> field_builder;
     absl::Status s =
-        ConvertFieldDescriptor(field_descriptor, pool, &field, &field_builder);
+        ConvertFieldDescriptor(*field_descriptor, pool, &field, &field_builder);
     if (!s.ok()) {
       return s;
     }
@@ -179,31 +183,35 @@ absl::Status ConvertDescriptor(
 }
 
 absl::Status ConvertFieldDescriptor(
-    const google::protobuf::FieldDescriptor* field_descriptor,
+    const google::protobuf::FieldDescriptor& field_descriptor,
     arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
     std::shared_ptr<arrow::ArrayBuilder>* field_builder) {
-  if (field_descriptor->type() ==
+  DCHECK_NOTNULL(pool);
+  DCHECK_NOTNULL(field);
+  DCHECK_NOTNULL(field_builder);
+
+  if (field_descriptor.type() ==
           google::protobuf::FieldDescriptor::TYPE_MESSAGE ||
-      field_descriptor->type() ==
+      field_descriptor.type() ==
           google::protobuf::FieldDescriptor::TYPE_GROUP) {
     std::vector<std::shared_ptr<arrow::Field>> fields;
     std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
-    absl::Status s = ConvertDescriptor(field_descriptor->message_type(), pool,
+    absl::Status s = ConvertDescriptor(*(field_descriptor.message_type()), pool,
                                        &fields, &fields_builders);
     if (!s.ok()) {
       return s;
     }
 
     std::shared_ptr<arrow::Field> arrow_field =
-        arrow::field(field_descriptor->name(), arrow::struct_(fields));
+        arrow::field(field_descriptor.name(), arrow::struct_(fields));
     auto struct_builder = std::make_shared<arrow::StructBuilder>(
         arrow::struct_(fields), pool, fields_builders);
-    if (field_descriptor->is_repeated()) {
-      *field = arrow::field(field_descriptor->name(),
+    if (field_descriptor.is_repeated()) {
+      *field = arrow::field(field_descriptor.name(),
                             arrow::list(std::move(arrow_field)));
       *field_builder = std::make_shared<arrow::ListBuilder>(
           pool, std::move(struct_builder), arrow::struct_(fields));
-    } else if (field_descriptor->is_map()) {
+    } else if (field_descriptor.is_map()) {
       return absl::UnimplementedError("Not implemented for map");
     } else {
       *field = std::move(arrow_field);
@@ -211,29 +219,29 @@ absl::Status ConvertFieldDescriptor(
     }
   } else {
     const ArrowTypeAndBuilder* arrow_type_and_builder =
-        gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor->type());
+        gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor.type());
     if (arrow_type_and_builder == nullptr) {
       return absl::UnimplementedError(absl::StrCat(
-          "Failed to convert '", field_descriptor->name(),
+          "Failed to convert '", field_descriptor.name(),
           "', not implemented for primitive type '",
-          field_descriptor->type_name(), "(", field_descriptor->type(), ")'"));
+          field_descriptor.type_name(), "(", field_descriptor.type(), ")'"));
     }
 
-    if (field_descriptor->is_repeated()) {
-      *field = arrow::field(field_descriptor->name(),
+    if (field_descriptor.is_repeated()) {
+      DCHECK_EQ(arrow_type_and_builder->builder_factory(pool)->type(),
+                arrow_type_and_builder->type_factory());
+      *field = arrow::field(field_descriptor.name(),
                             arrow::list(arrow_type_and_builder->type_factory()),
                             true /* nullable */);
       *field_builder = std::make_shared<arrow::ListBuilder>(
           pool, arrow_type_and_builder->builder_factory(pool)
           /*, arrow_type_and_builder->type_factory() */);
-      DCHECK(arrow_type_and_builder->builder_factory(pool)->type() ==
-             arrow_type_and_builder->type_factory());
-    } else if (field_descriptor->is_map()) {
+    } else if (field_descriptor.is_map()) {
       return absl::UnimplementedError("Not implemented for map");
     } else {
-      *field = arrow::field(field_descriptor->name(),
+      *field = arrow::field(field_descriptor.name(),
                             arrow_type_and_builder->type_factory(),
-                            field_descriptor->is_optional() /* nullable */);
+                            field_descriptor.is_optional() /* nullable */);
       *field_builder = arrow_type_and_builder->builder_factory(pool);
     }
   }
@@ -242,43 +250,40 @@ absl::Status ConvertFieldDescriptor(
 }
 
 absl::Status ConvertData(
-    const google::protobuf::Descriptor* descriptor,
-    const google::protobuf::Message* const message,
-    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders) {
-  DCHECK(descriptor);
-  DCHECK(message);
-  DCHECK(fields_builders);
-  DCHECK(fields_builders->size() == descriptor->field_count());
+    const google::protobuf::Descriptor& descriptor,
+    const google::protobuf::Message& message,
+    const std::vector<std::shared_ptr<arrow::ArrayBuilder>>& fields_builders) {
+  DCHECK_EQ(fields_builders.size(), descriptor.field_count());
 #if DCHECK_IS_ON()
-  for (const std::shared_ptr<arrow::ArrayBuilder>& builder : *fields_builders) {
+  for (const std::shared_ptr<arrow::ArrayBuilder>& builder : fields_builders) {
     CHECK(static_cast<bool>(builder));
   }
 #endif  // DCHECK_IS_ON()
 
-  for (int i = 0; i < descriptor->field_count(); i++) {
+  for (int i = 0; i < descriptor.field_count(); i++) {
     const google::protobuf::FieldDescriptor* field_descriptor =
-        descriptor->field(i);
+        descriptor.field(i);
     if (field_descriptor->is_repeated()) {
-      auto field_builder = std::static_pointer_cast<arrow::ListBuilder>(
-          fields_builders->operator[](i));
+      auto field_builder =
+          std::static_pointer_cast<arrow::ListBuilder>(fields_builders[i]);
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
-      for (int i = 0;
-           i < message->GetReflection()->FieldSize(*message, field_descriptor);
-           i++) {
+      for (int j = 0;
+           j < message.GetReflection()->FieldSize(message, field_descriptor);
+           j++) {
         RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
         RETURN_STATUS_IF_NOT_OK(
-            ConvertFieldData(field_descriptor, message, i, value_builder));
+            ConvertFieldData(*field_descriptor, message, j, value_builder));
       }
     } else if (field_descriptor->is_map()) {
       return absl::UnimplementedError("Not implemented for map");
     } else {
-      std::shared_ptr<arrow::ArrayBuilder>& field_builder =
-          fields_builders->operator[](i);
+      const std::shared_ptr<arrow::ArrayBuilder>& field_builder =
+          fields_builders[i];
       if (field_descriptor->is_optional() &&
-          !message->GetReflection()->HasField(*message, field_descriptor)) {
+          !message.GetReflection()->HasField(message, field_descriptor)) {
         RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
       } else {
-        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(field_descriptor, message, -1,
+        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(*field_descriptor, message, -1,
                                                  field_builder.get()));
       }
     }
@@ -288,21 +293,27 @@ absl::Status ConvertData(
 }
 
 absl::Status ConvertFieldData(
-    const google::protobuf::FieldDescriptor* field_descriptor,
-    const google::protobuf::Message* const message, int repeated_field_index,
+    const google::protobuf::FieldDescriptor& field_descriptor,
+    const google::protobuf::Message& message, int repeated_field_index,
     arrow::ArrayBuilder* field_builder) {
-  DCHECK(field_descriptor);
-  DCHECK(message);
-  DCHECK(field_builder);
+  DCHECK_NOTNULL(field_builder);
+#if DCHECK_IS_ON()
+  if (field_descriptor.is_repeated()) {
+    CHECK_LT(repeated_field_index,
+             message.GetReflection()->FieldSize(message, &field_descriptor));
+  } else {
+    CHECK_EQ(repeated_field_index, -1);
+  }
+#endif  // DCHECK_IS_ON()
 
-  switch (field_descriptor->type()) {
+  switch (field_descriptor.type()) {
     case google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE: {
       auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
       double value =
           repeated_field_index == -1
-              ? message->GetReflection()->GetDouble(*message, field_descriptor)
-              : message->GetReflection()->GetRepeatedDouble(
-                    *message, field_descriptor, repeated_field_index);
+              ? message.GetReflection()->GetDouble(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedDouble(
+                    message, &field_descriptor, repeated_field_index);
       RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
@@ -310,14 +321,14 @@ absl::Status ConvertFieldData(
     case google::protobuf::FieldDescriptor::Type::TYPE_FLOAT:
       return absl::UnimplementedError(absl::StrCat(
           "Not implemented for other types converting field data: ",
-          field_descriptor->type_name()));
+          field_descriptor.type_name()));
     case google::protobuf::FieldDescriptor::Type::TYPE_INT64: {
       auto builder = down_cast<arrow::Int64Builder*>(field_builder);
       int64_t value =
           repeated_field_index == -1
-              ? message->GetReflection()->GetInt64(*message, field_descriptor)
-              : message->GetReflection()->GetRepeatedInt64(
-                    *message, field_descriptor, repeated_field_index);
+              ? message.GetReflection()->GetInt64(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedInt64(
+                    message, &field_descriptor, repeated_field_index);
       RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
@@ -325,14 +336,14 @@ absl::Status ConvertFieldData(
     case google::protobuf::FieldDescriptor::Type::TYPE_UINT64:
       return absl::UnimplementedError(absl::StrCat(
           "Not implemented for other types converting field data: ",
-          field_descriptor->type_name()));
+          field_descriptor.type_name()));
     case google::protobuf::FieldDescriptor::Type::TYPE_INT32: {
       auto builder = down_cast<arrow::Int32Builder*>(field_builder);
       int32_t value =
           repeated_field_index == -1
-              ? message->GetReflection()->GetInt32(*message, field_descriptor)
-              : message->GetReflection()->GetRepeatedInt32(
-                    *message, field_descriptor, repeated_field_index);
+              ? message.GetReflection()->GetInt32(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedInt32(
+                    message, &field_descriptor, repeated_field_index);
       RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
@@ -341,11 +352,11 @@ absl::Status ConvertFieldData(
       auto builder = down_cast<arrow::StringBuilder*>(field_builder);
       std::string value =
           repeated_field_index == -1
-              ? message->GetReflection()
-                    ->GetEnum(*message, field_descriptor)
+              ? message.GetReflection()
+                    ->GetEnum(message, &field_descriptor)
                     ->name()
-              : message->GetReflection()
-                    ->GetRepeatedEnum(*message, field_descriptor,
+              : message.GetReflection()
+                    ->GetRepeatedEnum(message, &field_descriptor,
                                       repeated_field_index)
                     ->name();
       RETURN_STATUS_IF_NOT_OK(
@@ -355,16 +366,19 @@ absl::Status ConvertFieldData(
     default:
       return absl::UnimplementedError(absl::StrCat(
           "Not implemented for other types converting field data: ",
-          field_descriptor->type_name()));
+          field_descriptor.type_name()));
   }
 
   return absl::OkStatus();
 }
 
 absl::Status ConvertTable(
-    const google::protobuf::Descriptor* descriptor,
+    const google::protobuf::Descriptor& descriptor,
     absl::Span<const google::protobuf::Message* const> messages,
     arrow::MemoryPool* pool, std::shared_ptr<arrow::Table>* table) {
+  DCHECK_NOTNULL(pool);
+  DCHECK_NOTNULL(table);
+
   std::vector<std::shared_ptr<arrow::Field>> fields;
   std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
   RETURN_STATUS_IF_NOT_OK(
@@ -372,7 +386,7 @@ absl::Status ConvertTable(
   std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
 
   for (const google::protobuf::Message* const message : messages) {
-    RETURN_STATUS_IF_NOT_OK(ConvertData(descriptor, message, &fields_builders));
+    RETURN_STATUS_IF_NOT_OK(ConvertData(descriptor, *message, fields_builders));
   }
 
   std::vector<std::shared_ptr<arrow::Array>> arrays;
