@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <memory>
 #include <string>
@@ -55,7 +56,57 @@ int main(int argc, char** argv) {
 
   std::shared_ptr<arrow::io::FileOutputStream> output_file =
       arrow::io::FileOutputStream::Open("test.bin").ValueOrDie();
-  ARROW_CHECK_OK(parquet::arrow::WriteTable(*table, pool, output_file, 2));
+
+  // Expand following calls for writing multiple row groups.
+  // ARROW_CHECK_OK(parquet::arrow::WriteTable(*table, pool, output_file, 2));
+
+  std::unique_ptr<parquet::arrow::FileWriter> file_writer;
+  ARROW_CHECK_OK(parquet::arrow::FileWriter::Open(
+      *schema, pool, output_file, parquet::default_writer_properties(),
+      parquet::default_arrow_writer_properties(), &file_writer));
+
+  int64_t chunk_size = 2;
+  ARROW_CHECK_OK(table->Validate());
+
+  CHECK(!(chunk_size <= 0 && table->num_rows() > 0))
+      << "chunk size per row_group must be greater than 0";
+  CHECK(table->schema()->Equals(*schema, false))
+      << "table schema does not match this writer's. table:'"
+      << table->schema()->ToString() << "' this:'" << schema->ToString() << "'";
+
+  auto WriteRowGroup = [&](int64_t offset, int64_t size) {
+    ARROW_CHECK_OK(file_writer->NewRowGroup(size));
+    for (int i = 0; i < table->num_columns(); i++) {
+      ARROW_CHECK_OK(
+          file_writer->WriteColumnChunk(table->column(i), offset, size));
+    }
+    return arrow::Status::OK();
+  };
+
+  if (table->num_rows() == 0) {
+    // Append a row group with 0 rows
+    ARROW_CHECK_OK(WriteRowGroup(0, 0));
+  } else {
+    for (int chunk = 0; chunk * chunk_size < table->num_rows(); chunk++) {
+      int64_t offset = chunk * chunk_size;
+      ARROW_CHECK_OK(WriteRowGroup(
+          offset, std::min(chunk_size, table->num_rows() - offset)));
+    }
+  }
+
+  if (table->num_rows() == 0) {
+    // Append a row group with 0 rows
+    ARROW_CHECK_OK(WriteRowGroup(0, 0));
+  } else {
+    for (int chunk = 0; chunk * chunk_size < table->num_rows(); chunk++) {
+      int64_t offset = chunk * chunk_size;
+      ARROW_CHECK_OK(WriteRowGroup(
+          offset, std::min(chunk_size, table->num_rows() - offset)));
+    }
+  }
+
+  ARROW_CHECK_OK(file_writer->Close());
+  ARROW_CHECK_OK(output_file->Close());
 
   LOG(INFO) << "DONE";
 
