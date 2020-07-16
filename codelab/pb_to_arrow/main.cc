@@ -2,6 +2,7 @@
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
+#include "absl/types/span.h"
 #include "arrow/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
@@ -100,10 +101,13 @@ int main(int argc, char** argv) {
       message, descriptor->FindFieldByNumber(8), 2);
   LOG(INFO) << message->Utf8DebugString();
 
-  const google::protobuf::EnumValueDescriptor* enum_value_descriptor =
-      message_prototype->GetReflection()->GetEnum(
-          *message, descriptor->FindFieldByNumber(8));
-  LOG(INFO) << enum_value_descriptor->name();
+  // const google::protobuf::EnumValueDescriptor* enum_value_descriptor =
+  //     message_prototype->GetReflection()->GetEnum(
+  //         *message, descriptor->FindFieldByNumber(8));
+  // LOG(INFO) << enum_value_descriptor->name();
+
+  absl::Span<const google::protobuf::Message*> messages = absl::MakeSpan(
+      const_cast<const google::protobuf::Message**>(&message), 1);
 
   return 0;
 }

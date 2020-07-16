@@ -1,5 +1,6 @@
 #include "codelab/pb_to_arrow/converter.h"
 
+#include <queue>
 #include <utility>
 
 #include "absl/container/flat_hash_map.h"
@@ -14,6 +15,27 @@ namespace hcoona {
 namespace codelab {
 
 namespace {
+
+// Provides a definition of base::queue that's like std::queue but uses a
+// base::circular_deque instead of std::deque. Since std::queue is just a
+// wrapper for an underlying type, we can just provide a typedef for it that
+// defaults to the base circular_deque.
+// template <class T, class Container = gtl::circular_deque<T>>
+// using CircularQueue = std::queue<T, Container>;
+
+// Implementation of C++20's std::identity.
+//
+// Reference:
+// - https://en.cppreference.com/w/cpp/utility/functional/identity
+// - https://wg21.link/func.identity
+struct identity {
+  template <typename T>
+  constexpr T&& operator()(T&& t) const noexcept {
+    return std::forward<T>(t);
+  }
+
+  using is_transparent = void;
+};
 
 const absl::flat_hash_map<google::protobuf::FieldDescriptor::Type,
                           std::function<std::shared_ptr<arrow::DataType>()>>*
@@ -128,7 +150,14 @@ absl::Status ConvertFieldDescriptor(
       return s;
     }
 
-    *field = arrow::field(field_descriptor->name(), arrow::struct_(fields));
+    std::shared_ptr<arrow::Field> arrow_field =
+        arrow::field(field_descriptor->name(), arrow::struct_(fields));
+    if (field_descriptor->is_repeated()) {
+      *field = arrow::field(field_descriptor->name(),
+                            arrow::list(std::move(arrow_field)));
+    } else {
+      *field = std::move(arrow_field);
+    }
   } else {
     const std::function<std::shared_ptr<arrow::DataType>()>*
         arrow_type_factory =
