@@ -290,16 +290,23 @@ absl::Status ConvertData(
         const google::protobuf::Message& inner_message =
             message.GetReflection()->GetRepeatedMessage(message,
                                                         field_descriptor, j);
-        LOG(INFO) << "Inner message: " << inner_message.DebugString();
-        return absl::UnimplementedError(absl::StrCat(
-            __LINE__,
-            "Not implemented for map: ", field_descriptor->DebugString()));
-        // RETURN_STATUS_IF_NOT_OK(
-        //     ConvertFieldData(*field_descriptor, message, j, value_builder));
+        const google::protobuf::Descriptor* inner_descriptor =
+            inner_message.GetDescriptor();
+        DCHECK_NOTNULL(inner_descriptor);
+        DCHECK_EQ(2, inner_descriptor->field_count());
+
+        const google::protobuf::FieldDescriptor* key_field_descriptor =
+            inner_descriptor->field(0);
+        DCHECK_NOTNULL(key_field_descriptor);
+        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
+            *key_field_descriptor, inner_message, -1, key_builder));
+
+        const google::protobuf::FieldDescriptor* value_field_descriptor =
+            inner_descriptor->field(1);
+        DCHECK_NOTNULL(value_field_descriptor);
+        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
+            *value_field_descriptor, inner_message, -1, value_builder));
       }
-      // return absl::UnimplementedError(absl::StrCat(
-      //     __LINE__,
-      //     "Not implemented for map: ", field_descriptor->DebugString()));
     } else if (field_descriptor->is_repeated()) {
       auto field_builder =
           std::static_pointer_cast<arrow::ListBuilder>(fields_builders[i]);

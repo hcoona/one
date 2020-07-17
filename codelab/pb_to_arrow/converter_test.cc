@@ -51,6 +51,25 @@ TEST(TestDouble, TestDoubleList) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
+TEST(TestDouble, TestDoubleMap) {
+  DoubleMapWrapper double_map_wrapper;
+  double_map_wrapper.mutable_double_map()->operator[](3) = 3;
+  double_map_wrapper.mutable_double_map()->operator[](5) = 5;
+  google::protobuf::Message* message = &double_map_wrapper;
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
 }  // namespace
 }  // namespace codelab
 }  // namespace hcoona
