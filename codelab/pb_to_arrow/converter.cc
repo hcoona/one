@@ -285,23 +285,6 @@ absl::Status ConvertFieldDescriptor(
       *field_builder = std::make_shared<arrow::MapBuilder>(
           pool, fields_builders[0], fields_builders[1],
           arrow::map(fields[0]->type(), fields[1]->type()));
-      LOG(WARNING) << "MapBuilder("
-                   << absl::StreamFormat("%p", field_builder->get())
-                   << ") created with KeyBuilder("
-                   << absl::StreamFormat("%p", static_cast<arrow::MapBuilder*>(
-                                                   field_builder->get())
-                                                   ->key_builder())
-                   << "), ValueBuilder("
-                   << absl::StreamFormat("%p", static_cast<arrow::MapBuilder*>(
-                                                   field_builder->get())
-                                                   ->item_builder())
-                   << ")";
-      DCHECK_EQ(
-          fields_builders[0].get(),
-          static_cast<arrow::MapBuilder*>(field_builder->get())->key_builder());
-      DCHECK_EQ(fields_builders[1].get(),
-                static_cast<arrow::MapBuilder*>(field_builder->get())
-                    ->item_builder());
       AddArrowArrayBuilderDebugInfo(field_builder->get(), FROM_HERE,
                                     "MapBuilder",
                                     field_descriptor.DebugString());
@@ -495,12 +478,7 @@ absl::Status ConvertFieldData(
 
   switch (field_descriptor.type()) {
     case google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE: {
-      // auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
-      auto builder = dynamic_cast<arrow::DoubleBuilder*>(field_builder);
-      CHECK(builder != nullptr)
-          << "Invalid field_builder type, expected DoubleBuilder, actual "
-          << typeid(*field_builder).name()
-          << ", debug: " << LookupArrowArrayBuilderDebugLocation(field_builder);
+      auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
       double value =
           repeated_field_index == -1
               ? message.GetReflection()->GetDouble(message, &field_descriptor)
