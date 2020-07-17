@@ -69,8 +69,8 @@ cc_test(
 )
 
 cc_binary(
-    name = "list_debug",
-    srcs = ["list_debug.cc"],
+    name = "nested_debug",
+    srcs = ["nested_debug.cc"],
     deps = [
         ":converter",
         ":messages_cc_proto",
