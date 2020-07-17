@@ -527,6 +527,7 @@ absl::Status ConvertFieldData(
       for (int i = 0; i < builder->num_fields(); i++) {
         field_builders.emplace_back(builder->field_builder(i));
       }
+      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
       RETURN_STATUS_IF_NOT_OK(
           ConvertData(*(value.GetDescriptor()), value, field_builders));
       break;

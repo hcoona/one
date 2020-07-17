@@ -28,8 +28,8 @@ int main(int argc, char** argv) {
   std::shared_ptr<arrow::Table> table;
   absl::Status s = hcoona::codelab::ConvertTable(*(message->GetDescriptor()),
                                                  messages, pool, &table);
-  // CHECK_STATUS_OK(s);
-  // s = hcoona::codelab::FromArrowStatus(table->ValidateFull());
+  CHECK_STATUS_OK(s);
+  s = hcoona::codelab::FromArrowStatus(table->ValidateFull());
   if (!s.ok()) {
     LOG(ERROR) << s.ToString();
   } else {
