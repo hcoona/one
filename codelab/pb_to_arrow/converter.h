@@ -37,7 +37,7 @@ absl::Status ConvertPrimitiveFieldDescriptor(
 absl::Status ConvertData(
     const google::protobuf::Descriptor& descriptor,
     const google::protobuf::Message& message,
-    const std::vector<std::shared_ptr<arrow::ArrayBuilder>>& fields_builders);
+    absl::Span<arrow::ArrayBuilder* const> fields_builders);
 
 absl::Status ConvertFieldData(
     const google::protobuf::FieldDescriptor& field_descriptor,

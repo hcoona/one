@@ -184,7 +184,7 @@ void AddArrowArrayBuilderDebugInfo(arrow::ArrayBuilder* builder,
                                    std::string array_builder_type,
                                    std::string field_debug_string) {
 #if DCHECK_IS_ON()
-  VLOG(2) << absl::StrFormat("Created %p", builder);
+  VLOG(2) << absl::StreamFormat("Created %p", builder);
   GetArrowArrayBuilderDebugTable()->emplace(
       builder, ArrowArrayBuilderDebugContext(std::move(location),
                                              std::move(array_builder_type),
@@ -379,13 +379,13 @@ absl::Status ConvertPrimitiveFieldDescriptor(
 absl::Status ConvertData(
     const google::protobuf::Descriptor& descriptor,
     const google::protobuf::Message& message,
-    const std::vector<std::shared_ptr<arrow::ArrayBuilder>>& fields_builders) {
+    absl::Span<arrow::ArrayBuilder* const> fields_builders) {
   DCHECK_EQ(fields_builders.size(), descriptor.field_count());
 #if DCHECK_IS_ON()
-  for (const std::shared_ptr<arrow::ArrayBuilder>& builder : fields_builders) {
+  for (arrow::ArrayBuilder* const builder : fields_builders) {
     CHECK(static_cast<bool>(builder));
-    CHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), builder.get()))
-        << LookupArrowArrayBuilderDebugLocation(builder.get());
+    CHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), builder))
+        << LookupArrowArrayBuilderDebugLocation(builder);
   }
 #endif  // DCHECK_IS_ON()
 
@@ -393,11 +393,9 @@ absl::Status ConvertData(
     const google::protobuf::FieldDescriptor* field_descriptor =
         descriptor.field(i);
     if (field_descriptor->is_map()) {
-      auto field_builder =
-          std::static_pointer_cast<arrow::MapBuilder>(fields_builders[i]);
-      DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(),
-                             field_builder.get()))
-          << LookupArrowArrayBuilderDebugLocation(field_builder.get());
+      auto field_builder = down_cast<arrow::MapBuilder*>(fields_builders[i]);
+      DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), field_builder))
+          << LookupArrowArrayBuilderDebugLocation(field_builder);
       arrow::ArrayBuilder* key_builder = field_builder->key_builder();
       DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), key_builder))
           << LookupArrowArrayBuilderDebugLocation(key_builder);
@@ -405,8 +403,8 @@ absl::Status ConvertData(
       DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), value_builder))
           << LookupArrowArrayBuilderDebugLocation(value_builder)
           << ", parent map builder: "
-          << absl::StrFormat("%p=", field_builder.get())
-          << LookupArrowArrayBuilderDebugLocation(field_builder.get());
+          << absl::StreamFormat("%p=", field_builder)
+          << LookupArrowArrayBuilderDebugLocation(field_builder);
 
       RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
@@ -434,8 +432,7 @@ absl::Status ConvertData(
             *value_field_descriptor, inner_message, -1, value_builder));
       }
     } else if (field_descriptor->is_repeated()) {
-      auto field_builder =
-          std::static_pointer_cast<arrow::ListBuilder>(fields_builders[i]);
+      auto field_builder = down_cast<arrow::ListBuilder*>(fields_builders[i]);
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
       RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
@@ -445,14 +442,13 @@ absl::Status ConvertData(
             ConvertFieldData(*field_descriptor, message, j, value_builder));
       }
     } else {
-      const std::shared_ptr<arrow::ArrayBuilder>& field_builder =
-          fields_builders[i];
+      arrow::ArrayBuilder* const field_builder = fields_builders[i];
       if (field_descriptor->is_optional() &&
           !message.GetReflection()->HasField(message, field_descriptor)) {
         RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
       } else {
-        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(*field_descriptor, message, -1,
-                                                 field_builder.get()));
+        RETURN_STATUS_IF_NOT_OK(
+            ConvertFieldData(*field_descriptor, message, -1, field_builder));
       }
     }
   }
@@ -518,6 +514,23 @@ absl::Status ConvertFieldData(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
+    case google::protobuf::FieldDescriptor::Type::TYPE_GROUP:
+    case google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE: {
+      auto builder = down_cast<arrow::StructBuilder*>(field_builder);
+      const google::protobuf::Message& value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetMessage(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedMessage(
+                    message, &field_descriptor, repeated_field_index);
+      std::vector<arrow::ArrayBuilder*> field_builders;
+      field_builders.reserve(builder->num_fields());
+      for (int i = 0; i < builder->num_fields(); i++) {
+        field_builders.emplace_back(builder->field_builder(i));
+      }
+      RETURN_STATUS_IF_NOT_OK(
+          ConvertData(*(value.GetDescriptor()), value, field_builders));
+      break;
+    }
     case google::protobuf::FieldDescriptor::Type::TYPE_ENUM: {
       auto builder = down_cast<arrow::StringBuilder*>(field_builder);
       std::string value =
@@ -555,8 +568,15 @@ absl::Status ConvertTable(
       ConvertDescriptor(descriptor, pool, &fields, &fields_builders));
   std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
 
+  std::vector<arrow::ArrayBuilder*> fields_builders_raw_pointers;
+  fields_builders_raw_pointers.reserve(fields_builders.size());
+  for (const std::shared_ptr<arrow::ArrayBuilder>& builder : fields_builders) {
+    fields_builders_raw_pointers.emplace_back(builder.get());
+  }
+
   for (const google::protobuf::Message* const message : messages) {
-    RETURN_STATUS_IF_NOT_OK(ConvertData(descriptor, *message, fields_builders));
+    RETURN_STATUS_IF_NOT_OK(
+        ConvertData(descriptor, *message, fields_builders_raw_pointers));
   }
 
   std::vector<std::shared_ptr<arrow::Array>> arrays;

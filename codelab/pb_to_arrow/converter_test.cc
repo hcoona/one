@@ -138,6 +138,26 @@ TEST(TestInt32, TestInt32Map) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
+TEST(TestNest, TestNestInt32Value) {
+  ClearArrowArrayBuilderDebugContext();
+
+  NestInt32Wrapper nest_int32_wrapper;
+  nest_int32_wrapper.mutable_value()->set_int32_value(3);
+  google::protobuf::Message* message = &nest_int32_wrapper;
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
 }  // namespace
 }  // namespace codelab
 }  // namespace hcoona
