@@ -282,10 +282,10 @@ absl::Status ConvertData(
           std::static_pointer_cast<arrow::MapBuilder>(fields_builders[i]);
       arrow::ArrayBuilder* key_builder = field_builder->key_builder();
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
+      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
            j < message.GetReflection()->FieldSize(message, field_descriptor);
            j++) {
-        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
         // Extract into key & value fields.
         const google::protobuf::Message& inner_message =
             message.GetReflection()->GetRepeatedMessage(message,
@@ -304,10 +304,10 @@ absl::Status ConvertData(
       auto field_builder =
           std::static_pointer_cast<arrow::ListBuilder>(fields_builders[i]);
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
+      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
            j < message.GetReflection()->FieldSize(message, field_descriptor);
            j++) {
-        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
         RETURN_STATUS_IF_NOT_OK(
             ConvertFieldData(*field_descriptor, message, j, value_builder));
       }

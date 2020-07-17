@@ -1,10 +1,11 @@
 #include "codelab/pb_to_arrow/converter.h"
 
-#include <array>
+#include <memory>
 
 #include "absl/base/casts.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
+#include "arrow/api.h"
 #include "gtest/gtest.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"

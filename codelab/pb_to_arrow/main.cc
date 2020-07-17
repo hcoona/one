@@ -34,7 +34,7 @@ bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
 }  // namespace
 
 DEFINE_string(proto_file, "", "Protobuf description file.");
-DEFINE_string(message_name, "codelab.MessageA",
+DEFINE_string(message_name, "hcoona.codelab.MessageA",
               "Message name in the protobuf description file.");
 DEFINE_validator(message_name, &FlagStringNotEmpty);
 

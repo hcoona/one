@@ -53,19 +53,6 @@ cc_library(
     ],
 )
 
-cc_library(
-    name = "status_util",
-    srcs = ["status_util.cc"],
-    hdrs = ["status_util.h"],
-    copts = ONE_DEFAULT_COPTS,
-    linkopts = ONE_DEFAULT_LINKOPTS,
-    deps = [
-        "//arrow",
-        "//status:status_or",
-        "//status:status_util",
-    ],
-)
-
 cc_test(
     name = "converter_test",
     srcs = ["converter_test.cc"],
@@ -77,6 +64,32 @@ cc_test(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "list_debug",
+    srcs = ["list_debug.cc"],
+    deps = [
+        ":converter",
+        ":messages_cc_proto",
+        ":status_util",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_library(
+    name = "status_util",
+    srcs = ["status_util.cc"],
+    hdrs = ["status_util.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        "//arrow",
+        "//status:status_or",
+        "//status:status_util",
     ],
 )
 
