@@ -31,4 +31,4 @@ popd >/dev/null # "$BD3_ROOT"
 
 # TODO: Fix the base directory in compile_command.json
 
-# cp "$($BAZELIST_EXEC info execution_root)/compile_commands.json" .
+cp "$($BAZELIST_EXEC info execution_root)/compile_commands.json" .

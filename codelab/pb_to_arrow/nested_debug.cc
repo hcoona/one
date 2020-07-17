@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
 
-  hcoona::codelab::NestInt32Wrapper nested_int32_wrapper;
+  hcoona::codelab::Int32WrapperWrapper nested_int32_wrapper;
   nested_int32_wrapper.mutable_value()->set_int32_value(3);
   nested_int32_wrapper.mutable_value()->set_int32_value(5);
   google::protobuf::Message* message = &nested_int32_wrapper;
