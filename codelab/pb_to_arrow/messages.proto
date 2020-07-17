@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package codelab;
+package hcoona.codelab;
 
 enum EnumA {
   ENUMA_UNSPECIFIED = 0;
@@ -8,10 +8,14 @@ enum EnumA {
   ENUMA_Y = 2;
 }
 
-message MessageC { repeated sint64 my_sint64_value = 1; }
+message MessageC {
+  repeated sint64 my_sint64_value = 1;
+}
 
 message MessageA {
-  message NestedMessageB { repeated sfixed64 my_sfixed64_value = 1; }
+  message NestedMessageB {
+    repeated sfixed64 my_sfixed64_value = 1;
+  }
   int32 my_int32_value = 1;
   int64 my_int64_value = 2;
   uint64 my_uint64_value = 3;
@@ -29,4 +33,40 @@ message MessageA {
     string my_oneof_string_value = 150;
     int64 my_oneof_int64_value = 151;
   }
+}
+
+message DoubleWrapper {
+  double double_value = 1;
+}
+
+message DoubleListWrapper {
+  repeated double double_list = 1;
+}
+
+message DoubleMapWrapper {
+  map<int32, double> double_map = 1;
+}
+
+message Int32Wrapper {
+  int32 int32_value = 1;
+}
+
+message Int32ListWrapper {
+  repeated int32 int32_list = 1;
+}
+
+message Int32MapWrapper {
+  map<int32, int32> int32_map = 1;
+}
+
+message NestInt32Wrapper {
+  Int32Wrapper value = 1;
+}
+
+message NestInt32ListWrapper {
+  repeated Int32Wrapper value = 1;
+}
+
+message NestInt32MapWrapper {
+  map<int32, Int32Wrapper> value = 1;
 }

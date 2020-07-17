@@ -1,4 +1,5 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library", "cc_test")
 load(
     "//bazel/copts:configure.bzl",
     "ONE_DEFAULT_COPTS",
@@ -63,4 +64,28 @@ cc_library(
         "//status:status_or",
         "//status:status_util",
     ],
+)
+
+cc_test(
+    name = "converter_test",
+    srcs = ["converter_test.cc"],
+    deps = [
+        ":converter",
+        ":messages_cc_proto",
+        ":status_util",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+proto_library(
+    name = "messages_proto",
+    srcs = ["messages.proto"],
+)
+
+cc_proto_library(
+    name = "messages_cc_proto",
+    deps = ["messages_proto"],
 )
