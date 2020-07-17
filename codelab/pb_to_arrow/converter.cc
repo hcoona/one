@@ -5,9 +5,12 @@
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/str_format.h"
+#include "absl/strings/str_join.h"
 #include "glog/logging.h"
 #include "google/protobuf/message.h"
 #include "codelab/pb_to_arrow/status_util.h"
+#include "gtl/location.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
 #include "util/casts.h"
@@ -154,7 +157,68 @@ GetArrowTypeTable() {
   return table.get();
 }
 
+struct ArrowArrayBuilderDebugContext {
+  gtl::Location location;
+  std::string array_builder_type;
+  std::string field_debug_string;
+
+  ArrowArrayBuilderDebugContext() = default;
+  ArrowArrayBuilderDebugContext(gtl::Location location,
+                                std::string array_builder_type,
+                                std::string field_debug_string)
+      : location(std::move(location)),
+        array_builder_type(std::move(array_builder_type)),
+        field_debug_string(std::move(field_debug_string)) {}
+};
+
+absl::flat_hash_map<arrow::ArrayBuilder*, ArrowArrayBuilderDebugContext>*
+GetArrowArrayBuilderDebugTable() {
+  static gtl::NoDestructor<
+      absl::flat_hash_map<arrow::ArrayBuilder*, ArrowArrayBuilderDebugContext>>
+      table;
+  return table.get();
+}
+
+void AddArrowArrayBuilderDebugInfo(arrow::ArrayBuilder* builder,
+                                   gtl::Location location,
+                                   std::string array_builder_type,
+                                   std::string field_debug_string) {
+#if DCHECK_IS_ON()
+  VLOG(2) << absl::StrFormat("Created %p", builder);
+  GetArrowArrayBuilderDebugTable()->emplace(
+      builder, ArrowArrayBuilderDebugContext(std::move(location),
+                                             std::move(array_builder_type),
+                                             std::move(field_debug_string)));
+#endif  // DCHECK_IS_ON()
+}
+
 }  // namespace
+
+std::string LookupArrowArrayBuilderDebugLocation(arrow::ArrayBuilder* builder) {
+  const ArrowArrayBuilderDebugContext* debug_context =
+      gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), builder);
+  if (debug_context == nullptr) {
+    return absl::StrFormat(
+        "NOT_FOUND: finding %p in [%s]", builder,
+        absl::StrJoin(*GetArrowArrayBuilderDebugTable(), ", ",
+                      [](std::string* out,
+                         const std::pair<arrow::ArrayBuilder*,
+                                         ArrowArrayBuilderDebugContext>& item) {
+                        absl::StrAppendFormat(out, "%p", item.first);
+                        absl::StrAppendFormat(out, "=%s",
+                                              item.second.array_builder_type);
+                      }));
+  } else {
+    return absl::StrCat("ArrayBuilder(", debug_context->array_builder_type,
+                        ") is created from protobuf field '",
+                        debug_context->field_debug_string, "' from location ",
+                        debug_context->location.ToString());
+  }
+}
+
+void ClearArrowArrayBuilderDebugContext() {
+  GetArrowArrayBuilderDebugTable()->clear();
+}
 
 absl::Status ConvertDescriptor(
     const google::protobuf::Descriptor& descriptor, arrow::MemoryPool* pool,
@@ -174,6 +238,8 @@ absl::Status ConvertDescriptor(
     if (!s.ok()) {
       return s;
     }
+    DCHECK_NOTNULL(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(),
+                                   field_builder.get()));
 
     fields->emplace_back(std::move(field));
     fields_builders->emplace_back(std::move(field_builder));
@@ -201,6 +267,14 @@ absl::Status ConvertFieldDescriptor(
     if (!s.ok()) {
       return s;
     }
+#if DCHECK_IS_ON()
+    for (const std::shared_ptr<arrow::ArrayBuilder>& field_builder :
+         fields_builders) {
+      CHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(),
+                            field_builder.get()))
+          << LookupArrowArrayBuilderDebugLocation(field_builder.get());
+    }
+#endif  // DCHECK_IS_ON()
 
     if (field_descriptor.is_map()) {
       DCHECK_EQ(fields.size(), 2);
@@ -211,53 +285,109 @@ absl::Status ConvertFieldDescriptor(
       *field_builder = std::make_shared<arrow::MapBuilder>(
           pool, fields_builders[0], fields_builders[1],
           arrow::map(fields[0]->type(), fields[1]->type()));
+      LOG(WARNING) << "MapBuilder("
+                   << absl::StreamFormat("%p", field_builder->get())
+                   << ") created with KeyBuilder("
+                   << absl::StreamFormat("%p", static_cast<arrow::MapBuilder*>(
+                                                   field_builder->get())
+                                                   ->key_builder())
+                   << "), ValueBuilder("
+                   << absl::StreamFormat("%p", static_cast<arrow::MapBuilder*>(
+                                                   field_builder->get())
+                                                   ->item_builder())
+                   << ")";
+      DCHECK_EQ(
+          fields_builders[0].get(),
+          static_cast<arrow::MapBuilder*>(field_builder->get())->key_builder());
+      DCHECK_EQ(fields_builders[1].get(),
+                static_cast<arrow::MapBuilder*>(field_builder->get())
+                    ->item_builder());
+      AddArrowArrayBuilderDebugInfo(field_builder->get(), FROM_HERE,
+                                    "MapBuilder",
+                                    field_descriptor.DebugString());
     } else {
       std::shared_ptr<arrow::DataType> arrow_struct_type =
           arrow::struct_(fields);
       auto struct_builder = std::make_shared<arrow::StructBuilder>(
           arrow_struct_type, pool, fields_builders);
+      AddArrowArrayBuilderDebugInfo(struct_builder.get(), FROM_HERE,
+                                    "StructBuilder",
+                                    field_descriptor.DebugString());
+
       if (field_descriptor.is_repeated()) {
         *field = arrow::field(field_descriptor.name(),
                               arrow::list(arrow::struct_(fields)));
         *field_builder = std::make_shared<arrow::ListBuilder>(
             pool, std::move(struct_builder),
             arrow::list(std::move(arrow_struct_type)));
+        AddArrowArrayBuilderDebugInfo(field_builder->get(), FROM_HERE,
+                                      "ListBuilder",
+                                      field_descriptor.DebugString());
       } else {
         *field =
             arrow::field(field_descriptor.name(), std::move(arrow_struct_type));
         *field_builder = std::move(struct_builder);
+        AddArrowArrayBuilderDebugInfo(field_builder->get(), FROM_HERE,
+                                      "StructBuilder",
+                                      field_descriptor.DebugString());
       }
     }
   } else {
-    const ArrowTypeAndBuilder* arrow_type_and_builder =
-        gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor.type());
-    if (arrow_type_and_builder == nullptr) {
-      return absl::UnimplementedError(absl::StrCat(
-          "Failed to convert '", field_descriptor.name(),
-          "', not implemented for primitive type '",
-          field_descriptor.type_name(), "(", field_descriptor.type(), ")'"));
-    }
+    RETURN_STATUS_IF_NOT_OK(ConvertPrimitiveFieldDescriptor(
+        field_descriptor, pool, field, field_builder));
+  }
 
-    if (field_descriptor.is_map()) {
-      return absl::UnimplementedError(absl::StrCat(
-          __LINE__,
-          "Not implemented for map: ", field_descriptor.DebugString()));
-    } else if (field_descriptor.is_repeated()) {
-      DCHECK_EQ(arrow_type_and_builder->builder_factory(pool)->type(),
-                arrow_type_and_builder->type_factory());
+  return absl::OkStatus();
+}
 
-      *field = arrow::field(field_descriptor.name(),
-                            arrow::list(arrow_type_and_builder->type_factory()),
-                            true /* nullable */);
-      *field_builder = std::make_shared<arrow::ListBuilder>(
-          pool, arrow_type_and_builder->builder_factory(pool),
-          arrow::list(arrow_type_and_builder->type_factory()));
-    } else {
-      *field = arrow::field(field_descriptor.name(),
-                            arrow_type_and_builder->type_factory(),
-                            field_descriptor.is_optional() /* nullable */);
-      *field_builder = arrow_type_and_builder->builder_factory(pool);
-    }
+absl::Status ConvertPrimitiveFieldDescriptor(
+    const google::protobuf::FieldDescriptor& field_descriptor,
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
+    std::shared_ptr<arrow::ArrayBuilder>* field_builder) {
+  DCHECK_NOTNULL(pool);
+  DCHECK_NOTNULL(field);
+  DCHECK_NOTNULL(field_builder);
+
+  const ArrowTypeAndBuilder* arrow_type_and_builder =
+      gtl::FindOrNull(*GetArrowTypeTable(), field_descriptor.type());
+  if (arrow_type_and_builder == nullptr) {
+    return absl::UnimplementedError(absl::StrCat(
+        "Failed to convert '", field_descriptor.name(),
+        "', not implemented for primitive type '", field_descriptor.type_name(),
+        "(", field_descriptor.type(), ")'"));
+  }
+
+  if (field_descriptor.is_map()) {
+    return absl::UnimplementedError(absl::StrCat(
+        __LINE__, "Not implemented for map: ", field_descriptor.DebugString()));
+  } else if (field_descriptor.is_repeated()) {
+    DCHECK_EQ(arrow_type_and_builder->builder_factory(pool)->type(),
+              arrow_type_and_builder->type_factory());
+
+    *field = arrow::field(field_descriptor.name(),
+                          arrow::list(arrow_type_and_builder->type_factory()),
+                          true /* nullable */);
+    std::shared_ptr<arrow::ArrayBuilder> value_builder =
+        arrow_type_and_builder->builder_factory(pool);
+    AddArrowArrayBuilderDebugInfo(value_builder.get(), FROM_HERE,
+                                  "NumericBuilder",
+                                  field_descriptor.DebugString());
+    *field_builder = std::make_shared<arrow::ListBuilder>(
+        pool, value_builder,
+        arrow::list(arrow_type_and_builder->type_factory()));
+    AddArrowArrayBuilderDebugInfo(field_builder->get(), FROM_HERE,
+                                  "ListBuilder",
+                                  field_descriptor.DebugString());
+  } else {
+    *field = arrow::field(field_descriptor.name(),
+                          arrow_type_and_builder->type_factory(),
+                          field_descriptor.is_optional() /* nullable */);
+    *field_builder = arrow_type_and_builder->builder_factory(pool);
+    AddArrowArrayBuilderDebugInfo(
+        field_builder->get(), FROM_HERE,
+        absl::StrCat("NumericBuilder(", typeid(*(field_builder->get())).name(),
+                     ")"),
+        field_descriptor.DebugString());
   }
 
   return absl::OkStatus();
@@ -271,6 +401,8 @@ absl::Status ConvertData(
 #if DCHECK_IS_ON()
   for (const std::shared_ptr<arrow::ArrayBuilder>& builder : fields_builders) {
     CHECK(static_cast<bool>(builder));
+    CHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), builder.get()))
+        << LookupArrowArrayBuilderDebugLocation(builder.get());
   }
 #endif  // DCHECK_IS_ON()
 
@@ -280,8 +412,19 @@ absl::Status ConvertData(
     if (field_descriptor->is_map()) {
       auto field_builder =
           std::static_pointer_cast<arrow::MapBuilder>(fields_builders[i]);
+      DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(),
+                             field_builder.get()))
+          << LookupArrowArrayBuilderDebugLocation(field_builder.get());
       arrow::ArrayBuilder* key_builder = field_builder->key_builder();
-      arrow::ArrayBuilder* value_builder = field_builder->value_builder();
+      DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), key_builder))
+          << LookupArrowArrayBuilderDebugLocation(key_builder);
+      arrow::ArrayBuilder* value_builder = field_builder->item_builder();
+      DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), value_builder))
+          << LookupArrowArrayBuilderDebugLocation(value_builder)
+          << ", parent map builder: "
+          << absl::StrFormat("%p=", field_builder.get())
+          << LookupArrowArrayBuilderDebugLocation(field_builder.get());
+
       RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
            j < message.GetReflection()->FieldSize(message, field_descriptor);
@@ -347,10 +490,17 @@ absl::Status ConvertFieldData(
     CHECK_EQ(repeated_field_index, -1);
   }
 #endif  // DCHECK_IS_ON()
+  DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), field_builder))
+      << LookupArrowArrayBuilderDebugLocation(field_builder);
 
   switch (field_descriptor.type()) {
     case google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE: {
-      auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
+      // auto builder = down_cast<arrow::DoubleBuilder*>(field_builder);
+      auto builder = dynamic_cast<arrow::DoubleBuilder*>(field_builder);
+      CHECK(builder != nullptr)
+          << "Invalid field_builder type, expected DoubleBuilder, actual "
+          << typeid(*field_builder).name()
+          << ", debug: " << LookupArrowArrayBuilderDebugLocation(field_builder);
       double value =
           repeated_field_index == -1
               ? message.GetReflection()->GetDouble(message, &field_descriptor)

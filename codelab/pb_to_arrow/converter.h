@@ -2,6 +2,7 @@
 #define CODELAB_PB_TO_PARQUET_CONVERTER_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "absl/status/status.h"
@@ -14,12 +15,21 @@
 namespace hcoona {
 namespace codelab {
 
+std::string LookupArrowArrayBuilderDebugLocation(arrow::ArrayBuilder* builder);
+
+void ClearArrowArrayBuilderDebugContext();
+
 absl::Status ConvertDescriptor(
     const google::protobuf::Descriptor& descriptor, arrow::MemoryPool* pool,
     std::vector<std::shared_ptr<arrow::Field>>* fields,
     std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders);
 
 absl::Status ConvertFieldDescriptor(
+    const google::protobuf::FieldDescriptor& field_descriptor,
+    arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
+    std::shared_ptr<arrow::ArrayBuilder>* field_builder);
+
+absl::Status ConvertPrimitiveFieldDescriptor(
     const google::protobuf::FieldDescriptor& field_descriptor,
     arrow::MemoryPool* pool, std::shared_ptr<arrow::Field>* field,
     std::shared_ptr<arrow::ArrayBuilder>* field_builder);

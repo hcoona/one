@@ -15,6 +15,8 @@ namespace codelab {
 namespace {
 
 TEST(TestDouble, TestDoubleValue) {
+  ClearArrowArrayBuilderDebugContext();
+
   DoubleWrapper double_wrapper;
   double_wrapper.set_double_value(3);
   google::protobuf::Message* message = &double_wrapper;
@@ -33,6 +35,8 @@ TEST(TestDouble, TestDoubleValue) {
 }
 
 TEST(TestDouble, TestDoubleList) {
+  ClearArrowArrayBuilderDebugContext();
+
   DoubleListWrapper double_list_wrapper;
   double_list_wrapper.add_double_list(3);
   double_list_wrapper.add_double_list(5);
@@ -52,6 +56,8 @@ TEST(TestDouble, TestDoubleList) {
 }
 
 TEST(TestDouble, TestDoubleMap) {
+  ClearArrowArrayBuilderDebugContext();
+
   DoubleMapWrapper double_map_wrapper;
   double_map_wrapper.mutable_double_map()->operator[](3) = 3;
   double_map_wrapper.mutable_double_map()->operator[](5) = 5;
