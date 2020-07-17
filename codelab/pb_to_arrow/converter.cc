@@ -567,6 +567,7 @@ absl::Status ConvertTable(
   RETURN_STATUS_IF_NOT_OK(
       ConvertDescriptor(descriptor, pool, &fields, &fields_builders));
   std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
+  VLOG(1) << "Schema=" << schema->ToString();
 
   std::vector<arrow::ArrayBuilder*> fields_builders_raw_pointers;
   fields_builders_raw_pointers.reserve(fields_builders.size());
