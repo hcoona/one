@@ -67,6 +67,10 @@ message Int32WrapperListWrapper {
   repeated Int32Wrapper value = 1;
 }
 
+message Int32ListWrapperWrapper {
+  Int32ListWrapper value = 1;
+}
+
 message Int32ListWrapperListWrapper {
   repeated Int32ListWrapper value = 1;
 }

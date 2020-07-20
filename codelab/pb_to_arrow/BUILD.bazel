@@ -40,6 +40,7 @@ cc_library(
     deps = [
         ":status_util",
         "//arrow",
+        "//gtl:compiler_specific",
         "//gtl:location",
         "//gtl:macros",
         "//gtl:map_util",

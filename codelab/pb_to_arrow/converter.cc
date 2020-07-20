@@ -10,6 +10,7 @@
 #include "glog/logging.h"
 #include "google/protobuf/message.h"
 #include "codelab/pb_to_arrow/status_util.h"
+#include "gtl/compiler_specific.h"
 #include "gtl/location.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
@@ -179,10 +180,9 @@ GetArrowArrayBuilderDebugTable() {
   return table.get();
 }
 
-void AddArrowArrayBuilderDebugInfo(arrow::ArrayBuilder* builder,
-                                   gtl::Location location,
-                                   std::string array_builder_type,
-                                   std::string field_debug_string) {
+ALWAYS_INLINE void AddArrowArrayBuilderDebugInfo(
+    arrow::ArrayBuilder* builder, gtl::Location location,
+    std::string array_builder_type, std::string field_debug_string) {
 #if DCHECK_IS_ON()
   VLOG(2) << absl::StreamFormat("Created %p", builder);
   GetArrowArrayBuilderDebugTable()->emplace(

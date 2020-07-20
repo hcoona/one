@@ -105,8 +105,10 @@ TEST(TestInt32, TestInt32List) {
   ClearArrowArrayBuilderDebugContext();
 
   Int32ListWrapper int32_list_wrapper;
+  int32_list_wrapper.add_int32_list(2);
   int32_list_wrapper.add_int32_list(3);
   int32_list_wrapper.add_int32_list(5);
+  int32_list_wrapper.add_int32_list(7);
   google::protobuf::Message* message =
       absl::implicit_cast<google::protobuf::Message*>(&int32_list_wrapper);
   absl::Span<const google::protobuf::Message* const> messages =
@@ -166,7 +168,7 @@ TEST(TestNest, TestInt32WrapperWrapper) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
-TEST(TestNest, Int32WrapperListWrapper) {
+TEST(TestNest, TestInt32WrapperListWrapper) {
   ClearArrowArrayBuilderDebugContext();
 
   Int32WrapperListWrapper int32_wrapper_list_wrapper;
@@ -189,7 +191,7 @@ TEST(TestNest, Int32WrapperListWrapper) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
-TEST(TestNest, EmptyInt32ListWrapperListWrapper) {
+TEST(TestNest, TestEmptyInt32ListWrapperListWrapper) {
   ClearArrowArrayBuilderDebugContext();
 
   Int32ListWrapperListWrapper int32_list_wrapper_list_wrapper;
@@ -211,7 +213,7 @@ TEST(TestNest, EmptyInt32ListWrapperListWrapper) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
-TEST(TestNest, Int32ListWrapperListWrapper) {
+TEST(TestNest, TestInt32ListWrapperListWrapper) {
   ClearArrowArrayBuilderDebugContext();
 
   Int32ListWrapperListWrapper int32_list_wrapper_list_wrapper;
@@ -240,7 +242,7 @@ TEST(TestNest, Int32ListWrapperListWrapper) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
-TEST(TestNest, Int32WrapperMapWrapper) {
+TEST(TestNest, TestInt32WrapperMapWrapper) {
   ClearArrowArrayBuilderDebugContext();
 
   Int32WrapperMapWrapper int32_wrapper_map_wrapper;
@@ -262,6 +264,78 @@ TEST(TestNest, Int32WrapperMapWrapper) {
   absl::Span<const google::protobuf::Message* const> messages =
       absl::MakeConstSpan(
           absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
+TEST(TestNest, TestInt32ListWrapperWrapper) {
+  ClearArrowArrayBuilderDebugContext();
+
+  Int32ListWrapperWrapper int32_list_wrapper_wrapper;
+  int32_list_wrapper_wrapper.mutable_value()->add_int32_list(2);
+  int32_list_wrapper_wrapper.mutable_value()->add_int32_list(3);
+  int32_list_wrapper_wrapper.mutable_value()->add_int32_list(5);
+  int32_list_wrapper_wrapper.mutable_value()->add_int32_list(7);
+
+  google::protobuf::Message* message =
+      absl::implicit_cast<google::protobuf::Message*>(
+          &int32_list_wrapper_wrapper);
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
+TEST(TestNest, TestEmptyInt32ListWrapperWrapper) {
+  ClearArrowArrayBuilderDebugContext();
+
+  Int32ListWrapperWrapper int32_list_wrapper_wrapper;
+
+  google::protobuf::Message* message =
+      absl::implicit_cast<google::protobuf::Message*>(
+          &int32_list_wrapper_wrapper);
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
+TEST(TestComplexData, TestCase1) {
+  ClearArrowArrayBuilderDebugContext();
+
+  auto message = std::make_unique<MessageA>();
+  message->add_id(2);
+  message->add_id(3);
+  message->add_id(5);
+  message->add_id(7);
+
+  google::protobuf::Message* raw_messages = message.get();
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&raw_messages), 1);
 
   arrow::MemoryPool* pool = arrow::default_memory_pool();
   std::shared_ptr<arrow::Table> table;
