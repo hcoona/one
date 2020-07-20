@@ -341,8 +341,11 @@ absl::Status ConvertPrimitiveFieldDescriptor(
   }
 
   if (field_descriptor.is_map()) {
-    return absl::UnimplementedError(absl::StrCat(
-        __LINE__, "Not implemented for map: ", field_descriptor.DebugString()));
+    DCHECK(false) << "Impossible, primitive field could not be a map: "
+                  << field_descriptor.DebugString();
+    return absl::UnknownError(absl::StrCat(
+        "Impossible, primitive field could not be a map: ",
+        field_descriptor.DebugString(), ", location:", FROM_HERE.ToString()));
   } else if (field_descriptor.is_repeated()) {
     DCHECK_EQ(arrow_type_and_builder->builder_factory(pool)->type(),
               arrow_type_and_builder->type_factory());
@@ -508,11 +511,20 @@ absl::Status ConvertFieldData(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
-    case google::protobuf::FieldDescriptor::Type::TYPE_FLOAT:
-      return absl::UnimplementedError(absl::StrCat(
-          "Not implemented for other types converting field data: ",
-          field_descriptor.type_name()));
-    case google::protobuf::FieldDescriptor::Type::TYPE_INT64: {
+    case google::protobuf::FieldDescriptor::Type::TYPE_FLOAT: {
+      auto builder = down_cast<arrow::FloatBuilder*>(field_builder);
+      float value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetFloat(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedFloat(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_INT64:
+    case google::protobuf::FieldDescriptor::Type::TYPE_SFIXED64:
+    case google::protobuf::FieldDescriptor::Type::TYPE_SINT64: {
       auto builder = down_cast<arrow::Int64Builder*>(field_builder);
       int64_t value =
           repeated_field_index == -1
@@ -524,15 +536,47 @@ absl::Status ConvertFieldData(
       break;
     }
     case google::protobuf::FieldDescriptor::Type::TYPE_UINT64:
-      return absl::UnimplementedError(absl::StrCat(
-          "Not implemented for other types converting field data: ",
-          field_descriptor.type_name()));
-    case google::protobuf::FieldDescriptor::Type::TYPE_INT32: {
+    case google::protobuf::FieldDescriptor::Type::TYPE_FIXED64: {
+      auto builder = down_cast<arrow::UInt64Builder*>(field_builder);
+      uint64_t value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetUInt64(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedUInt64(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_INT32:
+    case google::protobuf::FieldDescriptor::Type::TYPE_SFIXED32:
+    case google::protobuf::FieldDescriptor::Type::TYPE_SINT32: {
       auto builder = down_cast<arrow::Int32Builder*>(field_builder);
       int32_t value =
           repeated_field_index == -1
               ? message.GetReflection()->GetInt32(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedInt32(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_BOOL: {
+      auto builder = down_cast<arrow::BooleanBuilder*>(field_builder);
+      bool value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetBool(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedBool(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_STRING: {
+      auto builder = down_cast<arrow::StringBuilder*>(field_builder);
+      std::string value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetString(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedString(
                     message, &field_descriptor, repeated_field_index);
       RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
@@ -556,6 +600,29 @@ absl::Status ConvertFieldData(
           ConvertData(*(value.GetDescriptor()), value, field_builders));
       break;
     }
+    case google::protobuf::FieldDescriptor::Type::TYPE_BYTES: {
+      auto builder = down_cast<arrow::BinaryBuilder*>(field_builder);
+      std::string value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetString(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedString(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
+    case google::protobuf::FieldDescriptor::Type::TYPE_UINT32:
+    case google::protobuf::FieldDescriptor::Type::TYPE_FIXED32: {
+      auto builder = down_cast<arrow::UInt32Builder*>(field_builder);
+      uint32_t value =
+          repeated_field_index == -1
+              ? message.GetReflection()->GetUInt32(message, &field_descriptor)
+              : message.GetReflection()->GetRepeatedUInt32(
+                    message, &field_descriptor, repeated_field_index);
+      RETURN_STATUS_IF_NOT_OK(
+          FromArrowStatus(builder->Append(std::move(value))));
+      break;
+    }
     case google::protobuf::FieldDescriptor::Type::TYPE_ENUM: {
       auto builder = down_cast<arrow::StringBuilder*>(field_builder);
       std::string value =
@@ -572,6 +639,8 @@ absl::Status ConvertFieldData(
       break;
     }
     default:
+      DCHECK(false) << "Should not reach here: unimplemented for type: "
+                    << field_descriptor.type_name();
       return absl::UnimplementedError(absl::StrCat(
           "Not implemented for other types converting field data: ",
           field_descriptor.type_name()));

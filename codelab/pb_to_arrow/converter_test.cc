@@ -7,6 +7,7 @@
 #include "absl/status/status.h"
 #include "absl/types/span.h"
 #include "arrow/api.h"
+#include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
@@ -323,19 +324,15 @@ TEST(TestNest, TestEmptyInt32ListWrapperWrapper) {
   EXPECT_TRUE(s.ok()) << s.ToString();
 }
 
-TEST(TestComplexData, TestCase1) {
+TEST(TestComplexData, TestEmptyMessageA) {
   ClearArrowArrayBuilderDebugContext();
 
-  auto message = std::make_unique<MessageA>();
-  message->add_id(2);
-  message->add_id(3);
-  message->add_id(5);
-  message->add_id(7);
+  MessageA message_a;
 
-  google::protobuf::Message* raw_messages = message.get();
+  google::protobuf::Message* message = &message_a;
   absl::Span<const google::protobuf::Message* const> messages =
       absl::MakeConstSpan(
-          absl::implicit_cast<google::protobuf::Message**>(&raw_messages), 1);
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
 
   arrow::MemoryPool* pool = arrow::default_memory_pool();
   std::shared_ptr<arrow::Table> table;
@@ -345,6 +342,73 @@ TEST(TestComplexData, TestCase1) {
 
   s = FromArrowStatus(table->ValidateFull());
   EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
+TEST(TestComplexData, TestMessageACase1) {
+  ClearArrowArrayBuilderDebugContext();
+
+  MessageA message_a;
+  message_a.add_id(2);
+  message_a.add_id(3);
+  message_a.add_id(5);
+  message_a.add_id(7);
+
+  google::protobuf::Message* message = &message_a;
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+}
+
+TEST(TestComplexData, TestMessageACase2) {
+  ClearArrowArrayBuilderDebugContext();
+
+  constexpr const double PI = 3.14159265358979323846;
+  constexpr const char HELLO_WORLD[] = "Hello World!";
+
+  MessageA message_a;
+  message_a.set_my_int32_value(2);
+  message_a.set_my_int64_value(3);
+  message_a.set_my_uint64_value(5);
+  message_a.set_my_bool_value(true);
+  message_a.set_my_double_value(PI);
+  message_a.set_my_string_value(HELLO_WORLD);
+  message_a.set_my_bytes_value(HELLO_WORLD);
+  message_a.set_my_enum_value(EnumA::ENUMA_Y);
+  message_a.add_id(7);
+  message_a.add_id(11);
+  message_a.add_id(13);
+  message_a.add_id(17);
+  message_a.mutable_my_map()->insert(google::protobuf::MapPair(1, 2));
+  message_a.mutable_my_map()->insert(google::protobuf::MapPair(2, 3));
+  message_a.mutable_my_map()->insert(google::protobuf::MapPair(3, 5));
+  message_a.mutable_my_map()->insert(google::protobuf::MapPair(4, 8));
+  message_a.mutable_my_map()->insert(google::protobuf::MapPair(5, 13));
+  message_a.set_my_oneof_string_value(HELLO_WORLD);
+
+  google::protobuf::Message* message = &message_a;
+  absl::Span<const google::protobuf::Message* const> messages =
+      absl::MakeConstSpan(
+          absl::implicit_cast<google::protobuf::Message**>(&message), 1);
+
+  arrow::MemoryPool* pool = arrow::default_memory_pool();
+  std::shared_ptr<arrow::Table> table;
+  absl::Status s =
+      ConvertTable(*(message->GetDescriptor()), messages, pool, &table);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+
+  s = FromArrowStatus(table->ValidateFull());
+  EXPECT_TRUE(s.ok()) << s.ToString();
+
+  LOG(INFO) << table->ToString();
 }
 
 }  // namespace
