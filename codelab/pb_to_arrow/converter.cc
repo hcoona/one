@@ -445,12 +445,36 @@ absl::Status ConvertData(
       arrow::ArrayBuilder* const field_builder = fields_builders[i];
       if (field_descriptor->is_optional() &&
           !message.GetReflection()->HasField(message, field_descriptor)) {
-        RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
+        RETURN_STATUS_IF_NOT_OK(
+            ConvertNullFieldData(*field_descriptor, field_builder));
       } else {
         RETURN_STATUS_IF_NOT_OK(
             ConvertFieldData(*field_descriptor, message, -1, field_builder));
       }
     }
+  }
+
+  return absl::OkStatus();
+}
+
+absl::Status ConvertNullData(
+    const google::protobuf::Descriptor& descriptor,
+    absl::Span<arrow::ArrayBuilder* const> fields_builders) {
+  DCHECK_EQ(fields_builders.size(), descriptor.field_count());
+#if DCHECK_IS_ON()
+  for (arrow::ArrayBuilder* const builder : fields_builders) {
+    CHECK(static_cast<bool>(builder));
+    CHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), builder))
+        << LookupArrowArrayBuilderDebugLocation(builder);
+  }
+#endif  // DCHECK_IS_ON()
+
+  for (int i = 0; i < descriptor.field_count(); i++) {
+    const google::protobuf::FieldDescriptor* field_descriptor =
+        descriptor.field(i);
+    arrow::ArrayBuilder* const field_builder = fields_builders[i];
+    RETURN_STATUS_IF_NOT_OK(
+        ConvertNullFieldData(*field_descriptor, field_builder));
   }
 
   return absl::OkStatus();
@@ -551,6 +575,33 @@ absl::Status ConvertFieldData(
       return absl::UnimplementedError(absl::StrCat(
           "Not implemented for other types converting field data: ",
           field_descriptor.type_name()));
+  }
+
+  return absl::OkStatus();
+}
+
+absl::Status ConvertNullFieldData(
+    const google::protobuf::FieldDescriptor& field_descriptor,
+    arrow::ArrayBuilder* field_builder) {
+  DCHECK_NOTNULL(field_builder);
+  DCHECK(gtl::FindOrNull(*GetArrowArrayBuilderDebugTable(), field_builder))
+      << LookupArrowArrayBuilderDebugLocation(field_builder);
+
+  if (field_descriptor.type() ==
+          google::protobuf::FieldDescriptor::Type::TYPE_GROUP ||
+      field_descriptor.type() ==
+          google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE) {
+    auto builder = down_cast<arrow::StructBuilder*>(field_builder);
+    std::vector<arrow::ArrayBuilder*> field_builders;
+    field_builders.reserve(builder->num_fields());
+    for (int i = 0; i < builder->num_fields(); i++) {
+      field_builders.emplace_back(builder->field_builder(i));
+    }
+    RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
+    RETURN_STATUS_IF_NOT_OK(
+        ConvertNullData(*(field_descriptor.message_type()), field_builders));
+  } else {
+    RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
   }
 
   return absl::OkStatus();

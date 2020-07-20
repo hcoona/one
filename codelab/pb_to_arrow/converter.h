@@ -39,9 +39,17 @@ absl::Status ConvertData(
     const google::protobuf::Message& message,
     absl::Span<arrow::ArrayBuilder* const> fields_builders);
 
+absl::Status ConvertNullData(
+    const google::protobuf::Descriptor& descriptor,
+    absl::Span<arrow::ArrayBuilder* const> fields_builders);
+
 absl::Status ConvertFieldData(
     const google::protobuf::FieldDescriptor& field_descriptor,
     const google::protobuf::Message& message, int repeated_field_index,
+    arrow::ArrayBuilder* field_builder);
+
+absl::Status ConvertNullFieldData(
+    const google::protobuf::FieldDescriptor& field_descriptor,
     arrow::ArrayBuilder* field_builder);
 
 absl::Status ConvertTable(

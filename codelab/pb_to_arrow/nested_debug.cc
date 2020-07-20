@@ -17,8 +17,6 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
 
   hcoona::codelab::Int32WrapperWrapper nested_int32_wrapper;
-  nested_int32_wrapper.mutable_value()->set_int32_value(3);
-  nested_int32_wrapper.mutable_value()->set_int32_value(5);
   google::protobuf::Message* message = &nested_int32_wrapper;
   absl::Span<const google::protobuf::Message* const> messages =
       absl::MakeConstSpan(
@@ -47,14 +45,10 @@ int main(int argc, char** argv) {
   arrow::Int32Builder* inner_int32_builder =
       hcoona::down_cast<arrow::Int32Builder*>(
           nested_int32_struct_builder->field_builder(0));
-  CHECK_STATUS_OK(
-      hcoona::codelab::FromArrowStatus(nested_int32_struct_builder->Append()));
-  CHECK_STATUS_OK(
-      hcoona::codelab::FromArrowStatus(inner_int32_builder->Append(3)));
-  CHECK_STATUS_OK(
-      hcoona::codelab::FromArrowStatus(nested_int32_struct_builder->Append()));
-  CHECK_STATUS_OK(
-      hcoona::codelab::FromArrowStatus(inner_int32_builder->Append(5)));
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+      nested_int32_struct_builder->AppendNull()));
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+      inner_int32_builder->AppendNull()));
 
   std::shared_ptr<arrow::Array> nested_int32_struct_array;
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
@@ -63,7 +57,7 @@ int main(int argc, char** argv) {
       arrow::schema({arrow::field(
           "value",
           arrow::struct_({arrow::field("int32_value", arrow::int32())}))}),
-      {nested_int32_struct_array}, 2);
+      {nested_int32_struct_array}, 1);
   LOG(INFO) << "Schema=" << table->schema()->ToString();
 
   s = hcoona::codelab::FromArrowStatus(table->ValidateFull());
