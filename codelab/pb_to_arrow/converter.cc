@@ -446,7 +446,15 @@ absl::Status ConvertData(
       }
     } else {
       arrow::ArrayBuilder* const field_builder = fields_builders[i];
-      if (field_descriptor->is_optional() &&
+      if ((field_descriptor->type() ==
+               google::protobuf::FieldDescriptor::TYPE_STRING ||
+           field_descriptor->type() ==
+               google::protobuf::FieldDescriptor::TYPE_BYTES ||
+           field_descriptor->type() ==
+               google::protobuf::FieldDescriptor::TYPE_GROUP ||
+           field_descriptor->type() ==
+               google::protobuf::FieldDescriptor::TYPE_MESSAGE) &&
+          field_descriptor->is_optional() &&
           !message.GetReflection()->HasField(message, field_descriptor)) {
         RETURN_STATUS_IF_NOT_OK(
             ConvertNullFieldData(*field_descriptor, field_builder));

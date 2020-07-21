@@ -29,6 +29,29 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "pb_arrow_parquet",
+    srcs = [
+        "pb_arrow_parquet.cc",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":converter",
+        ":messages_cc_proto",
+        ":status_util",
+        "//arrow",
+        "//gtl:macros",
+        "//parquet",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
 cc_library(
     name = "converter",
     srcs = [
