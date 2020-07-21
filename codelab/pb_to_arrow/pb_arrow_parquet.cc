@@ -29,19 +29,19 @@ bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
 DEFINE_string(output, "arrow_test.parquet", "Output file.");
 DEFINE_validator(output, &FlagStringNotEmpty);
 
-void FillMessageA(
-    std::vector<std::shared_ptr<hcoona::codelab::MessageA>>* messages);
+void FillMessageX(
+    std::vector<std::shared_ptr<hcoona::codelab::MessageX>>* messages);
 
 int main(int argc, char** argv) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
 
-  std::vector<std::shared_ptr<hcoona::codelab::MessageA>> message_vector;
-  FillMessageA(&message_vector);
+  std::vector<std::shared_ptr<hcoona::codelab::MessageX>> message_vector;
+  FillMessageX(&message_vector);
 
   std::vector<const google::protobuf::Message*> messages;
   messages.reserve(message_vector.size());
-  for (const std::shared_ptr<hcoona::codelab::MessageA>& m : message_vector) {
+  for (const std::shared_ptr<hcoona::codelab::MessageX>& m : message_vector) {
     DLOG(INFO) << m->DebugString();
     messages.emplace_back(m.get());
   }
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   arrow::MemoryPool* pool = arrow::default_memory_pool();
   std::shared_ptr<arrow::Table> table;
   CHECK_STATUS_OK(hcoona::codelab::ConvertTable(
-      *hcoona::codelab::MessageA::GetDescriptor(),
+      *hcoona::codelab::MessageX::GetDescriptor(),
       absl::MakeConstSpan(messages), pool, &table));
   LOG(INFO) << "Table: " << table->ToString();
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
@@ -63,18 +63,15 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-void FillMessageA(
-    std::vector<std::shared_ptr<hcoona::codelab::MessageA>>* messages) {
+void FillMessageX(
+    std::vector<std::shared_ptr<hcoona::codelab::MessageX>>* messages) {
   DCHECK_NOTNULL(messages);
   absl::BitGen bitgen;
 
   for (int i = 0; i < kMessageCount; i++) {
-    auto m = std::make_unique<hcoona::codelab::MessageA>();
+    auto m = std::make_unique<hcoona::codelab::MessageX>();
     m->set_my_int32_value(i);
     m->set_my_int64_value(kMessageCount - i - 1);
-    m->set_my_uint64_value(absl::Uniform(bitgen,
-                                         std::numeric_limits<uint64_t>::min(),
-                                         std::numeric_limits<uint64_t>::max()));
     m->set_my_bool_value(i % 2 == 0);
     m->set_my_string_value(kMyString);
 
@@ -90,7 +87,7 @@ void FillMessageA(
 
     s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
     for (int j = 0; j < s; j++) {
-      hcoona::codelab::MessageA_NestedMessageB* b = m->add_my_message_b_value();
+      hcoona::codelab::MessageX_NestedMessageB* b = m->add_my_message_b_value();
       int t = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
       for (int k = 0; k < t; k++) {
         b->add_my_sfixed64_value(absl::Zipf<int64_t>(bitgen));
