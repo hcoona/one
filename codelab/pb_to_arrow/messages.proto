@@ -36,25 +36,25 @@ message MessageA {
 }
 
 message MessageX {
-  message NestedMessageB {
-    repeated sfixed64 my_sfixed64_value = 1;
-  }
-  int32 my_int32_value = 1;
-  int64 my_int64_value = 2;
-  bool my_bool_value = 4;
-  double my_double_value = 5;
-  string my_string_value = 6;
-  bytes my_bytes_value = 7;
-  EnumA my_enum_value = 8;
-  repeated int32 id = 100;
-  map<int32, int32> my_map = 101;
-  repeated NestedMessageB my_message_b_value = 102;
-  MessageC my_message_c_value = 103;
-  map<int64, MessageC> my_message_c_map = 104;
-  oneof my_oneof_value {
-    string my_oneof_string_value = 150;
-    int64 my_oneof_int64_value = 151;
-  }
+  // message NestedMessageB {
+  //   repeated sfixed64 my_sfixed64_value = 1;
+  // }
+  // int32 my_int32_value = 1;
+  // int64 my_int64_value = 2;
+  // bool my_bool_value = 4;
+  // double my_double_value = 5;
+  // string my_string_value = 6;
+  // bytes my_bytes_value = 7;
+  // EnumA my_enum_value = 8;
+  // repeated int32 id = 100;
+  map<string, int32> my_map = 101;
+  // repeated NestedMessageB my_message_b_value = 102;
+  // MessageC my_message_c_value = 103;
+  // map<int64, MessageC> my_message_c_map = 104;
+  // oneof my_oneof_value {
+  //   string my_oneof_string_value = 150;
+  //   int64 my_oneof_int64_value = 151;
+  // }
 }
 
 message DoubleWrapper {

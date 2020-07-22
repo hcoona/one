@@ -10,6 +10,8 @@
 #include "arrow/io/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "parquet/arrow/reader.h"
+#include "parquet/arrow/writer.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
@@ -60,6 +62,26 @@ int main(int argc, char** argv) {
       parquet::arrow::WriteTable(*table, pool, output_file, 128)));
   LOG(INFO) << kMessageCount << " messages written to " << FLAGS_output;
 
+  std::shared_ptr<arrow::io::MemoryMappedFile> input_file =
+      arrow::io::MemoryMappedFile::Open(FLAGS_output,
+      arrow::io::FileMode::READ)
+          .ValueOrDie();
+
+  parquet::arrow::FileReaderBuilder file_reader_builder;
+  CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(file_reader_builder.Open(input_file)));
+
+  std::unique_ptr<parquet::arrow::FileReader> file_reader;
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+      file_reader_builder.Build(&file_reader)));
+
+  std::vector<int> column_indices = {1, 8};
+  // std::shared_ptr<arrow::Table> table;
+  table.reset();
+  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+      file_reader->ReadTable(column_indices, &table)));
+  LOG(INFO) << table->ToString();
+
   return 0;
 }
 
@@ -68,38 +90,45 @@ void FillMessageX(
   DCHECK_NOTNULL(messages);
   absl::BitGen bitgen;
 
-  for (int i = 0; i < kMessageCount; i++) {
+  // for (int i = 0; i < kMessageCount; i++) {
+  //   auto m = std::make_unique<hcoona::codelab::MessageX>();
+  //   m->set_my_int32_value(i);
+  //   m->set_my_int64_value(kMessageCount - i - 1);
+  //   m->set_my_bool_value(i % 2 == 0);
+  //   m->set_my_string_value(kMyString);
+
+  //   int s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
+  //   for (int j = 0; j < s; j++) {
+  //     m->add_id(j);
+  //   }
+
+  //   s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
+  //   for (int j = 0; j < s; j++) {
+  //     m->mutable_my_map()->operator[](j) = absl::Zipf<int32_t>(bitgen);
+  //   }
+
+  //   s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
+  //   for (int j = 0; j < s; j++) {
+  //     hcoona::codelab::MessageX_NestedMessageB* b = m->add_my_message_b_value();
+  //     int t = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
+  //     for (int k = 0; k < t; k++) {
+  //       b->add_my_sfixed64_value(absl::Zipf<int64_t>(bitgen));
+  //     }
+  //   }
+
+  //   if (i % 2 == 0) {
+  //     m->set_my_oneof_string_value(kMyString);
+  //   } else {
+  //     m->set_my_oneof_int64_value(i);
+  //   }
+
+  //   messages->emplace_back(std::move(m));
+  // }
+
     auto m = std::make_unique<hcoona::codelab::MessageX>();
-    m->set_my_int32_value(i);
-    m->set_my_int64_value(kMessageCount - i - 1);
-    m->set_my_bool_value(i % 2 == 0);
-    m->set_my_string_value(kMyString);
 
-    int s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
-    for (int j = 0; j < s; j++) {
-      m->add_id(j);
-    }
-
-    s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
-    for (int j = 0; j < s; j++) {
-      m->mutable_my_map()->operator[](j) = absl::Zipf<int32_t>(bitgen);
-    }
-
-    s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
-    for (int j = 0; j < s; j++) {
-      hcoona::codelab::MessageX_NestedMessageB* b = m->add_my_message_b_value();
-      int t = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
-      for (int k = 0; k < t; k++) {
-        b->add_my_sfixed64_value(absl::Zipf<int64_t>(bitgen));
-      }
-    }
-
-    if (i % 2 == 0) {
-      m->set_my_oneof_string_value(kMyString);
-    } else {
-      m->set_my_oneof_int64_value(i);
-    }
+    m->mutable_my_map()->operator[]("1") = 1;
+    m->mutable_my_map()->operator[]("2") = 3;
 
     messages->emplace_back(std::move(m));
-  }
 }
