@@ -162,7 +162,7 @@ http_archive(
 # Google benchmark, required by Grpc.
 http_archive(
     name = "com_github_google_benchmark",
-    sha256 = "59f918c8ccd4d74b6ac43484467b500f1d64b40cc1010daa055375b322a43ba3",
+    sha256 = "3c6a165b6ecc948967a1ead710d4a181d7b0fbcaa183ef7ea84604994966221a",
     strip_prefix = "benchmark-1.5.0",
     urls = ["https://github.com/google/benchmark/archive/v1.5.0.tar.gz"],  # 2019-05-28
 )
