@@ -382,6 +382,31 @@ cc_test(
 )
 
 cc_library(
+    name = "template_util",
+    hdrs = ["template_util.h"],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//config",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/meta:type_traits",
+    ],
+)
+
+cc_test(
+    name = "template_util_test",
+    srcs = ["template_util_unittest.cc"],
+    copts = ONE_DEFAULT_COPTS + ONE_TEST_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    deps = [
+        ":template_util",
+        "//gtl/test:move_only_int",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "thread_annotations",
     hdrs = ["thread_annotations.h"],
     copts = ONE_DEFAULT_COPTS,

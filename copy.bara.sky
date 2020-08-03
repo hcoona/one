@@ -297,6 +297,10 @@ core.workflow(
             "base/test/copy_only_int.cc",
             "base/test/gtest_util.h",
             "base/test/move_only_int.h",
+            "base/stl_util.h",
+            "base/stl_util_unittest.cc",
+            "base/template_util.h",
+            "base/template_util_unittest.cc",
             "crypto/openssl_util.h",
             "crypto/openssl_util.cc",
             "crypto/secure_hash.h",
@@ -373,6 +377,10 @@ core.workflow(
             "gtl/test/copy_only_int.cc",
             "gtl/test/gtest_util.h",
             "gtl/test/move_only_int.h",
+            "gtl/stl_util.h",
+            "gtl/stl_util_unittest.cc",
+            "gtl/template_util.h",
+            "gtl/template_util_unittest.cc",
         ],
         exclude = [
             "**/BUILD.bazel",
@@ -458,6 +466,17 @@ core.workflow(
         core.replace(
             before = "base::flat_set",
             after = "absl::flat_hash_set",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        # optional
+        core.replace(
+            before = "#include \"base/optional.h\"",
+            after = "#include \"absl/types/optional.h\"",
+            paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
+        ),
+        core.replace(
+            before = "base::Optional",
+            after = "absl::optional",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         # build_config header path
@@ -676,6 +695,7 @@ core.workflow(
             "gtl/patches/chromium/location.patch",
             "gtl/patches/chromium/secure_hash.patch",
             "gtl/patches/chromium/crypto_gtl_namespace.patch",
+            "gtl/patches/chromium/template_util.patch",
         ]),
     ],
 )
