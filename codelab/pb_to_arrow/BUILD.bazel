@@ -111,6 +111,9 @@ cc_library(
     hdrs = ["status_util.h"],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = [
+        "//codelab:__subpackages__",
+    ],
     deps = [
         "//arrow",
         "//status:status_or",
