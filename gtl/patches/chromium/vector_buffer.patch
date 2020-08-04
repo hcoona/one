@@ -1,12 +1,12 @@
 diff --git a/gtl/container/vector_buffer.h b/gtl/container/vector_buffer.h
-index 63040fa..2dff84d 100644
+index 63040fa..4ad2861 100644
 --- a/gtl/container/vector_buffer.h
 +++ b/gtl/container/vector_buffer.h
 @@ -14,6 +14,7 @@
  #include "glog/logging.h"
  #include "gtl/container/util.h"
  #include "gtl/numeric/checked_math.h"
-+#include "gtl/type_traits.h"
++#include "gtl/template_util.h"
  
  namespace gtl {
  namespace internal {
