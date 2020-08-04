@@ -24,6 +24,13 @@ namespace feature_store {
 
 namespace {
 
+constexpr const size_t kBatchSize = 64;
+using underlying_bitmap_t = uint64_t;
+static_assert(kBatchSize == sizeof(underlying_bitmap_t) * 8);
+constexpr const underlying_bitmap_t kLeftMostMask =
+    static_cast<underlying_bitmap_t>(1U) << (kBatchSize - 1);
+static_assert(kLeftMostMask + kLeftMostMask == 0);
+
 struct FieldContext {
   size_t column_index;
   size_t subfields_num;
@@ -277,8 +284,99 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
   return absl::OkStatus();
 }
 
-absl::Status DumpWithParquetApiV2(const std::vector<Row>& rows) {
-  return absl::UnimplementedError("");
+absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
+                                  const std::vector<Row>& rows,
+                                  int64_t* written_bytes) {
+  std::vector<absl::string_view> all_field_names;
+  absl::flat_hash_map<absl::string_view /* field_name */, FieldContext>
+      field_index;
+  parquet::schema::NodeVector parquet_fields;
+  RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
+      fields, &all_field_names, &field_index, &parquet_fields));
+
+  auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
+      parquet::schema::GroupNode::Make(
+          "__schema", parquet::Repetition::REQUIRED, parquet_fields));
+  auto output_stream = std::make_shared<NullOutputStream>();
+  std::unique_ptr<parquet::ParquetFileWriter> file_writer =
+      parquet::ParquetFileWriter::Open(output_stream, schema);
+
+  int16_t def_levels[kBatchSize];
+  int16_t rep_levels[kBatchSize];
+  underlying_bitmap_t valid_bits = static_cast<underlying_bitmap_t>(0U);
+  parquet::ByteArray byte_array_values[kBatchSize];
+
+  parquet::RowGroupWriter* rg_writer = file_writer->AppendBufferedRowGroup();
+  for (absl::string_view field_name : all_field_names) {
+    const FieldContext& field_context = field_index[field_name];
+
+    // Loop for raw_feature internal features.
+    // Only loop once for feature.
+    for (size_t raw_feature_internal_offset = 0;
+         raw_feature_internal_offset <
+         std::max(static_cast<size_t>(1) /* for feature */,
+                  field_context.subfields_num /* for raw_feature */);
+         raw_feature_internal_offset++) {
+      underlying_bitmap_t mask = kLeftMostMask;
+      for (size_t i = 0; i < rows.size(); i += kBatchSize) {
+        size_t this_batch_size =
+            std::min(kBatchSize, rows.size() - i /* remaining count */);
+        for (size_t j = 0; j < this_batch_size; j++) {
+          const Row& row = rows[i + j];
+
+          if (field_context.subfields_num == 0) {  // feature
+            if (row.features().contains(field_name)) {
+              def_levels[j] = 1;
+              rep_levels[j] = 0;
+              valid_bits |= mask;  // Set mask position
+
+              const std::string& serialized_bytes =
+                  row.features().find(field_name)->second;
+              byte_array_values[j].ptr =
+                  reinterpret_cast<const uint8_t*>(serialized_bytes.data());
+              byte_array_values[j].len = serialized_bytes.size();
+            } else {
+              def_levels[j] = 0;
+              rep_levels[j] = 0;
+              valid_bits &= ~mask;  // Clear mask position
+            }
+          } else {  // raw_feature
+            if (row.raw_features().contains(field_name)) {
+              def_levels[j] = 2;
+              rep_levels[j] = 0;
+              valid_bits |= mask;  // Set mask position
+
+              const std::string& serialized_bytes =
+                  row.raw_features()
+                      .find(field_name)
+                      ->second[raw_feature_internal_offset];
+              byte_array_values[j].ptr =
+                  reinterpret_cast<const uint8_t*>(serialized_bytes.data());
+              byte_array_values[j].len = serialized_bytes.size();
+            } else {
+              def_levels[j] = 1;
+              rep_levels[j] = 0;
+              valid_bits &= ~mask;  // Clear mask position
+            }
+          }
+
+          mask >>= 1;
+        }
+
+        parquet::ByteArrayWriter* byte_array_writer =
+            hcoona::down_cast<parquet::ByteArrayWriter*>(
+                rg_writer->column(field_context.column_index));
+        byte_array_writer->WriteBatchSpaced(
+            this_batch_size, def_levels, rep_levels,
+            reinterpret_cast<uint8_t*>(&valid_bits), 0, byte_array_values);
+      }
+    }
+  }
+
+  file_writer->Close();
+  *written_bytes = output_stream->Tell().ValueOrDie();
+
+  return absl::OkStatus();
 }
 
 absl::Status DumpWithArrowApi(const std::vector<Row>& rows) {

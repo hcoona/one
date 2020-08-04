@@ -63,15 +63,42 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
     written_bytes += this_iter_written_bytes;
     state.SetBytesProcessed(written_bytes);
   }
+}
 
-  LOG(INFO) << "Proceeded " << proceeded_items << " items.";
-  LOG(INFO) << "Proceeded " << written_bytes << " bytes.";
+void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
+  std::vector<codelab::feature_store::FieldDescriptor> fields;
+  absl::Status s =
+      codelab::feature_store::GenerateSchema(*GetPreparedRows(), &fields);
+  CHECK(s.ok()) << s.ToString();
+
+  std::vector<codelab::feature_store::Row> rows;
+  rows.reserve(kDumpRowCount);
+  for (size_t i = 0; i < kDumpRowCount; i++) {
+    rows.emplace_back(
+        GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+  }
+
+  int64_t proceeded_items = 0;
+  int64_t written_bytes = 0;
+  for (auto _ : state) {
+    int64_t this_iter_written_bytes = 0;
+    s = codelab::feature_store::DumpWithParquetApiV2(fields, rows,
+                                                     &this_iter_written_bytes);
+    CHECK(s.ok()) << s.ToString();
+
+    proceeded_items += rows.size();
+    state.SetItemsProcessed(proceeded_items);
+
+    written_bytes += this_iter_written_bytes;
+    state.SetBytesProcessed(written_bytes);
+  }
 }
 
 }  // namespace
 
 BENCHMARK(BM_StringCopy);
 BENCHMARK(BM_DumpWithParquetApi);
+BENCHMARK(BM_DumpWithParquetApiV2);
 
 DEFINE_string(input, "", "Input encoded protobuf data file.");
 

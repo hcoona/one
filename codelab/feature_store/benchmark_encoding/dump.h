@@ -35,7 +35,9 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
                                 const std::vector<Row>& rows,
                                 int64_t* written_bytes);
 
-absl::Status DumpWithParquetApiV2(const std::vector<Row>& rows);
+absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
+                                  const std::vector<Row>& rows,
+                                  int64_t* written_bytes);
 
 absl::Status DumpWithArrowApi(const std::vector<Row>& rows);
 
