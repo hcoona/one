@@ -1,5 +1,5 @@
 diff --git a/absl/base/dynamic_annotations.cc b/absl/base/dynamic_annotations.cc
-index f26e673..68ed04b 100644
+index f26e673..aca0d1a 100644
 --- a/absl/base/dynamic_annotations.cc
 +++ b/absl/base/dynamic_annotations.cc
 @@ -29,7 +29,7 @@
@@ -29,8 +29,9 @@ index f26e673..68ed04b 100644
  }
  
  // See the comments in dynamic_annotations.h
- double ValgrindSlowdown(void) {
+-double ValgrindSlowdown(void) {
 -  // Same initialization hack as in RunningOnValgrind().
++double AbslValgrindSlowdown(void) {
 +  // Same initialization hack as in AbslRunningOnValgrind().
    static volatile double slowdown = 0.0;
    double local_slowdown = slowdown;
@@ -41,10 +42,10 @@ index f26e673..68ed04b 100644
    }
    if (local_slowdown == 0.0) {
 diff --git a/absl/base/dynamic_annotations.h b/absl/base/dynamic_annotations.h
-index 1444dc4..6712235 100644
+index 1444dc4..6de2e58 100644
 --- a/absl/base/dynamic_annotations.h
 +++ b/absl/base/dynamic_annotations.h
-@@ -444,14 +444,14 @@ ABSL_INTERNAL_BEGIN_EXTERN_C
+@@ -444,24 +444,24 @@ ABSL_INTERNAL_BEGIN_EXTERN_C
  //  If for some reason you can't use "valgrind.h" or want to fake valgrind,
  //  there are two ways to make this function return non-zero:
  //    - Use environment variable: export RUNNING_ON_VALGRIND=1
@@ -55,14 +56,27 @@ index 1444dc4..6712235 100644
 -int RunningOnValgrind(void);
 +int AbslRunningOnValgrind(void);
  
- // ValgrindSlowdown returns:
+-// ValgrindSlowdown returns:
 -//    * 1.0, if (RunningOnValgrind() == 0)
 -//    * 50.0, if (RunningOnValgrind() != 0 && getenv("VALGRIND_SLOWDOWN") ==
++// AbslValgrindSlowdown returns:
 +//    * 1.0, if (AbslRunningOnValgrind() == 0)
 +//    * 50.0, if (AbslRunningOnValgrind() != 0 && getenv("VALGRIND_SLOWDOWN") ==
  //    NULL)
  //    * atof(getenv("VALGRIND_SLOWDOWN")) otherwise
  //   This function can be used to scale timeout values:
+ //   EXAMPLE:
+ //   for (;;) {
+ //     DoExpensiveBackgroundTask();
+-//     SleepForSeconds(5 * ValgrindSlowdown());
++//     SleepForSeconds(5 * AbslValgrindSlowdown());
+ //   }
+ //
+-double ValgrindSlowdown(void);
++double AbslValgrindSlowdown(void);
+ 
+ ABSL_INTERNAL_END_EXTERN_C
+ 
 diff --git a/absl/debugging/internal/vdso_support.cc b/absl/debugging/internal/vdso_support.cc
 index 19deb3c..559af8d 100644
 --- a/absl/debugging/internal/vdso_support.cc

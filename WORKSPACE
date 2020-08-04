@@ -531,6 +531,24 @@ http_archive(
     url = "https://github.com/google/re2/archive/b83705e2d297f21b0805202bac86c935670634f8.tar.gz",  # 2020-07-01
 )
 
+# libunwind, required by gperftools.
+http_archive(
+    name = "org_nongnu_libunwind",
+    build_file = "//third_party/libunwind:libunwind.BUILD",
+    sha256 = "43997a3939b6ccdf2f669b50fdb8a4d3205374728c2923ddc2354c65260214f8",
+    strip_prefix = "libunwind-1.3.1",
+    urls = ["http://download.savannah.nongnu.org/releases/libunwind/libunwind-1.3.1.tar.gz"],
+)
+
+# gperftools, including tcmalloc & heap/cpu profiler.
+http_archive(
+    name = "com_github_gperftools_gperftools",
+    build_file = "//third_party/gperftools:gperftools.BUILD",
+    sha256 = "1ee8c8699a0eff6b6a203e59b43330536b22bbcbe6448f54c7091e5efb0763c9",
+    strip_prefix = "gperftools-2.7",
+    urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz"],
+)
+
 ######## Java External Dependencies ########
 
 MAVEN_REPOSITORY_URL = "https://maven.aliyun.com/repository/public"

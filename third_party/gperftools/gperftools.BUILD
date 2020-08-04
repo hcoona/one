@@ -92,6 +92,10 @@ cc_library(
         "include",
     ],
     linkstatic = 1,
+    deps = [
+        "@org_nongnu_libunwind//:libunwind",
+    ],
+    alwayslink = 1,
 )
 
 cc_library(
@@ -102,6 +106,7 @@ cc_library(
     ],
     includes = ["include"],
     linkstatic = 1,
+    alwayslink = 1,
 )
 
 cc_library(
@@ -132,6 +137,7 @@ cc_library(
     deps = [
         "@org_nongnu_libunwind//:libunwind",
     ],
+    alwayslink = 1,
 )
 
 filegroup(

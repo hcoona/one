@@ -11,6 +11,7 @@ cc_binary(
         "row.h",
     ],
     data = ["rosetta_example_without_map_10.pb"],
+    malloc = "@com_github_gperftools_gperftools//:tcmalloc",
     deps = [
         ":feature_cc_proto",
         "//arrow",
