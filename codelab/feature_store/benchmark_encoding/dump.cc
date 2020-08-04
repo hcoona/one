@@ -11,10 +11,12 @@
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
+#include "arrow/api.h"
 #include "arrow/io/api.h"
 #include "glog/logging.h"
 #include "parquet/api/schema.h"
 #include "parquet/api/writer.h"
+#include "parquet/arrow/writer.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
 #include "status/status_util.h"
 #include "util/casts.h"
@@ -107,34 +109,6 @@ class NullOutputStream : public arrow::io::OutputStream {
   int64_t position_;
 };
 
-}  // namespace
-
-absl::Status GenerateSchema(const std::vector<Row>& rows,
-                            std::vector<FieldDescriptor>* fields) {
-  absl::flat_hash_set<absl::string_view> visited_fields_names;
-  for (const Row& row : rows) {
-    for (const std::pair<std::string /* name */,
-                         std::string /* serialized bytes */>& p :
-         row.features()) {
-      if (!visited_fields_names.contains(p.first)) {
-        fields->emplace_back(p.first);
-        visited_fields_names.emplace(p.first);
-      }
-    }
-
-    for (const std::pair<std::string /* name */,
-                         std::vector<std::string> /* serialized features */>&
-             p : row.raw_features()) {
-      if (!visited_fields_names.contains(p.first)) {
-        fields->emplace_back(p.first, p.second.size());
-        visited_fields_names.emplace(p.first);
-      }
-    }
-  }
-
-  return absl::OkStatus();
-}
-
 absl::Status BuildParquetSchemaFields(
     const std::vector<FieldDescriptor>& fields,
     std::vector<absl::string_view>* all_field_names,
@@ -185,6 +159,34 @@ absl::Status BuildParquetSchemaFields(
     } else {
       return absl::UnimplementedError(
           absl::StrCat("Not implemented for field type: ", field.type));
+    }
+  }
+
+  return absl::OkStatus();
+}
+
+}  // namespace
+
+absl::Status GenerateSchema(const std::vector<Row>& rows,
+                            std::vector<FieldDescriptor>* fields) {
+  absl::flat_hash_set<absl::string_view> visited_fields_names;
+  for (const Row& row : rows) {
+    for (const std::pair<std::string /* name */,
+                         std::string /* serialized bytes */>& p :
+         row.features()) {
+      if (!visited_fields_names.contains(p.first)) {
+        fields->emplace_back(p.first);
+        visited_fields_names.emplace(p.first);
+      }
+    }
+
+    for (const std::pair<std::string /* name */,
+                         std::vector<std::string> /* serialized features */>&
+             p : row.raw_features()) {
+      if (!visited_fields_names.contains(p.first)) {
+        fields->emplace_back(p.first, p.second.size());
+        visited_fields_names.emplace(p.first);
+      }
     }
   }
 
@@ -379,7 +381,10 @@ absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
   return absl::OkStatus();
 }
 
-absl::Status DumpWithArrowApi(const std::vector<Row>& rows) {
+absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
+                              const std::vector<FieldDescriptor>& fields,
+                              const std::vector<Row>& rows,
+                              int64_t* written_bytes) {
   return absl::UnimplementedError("");
 }
 

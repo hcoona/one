@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "absl/status/status.h"
+#include "arrow/api.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
 
 namespace codelab {
@@ -39,7 +40,10 @@ absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
                                   const std::vector<Row>& rows,
                                   int64_t* written_bytes);
 
-absl::Status DumpWithArrowApi(const std::vector<Row>& rows);
+absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
+                              const std::vector<FieldDescriptor>& fields,
+                              const std::vector<Row>& rows,
+                              int64_t* written_bytes);
 
 }  // namespace feature_store
 }  // namespace codelab
