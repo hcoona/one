@@ -1,0 +1,47 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_proto_library")
+
+cc_binary(
+    name = "benchmark_encoding",
+    srcs = [
+        "dump.cc",
+        "dump.h",
+        "main.cc",
+        "row.cc",
+        "row.h",
+    ],
+    data = ["rosetta_example_without_map_10.pb"],
+    deps = [
+        ":feature_cc_proto",
+        "//arrow",
+        "//codelab/pb_to_arrow:status_util",
+        "//gtl:file_system",
+        "//gtl:macros",
+        "//gtl:no_destructor",
+        "//gtl:posix_file_system",
+        "//parquet",
+        "//status:status_util",
+        "//util:casts",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_benchmark//:benchmark",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/base:endian",
+        "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
+proto_library(
+    name = "feature_proto",
+    srcs = ["feature.proto"],
+)
+
+cc_proto_library(
+    name = "feature_cc_proto",
+    deps = ["feature_proto"],
+)
