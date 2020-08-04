@@ -111,6 +111,17 @@ class NullOutputStream : public arrow::io::OutputStream {
   int64_t position_;
 };
 
+arrow::Compression::type ConvertArrow(CompressionMode mode) {
+  switch (mode) {
+    case CompressionMode::kNoCompression:
+      return arrow::Compression::UNCOMPRESSED;
+    case CompressionMode::kSnappy:
+      return arrow::Compression::SNAPPY;
+    default:
+      CHECK(false) << "Unknown compression mode " << static_cast<int32_t>(mode);
+  }
+}
+
 absl::Status BuildParquetSchemaFields(
     const std::vector<FieldDescriptor>& fields,
     std::vector<absl::string_view>* all_field_names,
@@ -258,7 +269,9 @@ absl::Status GenerateSchema(const std::vector<Row>& rows,
   return absl::OkStatus();
 }
 
-absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
+absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
+                                CompressionMode compression_mode,
+                                const std::vector<FieldDescriptor>& fields,
                                 const std::vector<Row>& rows,
                                 int64_t* written_bytes) {
   std::vector<absl::string_view> all_field_names;
@@ -268,12 +281,16 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
   RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
       fields, &all_field_names, &field_index, &parquet_fields));
 
+  auto output_stream = std::make_shared<NullOutputStream>();
   auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
       parquet::schema::GroupNode::Make(
           "__schema", parquet::Repetition::REQUIRED, parquet_fields));
-  auto output_stream = std::make_shared<NullOutputStream>();
+  auto properties = parquet::WriterProperties::Builder()
+                        .memory_pool(memory_pool)
+                        ->compression(ConvertArrow(compression_mode))
+                        ->build();
   std::unique_ptr<parquet::ParquetFileWriter> file_writer =
-      parquet::ParquetFileWriter::Open(output_stream, schema);
+      parquet::ParquetFileWriter::Open(output_stream, schema, properties);
 
   parquet::RowGroupWriter* rg_writer = file_writer->AppendBufferedRowGroup();
   for (const Row& row : rows) {
@@ -351,7 +368,9 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
   return absl::OkStatus();
 }
 
-absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
+absl::Status DumpWithParquetApiV2(arrow::MemoryPool* memory_pool,
+                                  CompressionMode compression_mode,
+                                  const std::vector<FieldDescriptor>& fields,
                                   const std::vector<Row>& rows,
                                   int64_t* written_bytes) {
   std::vector<absl::string_view> all_field_names;
@@ -361,12 +380,16 @@ absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
   RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
       fields, &all_field_names, &field_index, &parquet_fields));
 
+  auto output_stream = std::make_shared<NullOutputStream>();
   auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
       parquet::schema::GroupNode::Make(
           "__schema", parquet::Repetition::REQUIRED, parquet_fields));
-  auto output_stream = std::make_shared<NullOutputStream>();
+  auto properties = parquet::WriterProperties::Builder()
+                        .memory_pool(memory_pool)
+                        ->compression(ConvertArrow(compression_mode))
+                        ->build();
   std::unique_ptr<parquet::ParquetFileWriter> file_writer =
-      parquet::ParquetFileWriter::Open(output_stream, schema);
+      parquet::ParquetFileWriter::Open(output_stream, schema, properties);
 
   int16_t def_levels[kBatchSize];
   int16_t rep_levels[kBatchSize];
@@ -447,6 +470,7 @@ absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
 }
 
 absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
+                              CompressionMode compression_mode,
                               const std::vector<FieldDescriptor>& fields,
                               const std::vector<Row>& rows,
                               int64_t* written_bytes) {
@@ -518,8 +542,12 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
       arrow::Table::Make(schema, arrow_arrays, rows.size());
 
   auto output_stream = std::make_shared<NullOutputStream>();
+  auto properties = parquet::WriterProperties::Builder()
+                        .memory_pool(memory_pool)
+                        ->compression(ConvertArrow(compression_mode))
+                        ->build();
   RETURN_STATUS_IF_NOT_OK(FromArrowStatus(parquet::arrow::WriteTable(
-      *table, memory_pool, output_stream, kBatchSize)));
+      *table, memory_pool, output_stream, kBatchSize, properties)));
   *written_bytes = output_stream->Tell().ValueOrDie();
 
   return absl::OkStatus();

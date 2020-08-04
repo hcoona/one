@@ -12,6 +12,11 @@ namespace hcoona {
 namespace codelab {
 namespace feature_store {
 
+enum class CompressionMode : int32_t {
+  kNoCompression = 0,
+  kSnappy = 1,
+};
+
 enum class FieldType {
   kUnspecified = 0,
   kFeature = 1,
@@ -33,15 +38,20 @@ struct FieldDescriptor {
 absl::Status GenerateSchema(const std::vector<Row>& rows,
                             std::vector<FieldDescriptor>* fields);
 
-absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
+absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
+                                CompressionMode compression_mode,
+                                const std::vector<FieldDescriptor>& fields,
                                 const std::vector<Row>& rows,
                                 int64_t* written_bytes);
 
-absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
+absl::Status DumpWithParquetApiV2(arrow::MemoryPool* memory_pool,
+                                  CompressionMode compression_mode,
+                                  const std::vector<FieldDescriptor>& fields,
                                   const std::vector<Row>& rows,
                                   int64_t* written_bytes);
 
 absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
+                              CompressionMode compression_mode,
                               const std::vector<FieldDescriptor>& fields,
                               const std::vector<Row>& rows,
                               int64_t* written_bytes);

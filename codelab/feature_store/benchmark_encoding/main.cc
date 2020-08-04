@@ -32,12 +32,9 @@ std::vector<hcoona::codelab::feature_store::Row>* GetPreparedRows() {
   return rows.get();
 }
 
-void BM_StringCopy(benchmark::State& state) {  // NOLINT
-  std::string x = "hello";
-  for (auto _ : state) std::string copy(x);
-}
-
 void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
+  arrow::MemoryPool* memory_pool = arrow::default_memory_pool();
+
   std::vector<hcoona::codelab::feature_store::FieldDescriptor> fields;
   absl::Status s = hcoona::codelab::feature_store::GenerateSchema(
       *GetPreparedRows(), &fields);
@@ -55,18 +52,27 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   for (auto _ : state) {
     int64_t this_iter_written_bytes = 0;
     s = hcoona::codelab::feature_store::DumpWithParquetApi(
+        memory_pool,
+        static_cast<hcoona::codelab::feature_store::CompressionMode>(
+            state.range(0)),
         fields, rows, &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    state.SetItemsProcessed(proceeded_items);
-
     written_bytes += this_iter_written_bytes;
-    state.SetBytesProcessed(written_bytes);
   }
+  state.SetItemsProcessed(proceeded_items);
+  state.SetBytesProcessed(written_bytes);
+
+  LOG(INFO) << "Items proceeded: " << proceeded_items;
+  LOG(INFO) << "Written bytes: " << written_bytes;
+  LOG(INFO) << "Average bytes per item(compressed): "
+            << static_cast<double>(written_bytes) / proceeded_items;
 }
 
 void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
+  arrow::MemoryPool* memory_pool = arrow::default_memory_pool();
+
   std::vector<hcoona::codelab::feature_store::FieldDescriptor> fields;
   absl::Status s = hcoona::codelab::feature_store::GenerateSchema(
       *GetPreparedRows(), &fields);
@@ -84,15 +90,22 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
   for (auto _ : state) {
     int64_t this_iter_written_bytes = 0;
     s = hcoona::codelab::feature_store::DumpWithParquetApiV2(
+        memory_pool,
+        static_cast<hcoona::codelab::feature_store::CompressionMode>(
+            state.range(0)),
         fields, rows, &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    state.SetItemsProcessed(proceeded_items);
-
     written_bytes += this_iter_written_bytes;
-    state.SetBytesProcessed(written_bytes);
   }
+  state.SetItemsProcessed(proceeded_items);
+  state.SetBytesProcessed(written_bytes);
+
+  LOG(INFO) << "Items proceeded: " << proceeded_items;
+  LOG(INFO) << "Written bytes: " << written_bytes;
+  LOG(INFO) << "Average bytes per item(compressed): "
+            << static_cast<double>(written_bytes) / proceeded_items;
 }
 
 void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
@@ -115,23 +128,29 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
   for (auto _ : state) {
     int64_t this_iter_written_bytes = 0;
     s = hcoona::codelab::feature_store::DumpWithArrowApi(
-        memory_pool, fields, rows, &this_iter_written_bytes);
+        memory_pool,
+        static_cast<hcoona::codelab::feature_store::CompressionMode>(
+            state.range(0)),
+        fields, rows, &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    state.SetItemsProcessed(proceeded_items);
-
     written_bytes += this_iter_written_bytes;
-    state.SetBytesProcessed(written_bytes);
   }
+  state.SetItemsProcessed(proceeded_items);
+  state.SetBytesProcessed(written_bytes);
+
+  LOG(INFO) << "Items proceeded: " << proceeded_items;
+  LOG(INFO) << "Written bytes: " << written_bytes;
+  LOG(INFO) << "Average bytes per item(compressed): "
+            << static_cast<double>(written_bytes) / proceeded_items;
 }
 
 }  // namespace
 
-BENCHMARK(BM_StringCopy);
-BENCHMARK(BM_DumpWithParquetApi);
-BENCHMARK(BM_DumpWithParquetApiV2);
-BENCHMARK(BM_DumpWithArrowApi);
+BENCHMARK(BM_DumpWithParquetApi)->Arg(0)->Arg(1)->ArgName("CompressionMode");
+BENCHMARK(BM_DumpWithParquetApiV2)->Arg(0)->Arg(1)->ArgName("CompressionMode");
+BENCHMARK(BM_DumpWithArrowApi)->Arg(0)->Arg(1)->ArgName("CompressionMode");
 
 DEFINE_string(input, "", "Input encoded protobuf data file.");
 
@@ -140,7 +159,7 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
                       std::vector<hcoona::codelab::feature_store::Row>* rows);
 
 int main(int argc, char** argv) {
-  google::ParseCommandLineFlags(&argc, &argv, true);
+  // google::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   ::benchmark::Initialize(&argc, argv);
 
