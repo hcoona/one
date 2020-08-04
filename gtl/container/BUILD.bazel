@@ -15,7 +15,8 @@ cc_library(
     deps = [
         ":vector_buffer",
         "//gtl:macros",
-        "//gtl:type_traits",
+        "//gtl:stl_util",
+        "//gtl:template_util",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -88,7 +89,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":util",
-        "//gtl:type_traits",
+        "//gtl:template_util",
         "//gtl/numeric:checked_math",
         "@com_github_google_glog//:glog",
     ],

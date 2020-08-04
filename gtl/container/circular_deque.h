@@ -14,7 +14,8 @@
 #include "glog/logging.h"
 #include "gtl/container/vector_buffer.h"
 #include "gtl/macros.h"
-#include "gtl/type_traits.h"
+#include "gtl/stl_util.h"
+#include "gtl/template_util.h"
 
 // gtl::circular_deque is similar to std::deque. Unlike std::deque, the
 // storage is provided in a flat circular buffer conceptually similar to a
@@ -325,7 +326,7 @@ class circular_deque_const_iterator {
 
 template <typename T>
 class circular_deque_iterator : public circular_deque_const_iterator<T> {
-  using Base = circular_deque_const_iterator<T>;
+  using base = circular_deque_const_iterator<T>;
 
  public:
   friend class circular_deque<T>;
@@ -336,14 +337,14 @@ class circular_deque_iterator : public circular_deque_const_iterator<T> {
   using reference = T&;
   using iterator_category = std::random_access_iterator_tag;
 
-  // Expose the Base class' constructor.
+  // Expose the base class' constructor.
   circular_deque_iterator() : circular_deque_const_iterator<T>() {}
 
   // Dereferencing.
-  T& operator*() const { return const_cast<T&>(Base::operator*()); }
-  T* operator->() const { return const_cast<T*>(Base::operator->()); }
+  T& operator*() const { return const_cast<T&>(gtl::operator*()); }
+  T* operator->() const { return const_cast<T*>(gtl::operator->()); }
   T& operator[](difference_type i) {
-    return const_cast<T&>(Base::operator[](i));
+    return const_cast<T&>(gtl::operator[](i));
   }
 
   // Random access mutation.
@@ -354,7 +355,7 @@ class circular_deque_iterator : public circular_deque_const_iterator<T> {
     return ret;
   }
   circular_deque_iterator& operator+=(difference_type offset) {
-    Base::Add(offset);
+    gtl::Add(offset);
     return *this;
   }
   friend circular_deque_iterator operator-(const circular_deque_iterator& iter,
@@ -364,27 +365,27 @@ class circular_deque_iterator : public circular_deque_const_iterator<T> {
     return ret;
   }
   circular_deque_iterator& operator-=(difference_type offset) {
-    Base::Add(-offset);
+    gtl::Add(-offset);
     return *this;
   }
 
   // Increment and decrement.
   circular_deque_iterator& operator++() {
-    Base::Increment();
+    gtl::Increment();
     return *this;
   }
   circular_deque_iterator operator++(int) {
     circular_deque_iterator ret = *this;
-    Base::Increment();
+    gtl::Increment();
     return ret;
   }
   circular_deque_iterator& operator--() {
-    Base::Decrement();
+    gtl::Decrement();
     return *this;
   }
   circular_deque_iterator operator--(int) {
     circular_deque_iterator ret = *this;
-    Base::Decrement();
+    gtl::Decrement();
     return ret;
   }
 

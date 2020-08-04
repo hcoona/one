@@ -1,0 +1,14 @@
+diff --git a/gtl/container/circular_deque.h b/gtl/container/circular_deque.h
+index 06df986..702fe0e 100644
+--- a/gtl/container/circular_deque.h
++++ b/gtl/container/circular_deque.h
+@@ -14,7 +14,8 @@
+ #include "glog/logging.h"
+ #include "gtl/container/vector_buffer.h"
+ #include "gtl/macros.h"
+-#include "gtl/type_traits.h"
++#include "gtl/stl_util.h"
++#include "gtl/template_util.h"
+ 
+ // gtl::circular_deque is similar to std::deque. Unlike std::deque, the
+ // storage is provided in a flat circular buffer conceptually similar to a

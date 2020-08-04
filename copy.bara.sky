@@ -475,8 +475,8 @@ core.workflow(
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
-            before = "base::Optional",
-            after = "absl::optional",
+            before = "base::Optional<",
+            after = "absl::optional<",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         # build_config header path
@@ -690,12 +690,15 @@ core.workflow(
             "gtl/patches/chromium/thread_checker.patch",
             "gtl/patches/chromium/sha1.patch",
             "gtl/patches/chromium/id_map.patch",
-            "gtl/patches/chromium/circular_deque.patch",
-            "gtl/patches/chromium/vector_buffer.patch",
+            # "gtl/patches/chromium/circular_deque.patch",
+            # "gtl/patches/chromium/circular_deque-stl_util-0002.patch",
+            # "gtl/patches/chromium/vector_buffer.patch",
+            # "gtl/patches/chromium/vector_buffer-stl_util-0002.patch",
             "gtl/patches/chromium/location.patch",
             "gtl/patches/chromium/secure_hash.patch",
             "gtl/patches/chromium/crypto_gtl_namespace.patch",
             "gtl/patches/chromium/template_util.patch",
+            "gtl/patches/chromium/stl_util.patch",
         ]),
     ],
 )

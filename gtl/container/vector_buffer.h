@@ -14,7 +14,6 @@
 #include "glog/logging.h"
 #include "gtl/container/util.h"
 #include "gtl/numeric/checked_math.h"
-#include "gtl/type_traits.h"
 
 namespace gtl {
 namespace internal {
