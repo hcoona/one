@@ -49,11 +49,23 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
         GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
   }
 
+  int64_t proceeded_items = 0;
+  int64_t written_bytes = 0;
   for (auto _ : state) {
-    s = codelab::feature_store::DumpWithParquetApi(fields, rows);
+    int64_t this_iter_written_bytes = 0;
+    s = codelab::feature_store::DumpWithParquetApi(fields, rows,
+                                                   &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
-    state.SetItemsProcessed(GetPreparedRows()->size());
+
+    proceeded_items += rows.size();
+    state.SetItemsProcessed(proceeded_items);
+
+    written_bytes += this_iter_written_bytes;
+    state.SetBytesProcessed(written_bytes);
   }
+
+  LOG(INFO) << "Proceeded " << proceeded_items << " items.";
+  LOG(INFO) << "Proceeded " << written_bytes << " bytes.";
 }
 
 }  // namespace

@@ -32,7 +32,8 @@ absl::Status GenerateSchema(const std::vector<Row>& rows,
                             std::vector<FieldDescriptor>* fields);
 
 absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
-                                const std::vector<Row>& rows);
+                                const std::vector<Row>& rows,
+                                int64_t* written_bytes);
 
 absl::Status DumpWithParquetApiV2(const std::vector<Row>& rows);
 

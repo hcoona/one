@@ -35,6 +35,71 @@ struct FieldContext {
       : column_index(column_index), subfields_num(subfields_num) {}
 };
 
+class NullOutputStream : public arrow::io::OutputStream {
+ public:
+  NullOutputStream() : closed_(false), position_(0) {}
+  ~NullOutputStream() override = default;
+
+  /// \brief Close the stream cleanly
+  ///
+  /// For writable streams, this will attempt to flush any pending data
+  /// before releasing the underlying resource.
+  ///
+  /// After Close() is called, closed() returns true and the stream is not
+  /// available for further operations.
+  arrow::Status Close() override {
+    closed_ = true;
+    return arrow::Status::OK();
+  }
+
+  /// \brief Close the stream abruptly
+  ///
+  /// This method does not guarantee that any pending data is flushed.
+  /// It merely releases any underlying resource used by the stream for
+  /// its operation.
+  ///
+  /// After Abort() is called, closed() returns true and the stream is not
+  /// available for further operations.
+  arrow::Status Abort() override {
+    closed_ = true;
+    return arrow::Status::OK();
+  }
+
+  /// \brief Return the position in this stream
+  arrow::Result<int64_t> Tell() const override { return position_; }
+
+  /// \brief Return whether the stream is closed
+  bool closed() const override { return closed_; }
+
+  /// \brief Write the given data to the stream
+  ///
+  /// This method always processes the bytes in full.  Depending on the
+  /// semantics of the stream, the data may be written out immediately,
+  /// held in a buffer, or written asynchronously.  In the case where
+  /// the stream buffers the data, it will be copied.  To avoid potentially
+  /// large copies, use the Write variant that takes an owned Buffer.
+  arrow::Status Write(const void* data, int64_t nbytes) override {
+    position_ += nbytes;
+    return arrow::Status::OK();
+  }
+
+  /// \brief Write the given data to the stream
+  ///
+  /// Since the Buffer owns its memory, this method can avoid a copy if
+  /// buffering is required.  See Write(const void*, int64_t) for details.
+  arrow::Status Write(const std::shared_ptr<arrow::Buffer>& data) override {
+    position_ += data->size();
+    return arrow::Status::OK();
+  }
+
+  /// \brief Flush buffered bytes, if any
+  arrow::Status Flush() override { return arrow::Status::OK(); }
+
+ private:
+  bool closed_;
+  int64_t position_;
+};
+
 }  // namespace
 
 absl::Status GenerateSchema(const std::vector<Row>& rows,
@@ -120,7 +185,8 @@ absl::Status BuildParquetSchemaFields(
 }
 
 absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
-                                const std::vector<Row>& rows) {
+                                const std::vector<Row>& rows,
+                                int64_t* written_bytes) {
   std::vector<absl::string_view> all_field_names;
   absl::flat_hash_map<absl::string_view /* field_name */, FieldContext>
       field_index;
@@ -131,9 +197,9 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
   auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
       parquet::schema::GroupNode::Make(
           "__schema", parquet::Repetition::REQUIRED, parquet_fields));
+  auto output_stream = std::make_shared<NullOutputStream>();
   std::unique_ptr<parquet::ParquetFileWriter> file_writer =
-      parquet::ParquetFileWriter::Open(
-          arrow::io::FileOutputStream::Open("/dev/null").ValueOrDie(), schema);
+      parquet::ParquetFileWriter::Open(output_stream, schema);
 
   parquet::RowGroupWriter* rg_writer = file_writer->AppendBufferedRowGroup();
   for (const Row& row : rows) {
@@ -204,6 +270,9 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
       }
     }
   }
+
+  file_writer->Close();
+  *written_bytes = output_stream->Tell().ValueOrDie();
 
   return absl::OkStatus();
 }
