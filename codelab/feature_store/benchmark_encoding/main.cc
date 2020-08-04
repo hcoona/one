@@ -26,8 +26,9 @@ constexpr const char kInputFile[] =
     "rosetta_example_without_map_10.pb";
 constexpr const size_t kDumpRowCount = 1000;
 
-std::vector<codelab::feature_store::Row>* GetPreparedRows() {
-  static gtl::NoDestructor<std::vector<codelab::feature_store::Row>> rows;
+std::vector<hcoona::codelab::feature_store::Row>* GetPreparedRows() {
+  static gtl::NoDestructor<std::vector<hcoona::codelab::feature_store::Row>>
+      rows;
   return rows.get();
 }
 
@@ -37,12 +38,12 @@ void BM_StringCopy(benchmark::State& state) {  // NOLINT
 }
 
 void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
-  std::vector<codelab::feature_store::FieldDescriptor> fields;
-  absl::Status s =
-      codelab::feature_store::GenerateSchema(*GetPreparedRows(), &fields);
+  std::vector<hcoona::codelab::feature_store::FieldDescriptor> fields;
+  absl::Status s = hcoona::codelab::feature_store::GenerateSchema(
+      *GetPreparedRows(), &fields);
   CHECK(s.ok()) << s.ToString();
 
-  std::vector<codelab::feature_store::Row> rows;
+  std::vector<hcoona::codelab::feature_store::Row> rows;
   rows.reserve(kDumpRowCount);
   for (size_t i = 0; i < kDumpRowCount; i++) {
     rows.emplace_back(
@@ -53,8 +54,8 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   int64_t written_bytes = 0;
   for (auto _ : state) {
     int64_t this_iter_written_bytes = 0;
-    s = codelab::feature_store::DumpWithParquetApi(fields, rows,
-                                                   &this_iter_written_bytes);
+    s = hcoona::codelab::feature_store::DumpWithParquetApi(
+        fields, rows, &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
@@ -66,12 +67,12 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
 }
 
 void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
-  std::vector<codelab::feature_store::FieldDescriptor> fields;
-  absl::Status s =
-      codelab::feature_store::GenerateSchema(*GetPreparedRows(), &fields);
+  std::vector<hcoona::codelab::feature_store::FieldDescriptor> fields;
+  absl::Status s = hcoona::codelab::feature_store::GenerateSchema(
+      *GetPreparedRows(), &fields);
   CHECK(s.ok()) << s.ToString();
 
-  std::vector<codelab::feature_store::Row> rows;
+  std::vector<hcoona::codelab::feature_store::Row> rows;
   rows.reserve(kDumpRowCount);
   for (size_t i = 0; i < kDumpRowCount; i++) {
     rows.emplace_back(
@@ -82,8 +83,39 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
   int64_t written_bytes = 0;
   for (auto _ : state) {
     int64_t this_iter_written_bytes = 0;
-    s = codelab::feature_store::DumpWithParquetApiV2(fields, rows,
-                                                     &this_iter_written_bytes);
+    s = hcoona::codelab::feature_store::DumpWithParquetApiV2(
+        fields, rows, &this_iter_written_bytes);
+    CHECK(s.ok()) << s.ToString();
+
+    proceeded_items += rows.size();
+    state.SetItemsProcessed(proceeded_items);
+
+    written_bytes += this_iter_written_bytes;
+    state.SetBytesProcessed(written_bytes);
+  }
+}
+
+void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
+  arrow::MemoryPool* memory_pool = arrow::default_memory_pool();
+
+  std::vector<hcoona::codelab::feature_store::FieldDescriptor> fields;
+  absl::Status s = hcoona::codelab::feature_store::GenerateSchema(
+      *GetPreparedRows(), &fields);
+  CHECK(s.ok()) << s.ToString();
+
+  std::vector<hcoona::codelab::feature_store::Row> rows;
+  rows.reserve(kDumpRowCount);
+  for (size_t i = 0; i < kDumpRowCount; i++) {
+    rows.emplace_back(
+        GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+  }
+
+  int64_t proceeded_items = 0;
+  int64_t written_bytes = 0;
+  for (auto _ : state) {
+    int64_t this_iter_written_bytes = 0;
+    s = hcoona::codelab::feature_store::DumpWithArrowApi(
+        memory_pool, fields, rows, &this_iter_written_bytes);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
@@ -99,12 +131,13 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
 BENCHMARK(BM_StringCopy);
 BENCHMARK(BM_DumpWithParquetApi);
 BENCHMARK(BM_DumpWithParquetApiV2);
+BENCHMARK(BM_DumpWithArrowApi);
 
 DEFINE_string(input, "", "Input encoded protobuf data file.");
 
 absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
-                      std::vector<codelab::feature_store::Row>* rows);
+                      std::vector<hcoona::codelab::feature_store::Row>* rows);
 
 int main(int argc, char** argv) {
   google::ParseCommandLineFlags(&argc, &argv, true);
@@ -132,7 +165,7 @@ int main(int argc, char** argv) {
 
 absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
-                      std::vector<codelab::feature_store::Row>* rows) {
+                      std::vector<hcoona::codelab::feature_store::Row>* rows) {
   RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
 
   std::unique_ptr<gtl::ReadOnlyMemoryRegion> memory_region;

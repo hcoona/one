@@ -7,6 +7,7 @@
 #include "absl/container/btree_map.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
 
+namespace hcoona {
 namespace codelab {
 namespace feature_store {
 
@@ -30,5 +31,6 @@ class Row {
 
 }  // namespace feature_store
 }  // namespace codelab
+}  // namespace hcoona
 
 #endif  // CODELAB_FEATURE_STORE_BENCHMARK_ENCODING_ROW_H_

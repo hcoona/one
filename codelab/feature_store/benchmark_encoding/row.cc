@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+namespace hcoona {
 namespace codelab {
 namespace feature_store {
 
@@ -29,3 +30,4 @@ Row::Row(const idl::euclid::common::Example& example) {
 
 }  // namespace feature_store
 }  // namespace codelab
+}  // namespace hcoona

@@ -8,6 +8,7 @@
 #include "arrow/api.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
 
+namespace hcoona {
 namespace codelab {
 namespace feature_store {
 
@@ -47,5 +48,6 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
 
 }  // namespace feature_store
 }  // namespace codelab
+}  // namespace hcoona
 
 #endif  // CODELAB_FEATURE_STORE_BENCHMARK_ENCODING_DUMP_H_

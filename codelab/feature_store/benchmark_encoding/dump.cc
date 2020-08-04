@@ -18,9 +18,11 @@
 #include "parquet/api/writer.h"
 #include "parquet/arrow/writer.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
+#include "codelab/pb_to_arrow/status_util.h"
 #include "status/status_util.h"
 #include "util/casts.h"
 
+namespace hcoona {
 namespace codelab {
 namespace feature_store {
 
@@ -121,12 +123,12 @@ absl::Status BuildParquetSchemaFields(
       return absl::UnknownError(
           absl::StrCat("Field type must be specified, name=", field.name));
     } else if (field.type == FieldType::kFeature) {
-      parquet_fields->emplace_back(parquet::schema::PrimitiveNode::Make(
-          field.name, parquet::Repetition::OPTIONAL,
-          parquet::Type::BYTE_ARRAY));
       auto try_emplace_result =
           field_index->try_emplace(field.name, column_index);
       if (try_emplace_result.second) {
+        parquet_fields->emplace_back(parquet::schema::PrimitiveNode::Make(
+            field.name, parquet::Repetition::OPTIONAL,
+            parquet::Type::BYTE_ARRAY));
         all_field_names->emplace_back(field.name);
         column_index++;
       } else {
@@ -136,18 +138,81 @@ absl::Status BuildParquetSchemaFields(
                      << try_emplace_result.first->second.column_index << " .";
       }
     } else if (field.type == FieldType::kRawFeature) {
-      parquet::schema::NodeVector parquet_subfields;
-      for (size_t j = 0; j < field.children_num; j++) {
-        parquet_subfields.emplace_back(parquet::schema::PrimitiveNode::Make(
-            absl::StrCat("_", j), parquet::Repetition::OPTIONAL,
-            parquet::Type::BYTE_ARRAY));
-      }
-      parquet_fields->emplace_back(parquet::schema::GroupNode::Make(
-          field.name, parquet::Repetition::OPTIONAL,
-          std::move(parquet_subfields)));
       auto try_emplace_result = field_index->try_emplace(
           field.name, column_index, field.children_num);
       if (try_emplace_result.second) {
+        parquet::schema::NodeVector parquet_subfields;
+        for (size_t j = 0; j < field.children_num; j++) {
+          parquet_subfields.emplace_back(parquet::schema::PrimitiveNode::Make(
+              absl::StrCat("_", j), parquet::Repetition::OPTIONAL,
+              parquet::Type::BYTE_ARRAY));
+        }
+        parquet_fields->emplace_back(parquet::schema::GroupNode::Make(
+            field.name, parquet::Repetition::OPTIONAL,
+            std::move(parquet_subfields)));
+        all_field_names->emplace_back(field.name);
+        column_index += field.children_num;
+      } else {
+        LOG(WARNING) << "Skip raw feature field '" << field.name
+                     << "'(column_index=" << column_index
+                     << "), it already occurred at column_index="
+                     << try_emplace_result.first->second.column_index << " .";
+      }
+    } else {
+      return absl::UnimplementedError(
+          absl::StrCat("Not implemented for field type: ", field.type));
+    }
+  }
+
+  return absl::OkStatus();
+}
+
+absl::Status BuildArrowSchemaFields(
+    arrow::MemoryPool* pool,
+    const std::vector<FieldDescriptor>& field_descriptors,
+    std::vector<absl::string_view>* all_field_names,
+    absl::flat_hash_map<absl::string_view /* field_name */, FieldContext>*
+        field_index,
+    std::vector<std::shared_ptr<arrow::Field>>* fields,
+    std::vector<std::shared_ptr<arrow::ArrayBuilder>>* fields_builders) {
+  size_t column_index = 0;
+  for (const FieldDescriptor& field : field_descriptors) {
+    if (field.type == FieldType::kUnspecified) {
+      return absl::UnknownError(
+          absl::StrCat("Field type must be specified, name=", field.name));
+    } else if (field.type == FieldType::kFeature) {
+      auto try_emplace_result =
+          field_index->try_emplace(field.name, column_index);
+      if (try_emplace_result.second) {
+        fields->emplace_back(arrow::field(field.name, arrow::binary()));
+        fields_builders->emplace_back(
+            std::make_shared<arrow::BinaryBuilder>(pool));
+        all_field_names->emplace_back(field.name);
+        column_index++;
+      } else {
+        LOG(WARNING) << "Skip feature field '" << field.name
+                     << "'(column_index=" << column_index
+                     << "), it already occurred at column_index="
+                     << try_emplace_result.first->second.column_index << " .";
+      }
+    } else if (field.type == FieldType::kRawFeature) {
+      auto try_emplace_result = field_index->try_emplace(
+          field.name, column_index, field.children_num);
+      if (try_emplace_result.second) {
+        std::vector<std::shared_ptr<arrow::Field>> arrow_subfields;
+        std::vector<std::shared_ptr<arrow::ArrayBuilder>>
+            arrow_subfields_builders;
+        for (size_t j = 0; j < field.children_num; j++) {
+          arrow_subfields.emplace_back(
+              arrow::field(absl::StrCat("_", j), arrow::binary()));
+          arrow_subfields_builders.emplace_back(
+              std::make_shared<arrow::BinaryBuilder>(pool));
+        }
+        fields->emplace_back(
+            arrow::field(field.name, arrow::struct_(arrow_subfields)));
+        fields_builders->emplace_back(std::make_shared<arrow::StructBuilder>(
+            arrow::struct_(std::move(arrow_subfields)), pool,
+            std::move(arrow_subfields_builders)));
         all_field_names->emplace_back(field.name);
         column_index += field.children_num;
       } else {
@@ -221,7 +286,7 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
       DCHECK(field_index.contains(p.first));
       unvisited_field_names.erase(p.first);
       parquet::ByteArrayWriter* byte_array_writer =
-          hcoona::down_cast<parquet::ByteArrayWriter*>(
+          down_cast<parquet::ByteArrayWriter*>(
               rg_writer->column(field_index[p.first].column_index));
       int16_t definition_level = 1;
       parquet::ByteArray byte_array(p.second);
@@ -238,7 +303,7 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
            j < std::min(field_index[p.first].subfields_num, p.second.size());
            j++) {
         parquet::ByteArrayWriter* byte_array_writer =
-            hcoona::down_cast<parquet::ByteArrayWriter*>(
+            down_cast<parquet::ByteArrayWriter*>(
                 rg_writer->column(base_column_index + j));
         int16_t definition_level = 2;
         parquet::ByteArray byte_array(p.second[j]);
@@ -250,7 +315,7 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
       for (size_t j = p.second.size(); j < field_index[p.first].subfields_num;
            j++) {
         parquet::ByteArrayWriter* byte_array_writer =
-            hcoona::down_cast<parquet::ByteArrayWriter*>(
+            down_cast<parquet::ByteArrayWriter*>(
                 rg_writer->column(base_column_index + j));
         int16_t definition_level = 1;
         byte_array_writer->WriteBatch(1, &definition_level, nullptr, nullptr);
@@ -263,7 +328,7 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
       const FieldContext& field_context = field_index[field_name];
       if (field_context.subfields_num == 0) {  // feature
         parquet::ByteArrayWriter* byte_array_writer =
-            hcoona::down_cast<parquet::ByteArrayWriter*>(
+            down_cast<parquet::ByteArrayWriter*>(
                 rg_writer->column(field_context.column_index));
         int16_t definition_level = 0;
         byte_array_writer->WriteBatch(1, &definition_level, nullptr, nullptr);
@@ -271,7 +336,7 @@ absl::Status DumpWithParquetApi(const std::vector<FieldDescriptor>& fields,
         size_t base_column_index = field_context.column_index;
         for (size_t j = 0; j < field_context.subfields_num; j++) {
           parquet::ByteArrayWriter* byte_array_writer =
-              hcoona::down_cast<parquet::ByteArrayWriter*>(
+              down_cast<parquet::ByteArrayWriter*>(
                   rg_writer->column(base_column_index + j));
           int16_t definition_level = 1;
           byte_array_writer->WriteBatch(1, &definition_level, nullptr, nullptr);
@@ -366,7 +431,7 @@ absl::Status DumpWithParquetApiV2(const std::vector<FieldDescriptor>& fields,
         }
 
         parquet::ByteArrayWriter* byte_array_writer =
-            hcoona::down_cast<parquet::ByteArrayWriter*>(
+            down_cast<parquet::ByteArrayWriter*>(
                 rg_writer->column(field_context.column_index));
         byte_array_writer->WriteBatchSpaced(
             this_batch_size, def_levels, rep_levels,
@@ -385,8 +450,81 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
                               const std::vector<FieldDescriptor>& fields,
                               const std::vector<Row>& rows,
                               int64_t* written_bytes) {
-  return absl::UnimplementedError("");
+  std::vector<absl::string_view> all_field_names;
+  absl::flat_hash_map<absl::string_view /* field_name */, FieldContext>
+      field_index;
+  std::vector<std::shared_ptr<arrow::Field>> arrow_fields;
+  std::vector<std::shared_ptr<arrow::ArrayBuilder>> arrow_fields_builders;
+  RETURN_STATUS_IF_NOT_OK(BuildArrowSchemaFields(
+      memory_pool, fields, &all_field_names, &field_index, &arrow_fields,
+      &arrow_fields_builders));
+
+  for (const Row& row : rows) {
+    for (absl::string_view field_name : all_field_names) {
+      const FieldContext& field_context = field_index[field_name];
+
+      if (field_context.subfields_num == 0) {  // feature
+        auto builder = down_cast<arrow::BinaryBuilder*>(
+            arrow_fields_builders[field_context.column_index].get());
+        if (row.features().contains(field_name)) {
+          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
+              builder->Append(row.features().find(field_name)->second)));
+        } else {
+          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
+        }
+      } else {  // raw_feature
+        auto builder = down_cast<arrow::StructBuilder*>(
+            arrow_fields_builders[field_context.column_index].get());
+        if (row.raw_features().contains(field_name)) {
+          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
+          for (int i = 0; i < static_cast<int>(field_context.subfields_num);
+               i++) {
+            auto child_builder =
+                down_cast<arrow::BinaryBuilder*>(builder->child(i));
+            const std::vector<std::string>& children_serialized_bytes =
+                row.raw_features().find(field_name)->second;
+            if (i < static_cast<int>(children_serialized_bytes.size())) {
+              RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
+                  child_builder->Append(children_serialized_bytes[i])));
+            } else {
+              RETURN_STATUS_IF_NOT_OK(
+                  FromArrowStatus(child_builder->AppendNull()));
+            }
+          }
+        } else {
+          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
+          for (int i = 0; i < static_cast<int>(field_context.subfields_num);
+               i++) {
+            auto child_builder =
+                down_cast<arrow::BinaryBuilder*>(builder->child(i));
+            RETURN_STATUS_IF_NOT_OK(
+                FromArrowStatus(child_builder->AppendNull()));
+          }
+        }
+      }
+    }
+  }
+
+  std::shared_ptr<arrow::Schema> schema = arrow::schema(arrow_fields);
+  std::vector<std::shared_ptr<arrow::Array>> arrow_arrays;
+  arrow_arrays.reserve(arrow_fields_builders.size());
+  for (std::size_t i = 0; i < arrow_fields_builders.size(); i++) {
+    std::shared_ptr<arrow::Array> array;
+    RETURN_STATUS_IF_NOT_OK(
+        FromArrowStatus(arrow_fields_builders[i]->Finish(&array)));
+    arrow_arrays.emplace_back(std::move(array));
+  }
+  std::shared_ptr<arrow::Table> table =
+      arrow::Table::Make(schema, arrow_arrays, rows.size());
+
+  auto output_stream = std::make_shared<NullOutputStream>();
+  RETURN_STATUS_IF_NOT_OK(FromArrowStatus(parquet::arrow::WriteTable(
+      *table, memory_pool, output_stream, kBatchSize)));
+  *written_bytes = output_stream->Tell().ValueOrDie();
+
+  return absl::OkStatus();
 }
 
 }  // namespace feature_store
 }  // namespace codelab
+}  // namespace hcoona
