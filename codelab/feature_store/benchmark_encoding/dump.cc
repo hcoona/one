@@ -1,6 +1,7 @@
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -477,7 +478,8 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
                         ->compression(ConvertArrow(compression_mode))
                         ->build();
   RETURN_STATUS_IF_NOT_OK(FromArrowStatus(parquet::arrow::WriteTable(
-      *table, memory_pool, std::move(sink), kBatchSize, properties)));
+      *table, memory_pool, std::move(sink), std::numeric_limits<int64_t>::max(),
+      properties)));
 
   return absl::OkStatus();
 }
