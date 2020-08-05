@@ -100,6 +100,7 @@ cc_library(
         "vendored/double-conversion/fixed-dtoa.cc",
         "vendored/double-conversion/diy-fp.cc",
         "vendored/double-conversion/strtod.cc",
+        "vendored/musl/strptime.c",
     ] + [
         "util/compression_lz4.cc",
     ] + [
