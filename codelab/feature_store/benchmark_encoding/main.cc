@@ -159,7 +159,6 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
                       std::vector<hcoona::codelab::feature_store::Row>* rows);
 
 int main(int argc, char** argv) {
-  // google::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   ::benchmark::Initialize(&argc, argv);
 

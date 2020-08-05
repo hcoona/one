@@ -160,12 +160,12 @@ http_archive(
 )
 
 # Google benchmark, required by Grpc.
-# TODO(zhangshuai.ustc): Patch to use gflags.
+# Patched to use gflags.
 http_archive(
     name = "com_github_google_benchmark",
-    sha256 = "3c6a165b6ecc948967a1ead710d4a181d7b0fbcaa183ef7ea84604994966221a",
-    strip_prefix = "benchmark-1.5.0",
-    urls = ["https://github.com/google/benchmark/archive/v1.5.0.tar.gz"],  # 2019-05-28
+    sha256 = "b81464b717bbdfd960dd7c791c3d50f3d8a5443bc22faf9523f1ed048b40b973",
+    strip_prefix = "benchmark-7686b6bbfdfa5034e89c410e0a31497d10fbdb41",
+    urls = ["https://github.com/hcoona/benchmark/archive/7686b6bbfdfa5034e89c410e0a31497d10fbdb41.tar.gz"],  # 2020-08-05
 )
 
 # required by Grpc
