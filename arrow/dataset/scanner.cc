@@ -34,8 +34,7 @@ namespace arrow {
 namespace dataset {
 
 ScanOptions::ScanOptions(std::shared_ptr<Schema> schema)
-    : filter(scalar(true)),
-      evaluator(ExpressionEvaluator::Null()),
+    : evaluator(ExpressionEvaluator::Null()),
       projector(RecordBatchProjector(std::move(schema))) {}
 
 std::shared_ptr<ScanOptions> ScanOptions::ReplaceSchema(
@@ -43,6 +42,7 @@ std::shared_ptr<ScanOptions> ScanOptions::ReplaceSchema(
   auto copy = ScanOptions::Make(std::move(schema));
   copy->filter = filter;
   copy->evaluator = evaluator;
+  copy->batch_size = batch_size;
   return copy;
 }
 
@@ -72,21 +72,14 @@ FragmentIterator Scanner::GetFragments() {
   // Transform Datasets in a flat Iterator<Fragment>. This
   // iterator is lazily constructed, i.e. Dataset::GetFragments is
   // not invoked until a Fragment is requested.
-  return GetFragmentsFromDatasets({dataset_}, scan_options_);
+  return GetFragmentsFromDatasets({dataset_}, scan_options_->filter);
 }
 
 Result<ScanTaskIterator> Scanner::Scan() {
   // Transforms Iterator<Fragment> into a unified
   // Iterator<ScanTask>. The first Iterator::Next invocation is going to do
   // all the work of unwinding the chained iterators.
-  auto scan_task_it = GetScanTaskIterator(GetFragments(), scan_context_);
-
-  // Apply the filter and/or projection to incoming RecordBatches by
-  // wrapping the ScanTask with a FilterAndProjectScanTask
-  auto wrap_scan_task = [](std::shared_ptr<ScanTask> task) -> std::shared_ptr<ScanTask> {
-    return std::make_shared<FilterAndProjectScanTask>(std::move(task));
-  };
-  return MakeMapIterator(wrap_scan_task, std::move(scan_task_it));
+  return GetScanTaskIterator(GetFragments(), scan_options_, scan_context_);
 }
 
 Result<ScanTaskIterator> ScanTaskIteratorFromRecordBatch(
@@ -100,7 +93,16 @@ Result<ScanTaskIterator> ScanTaskIteratorFromRecordBatch(
 ScannerBuilder::ScannerBuilder(std::shared_ptr<Dataset> dataset,
                                std::shared_ptr<ScanContext> scan_context)
     : dataset_(std::move(dataset)),
+      fragment_(nullptr),
       scan_options_(ScanOptions::Make(dataset_->schema())),
+      scan_context_(std::move(scan_context)) {}
+
+ScannerBuilder::ScannerBuilder(std::shared_ptr<Schema> schema,
+                               std::shared_ptr<Fragment> fragment,
+                               std::shared_ptr<ScanContext> scan_context)
+    : dataset_(nullptr),
+      fragment_(std::move(fragment)),
+      scan_options_(ScanOptions::Make(schema)),
       scan_context_(std::move(scan_context)) {}
 
 Status ScannerBuilder::Project(std::vector<std::string> columns) {
@@ -145,36 +147,68 @@ Result<std::shared_ptr<Scanner>> ScannerBuilder::Finish() const {
     scan_options->evaluator = std::make_shared<TreeEvaluator>();
   }
 
+  if (dataset_ == nullptr) {
+    return std::make_shared<Scanner>(fragment_, std::move(scan_options), scan_context_);
+  }
+
   return std::make_shared<Scanner>(dataset_, std::move(scan_options), scan_context_);
 }
 
-std::shared_ptr<internal::TaskGroup> ScanContext::TaskGroup() const {
+using arrow::internal::TaskGroup;
+
+std::shared_ptr<TaskGroup> ScanContext::TaskGroup() const {
   if (use_threads) {
-    internal::ThreadPool* thread_pool = arrow::internal::GetCpuThreadPool();
-    return internal::TaskGroup::MakeThreaded(thread_pool);
+    auto* thread_pool = arrow::internal::GetCpuThreadPool();
+    return TaskGroup::MakeThreaded(thread_pool);
   }
-  return internal::TaskGroup::MakeSerial();
+  return TaskGroup::MakeSerial();
 }
+
+static inline RecordBatchVector FlattenRecordBatchVector(
+    std::vector<RecordBatchVector> nested_batches) {
+  RecordBatchVector flattened;
+
+  for (auto& task_batches : nested_batches) {
+    for (auto& batch : task_batches) {
+      flattened.emplace_back(std::move(batch));
+    }
+  }
+
+  return flattened;
+}
+
+struct TableAssemblyState {
+  /// Protecting mutating accesses to batches
+  std::mutex mutex{};
+  std::vector<RecordBatchVector> batches{};
+
+  void Emplace(RecordBatchVector b, size_t position) {
+    std::lock_guard<std::mutex> lock(mutex);
+    if (batches.size() <= position) {
+      batches.resize(position + 1);
+    }
+    batches[position] = std::move(b);
+  }
+};
 
 Result<std::shared_ptr<Table>> Scanner::ToTable() {
   ARROW_ASSIGN_OR_RAISE(auto scan_task_it, Scan());
-  std::mutex mutex;
-  RecordBatchVector batches;
-
   auto task_group = scan_context_->TaskGroup();
 
+  /// Wraps the state in a shared_ptr to ensure that failing ScanTasks don't
+  /// invalidate concurrently running tasks when Finish() early returns
+  /// and the mutex/batches fail out of scope.
+  auto state = std::make_shared<TableAssemblyState>();
+
+  size_t scan_task_id = 0;
   for (auto maybe_scan_task : scan_task_it) {
     ARROW_ASSIGN_OR_RAISE(auto scan_task, std::move(maybe_scan_task));
 
-    task_group->Append([&batches, &mutex, scan_task] {
+    auto id = scan_task_id++;
+    task_group->Append([state, id, scan_task] {
       ARROW_ASSIGN_OR_RAISE(auto batch_it, scan_task->Execute());
-
-      for (auto maybe_batch : batch_it) {
-        ARROW_ASSIGN_OR_RAISE(auto batch, std::move(maybe_batch));
-        std::lock_guard<std::mutex> lock(mutex);
-        batches.emplace_back(std::move(batch));
-      }
-
+      ARROW_ASSIGN_OR_RAISE(auto local, batch_it.ToVector());
+      state->Emplace(std::move(local), id);
       return Status::OK();
     });
   }
@@ -182,7 +216,8 @@ Result<std::shared_ptr<Table>> Scanner::ToTable() {
   // Wait for all tasks to complete, or the first error.
   RETURN_NOT_OK(task_group->Finish());
 
-  return Table::FromRecordBatches(scan_options_->schema(), std::move(batches));
+  return Table::FromRecordBatches(scan_options_->schema(),
+                                  FlattenRecordBatchVector(std::move(state->batches)));
 }
 
 }  // namespace dataset

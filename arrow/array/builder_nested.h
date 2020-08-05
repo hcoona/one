@@ -17,14 +17,21 @@
 
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "arrow/array.h"
+#include "arrow/array/array_nested.h"
 #include "arrow/array/builder_base.h"
+#include "arrow/array/data.h"
+#include "arrow/buffer.h"
 #include "arrow/buffer_builder.h"
+#include "arrow/status.h"
+#include "arrow/type.h"
+#include "arrow/util/macros.h"
+#include "arrow/util/visibility.h"
 
 namespace arrow {
 
@@ -44,7 +51,7 @@ class BaseListBuilder : public ArrayBuilder {
       : ArrayBuilder(pool),
         offsets_builder_(pool),
         value_builder_(value_builder),
-        value_field_(type->child(0)->WithType(NULLPTR)) {}
+        value_field_(type->field(0)->WithType(NULLPTR)) {}
 
   BaseListBuilder(MemoryPool* pool, std::shared_ptr<ArrayBuilder> const& value_builder)
       : BaseListBuilder(pool, value_builder, list(value_builder->type())) {}
@@ -388,8 +395,17 @@ class ARROW_EXPORT StructBuilder : public ArrayBuilder {
     return Status::OK();
   }
 
-  Status AppendNull() final { return Append(false); }
+  /// \brief Append a null value. Automatically appends a null to each child
+  /// builder.
+  Status AppendNull() final {
+    for (const auto& field : children_) {
+      ARROW_RETURN_NOT_OK(field->AppendNull());
+    }
+    return Append(false);
+  }
 
+  /// \brief Append multiple null values. Automatically appends nulls to each
+  /// child builder.
   Status AppendNulls(int64_t length) final;
 
   void Reset() override;

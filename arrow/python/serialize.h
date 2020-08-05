@@ -115,6 +115,7 @@ Status WriteNdarrayHeader(std::shared_ptr<DataType> dtype,
 
 struct PythonType {
   enum type {
+    NONE,
     BOOL,
     INT,
     PY2INT,  // Kept for compatibility
@@ -134,6 +135,7 @@ struct PythonType {
     SPARSECOOTENSOR,
     SPARSECSRMATRIX,
     SPARSECSCMATRIX,
+    SPARSECSFTENSOR,
     NUM_PYTHON_TYPES
   };
 };

@@ -17,9 +17,17 @@
 
 #pragma once
 
+#include <cstdint>
+#include <cstring>
 #include <memory>
+#include <type_traits>
 
 #include "arrow/array/builder_base.h"
+#include "arrow/buffer.h"
+#include "arrow/status.h"
+#include "arrow/type.h"
+#include "arrow/util/macros.h"
+#include "arrow/util/visibility.h"
 
 namespace arrow {
 
@@ -45,6 +53,7 @@ class ARROW_EXPORT AdaptiveIntBuilderBase : public ArrayBuilder {
     pending_has_nulls_ = true;
     ++pending_pos_;
     ++length_;
+    ++null_count_;
 
     if (ARROW_PREDICT_FALSE(pending_pos_ >= pending_size_)) {
       return CommitPendingData();

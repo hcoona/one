@@ -27,7 +27,9 @@
 #include <vector>
 
 #include "arrow/flight/visibility.h"
+#include "arrow/ipc/options.h"
 #include "arrow/ipc/writer.h"
+#include "arrow/result.h"
 
 namespace arrow {
 
@@ -346,7 +348,7 @@ struct ARROW_FLIGHT_EXPORT FlightEndpoint {
 struct ARROW_FLIGHT_EXPORT FlightPayload {
   std::shared_ptr<Buffer> descriptor;
   std::shared_ptr<Buffer> app_metadata;
-  ipc::internal::IpcPayload ipc_message;
+  ipc::IpcPayload ipc_message;
 };
 
 /// \brief Schema result returned after a schema request RPC
@@ -382,6 +384,12 @@ class ARROW_FLIGHT_EXPORT FlightInfo {
   explicit FlightInfo(const Data& data) : data_(data), reconstructed_schema_(false) {}
   explicit FlightInfo(Data&& data)
       : data_(std::move(data)), reconstructed_schema_(false) {}
+
+  /// \brief Factory method to construct a FlightInfo.
+  static arrow::Result<FlightInfo> Make(const Schema& schema,
+                                        const FlightDescriptor& descriptor,
+                                        const std::vector<FlightEndpoint>& endpoints,
+                                        int64_t total_records, int64_t total_bytes);
 
   /// \brief Deserialize the Arrow schema of the dataset, to be passed
   /// to each call to DoGet. Populate any dictionary encoded fields
@@ -463,7 +471,7 @@ class ARROW_FLIGHT_EXPORT MetadataRecordBatchReader {
   virtual ~MetadataRecordBatchReader() = default;
 
   /// \brief Get the schema for this stream.
-  virtual std::shared_ptr<Schema> schema() const = 0;
+  virtual arrow::Result<std::shared_ptr<Schema>> GetSchema() = 0;
   /// \brief Get the next message from Flight. If the stream is
   /// finished, then the members of \a FlightStreamChunk will be
   /// nullptr.
@@ -472,6 +480,19 @@ class ARROW_FLIGHT_EXPORT MetadataRecordBatchReader {
   virtual Status ReadAll(std::vector<std::shared_ptr<RecordBatch>>* batches);
   /// \brief Consume entire stream as a Table
   virtual Status ReadAll(std::shared_ptr<Table>* table);
+};
+
+/// \brief An interface to write IPC payloads with metadata.
+class ARROW_FLIGHT_EXPORT MetadataRecordBatchWriter : public ipc::RecordBatchWriter {
+ public:
+  virtual ~MetadataRecordBatchWriter() = default;
+  /// \brief Begin writing data with the given schema. Only used with \a DoExchange.
+  virtual Status Begin(const std::shared_ptr<Schema>& schema,
+                       const ipc::IpcWriteOptions& options) = 0;
+  virtual Status Begin(const std::shared_ptr<Schema>& schema);
+  virtual Status WriteMetadata(std::shared_ptr<Buffer> app_metadata) = 0;
+  virtual Status WriteWithMetadata(const RecordBatch& batch,
+                                   std::shared_ptr<Buffer> app_metadata) = 0;
 };
 
 /// \brief A FlightListing implementation based on a vector of

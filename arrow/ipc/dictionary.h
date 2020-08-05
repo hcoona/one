@@ -22,7 +22,10 @@
 #include <cstdint>
 #include <memory>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
+#include "arrow/memory_pool.h"
 #include "arrow/status.h"
 #include "arrow/util/macros.h"
 #include "arrow/util/visibility.h"
@@ -36,13 +39,13 @@ class RecordBatch;
 
 namespace ipc {
 
-using DictionaryMap = std::unordered_map<int64_t, std::shared_ptr<Array>>;
-
 /// \brief Memoization data structure for assigning id numbers to
 /// dictionaries and tracking their current state through possible
 /// deltas in an IPC stream
 class ARROW_EXPORT DictionaryMemo {
  public:
+  using DictionaryVector = std::vector<std::pair<int64_t, std::shared_ptr<Array>>>;
+
   DictionaryMemo();
   DictionaryMemo(DictionaryMemo&&) = default;
   DictionaryMemo& operator=(DictionaryMemo&&) = default;
@@ -76,7 +79,17 @@ class ARROW_EXPORT DictionaryMemo {
   /// KeyError if that dictionary already exists
   Status AddDictionary(int64_t id, const std::shared_ptr<Array>& dictionary);
 
-  const DictionaryMap& id_to_dictionary() const { return id_to_dictionary_; }
+  /// \brief Append a dictionary delta to the memo with a particular id. Returns
+  /// KeyError if that dictionary does not exists
+  Status AddDictionaryDelta(int64_t id, const std::shared_ptr<Array>& dictionary,
+                            MemoryPool* pool);
+
+  /// \brief Add a dictionary to the memo if it does not have one with the id,
+  /// otherwise, replace the dictionary with the new one.
+  Status AddOrReplaceDictionary(int64_t id, const std::shared_ptr<Array>& dictionary);
+
+  /// \brief The stored dictionaries, in ascending id order.
+  DictionaryVector dictionaries() const;
 
   /// \brief The number of fields tracked in the memo
   int num_fields() const { return static_cast<int>(field_to_id_.size()); }
@@ -90,7 +103,7 @@ class ARROW_EXPORT DictionaryMemo {
   std::unordered_map<const Field*, int64_t> field_to_id_;
 
   // Map of dictionary id to dictionary array
-  DictionaryMap id_to_dictionary_;
+  std::unordered_map<int64_t, std::shared_ptr<Array>> id_to_dictionary_;
   std::unordered_map<int64_t, std::shared_ptr<DataType>> id_to_type_;
 
   ARROW_DISALLOW_COPY_AND_ASSIGN(DictionaryMemo);

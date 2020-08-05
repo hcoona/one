@@ -23,6 +23,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include "arrow/io/caching.h"
 #include "arrow/type.h"
 #include "arrow/util/compression.h"
 #include "parquet/encryption.h"
@@ -58,31 +59,32 @@ struct ParquetVersion {
 /// DataPageV2 at all.
 enum class ParquetDataPageVersion { V1, V2 };
 
-static int64_t DEFAULT_BUFFER_SIZE = 1024;
-static bool DEFAULT_USE_BUFFERED_STREAM = false;
+/// Align the default buffer size to a small multiple of a page size.
+constexpr int64_t kDefaultBufferSize = 4096 * 4;
 
 class PARQUET_EXPORT ReaderProperties {
  public:
   explicit ReaderProperties(MemoryPool* pool = ::arrow::default_memory_pool())
-      : pool_(pool) {
-    buffered_stream_enabled_ = DEFAULT_USE_BUFFERED_STREAM;
-    buffer_size_ = DEFAULT_BUFFER_SIZE;
-  }
+      : pool_(pool) {}
 
   MemoryPool* memory_pool() const { return pool_; }
 
   std::shared_ptr<ArrowInputStream> GetStream(std::shared_ptr<ArrowInputFile> source,
                                               int64_t start, int64_t num_bytes);
 
+  /// Buffered stream reading allows the user to control the memory usage of
+  /// parquet readers. This ensure that all `RandomAccessFile::ReadAt` calls are
+  /// wrapped in a buffered reader that uses a fix sized buffer (of size
+  /// `buffer_size()`) instead of the full size of the ReadAt.
+  ///
+  /// The primary reason for this control knobs is for resource control and not
+  /// performance.
   bool is_buffered_stream_enabled() const { return buffered_stream_enabled_; }
-
   void enable_buffered_stream() { buffered_stream_enabled_ = true; }
-
   void disable_buffered_stream() { buffered_stream_enabled_ = false; }
 
-  void set_buffer_size(int64_t buf_size) { buffer_size_ = buf_size; }
-
   int64_t buffer_size() const { return buffer_size_; }
+  void set_buffer_size(int64_t size) { buffer_size_ = size; }
 
   void file_decryption_properties(std::shared_ptr<FileDecryptionProperties> decryption) {
     file_decryption_properties_ = std::move(decryption);
@@ -94,8 +96,8 @@ class PARQUET_EXPORT ReaderProperties {
 
  private:
   MemoryPool* pool_;
-  int64_t buffer_size_;
-  bool buffered_stream_enabled_;
+  int64_t buffer_size_ = kDefaultBufferSize;
+  bool buffered_stream_enabled_ = false;
   std::shared_ptr<FileDecryptionProperties> file_decryption_properties_;
 };
 
@@ -572,7 +574,9 @@ class PARQUET_EXPORT ArrowReaderProperties {
   explicit ArrowReaderProperties(bool use_threads = kArrowDefaultUseThreads)
       : use_threads_(use_threads),
         read_dict_indices_(),
-        batch_size_(kArrowDefaultBatchSize) {}
+        batch_size_(kArrowDefaultBatchSize),
+        pre_buffer_(false),
+        cache_options_(::arrow::io::CacheOptions::Defaults()) {}
 
   void set_use_threads(bool use_threads) { use_threads_ = use_threads; }
 
@@ -597,10 +601,33 @@ class PARQUET_EXPORT ArrowReaderProperties {
 
   int64_t batch_size() const { return batch_size_; }
 
+  /// Enable read coalescing.
+  ///
+  /// When enabled, the Arrow reader will pre-buffer necessary regions
+  /// of the file in-memory. This is intended to improve performance on
+  /// high-latency filesystems (e.g. Amazon S3).
+  void set_pre_buffer(bool pre_buffer) { pre_buffer_ = pre_buffer; }
+
+  bool pre_buffer() const { return pre_buffer_; }
+
+  /// Set options for read coalescing. This can be used to tune the
+  /// implementation for characteristics of different filesystems.
+  void set_cache_options(::arrow::io::CacheOptions options) { cache_options_ = options; }
+
+  ::arrow::io::CacheOptions cache_options() const { return cache_options_; }
+
+  /// Set execution context for read coalescing.
+  void set_async_context(::arrow::io::AsyncContext ctx) { async_context_ = ctx; }
+
+  ::arrow::io::AsyncContext async_context() const { return async_context_; }
+
  private:
   bool use_threads_;
   std::unordered_set<int> read_dict_indices_;
   int64_t batch_size_;
+  bool pre_buffer_;
+  ::arrow::io::AsyncContext async_context_;
+  ::arrow::io::CacheOptions cache_options_;
 };
 
 /// EXPERIMENTAL: Constructs the default ArrowReaderProperties

@@ -32,13 +32,13 @@
 namespace arrow {
 namespace dataset {
 
-static ipc::IpcReadOptions default_read_options() {
+static inline ipc::IpcReadOptions default_read_options() {
   auto options = ipc::IpcReadOptions::Defaults();
   options.use_threads = false;
   return options;
 }
 
-Result<std::shared_ptr<ipc::RecordBatchFileReader>> OpenReader(
+static inline Result<std::shared_ptr<ipc::RecordBatchFileReader>> OpenReader(
     const FileSource& source,
     const ipc::IpcReadOptions& options = default_read_options()) {
   ARROW_ASSIGN_OR_RAISE(auto input, source.Open());
@@ -54,7 +54,7 @@ Result<std::shared_ptr<ipc::RecordBatchFileReader>> OpenReader(
   return reader;
 }
 
-Result<std::vector<int>> GetIncludedFields(
+static inline Result<std::vector<int>> GetIncludedFields(
     const Schema& schema, const std::vector<std::string>& materialized_fields) {
   std::vector<int> included_fields;
 
@@ -83,11 +83,12 @@ class IpcScanTask : public ScanTask {
         ARROW_ASSIGN_OR_RAISE(auto reader, OpenReader(source));
 
         auto options = default_read_options();
+        options.memory_pool = pool;
         ARROW_ASSIGN_OR_RAISE(options.included_fields,
                               GetIncludedFields(*reader->schema(), materialized_fields));
 
         ARROW_ASSIGN_OR_RAISE(reader, OpenReader(source, options));
-        return RecordBatchIterator(Impl{std::move(reader), pool, 0});
+        return RecordBatchIterator(Impl{std::move(reader), 0});
       }
 
       Result<std::shared_ptr<RecordBatch>> Next() {
@@ -99,7 +100,6 @@ class IpcScanTask : public ScanTask {
       }
 
       std::shared_ptr<ipc::RecordBatchFileReader> reader_;
-      MemoryPool* pool_;
       int i_;
     };
 
@@ -152,50 +152,61 @@ Result<std::shared_ptr<Schema>> IpcFileFormat::Inspect(const FileSource& source)
   return reader->schema();
 }
 
-Result<ScanTaskIterator> IpcFileFormat::ScanFile(
-    const FileSource& source, std::shared_ptr<ScanOptions> options,
-    std::shared_ptr<ScanContext> context) const {
-  return IpcScanTaskIterator::Make(options, context, source);
+Result<ScanTaskIterator> IpcFileFormat::ScanFile(std::shared_ptr<ScanOptions> options,
+                                                 std::shared_ptr<ScanContext> context,
+                                                 FileFragment* fragment) const {
+  return IpcScanTaskIterator::Make(std::move(options), std::move(context),
+                                   fragment->source());
 }
 
-Result<std::shared_ptr<WriteTask>> IpcFileFormat::WriteFragment(
-    FileSource destination, std::shared_ptr<Fragment> fragment,
-    std::shared_ptr<ScanContext> scan_context) {
-  struct Task : WriteTask {
-    Task(FileSource destination, std::shared_ptr<FileFormat> format,
-         std::shared_ptr<Fragment> fragment, std::shared_ptr<ScanContext> scan_context)
-        : WriteTask(std::move(destination), std::move(format)),
-          fragment_(std::move(fragment)),
-          scan_context_(std::move(scan_context)) {}
+class IpcWriteTask : public WriteTask {
+ public:
+  IpcWriteTask(WritableFileSource destination, std::shared_ptr<FileFormat> format,
+               std::shared_ptr<Fragment> fragment,
+               std::shared_ptr<ScanOptions> scan_options,
+               std::shared_ptr<ScanContext> scan_context)
+      : WriteTask(std::move(destination), std::move(format)),
+        fragment_(std::move(fragment)),
+        scan_options_(std::move(scan_options)),
+        scan_context_(std::move(scan_context)) {}
 
-    Status Execute() override {
-      RETURN_NOT_OK(CreateDestinationParentDir());
+  Status Execute() override {
+    RETURN_NOT_OK(CreateDestinationParentDir());
 
-      ARROW_ASSIGN_OR_RAISE(auto out_stream, destination_.OpenWritable());
-      ARROW_ASSIGN_OR_RAISE(auto writer,
-                            ipc::NewFileWriter(out_stream.get(), fragment_->schema()));
-      ARROW_ASSIGN_OR_RAISE(auto scan_task_it, fragment_->Scan(scan_context_));
+    auto schema = scan_options_->schema();
 
-      for (auto maybe_scan_task : scan_task_it) {
-        ARROW_ASSIGN_OR_RAISE(auto scan_task, maybe_scan_task);
+    ARROW_ASSIGN_OR_RAISE(auto out_stream, destination_.Open());
+    ARROW_ASSIGN_OR_RAISE(auto writer, ipc::NewFileWriter(out_stream.get(), schema));
+    ARROW_ASSIGN_OR_RAISE(auto scan_task_it,
+                          fragment_->Scan(scan_options_, scan_context_));
 
-        ARROW_ASSIGN_OR_RAISE(auto batch_it, scan_task->Execute());
+    for (auto maybe_scan_task : scan_task_it) {
+      ARROW_ASSIGN_OR_RAISE(auto scan_task, maybe_scan_task);
 
-        for (auto maybe_batch : batch_it) {
-          ARROW_ASSIGN_OR_RAISE(auto batch, std::move(maybe_batch));
-          RETURN_NOT_OK(writer->WriteRecordBatch(*batch));
-        }
+      ARROW_ASSIGN_OR_RAISE(auto batch_it, scan_task->Execute());
+
+      for (auto maybe_batch : batch_it) {
+        ARROW_ASSIGN_OR_RAISE(auto batch, std::move(maybe_batch));
+        RETURN_NOT_OK(writer->WriteRecordBatch(*batch));
       }
-
-      return writer->Close();
     }
 
-    std::shared_ptr<Fragment> fragment_;
-    std::shared_ptr<ScanContext> scan_context_;
-  };
+    return writer->Close();
+  }
 
-  return std::make_shared<Task>(std::move(destination), shared_from_this(),
-                                std::move(fragment), std::move(scan_context));
+ private:
+  std::shared_ptr<Fragment> fragment_;
+  std::shared_ptr<ScanOptions> scan_options_;
+  std::shared_ptr<ScanContext> scan_context_;
+};
+
+Result<std::shared_ptr<WriteTask>> IpcFileFormat::WriteFragment(
+    WritableFileSource destination, std::shared_ptr<Fragment> fragment,
+    std::shared_ptr<ScanOptions> scan_options,
+    std::shared_ptr<ScanContext> scan_context) {
+  return std::make_shared<IpcWriteTask>(std::move(destination), shared_from_this(),
+                                        std::move(fragment), std::move(scan_options),
+                                        std::move(scan_context));
 }
 
 }  // namespace dataset

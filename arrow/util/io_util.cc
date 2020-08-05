@@ -837,8 +837,19 @@ Result<int> FileOpenReadable(const PlatformFilename& file_name) {
   int fd, errno_actual;
 #if defined(_WIN32)
   SetLastError(0);
-  errno_actual = _wsopen_s(&fd, file_name.ToNative().c_str(),
-                           _O_RDONLY | _O_BINARY | _O_NOINHERIT, _SH_DENYNO, _S_IREAD);
+  HANDLE file_handle = CreateFileW(file_name.ToNative().c_str(), GENERIC_READ,
+                                   FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                                   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+  DWORD last_error = GetLastError();
+  if (last_error == ERROR_SUCCESS) {
+    errno_actual = 0;
+    fd = _open_osfhandle(reinterpret_cast<intptr_t>(file_handle),
+                         _O_RDONLY | _O_BINARY | _O_NOINHERIT);
+  } else {
+    return IOErrorFromWinError(last_error, "Failed to open local file '",
+                               file_name.ToString(), "'");
+  }
 #else
   fd = open(file_name.ToNative().c_str(), O_RDONLY);
   errno_actual = errno;
@@ -868,23 +879,38 @@ Result<int> FileOpenWritable(const PlatformFilename& file_name, bool write_only,
 #if defined(_WIN32)
   SetLastError(0);
   int oflag = _O_CREAT | _O_BINARY | _O_NOINHERIT;
-  int pmode = _S_IREAD | _S_IWRITE;
+  DWORD desired_access = GENERIC_WRITE;
+  DWORD share_mode = FILE_SHARE_READ | FILE_SHARE_WRITE;
+  DWORD creation_disposition = OPEN_ALWAYS;
+
+  if (append) {
+    oflag |= _O_APPEND;
+  }
 
   if (truncate) {
     oflag |= _O_TRUNC;
-  }
-  if (append) {
-    oflag |= _O_APPEND;
+    creation_disposition = CREATE_ALWAYS;
   }
 
   if (write_only) {
     oflag |= _O_WRONLY;
   } else {
     oflag |= _O_RDWR;
+    desired_access |= GENERIC_READ;
   }
 
-  errno_actual = _wsopen_s(&fd, file_name.ToNative().c_str(), oflag, _SH_DENYNO, pmode);
+  HANDLE file_handle =
+      CreateFileW(file_name.ToNative().c_str(), desired_access, share_mode, NULL,
+                  creation_disposition, FILE_ATTRIBUTE_NORMAL, NULL);
 
+  DWORD last_error = GetLastError();
+  if (last_error == ERROR_SUCCESS || last_error == ERROR_ALREADY_EXISTS) {
+    errno_actual = 0;
+    fd = _open_osfhandle(reinterpret_cast<intptr_t>(file_handle), oflag);
+  } else {
+    return IOErrorFromWinError(last_error, "Failed to open local file '",
+                               file_name.ToString(), "'");
+  }
 #else
   int oflag = O_CREAT;
 
@@ -953,6 +979,32 @@ static Status StatusFromMmapErrno(const char* prefix) {
   return IOErrorFromErrno(errno, prefix);
 }
 
+namespace {
+
+int64_t GetPageSizeInternal() {
+#if defined(__APPLE__)
+  return getpagesize();
+#elif defined(_WIN32)
+  SYSTEM_INFO si;
+  GetSystemInfo(&si);
+  return si.dwPageSize;
+#else
+  errno = 0;
+  const auto ret = sysconf(_SC_PAGESIZE);
+  if (ret == -1) {
+    ARROW_LOG(FATAL) << "sysconf(_SC_PAGESIZE) failed: " << ErrnoMessage(errno);
+  }
+  return static_cast<int64_t>(ret);
+#endif
+}
+
+}  // namespace
+
+int64_t GetPageSize() {
+  static const int64_t kPageSize = GetPageSizeInternal();  // cache it
+  return kPageSize;
+}
+
 //
 // Compatible way to remap a memory map
 //
@@ -1017,6 +1069,61 @@ Status MemoryMapRemap(void* addr, size_t old_size, size_t new_size, int fildes,
   }
   return Status::OK();
 #endif
+#endif
+}
+
+Status MemoryAdviseWillNeed(const std::vector<MemoryRegion>& regions) {
+  const auto page_size = static_cast<size_t>(GetPageSize());
+  DCHECK_GT(page_size, 0);
+  const size_t page_mask = ~(page_size - 1);
+  DCHECK_EQ(page_mask & page_size, page_size);
+
+  auto align_region = [=](const MemoryRegion& region) -> MemoryRegion {
+    const auto addr = reinterpret_cast<uintptr_t>(region.addr);
+    const auto aligned_addr = addr & page_mask;
+    DCHECK_LT(addr - aligned_addr, page_size);
+    return {reinterpret_cast<void*>(aligned_addr),
+            region.size + static_cast<size_t>(addr - aligned_addr)};
+  };
+
+#ifdef _WIN32
+  // PrefetchVirtualMemory() is available on Windows 8 or later
+  struct PrefetchEntry {  // Like WIN32_MEMORY_RANGE_ENTRY
+    void* VirtualAddress;
+    size_t NumberOfBytes;
+
+    PrefetchEntry(const MemoryRegion& region)  // NOLINT runtime/explicit
+        : VirtualAddress(region.addr), NumberOfBytes(region.size) {}
+  };
+  using PrefetchVirtualMemoryFunc = BOOL (*)(HANDLE, ULONG_PTR, PrefetchEntry*, ULONG);
+  static const auto prefetch_virtual_memory = reinterpret_cast<PrefetchVirtualMemoryFunc>(
+      GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "PrefetchVirtualMemory"));
+  if (prefetch_virtual_memory != nullptr) {
+    std::vector<PrefetchEntry> entries;
+    entries.reserve(regions.size());
+    for (const auto& region : regions) {
+      if (region.size != 0) {
+        entries.emplace_back(align_region(region));
+      }
+    }
+    if (!entries.empty() &&
+        !prefetch_virtual_memory(GetCurrentProcess(),
+                                 static_cast<ULONG_PTR>(entries.size()), entries.data(),
+                                 0)) {
+      return IOErrorFromWinError(GetLastError(), "PrefetchVirtualMemory failed");
+    }
+  }
+  return Status::OK();
+#else
+  for (const auto& region : regions) {
+    if (region.size != 0) {
+      const auto aligned = align_region(region);
+      if (posix_madvise(aligned.addr, aligned.size, POSIX_MADV_WILLNEED)) {
+        return IOErrorFromErrno(errno, "posix_madvise failed");
+      }
+    }
+  }
+  return Status::OK();
 #endif
 }
 

@@ -5,7 +5,7 @@ core.workflow(
     name = "org_apache_arrow",
     origin = git.origin(
         url = "https://github.com/apache/arrow.git",
-        ref = "apache-arrow-0.17.1",
+        ref = "apache-arrow-1.0.0",
     ),
     destination = folder.destination(),
     origin_files = glob([
@@ -22,6 +22,7 @@ core.workflow(
         ],
         exclude = [
             "arrow/BUILD.bazel",
+            "arrow/util/config.h",
             "parquet/BUILD.bazel",
             "parquet/parquet_version.h",
             "codelab/parquet_examples/low_level_api/BUILD.bazel",

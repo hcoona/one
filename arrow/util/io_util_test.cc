@@ -17,12 +17,15 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <limits>
 #include <vector>
 
 #include <gtest/gtest.h>
 
 #include "arrow/testing/gtest_util.h"
+#include "arrow/util/bit_util.h"
 #include "arrow/util/io_util.h"
+#include "arrow/util/logging.h"
 #include "arrow/util/windows_compatibility.h"
 #include "arrow/util/windows_fixup.h"
 
@@ -55,6 +58,36 @@ TEST(ErrnoFromStatus, Basics) {
   ASSERT_EQ(ErrnoFromStatus(st), EPERM);
   st = IOErrorFromErrno(6789, "foo");
   ASSERT_EQ(ErrnoFromStatus(st), 6789);
+}
+
+TEST(GetPageSize, Basics) {
+  const auto page_size = GetPageSize();
+  ASSERT_GE(page_size, 4096);
+  // It's a power of 2
+  ASSERT_EQ((page_size - 1) & page_size, 0);
+}
+
+TEST(MemoryAdviseWillNeed, Basics) {
+  ASSERT_OK_AND_ASSIGN(auto buf1, AllocateBuffer(8192));
+  ASSERT_OK_AND_ASSIGN(auto buf2, AllocateBuffer(1024 * 1024));
+
+  const auto addr1 = buf1->mutable_data();
+  const auto size1 = static_cast<size_t>(buf1->size());
+  const auto addr2 = buf2->mutable_data();
+  const auto size2 = static_cast<size_t>(buf2->size());
+
+  ASSERT_OK(MemoryAdviseWillNeed({}));
+  ASSERT_OK(MemoryAdviseWillNeed({{addr1, size1}, {addr2, size2}}));
+  ASSERT_OK(MemoryAdviseWillNeed({{addr1 + 1, size1 - 1}, {addr2 + 4095, size2 - 4095}}));
+  ASSERT_OK(MemoryAdviseWillNeed({{addr1, 13}, {addr2, 1}}));
+  ASSERT_OK(MemoryAdviseWillNeed({{addr1, 0}, {addr2 + 1, 0}}));
+
+  // Should probably fail
+  // (but on Windows, MemoryAdviseWillNeed can be a no-op)
+#ifndef _WIN32
+  ASSERT_RAISES(IOError,
+                MemoryAdviseWillNeed({{nullptr, std::numeric_limits<size_t>::max()}}));
+#endif
 }
 
 #if _WIN32
@@ -394,6 +427,10 @@ TEST(DeleteDirContents, Basics) {
 #else
   ASSERT_EQ(ErrnoFromStatus(status), ENOENT);
 #endif
+
+  // Now actually delete the test directory
+  ASSERT_OK_AND_ASSIGN(deleted, DeleteDirTree(parent));
+  ASSERT_TRUE(deleted);
 }
 
 TEST(TemporaryDir, Basics) {
@@ -522,6 +559,62 @@ TEST(DeleteFile, Basics) {
   AssertExists(fn);
   ASSERT_RAISES(IOError, DeleteFile(fn));
 }
+
+#ifndef __APPLE__
+TEST(FileUtils, LongPaths) {
+  // ARROW-8477: check using long file paths under Windows (> 260 characters).
+  bool created, deleted;
+#ifdef _WIN32
+  const char* kRegKeyName = R"(SYSTEM\CurrentControlSet\Control\FileSystem)";
+  const char* kRegValueName = "LongPathsEnabled";
+  DWORD value = 0;
+  DWORD size = sizeof(value);
+  LSTATUS status = RegGetValueA(HKEY_LOCAL_MACHINE, kRegKeyName, kRegValueName,
+                                RRF_RT_REG_DWORD, NULL, &value, &size);
+  bool test_long_paths = (status == ERROR_SUCCESS && value == 1);
+  if (!test_long_paths) {
+    ARROW_LOG(WARNING)
+        << "Tests for accessing files with long path names have been disabled. "
+        << "To enable these tests, set the value of " << kRegValueName
+        << " in registry key \\HKEY_LOCAL_MACHINE\\" << kRegKeyName
+        << " to 1 on the test host.";
+    return;
+  }
+#endif
+
+  const std::string BASE = "xxx-io-util-test-dir-long";
+  PlatformFilename base_path, long_path, long_filename;
+  int fd = -1;
+  std::stringstream fs;
+  fs << BASE;
+  for (int i = 0; i < 64; ++i) {
+    fs << "/123456789ABCDEF";
+  }
+  ASSERT_OK_AND_ASSIGN(base_path,
+                       PlatformFilename::FromString(BASE));  // long_path length > 1024
+  ASSERT_OK_AND_ASSIGN(
+      long_path, PlatformFilename::FromString(fs.str()));  // long_path length > 1024
+  ASSERT_OK_AND_ASSIGN(created, CreateDirTree(long_path));
+  ASSERT_TRUE(created);
+  AssertExists(long_path);
+  ASSERT_OK_AND_ASSIGN(long_filename,
+                       PlatformFilename::FromString(fs.str() + "/file.txt"));
+  ASSERT_OK_AND_ASSIGN(fd, FileOpenWritable(long_filename));
+  ASSERT_OK(FileClose(fd));
+  AssertExists(long_filename);
+  fd = -1;
+  ASSERT_OK_AND_ASSIGN(fd, FileOpenReadable(long_filename));
+  ASSERT_OK(FileClose(fd));
+  ASSERT_OK_AND_ASSIGN(deleted, DeleteDirContents(long_path));
+  ASSERT_TRUE(deleted);
+  ASSERT_OK_AND_ASSIGN(deleted, DeleteDirTree(long_path));
+  ASSERT_TRUE(deleted);
+
+  // Now delete the whole test directory tree
+  ASSERT_OK_AND_ASSIGN(deleted, DeleteDirTree(base_path));
+  ASSERT_TRUE(deleted);
+}
+#endif
 
 }  // namespace internal
 }  // namespace arrow

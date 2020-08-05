@@ -98,7 +98,9 @@
 #include "arrow/memory_pool.h"
 #include "arrow/type.h"
 #include "arrow/type_traits.h"
+#include "arrow/util/bit_run_reader.h"
 #include "arrow/util/bit_util.h"
+#include "arrow/util/bitmap_visit.h"
 #include "arrow/util/logging.h"
 #include "arrow/util/macros.h"
 #include "arrow/util/make_unique.h"
@@ -463,8 +465,8 @@ class NullableNode {
 
   void SetRepLevelIfNull(int16_t rep_level) { rep_level_if_null_ = rep_level; }
 
-  ::arrow::internal::BitmapReader MakeReader(const ElementRange& range) {
-    return ::arrow::internal::BitmapReader(null_bitmap_, entry_offset_ + range.start,
+  ::arrow::internal::BitRunReader MakeReader(const ElementRange& range) {
+    return ::arrow::internal::BitRunReader(null_bitmap_, entry_offset_ + range.start,
                                            range.Size());
   }
 
@@ -477,25 +479,20 @@ class NullableNode {
       valid_bits_reader_ = MakeReader(*range);
     }
     child_range->start = range->start;
-    while (!range->Empty() && !valid_bits_reader_.IsSet()) {
-      ++range->start;
-      valid_bits_reader_.Next();
-    }
-    int64_t null_count = range->start - child_range->start;
-    if (null_count > 0) {
-      RETURN_IF_ERROR(FillRepLevels(null_count, rep_level_if_null_, context));
-      RETURN_IF_ERROR(context->AppendDefLevels(null_count, def_level_if_null_));
+    ::arrow::internal::BitRun run = valid_bits_reader_.NextRun();
+    if (!run.set) {
+      range->start += run.length;
+      RETURN_IF_ERROR(FillRepLevels(run.length, rep_level_if_null_, context));
+      RETURN_IF_ERROR(context->AppendDefLevels(run.length, def_level_if_null_));
+      run = valid_bits_reader_.NextRun();
     }
     if (range->Empty()) {
       new_range_ = true;
       return kDone;
     }
     child_range->end = child_range->start = range->start;
+    child_range->end += run.length;
 
-    while (child_range->end != range->end && valid_bits_reader_.IsSet()) {
-      ++child_range->end;
-      valid_bits_reader_.Next();
-    }
     DCHECK(!child_range->Empty());
     range->start += child_range->Size();
     new_range_ = false;
@@ -504,7 +501,7 @@ class NullableNode {
 
   const uint8_t* null_bitmap_;
   int64_t entry_offset_;
-  ::arrow::internal::BitmapReader valid_bits_reader_;
+  ::arrow::internal::BitRunReader valid_bits_reader_;
   int16_t def_level_if_null_;
   int16_t rep_level_if_null_;
 
@@ -757,7 +754,7 @@ class PathBuilder {
   Status Visit(const ::arrow::DictionaryArray& array) {
     // Only currently handle DictionaryArray where the dictionary is a
     // primitive type
-    if (array.dict_type()->value_type()->num_children() > 0) {
+    if (array.dict_type()->value_type()->num_fields() > 0) {
       return Status::NotImplemented(
           "Writing DictionaryArray with nested dictionary "
           "type not yet supported");
@@ -806,7 +803,7 @@ class PathBuilder {
     MaybeAddNullable(array);
     PathInfo info_backup = info_;
     for (int x = 0; x < array.num_fields(); x++) {
-      nullable_in_parent_ = array.type()->child(x)->nullable();
+      nullable_in_parent_ = array.type()->field(x)->nullable();
       RETURN_NOT_OK(VisitInline(*array.field(x)));
       info_ = info_backup;
     }

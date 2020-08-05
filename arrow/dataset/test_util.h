@@ -40,6 +40,7 @@
 #include "arrow/testing/gtest_util.h"
 #include "arrow/util/io_util.h"
 #include "arrow/util/iterator.h"
+#include "arrow/util/logging.h"
 #include "arrow/util/make_unique.h"
 
 namespace arrow {
@@ -119,7 +120,7 @@ class DatasetFixtureMixin : public ::testing::Test {
   /// record batches yielded by the data fragment.
   void AssertFragmentEquals(RecordBatchReader* expected, Fragment* fragment,
                             bool ensure_drained = true) {
-    ASSERT_OK_AND_ASSIGN(auto it, fragment->Scan(ctx_));
+    ASSERT_OK_AND_ASSIGN(auto it, fragment->Scan(options_, ctx_));
 
     ARROW_EXPECT_OK(it.Visit([&](std::shared_ptr<ScanTask> task) -> Status {
       AssertScanTaskEquals(expected, task.get(), false);
@@ -135,7 +136,7 @@ class DatasetFixtureMixin : public ::testing::Test {
   /// record batches yielded by the data fragments of a dataset.
   void AssertDatasetFragmentsEqual(RecordBatchReader* expected, Dataset* dataset,
                                    bool ensure_drained = true) {
-    auto it = dataset->GetFragments(options_);
+    auto it = dataset->GetFragments(options_->filter);
 
     ARROW_EXPECT_OK(it.Visit([&](std::shared_ptr<Fragment> fragment) -> Status {
       AssertFragmentEquals(expected, fragment.get(), false);
@@ -202,9 +203,9 @@ class DummyFileFormat : public FileFormat {
   }
 
   /// \brief Open a file for scanning (always returns an empty iterator)
-  Result<ScanTaskIterator> ScanFile(const FileSource& source,
-                                    std::shared_ptr<ScanOptions> options,
-                                    std::shared_ptr<ScanContext> context) const override {
+  Result<ScanTaskIterator> ScanFile(std::shared_ptr<ScanOptions> options,
+                                    std::shared_ptr<ScanContext> context,
+                                    FileFragment* fragment) const override {
     return MakeEmptyIterator<std::shared_ptr<ScanTask>>();
   }
 
@@ -232,16 +233,16 @@ class JSONRecordBatchFileFormat : public FileFormat {
   }
 
   /// \brief Open a file for scanning
-  Result<ScanTaskIterator> ScanFile(const FileSource& source,
-                                    std::shared_ptr<ScanOptions> options,
-                                    std::shared_ptr<ScanContext> context) const override {
-    ARROW_ASSIGN_OR_RAISE(auto file, source.Open());
+  Result<ScanTaskIterator> ScanFile(std::shared_ptr<ScanOptions> options,
+                                    std::shared_ptr<ScanContext> context,
+                                    FileFragment* fragment) const override {
+    ARROW_ASSIGN_OR_RAISE(auto file, fragment->source().Open());
     ARROW_ASSIGN_OR_RAISE(int64_t size, file->GetSize());
     ARROW_ASSIGN_OR_RAISE(auto buffer, file->Read(size));
 
     util::string_view view{*buffer};
 
-    ARROW_ASSIGN_OR_RAISE(auto schema, Inspect(source));
+    ARROW_ASSIGN_OR_RAISE(auto schema, Inspect(fragment->source()));
     std::shared_ptr<RecordBatch> batch = RecordBatchFromJSON(schema, view);
     return ScanTaskIteratorFromRecordBatch({batch}, std::move(options),
                                            std::move(context));
@@ -258,9 +259,11 @@ struct MakeFileSystemDatasetMixin {
     std::stringstream ss(pathlist);
     std::string line;
     while (std::getline(ss, line)) {
-      if (std::all_of(line.begin(), line.end(), [](char c) { return isspace(c); })) {
+      auto start = line.find_first_not_of(" \n\r\t");
+      if (start == std::string::npos) {
         continue;
       }
+      line.erase(0, start);
 
       if (line.front() == '#') {
         continue;
@@ -292,15 +295,28 @@ struct MakeFileSystemDatasetMixin {
   void MakeDataset(const std::vector<fs::FileInfo>& infos,
                    std::shared_ptr<Expression> root_partition = scalar(true),
                    ExpressionVector partitions = {}) {
+    auto n_fragments = infos.size();
     if (partitions.empty()) {
-      partitions.resize(infos.size(), scalar(true));
+      partitions.resize(n_fragments, scalar(true));
     }
 
     MakeFileSystem(infos);
     auto format = std::make_shared<DummyFileFormat>();
-    ASSERT_OK_AND_ASSIGN(
-        dataset_, FileSystemDataset::Make(schema({}), root_partition, format, fs_, infos,
-                                          partitions));
+
+    std::vector<std::shared_ptr<FileFragment>> fragments;
+    for (size_t i = 0; i < n_fragments; i++) {
+      const auto& info = infos[i];
+      if (!info.IsFile()) {
+        continue;
+      }
+
+      ASSERT_OK_AND_ASSIGN(auto fragment,
+                           format->MakeFragment({info, fs_}, partitions[i]));
+      fragments.push_back(std::move(fragment));
+    }
+
+    ASSERT_OK_AND_ASSIGN(dataset_, FileSystemDataset::Make(schema({}), root_partition,
+                                                           format, std::move(fragments)));
   }
 
   void MakeDatasetFromPathlist(const std::string& pathlist,
@@ -436,8 +452,8 @@ struct ArithmeticDatasetFixture {
 
     std::stringstream ss;
     ss << "[\n";
-    for (int64_t i = 0; i < n; i++) {
-      if (i != 0) {
+    for (int64_t i = 1; i <= n; i++) {
+      if (i != 1) {
         ss << "\n,";
       }
       ss << record;

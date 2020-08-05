@@ -17,15 +17,11 @@
 
 #pragma once
 
-#include "arrow/util/sse_util.h"
+#include "arrow/util/simd.h"
 #include "arrow/util/ubsan.h"
 
 #include <stdint.h>
 #include <algorithm>
-
-#ifdef ARROW_HAVE_AVX2
-#include <immintrin.h>
-#endif  // ARROW_HAVE_AVX2
 
 #ifdef ARROW_HAVE_SSE4_2
 // Enable the SIMD for ByteStreamSplit Encoder/Decoder
@@ -595,14 +591,13 @@ template <typename T>
 void ByteStreamSplitDecodeScalar(const uint8_t* data, int64_t num_values, int64_t stride,
                                  T* out) {
   constexpr size_t kNumStreams = sizeof(T);
+  auto output_buffer_raw = reinterpret_cast<uint8_t*>(out);
 
   for (int64_t i = 0; i < num_values; ++i) {
-    uint8_t gathered_byte_data[kNumStreams];
     for (size_t b = 0; b < kNumStreams; ++b) {
       const size_t byte_index = b * stride + i;
-      gathered_byte_data[b] = data[byte_index];
+      output_buffer_raw[i * kNumStreams + b] = data[byte_index];
     }
-    out[i] = arrow::util::SafeLoadAs<T>(&gathered_byte_data[0]);
   }
 }
 

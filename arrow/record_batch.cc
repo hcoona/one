@@ -18,7 +18,6 @@
 #include "arrow/record_batch.h"
 
 #include <algorithm>
-#include <atomic>
 #include <cstdlib>
 #include <memory>
 #include <sstream>
@@ -42,22 +41,6 @@ Result<std::shared_ptr<RecordBatch>> RecordBatch::AddColumn(
     int i, std::string field_name, const std::shared_ptr<Array>& column) const {
   auto field = ::arrow::field(std::move(field_name), column->type());
   return AddColumn(i, field, column);
-}
-
-Status RecordBatch::AddColumn(int i, std::string field_name,
-                              const std::shared_ptr<Array>& column,
-                              std::shared_ptr<RecordBatch>* out) const {
-  return AddColumn(i, std::move(field_name), column).Value(out);
-}
-
-Status RecordBatch::AddColumn(int i, const std::shared_ptr<Field>& field,
-                              const std::shared_ptr<Array>& column,
-                              std::shared_ptr<RecordBatch>* out) const {
-  return AddColumn(i, field, column).Value(out);
-}
-
-Status RecordBatch::RemoveColumn(int i, std::shared_ptr<RecordBatch>* out) const {
-  return RemoveColumn(i).Value(out);
 }
 
 std::shared_ptr<Array> RecordBatch::GetColumnByName(const std::string& name) const {
@@ -138,14 +121,7 @@ class SimpleRecordBatch : public RecordBatch {
     std::vector<std::shared_ptr<ArrayData>> arrays;
     arrays.reserve(num_columns());
     for (const auto& field : columns_) {
-      int64_t col_length = std::min(field->length - offset, length);
-      int64_t col_offset = field->offset + offset;
-
-      auto new_data = std::make_shared<ArrayData>(*field);
-      new_data->length = col_length;
-      new_data->offset = col_offset;
-      new_data->null_count = kUnknownNullCount;
-      arrays.emplace_back(new_data);
+      arrays.emplace_back(field->Slice(offset, length));
     }
     int64_t num_rows = std::min(num_rows_ - offset, length);
     return std::make_shared<SimpleRecordBatch>(schema_, num_rows, std::move(arrays));
@@ -185,17 +161,27 @@ std::shared_ptr<RecordBatch> RecordBatch::Make(
 
 Result<std::shared_ptr<RecordBatch>> RecordBatch::FromStructArray(
     const std::shared_ptr<Array>& array) {
-  // TODO fail if null_count != 0?
   if (array->type_id() != Type::STRUCT) {
     return Status::Invalid("Cannot construct record batch from array of type ",
                            *array->type());
   }
-  return Make(arrow::schema(array->type()->children()), array->length(),
+  if (array->null_count() != 0) {
+    return Status::Invalid(
+        "Unable to construct record batch from a StructArray with non-zero nulls.");
+  }
+  return Make(arrow::schema(array->type()->fields()), array->length(),
               array->data()->child_data);
 }
 
 Result<std::shared_ptr<Array>> RecordBatch::ToStructArray() const {
-  return StructArray::Make(columns(), schema()->fields());
+  if (num_columns() != 0) {
+    return StructArray::Make(columns(), schema()->fields());
+  }
+  return std::make_shared<StructArray>(arrow::struct_({}), num_rows_,
+                                       std::vector<std::shared_ptr<Array>>{},
+                                       /*null_bitmap=*/nullptr,
+                                       /*null_count=*/0,
+                                       /*offset=*/0);
 }
 
 std::vector<std::shared_ptr<Array>> RecordBatch::columns() const {
@@ -306,11 +292,11 @@ class SimpleRecordBatchReader : public RecordBatchReader {
  public:
   SimpleRecordBatchReader(Iterator<std::shared_ptr<RecordBatch>> it,
                           std::shared_ptr<Schema> schema)
-      : schema_(schema), it_(std::move(it)) {}
+      : schema_(std::move(schema)), it_(std::move(it)) {}
 
   SimpleRecordBatchReader(std::vector<std::shared_ptr<RecordBatch>> batches,
                           std::shared_ptr<Schema> schema)
-      : schema_(schema), it_(MakeVectorIterator(std::move(batches))) {}
+      : schema_(std::move(schema)), it_(MakeVectorIterator(std::move(batches))) {}
 
   Status ReadNext(std::shared_ptr<RecordBatch>* batch) override {
     return it_.Next().Value(batch);
@@ -323,7 +309,7 @@ class SimpleRecordBatchReader : public RecordBatchReader {
   Iterator<std::shared_ptr<RecordBatch>> it_;
 };
 
-Result<std::shared_ptr<RecordBatchReader>> MakeRecordBatchReader(
+Result<std::shared_ptr<RecordBatchReader>> RecordBatchReader::Make(
     std::vector<std::shared_ptr<RecordBatch>> batches, std::shared_ptr<Schema> schema) {
   if (schema == nullptr) {
     if (batches.size() == 0 || batches[0] == nullptr) {
@@ -334,12 +320,6 @@ Result<std::shared_ptr<RecordBatchReader>> MakeRecordBatchReader(
   }
 
   return std::make_shared<SimpleRecordBatchReader>(std::move(batches), schema);
-}
-
-Status MakeRecordBatchReader(std::vector<std::shared_ptr<RecordBatch>> batches,
-                             std::shared_ptr<Schema> schema,
-                             std::shared_ptr<RecordBatchReader>* out) {
-  return MakeRecordBatchReader(std::move(batches), std::move(schema)).Value(out);
 }
 
 }  // namespace arrow
