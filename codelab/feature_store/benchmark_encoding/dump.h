@@ -1,6 +1,7 @@
 #ifndef CODELAB_FEATURE_STORE_BENCHMARK_ENCODING_DUMP_H_
 #define CODELAB_FEATURE_STORE_BENCHMARK_ENCODING_DUMP_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -42,19 +43,18 @@ absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
                                 CompressionMode compression_mode,
                                 const std::vector<FieldDescriptor>& fields,
                                 const std::vector<Row>& rows,
-                                int64_t* written_bytes);
+                                std::shared_ptr<arrow::io::OutputStream> sink);
 
-absl::Status DumpWithParquetApiV2(arrow::MemoryPool* memory_pool,
-                                  CompressionMode compression_mode,
-                                  const std::vector<FieldDescriptor>& fields,
-                                  const std::vector<Row>& rows,
-                                  int64_t* written_bytes);
+absl::Status DumpWithParquetApiV2(
+    arrow::MemoryPool* memory_pool, CompressionMode compression_mode,
+    const std::vector<FieldDescriptor>& fields, const std::vector<Row>& rows,
+    std::shared_ptr<arrow::io::OutputStream> sink);
 
 absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
                               CompressionMode compression_mode,
                               const std::vector<FieldDescriptor>& fields,
                               const std::vector<Row>& rows,
-                              int64_t* written_bytes);
+                              std::shared_ptr<arrow::io::OutputStream> sink);
 
 }  // namespace feature_store
 }  // namespace codelab

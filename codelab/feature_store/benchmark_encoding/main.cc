@@ -12,12 +12,13 @@
 #include "tools/cpp/runfiles/runfiles.h"
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
+#include "codelab/feature_store/benchmark_encoding/null_output_stream.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
-#include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"
 #include "gtl/no_destructor.h"
 #include "gtl/posix_file_system.h"
+#include "status/status_util.h"
 
 namespace {
 
@@ -50,16 +51,17 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
   for (auto _ : state) {
-    int64_t this_iter_written_bytes = 0;
+    auto output_stream =
+        std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
     s = hcoona::codelab::feature_store::DumpWithParquetApi(
         memory_pool,
         static_cast<hcoona::codelab::feature_store::CompressionMode>(
             state.range(0)),
-        fields, rows, &this_iter_written_bytes);
+        fields, rows, output_stream);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    written_bytes += this_iter_written_bytes;
+    written_bytes += output_stream->Tell().ValueOrDie();
   }
   state.SetItemsProcessed(proceeded_items);
   state.SetBytesProcessed(written_bytes);
@@ -88,16 +90,17 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
   for (auto _ : state) {
-    int64_t this_iter_written_bytes = 0;
+    auto output_stream =
+        std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
     s = hcoona::codelab::feature_store::DumpWithParquetApiV2(
         memory_pool,
         static_cast<hcoona::codelab::feature_store::CompressionMode>(
             state.range(0)),
-        fields, rows, &this_iter_written_bytes);
+        fields, rows, output_stream);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    written_bytes += this_iter_written_bytes;
+    written_bytes += output_stream->Tell().ValueOrDie();
   }
   state.SetItemsProcessed(proceeded_items);
   state.SetBytesProcessed(written_bytes);
@@ -126,16 +129,17 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
   for (auto _ : state) {
-    int64_t this_iter_written_bytes = 0;
+    auto output_stream =
+        std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
     s = hcoona::codelab::feature_store::DumpWithArrowApi(
         memory_pool,
         static_cast<hcoona::codelab::feature_store::CompressionMode>(
             state.range(0)),
-        fields, rows, &this_iter_written_bytes);
+        fields, rows, output_stream);
     CHECK(s.ok()) << s.ToString();
 
     proceeded_items += rows.size();
-    written_bytes += this_iter_written_bytes;
+    written_bytes += output_stream->Tell().ValueOrDie();
   }
   state.SetItemsProcessed(proceeded_items);
   state.SetBytesProcessed(written_bytes);
