@@ -22,15 +22,27 @@
 
 namespace {
 
-constexpr const char kInputFile[] =
+constexpr const char kDefaultInputFile[] =
     "com_github_hcoona_one/codelab/feature_store/benchmark_encoding/"
     "rosetta_example_without_map_10.pb";
-constexpr const size_t kDumpRowCount = 1000;
+constexpr const size_t kDefaultDumpRowCount = 1000;
+
+}  // namespace
+
+DEFINE_string(input, "", "Input encoded protobuf data file.");
+DEFINE_uint32(dump_row_count, kDefaultDumpRowCount, "How many rows to dump.");
+
+namespace {
 
 std::vector<hcoona::codelab::feature_store::Row>* GetPreparedRows() {
   static gtl::NoDestructor<std::vector<hcoona::codelab::feature_store::Row>>
       rows;
   return rows.get();
+}
+
+uint64_t* GetPreparedRowsBytes() {
+  static gtl::NoDestructor<uint64_t> rows_bytes;
+  return rows_bytes.get();
 }
 
 void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
@@ -42,14 +54,18 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(kDumpRowCount);
-  for (size_t i = 0; i < kDumpRowCount; i++) {
+  rows.reserve(FLAGS_dump_row_count);
+  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
     rows.emplace_back(
         GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
   }
+  uint64_t rows_bytes =
+      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
+  uint64_t read_bytes = 0;
   for (auto _ : state) {
     auto output_stream =
         std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
@@ -62,9 +78,17 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
 
     proceeded_items += rows.size();
     written_bytes += output_stream->Tell().ValueOrDie();
+    read_bytes += rows_bytes;
   }
-  state.SetItemsProcessed(proceeded_items);
-  state.SetBytesProcessed(written_bytes);
+  state.counters["proceeded_rows_per_second"] =
+      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1000);
+  state.counters["written_bytes_per_second"] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters["read_bytes_per_second"] =
+      benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
   LOG(INFO) << "Written bytes: " << written_bytes;
@@ -81,14 +105,18 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(kDumpRowCount);
-  for (size_t i = 0; i < kDumpRowCount; i++) {
+  rows.reserve(FLAGS_dump_row_count);
+  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
     rows.emplace_back(
         GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
   }
+  uint64_t rows_bytes =
+      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
+  uint64_t read_bytes = 0;
   for (auto _ : state) {
     auto output_stream =
         std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
@@ -101,9 +129,17 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
 
     proceeded_items += rows.size();
     written_bytes += output_stream->Tell().ValueOrDie();
+    read_bytes += rows_bytes;
   }
-  state.SetItemsProcessed(proceeded_items);
-  state.SetBytesProcessed(written_bytes);
+  state.counters["proceeded_rows_per_second"] =
+      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1000);
+  state.counters["written_bytes_per_second"] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters["read_bytes_per_second"] =
+      benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
   LOG(INFO) << "Written bytes: " << written_bytes;
@@ -120,14 +156,18 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(kDumpRowCount);
-  for (size_t i = 0; i < kDumpRowCount; i++) {
+  rows.reserve(FLAGS_dump_row_count);
+  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
     rows.emplace_back(
         GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
   }
+  uint64_t rows_bytes =
+      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
+  uint64_t read_bytes = 0;
   for (auto _ : state) {
     auto output_stream =
         std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
@@ -140,9 +180,17 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
 
     proceeded_items += rows.size();
     written_bytes += output_stream->Tell().ValueOrDie();
+    read_bytes += rows_bytes;
   }
-  state.SetItemsProcessed(proceeded_items);
-  state.SetBytesProcessed(written_bytes);
+  state.counters["proceeded_rows_per_second"] =
+      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1000);
+  state.counters["written_bytes_per_second"] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters["read_bytes_per_second"] =
+      benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
   LOG(INFO) << "Written bytes: " << written_bytes;
@@ -156,11 +204,10 @@ BENCHMARK(BM_DumpWithParquetApi)->Arg(0)->Arg(1)->ArgName("CompressionMode");
 BENCHMARK(BM_DumpWithParquetApiV2)->Arg(0)->Arg(1)->ArgName("CompressionMode");
 BENCHMARK(BM_DumpWithArrowApi)->Arg(0)->Arg(1)->ArgName("CompressionMode");
 
-DEFINE_string(input, "", "Input encoded protobuf data file.");
-
 absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
-                      std::vector<hcoona::codelab::feature_store::Row>* rows);
+                      std::vector<hcoona::codelab::feature_store::Row>* rows,
+                      uint64_t* rows_bytes);
 
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
@@ -172,11 +219,13 @@ int main(int argc, char** argv) {
   CHECK(runfiles) << "Failed to create Bazel runfiles context: "
                   << error_message;
 
-  std::string input_file =
-      FLAGS_input.empty() ? runfiles->Rlocation(kInputFile) : FLAGS_input;
+  std::string input_file = FLAGS_input.empty()
+                               ? runfiles->Rlocation(kDefaultInputFile)
+                               : FLAGS_input;
 
   gtl::PosixFileSystem file_system;
-  absl::Status s = LoadRows(&file_system, input_file, GetPreparedRows());
+  absl::Status s = LoadRows(&file_system, input_file, GetPreparedRows(),
+                            GetPreparedRowsBytes());
   CHECK(s.ok()) << "Failed to load rows: " << s.ToString();
   LOG(INFO) << GetPreparedRows()->size() << " rows loaded.";
 
@@ -187,7 +236,8 @@ int main(int argc, char** argv) {
 
 absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
-                      std::vector<hcoona::codelab::feature_store::Row>* rows) {
+                      std::vector<hcoona::codelab::feature_store::Row>* rows,
+                      uint64_t* rows_bytes) {
   RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
 
   std::unique_ptr<gtl::ReadOnlyMemoryRegion> memory_region;
@@ -209,6 +259,8 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
 
     rows->emplace_back(std::move(example));
   }
+
+  *rows_bytes = memory_region->length();
 
   return absl::OkStatus();
 }
