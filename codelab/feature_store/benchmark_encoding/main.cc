@@ -1,3 +1,4 @@
+#include <future>
 #include <memory>
 #include <string>
 #include <utility>
@@ -12,6 +13,7 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/util/delimited_message_util.h"
+#include "parquet/api/writer.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
@@ -50,7 +52,6 @@ uint64_t* GetPreparedRowsBytes() {
   static gtl::NoDestructor<uint64_t> rows_bytes;
   return rows_bytes.get();
 }
-
 void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   arrow::MemoryPool* memory_pool = arrow::default_memory_pool();
 
@@ -81,12 +82,16 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   for (auto _ : state) {
     auto output_stream =
         std::make_shared<hcoona::codelab::feature_store::NullOutputStream>();
-    s = hcoona::codelab::feature_store::DumpWithParquetApi(
-        memory_pool,
-        static_cast<hcoona::codelab::feature_store::CompressionMode>(
-            state.range(0)),
-        fields, rows, output_stream);
-    CHECK(s.ok()) << s.ToString();
+    try {
+      s = hcoona::codelab::feature_store::DumpWithParquetApi(
+          memory_pool,
+          static_cast<hcoona::codelab::feature_store::CompressionMode>(
+              state.range(0)),
+          fields, rows, output_stream);
+      CHECK(s.ok()) << s.ToString();
+    } catch (const parquet::ParquetException& e) {
+      LOG(FATAL) << "Failed to dump with Parquet API: " << e.what();
+    }
 
     proceeded_items += rows.size();
     written_bytes += output_stream->Tell().ValueOrDie();
@@ -269,54 +274,91 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
   RETURN_STATUS_IF_NOT_OK(
       file_system->NewReadOnlyMemoryRegionFromFile(input_file, &memory_region));
 
-  uint64_t counter = 0;
+  std::vector<std::future<idl::euclid::common::Example>> futures;
+
   if (FLAGS_input_standard_pack) {
     google::protobuf::io::ArrayInputStream array_input_stream(
         memory_region->data(), memory_region->length());
     google::protobuf::io::CodedInputStream coded_input_stream(
         &array_input_stream);
 
-    bool clean_eof;
-    idl::euclid::common::Example example;
-    while (true) {
-      if (counter++ % 100 == 0) {
-        LOG(INFO) << "Loading " << counter - 1 << "th row...";
+    while (static_cast<uint64_t>(coded_input_stream.CurrentPosition()) !=
+           memory_region->length()) {
+      uint32_t message_size;
+      if (!coded_input_stream.ReadVarint32(&message_size)) {
+        return absl::UnknownError("Failed to read varint32 from input file.");
       }
-      bool succeeded = google::protobuf::util::ParseDelimitedFromCodedStream(
-          &example, &coded_input_stream, &clean_eof);
-      if (succeeded) {
-        rows->emplace_back(std::move(example));
-      } else {
-        if (clean_eof) {
-          break;
-        } else {
-          return absl::UnknownError("Failed to parse message from input file.");
-        }
+
+      const void* data;
+      int size = message_size;
+      if (!coded_input_stream.GetDirectBufferPointer(&data, &size)) {
+        return absl::UnknownError(
+            "Failed to read message from input file (GetDirectBufferPointer).");
+      }
+      if (size < message_size) {
+        return absl::UnknownError(
+            "GetDirectBufferPointer returned size mismatch required message "
+            "size.");
+      }
+      CHECK_GT(message_size, 0);
+
+      futures.emplace_back(std::async(
+          std::launch::async,
+          [](const void* data, int size) {
+            DCHECK_NOTNULL(data);
+            DCHECK_GT(size, 0);
+
+            idl::euclid::common::Example example;
+            CHECK(example.ParseFromArray(data, size))
+                << "Failed to parse idl::euclid::common::Example.";
+            return example;
+          },
+          data, message_size));
+
+      if (!coded_input_stream.Skip(message_size)) {
+        return absl::UnknownError(
+            "Failed to read message from input file (No enough data).");
       }
     }
   } else {
     for (int offset = 0; offset < memory_region->length();) {
-      if (counter++ % 100 == 0) {
-        LOG(INFO) << "Loading " << counter - 1 << "th row...";
-      }
-
       uint64_t message_size = absl::big_endian::Load64(
           reinterpret_cast<const uint8_t*>(memory_region->data()) + offset);
       offset += sizeof(message_size);
 
-      idl::euclid::common::Example example;
-      CHECK(example.ParseFromArray(
+      futures.emplace_back(std::async(
+          std::launch::async,
+          [](const void* data, uint64_t size) {
+            idl::euclid::common::Example example;
+            CHECK(example.ParseFromArray(data, size))
+                << "Failed to parse idl::euclid::common::Example.";
+            return example;
+          },
           reinterpret_cast<const uint8_t*>(memory_region->data()) + offset,
-          message_size))
-          << "Failed to parse example, offset=" << offset
-          << ", message_size=" << message_size;
+          message_size));
       offset += message_size;
-
-      rows->emplace_back(std::move(example));
     }
   }
 
-  *rows_bytes = memory_region->length();
+  int counter = 0;
+  uint64_t total_size = 0;
+  for (std::future<idl::euclid::common::Example>& future : futures) {
+    if (counter % 100 == 0) {
+      LOG(INFO) << "Loading " << counter << "th row...";
+    }
+    if (counter == FLAGS_dump_row_count) {
+      break;
+    }
+
+    future.wait();
+    idl::euclid::common::Example example = future.get();
+    total_size += example.ByteSize();
+    rows->emplace_back(std::move(example));
+
+    counter++;
+  }
+
+  *rows_bytes = total_size;
 
   return absl::OkStatus();
 }
