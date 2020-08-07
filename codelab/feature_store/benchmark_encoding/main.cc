@@ -9,6 +9,9 @@
 #include "benchmark/benchmark.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/io/zero_copy_stream_impl_lite.h"
+#include "google/protobuf/util/delimited_message_util.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
@@ -31,6 +34,9 @@ constexpr const size_t kDefaultDumpRowCount = 1000;
 
 DEFINE_string(input, "", "Input encoded protobuf data file.");
 DEFINE_uint32(dump_row_count, kDefaultDumpRowCount, "How many rows to dump.");
+DEFINE_bool(input_standard_pack, false,
+            "Whether the input file is packed with varint32 prefixed length "
+            "delimited.");
 
 namespace {
 
@@ -54,14 +60,20 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(FLAGS_dump_row_count);
-  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
-    rows.emplace_back(
-        GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+  uint64_t rows_bytes;
+  if (FLAGS_dump_row_count == 0) {
+    rows = *GetPreparedRows();
+    rows_bytes = *GetPreparedRowsBytes();
+  } else {
+    rows.reserve(FLAGS_dump_row_count);
+    for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
+      rows.emplace_back(
+          GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+    }
+    rows_bytes =
+        static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                              GetPreparedRows()->size() * FLAGS_dump_row_count);
   }
-  uint64_t rows_bytes =
-      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
-                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
@@ -105,14 +117,20 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(FLAGS_dump_row_count);
-  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
-    rows.emplace_back(
-        GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+  uint64_t rows_bytes;
+  if (FLAGS_dump_row_count == 0) {
+    rows = *GetPreparedRows();
+    rows_bytes = *GetPreparedRowsBytes();
+  } else {
+    rows.reserve(FLAGS_dump_row_count);
+    for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
+      rows.emplace_back(
+          GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+    }
+    rows_bytes =
+        static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                              GetPreparedRows()->size() * FLAGS_dump_row_count);
   }
-  uint64_t rows_bytes =
-      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
-                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
@@ -156,14 +174,20 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
   CHECK(s.ok()) << s.ToString();
 
   std::vector<hcoona::codelab::feature_store::Row> rows;
-  rows.reserve(FLAGS_dump_row_count);
-  for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
-    rows.emplace_back(
-        GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+  uint64_t rows_bytes;
+  if (FLAGS_dump_row_count == 0) {
+    rows = *GetPreparedRows();
+    rows_bytes = *GetPreparedRowsBytes();
+  } else {
+    rows.reserve(FLAGS_dump_row_count);
+    for (size_t i = 0; i < FLAGS_dump_row_count; i++) {
+      rows.emplace_back(
+          GetPreparedRows()->operator[](i % GetPreparedRows()->size()));
+    }
+    rows_bytes =
+        static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
+                              GetPreparedRows()->size() * FLAGS_dump_row_count);
   }
-  uint64_t rows_bytes =
-      static_cast<uint64_t>(static_cast<double>(*GetPreparedRowsBytes()) /
-                            GetPreparedRows()->size() * FLAGS_dump_row_count);
 
   int64_t proceeded_items = 0;
   int64_t written_bytes = 0;
@@ -224,6 +248,7 @@ int main(int argc, char** argv) {
                                : FLAGS_input;
 
   gtl::PosixFileSystem file_system;
+  LOG(INFO) << "Loading input file " << input_file;
   absl::Status s = LoadRows(&file_system, input_file, GetPreparedRows(),
                             GetPreparedRowsBytes());
   CHECK(s.ok()) << "Failed to load rows: " << s.ToString();
@@ -244,20 +269,51 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
   RETURN_STATUS_IF_NOT_OK(
       file_system->NewReadOnlyMemoryRegionFromFile(input_file, &memory_region));
 
-  for (int offset = 0; offset < memory_region->length();) {
-    uint64_t message_size = absl::big_endian::Load64(
-        reinterpret_cast<const uint8_t*>(memory_region->data()) + offset);
-    offset += sizeof(message_size);
+  uint64_t counter = 0;
+  if (FLAGS_input_standard_pack) {
+    google::protobuf::io::ArrayInputStream array_input_stream(
+        memory_region->data(), memory_region->length());
+    google::protobuf::io::CodedInputStream coded_input_stream(
+        &array_input_stream);
 
+    bool clean_eof;
     idl::euclid::common::Example example;
-    CHECK(example.ParseFromArray(
-        reinterpret_cast<const uint8_t*>(memory_region->data()) + offset,
-        message_size))
-        << "Failed to parse example, offset=" << offset
-        << ", message_size=" << message_size;
-    offset += message_size;
+    while (true) {
+      if (counter++ % 100 == 0) {
+        LOG(INFO) << "Loading " << counter - 1 << "th row...";
+      }
+      bool succeeded = google::protobuf::util::ParseDelimitedFromCodedStream(
+          &example, &coded_input_stream, &clean_eof);
+      if (succeeded) {
+        rows->emplace_back(std::move(example));
+      } else {
+        if (clean_eof) {
+          break;
+        } else {
+          return absl::UnknownError("Failed to parse message from input file.");
+        }
+      }
+    }
+  } else {
+    for (int offset = 0; offset < memory_region->length();) {
+      if (counter++ % 100 == 0) {
+        LOG(INFO) << "Loading " << counter - 1 << "th row...";
+      }
 
-    rows->emplace_back(std::move(example));
+      uint64_t message_size = absl::big_endian::Load64(
+          reinterpret_cast<const uint8_t*>(memory_region->data()) + offset);
+      offset += sizeof(message_size);
+
+      idl::euclid::common::Example example;
+      CHECK(example.ParseFromArray(
+          reinterpret_cast<const uint8_t*>(memory_region->data()) + offset,
+          message_size))
+          << "Failed to parse example, offset=" << offset
+          << ", message_size=" << message_size;
+      offset += message_size;
+
+      rows->emplace_back(std::move(example));
+    }
   }
 
   *rows_bytes = memory_region->length();
