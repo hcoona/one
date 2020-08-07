@@ -32,6 +32,9 @@ constexpr const char kDefaultInputFile[] =
     "rosetta_example_without_map_10.pb";
 constexpr const size_t kDefaultDumpRowCount = 1000;
 
+constexpr const char kReadBytesMetricName[] = "ReadBytes";
+constexpr const char kWriteBytesMetricName[] = "WriteBytes";
+
 }  // namespace
 
 DEFINE_string(input, "", "Input encoded protobuf data file.");
@@ -97,14 +100,12 @@ void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
     written_bytes += output_stream->Tell().ValueOrDie();
     read_bytes += rows_bytes;
   }
-  state.counters["proceeded_rows_per_second"] =
-      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1000);
-  state.counters["written_bytes_per_second"] =
-      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1024);
-  state.counters["read_bytes_per_second"] =
+  state.SetItemsProcessed(proceeded_items);
+  state.counters[kReadBytesMetricName] =
       benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters[kWriteBytesMetricName] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
                          benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
@@ -154,14 +155,12 @@ void BM_DumpWithParquetApiV2(benchmark::State& state) {  // NOLINT
     written_bytes += output_stream->Tell().ValueOrDie();
     read_bytes += rows_bytes;
   }
-  state.counters["proceeded_rows_per_second"] =
-      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1000);
-  state.counters["written_bytes_per_second"] =
-      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1024);
-  state.counters["read_bytes_per_second"] =
+  state.SetItemsProcessed(proceeded_items);
+  state.counters[kReadBytesMetricName] =
       benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters[kWriteBytesMetricName] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
                          benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
@@ -211,14 +210,12 @@ void BM_DumpWithArrowApi(benchmark::State& state) {  // NOLINT
     written_bytes += output_stream->Tell().ValueOrDie();
     read_bytes += rows_bytes;
   }
-  state.counters["proceeded_rows_per_second"] =
-      benchmark::Counter(proceeded_items, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1000);
-  state.counters["written_bytes_per_second"] =
-      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
-                         benchmark::Counter::OneK::kIs1024);
-  state.counters["read_bytes_per_second"] =
+  state.SetItemsProcessed(proceeded_items);
+  state.counters[kReadBytesMetricName] =
       benchmark::Counter(read_bytes, benchmark::Counter::Flags::kIsRate,
+                         benchmark::Counter::OneK::kIs1024);
+  state.counters[kWriteBytesMetricName] =
+      benchmark::Counter(written_bytes, benchmark::Counter::Flags::kIsRate,
                          benchmark::Counter::OneK::kIs1024);
 
   LOG(INFO) << "Items proceeded: " << proceeded_items;
@@ -257,7 +254,8 @@ int main(int argc, char** argv) {
   absl::Status s = LoadRows(&file_system, input_file, GetPreparedRows(),
                             GetPreparedRowsBytes());
   CHECK(s.ok()) << "Failed to load rows: " << s.ToString();
-  LOG(INFO) << GetPreparedRows()->size() << " rows loaded.";
+  LOG(INFO) << GetPreparedRows()->size() << " rows(" << *GetPreparedRowsBytes()
+            << " bytes) loaded.";
 
   ::benchmark::RunSpecifiedBenchmarks();
 
@@ -305,9 +303,6 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
       futures.emplace_back(std::async(
           std::launch::async,
           [](const void* data, int size) {
-            DCHECK_NOTNULL(data);
-            DCHECK_GT(size, 0);
-
             idl::euclid::common::Example example;
             CHECK(example.ParseFromArray(data, size))
                 << "Failed to parse idl::euclid::common::Example.";
@@ -346,7 +341,7 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
     if (counter % 100 == 0) {
       LOG(INFO) << "Loading " << counter << "th row...";
     }
-    if (counter == FLAGS_dump_row_count) {
+    if (FLAGS_dump_row_count != 0 && counter == FLAGS_dump_row_count) {
       break;
     }
 
