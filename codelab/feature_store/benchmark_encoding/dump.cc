@@ -376,16 +376,6 @@ absl::Status DumpWithParquetApiV2(
     DCHECK(field_index.contains(field_name));
     const ParquetFieldContext& field_context = field_index[field_name];
 
-    if (field_context.column_index == 1012) {
-      LOG(WARNING) << "column 1012 (field_name=" << field_name << ", type="
-                   << (field_context.field_descriptor->type ==
-                               FieldType::kFeature
-                           ? "Feature"
-                           : "RawFeature")
-                   << ", children_num="
-                   << field_context.field_descriptor->children_num << ")";
-    }
-
     if (field_context.field_descriptor->type ==
         FieldType::kFeature) {  // feature
       for (size_t i = 0; i < rows.size(); i += kBatchSize) {
@@ -438,7 +428,9 @@ absl::Status DumpWithParquetApiV2(
           for (size_t j = 0; j < this_batch_size; j++, mask >>= 1) {
             const Row& row = rows[i + j];
 
-            if (row.raw_features().contains(field_name)) {
+            if (row.raw_features().contains(field_name) &&
+                child_index <
+                    row.raw_features().find(field_name)->second.size()) {
               def_levels[j] = 2;
               rep_levels[j] = 0;
               valid_bits |= mask;  // Set mask position
@@ -457,7 +449,7 @@ absl::Status DumpWithParquetApiV2(
 
           parquet::ByteArrayWriter* byte_array_writer =
               down_cast<parquet::ByteArrayWriter*>(
-                  rg_writer->column(field_context.column_index));
+                  rg_writer->column(field_context.column_index + child_index));
           byte_array_writer->WriteBatchSpaced(
               this_batch_size, def_levels, rep_levels,
               reinterpret_cast<uint8_t*>(&valid_bits), 0, byte_array_values);
