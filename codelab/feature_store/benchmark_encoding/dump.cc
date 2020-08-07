@@ -386,66 +386,31 @@ absl::Status DumpWithParquetApiV2(
                    << field_context.field_descriptor->children_num << ")";
     }
 
-    // Loop for raw_feature internal features.
-    // Only loop once for feature.
-    for (size_t raw_feature_internal_offset = 0;
-         raw_feature_internal_offset <
-         std::max(static_cast<size_t>(1) /* for feature */,
-                  field_context.field_descriptor
-                      ->children_num /* for raw_feature */);
-         raw_feature_internal_offset++) {
-      underlying_bitmap_t mask = kLeftMostMask;
+    if (field_context.field_descriptor->type ==
+        FieldType::kFeature) {  // feature
       for (size_t i = 0; i < rows.size(); i += kBatchSize) {
         size_t this_batch_size =
             std::min(kBatchSize, rows.size() - i /* remaining count */);
-        for (size_t j = 0; j < this_batch_size; j++) {
+
+        underlying_bitmap_t mask = kLeftMostMask;
+        for (size_t j = 0; j < this_batch_size; j++, mask >>= 1) {
           const Row& row = rows[i + j];
 
-          if (field_context.field_descriptor->type ==
-              FieldType::kFeature) {  // feature
-            if (row.features().contains(field_name)) {
-              def_levels[j] = 1;
-              rep_levels[j] = 0;
-              valid_bits |= mask;  // Set mask position
+          if (row.features().contains(field_name)) {
+            def_levels[j] = 1;
+            rep_levels[j] = 0;
+            valid_bits |= mask;  // Set mask position
 
-              const std::string& serialized_bytes =
-                  row.features().find(field_name)->second;
-              byte_array_values[j].ptr =
-                  reinterpret_cast<const uint8_t*>(serialized_bytes.data());
-              byte_array_values[j].len = serialized_bytes.size();
-            } else {
-              def_levels[j] = 0;
-              rep_levels[j] = 0;
-              valid_bits &= ~mask;  // Clear mask position
-            }
-          } else if (field_context.field_descriptor->type ==
-                     FieldType::kRawFeature) {  // raw_feature
-            if (field_context.field_descriptor->children_num == 0) {
-              LOG(FATAL) << "Column index " << field_context.column_index
-                         << " has none child!";
-            } else if (row.raw_features().contains(field_name)) {
-              def_levels[j] = 2;
-              rep_levels[j] = 0;
-              valid_bits |= mask;  // Set mask position
-
-              const std::string& serialized_bytes =
-                  row.raw_features()
-                      .find(field_name)
-                      ->second[raw_feature_internal_offset];
-              byte_array_values[j].ptr =
-                  reinterpret_cast<const uint8_t*>(serialized_bytes.data());
-              byte_array_values[j].len = serialized_bytes.size();
-            } else {
-              def_levels[j] = 1;
-              rep_levels[j] = 0;
-              valid_bits &= ~mask;  // Clear mask position
-            }
+            const std::string& serialized_bytes =
+                row.features().find(field_name)->second;
+            byte_array_values[j].ptr =
+                reinterpret_cast<const uint8_t*>(serialized_bytes.data());
+            byte_array_values[j].len = serialized_bytes.size();
           } else {
-            return absl::UnimplementedError(
-                "Only implemented for kFeature & kRawFeature.");
+            def_levels[j] = 0;
+            rep_levels[j] = 0;
+            valid_bits &= ~mask;  // Clear mask position
           }
-
-          mask >>= 1;
         }
 
         parquet::ByteArrayWriter* byte_array_writer =
@@ -455,6 +420,52 @@ absl::Status DumpWithParquetApiV2(
             this_batch_size, def_levels, rep_levels,
             reinterpret_cast<uint8_t*>(&valid_bits), 0, byte_array_values);
       }
+    } else if (field_context.field_descriptor->type ==
+               FieldType::kRawFeature) {  // raw_feature
+      if (field_context.field_descriptor->children_num == 0) {
+        LOG(FATAL) << "Column index " << field_context.column_index
+                   << " has none child!";
+      }
+
+      for (size_t child_index = 0;
+           child_index < field_context.field_descriptor->children_num;
+           child_index++) {
+        for (size_t i = 0; i < rows.size(); i += kBatchSize) {
+          size_t this_batch_size =
+              std::min(kBatchSize, rows.size() - i /* remaining count */);
+
+          underlying_bitmap_t mask = kLeftMostMask;
+          for (size_t j = 0; j < this_batch_size; j++, mask >>= 1) {
+            const Row& row = rows[i + j];
+
+            if (row.raw_features().contains(field_name)) {
+              def_levels[j] = 2;
+              rep_levels[j] = 0;
+              valid_bits |= mask;  // Set mask position
+
+              const std::string& serialized_bytes =
+                  row.raw_features().find(field_name)->second[child_index];
+              byte_array_values[j].ptr =
+                  reinterpret_cast<const uint8_t*>(serialized_bytes.data());
+              byte_array_values[j].len = serialized_bytes.size();
+            } else {
+              def_levels[j] = 1;
+              rep_levels[j] = 0;
+              valid_bits &= ~mask;  // Clear mask position
+            }
+          }
+
+          parquet::ByteArrayWriter* byte_array_writer =
+              down_cast<parquet::ByteArrayWriter*>(
+                  rg_writer->column(field_context.column_index));
+          byte_array_writer->WriteBatchSpaced(
+              this_batch_size, def_levels, rep_levels,
+              reinterpret_cast<uint8_t*>(&valid_bits), 0, byte_array_values);
+        }
+      }
+    } else {
+      return absl::UnimplementedError(
+          "Only implemented for kFeature & kRawFeature.");
     }
   }
 
