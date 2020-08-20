@@ -550,6 +550,23 @@ http_archive(
     urls = ["https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz"],
 )
 
+# arrow & parquet
+http_archive(
+    name = "org_apache_arrow",
+    build_file = "//third_party/arrow:arrow.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/arrow:0001-optional-use-abseil.patch",
+        "//third_party/arrow:0002-cxx-compiler-legacy-build.patch",
+    ],
+    sha256 = "86ddb9feb48203a5aaf9cc4f2827525e20a2ca4d7239e492af17e74532ccf243",
+    strip_prefix = "apache-arrow-1.0.0",
+    urls = [
+        "https://mirrors.tuna.tsinghua.edu.cn/apache/arrow/arrow-1.0.0/apache-arrow-1.0.0.tar.gz",
+        "https://downloads.apache.org/arrow/arrow-1.0.0/apache-arrow-1.0.0.tar.gz",
+    ],
+)
+
 ######## Java External Dependencies ########
 
 MAVEN_REPOSITORY_URL = "https://maven.aliyun.com/repository/public"

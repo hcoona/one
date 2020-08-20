@@ -2,61 +2,6 @@
 """
 
 core.workflow(
-    name = "org_apache_arrow",
-    origin = git.origin(
-        url = "https://github.com/apache/arrow.git",
-        ref = "apache-arrow-1.0.0",
-    ),
-    destination = folder.destination(),
-    origin_files = glob([
-        "cpp/src/generated/**",
-        "cpp/src/arrow/**",
-        "cpp/src/parquet/**",
-        "cpp/examples/parquet/low-level-api/**",
-    ]),
-    destination_files = glob(
-        [
-            "arrow/**",
-            "parquet/**",
-            "codelab/parquet_examples/low_level_api/**",
-        ],
-        exclude = [
-            "arrow/BUILD.bazel",
-            "arrow/util/config.h",
-            "parquet/BUILD.bazel",
-            "parquet/parquet_version.h",
-            "codelab/parquet_examples/low_level_api/BUILD.bazel",
-        ],
-    ),
-    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
-    mode = "SQUASH",
-    transformations = [
-        core.move("cpp/src/generated", "arrow/generated"),
-        core.move("cpp/src/arrow", "arrow"),
-        core.move("cpp/src/parquet", "parquet"),
-        core.move("cpp/examples/parquet/low-level-api", "codelab/parquet_examples/low_level_api"),
-        core.replace(
-            before = "<${ARROW_OR_PARQUET}/${ANY}>",
-            after = "\"${ARROW_OR_PARQUET}/${ANY}\"",
-            regex_groups = {
-                "ANY": "[^>]+",
-                "ARROW_OR_PARQUET": "(arrow|parquet)",
-            },
-            paths = glob(["codelab/parquet_examples/low_level_api/**.{h,cc}"]),
-        ),
-        core.replace(
-            before = "<reader_writer.h>",
-            after = "\"codelab/parquet_examples/low_level_api/reader_writer.h\"",
-            paths = glob(["codelab/parquet_examples/low_level_api/**.{h,cc}"]),
-        ),
-        patch.apply(patches = [
-            "third_party/arrow/0000-build.patch",
-            "third_party/parquet/0000-build.patch",
-        ]),
-    ],
-)
-
-core.workflow(
     name = "gtl_tensorflow",
     origin = git.origin(
         url = "https://github.com/tensorflow/tensorflow.git",
