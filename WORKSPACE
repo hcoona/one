@@ -245,10 +245,6 @@ http_archive(
     urls = ["https://github.com/grpc/grpc/archive/v1.29.1.tar.gz"],  # 2020-05-21
 )
 
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
-grpc_deps()
-
 ######## Grpc Java libraries ########
 
 # grpc-java
@@ -285,10 +281,6 @@ http_archive(
     strip_prefix = "rules_boost-82ae1790cef07f3fd618592ad227fe2d66fe0b31",
     urls = ["https://github.com/nelhage/rules_boost/archive/82ae1790cef07f3fd618592ad227fe2d66fe0b31.zip"],  # 2019-08-05, Boost 1.68.0
 )
-
-load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
-
-boost_deps()
 
 # GSL repository
 http_archive(
@@ -613,11 +605,6 @@ http_archive(
     ],
 )
 
-# Generate BUILD files for Go project.
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
-
-gazelle_dependencies()
-
 ######## Python External Dependencies ########
 
 pip3_import(
@@ -683,6 +670,7 @@ py_binary(
 # Buildifier tool
 http_archive(
     name = "com_github_bazelbuild_buildtools",
+    sha256 = "21e3f4cc034f01ca74643133fc9986cbf0bf43b7a0a0b150f0967e72b22b9132",
     strip_prefix = "buildtools-3.2.1",
     url = "https://github.com/bazelbuild/buildtools/archive/3.2.1.tar.gz",  # 2020-06-17
 )
@@ -699,3 +687,21 @@ http_archive(
     strip_prefix = "kythe-b366059660304a27ae7775055ca168a4ecb55a72",
     urls = ["https://github.com/kythe/kythe/archive/b366059660304a27ae7775055ca168a4ecb55a72.zip"],  # 2019-06-12
 )
+
+######## Load Other Dependencies After All ########
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
+
+boost_deps()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()

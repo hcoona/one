@@ -1,6 +1,9 @@
 # TODO: patch grpc
 build --copt -DGRPC_BAZEL_BUILD
+# TODO: patch brpc
 # For brpc
 build --define=with_glog=true
+build --copt -DHAVE_ZLIB=1
 
 build --cxxopt="-std=c++17"
+# build --conlyopt="-std=c11"
