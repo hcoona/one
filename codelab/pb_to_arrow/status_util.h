@@ -14,7 +14,13 @@ namespace codelab {
 absl::Status FromArrowStatus(const arrow::Status& arrow_status);
 
 template <typename T>
-StatusOr<T> FromArrowResult(const arrow::Result<T>& arrow_result);
+StatusOr<T> FromArrowResult(const arrow::Result<T>& arrow_result) {
+  if (arrow_result.ok()) {
+    return StatusOr<T>(arrow_result.ValueUnsafe());
+  } else {
+    return StatusOr<T>(FromArrowStatus(arrow_result.status()));
+  }
+}
 
 }  // namespace codelab
 }  // namespace hcoona
