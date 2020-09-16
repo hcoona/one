@@ -6,7 +6,6 @@
 #include "arrow/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-#include "gtest/gtest.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
