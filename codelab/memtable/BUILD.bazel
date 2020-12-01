@@ -1,0 +1,12 @@
+cc_test(
+    name = "record_batch_builder_test",
+    srcs = ["record_batch_builder_test.cc"],
+    deps = [
+        "//codelab/pb_to_arrow:status_util",
+        "//gtl:no_destructor",
+        "//status:status_or",
+        "//util:casts",
+        "@com_google_googletest//:gtest_main",
+        "@org_apache_arrow//:arrow",
+    ],
+)
