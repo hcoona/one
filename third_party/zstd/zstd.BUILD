@@ -22,7 +22,6 @@ cc_library(
     defines = [
         "ZSTD_LEGACY_SUPPORT=4",
         "ZSTD_MULTITHREAD",
-        "XXH_NAMESPACE=ZSTD_",
     ],
     includes = [
         ".",
@@ -32,6 +31,9 @@ cc_library(
         "deprecated",
         "dictBuilder",
         "legacy",
+    ],
+    local_defines = [
+        "XXH_NAMESPACE=ZSTD_",
     ],
     visibility = ["//visibility:public"],
 )

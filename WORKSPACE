@@ -352,9 +352,9 @@ http_archive(
 http_archive(
     name = "com_github_facebook_rocksdb",
     build_file = "//third_party/rocksdb:rocksdb.BUILD",
-    sha256 = "3e7365cb2a35982e95e5e5dd0b3352dc78573193dafca02788572318c38483fb",
-    strip_prefix = "rocksdb-6.2.2",
-    urls = ["https://github.com/facebook/rocksdb/archive/v6.2.2.tar.gz"],  # 2019-08-12
+    sha256 = "fa61c55735a4911f36001a98aa2f5df1ffe4b019c492133d0019f912191209ce",
+    strip_prefix = "rocksdb-6.14.6",
+    urls = ["https://github.com/facebook/rocksdb/archive/v6.14.6.tar.gz"],  # 2020-12-01
 )
 
 # required by brpc
