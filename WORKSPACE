@@ -124,11 +124,9 @@ http_archive(
 # abseil, required by Grpc, gtest & kythe.
 http_archive(
     name = "com_google_absl",
-    patch_args = ["-p1"],
-    patches = ["//third_party/abseil-cpp:0001-Rename-Valgrind-related-functions-to-avoid-conflicts.patch"],
-    sha256 = "96163b88c5e00b137b12d9ae7d47ef33cf2f14d78ffdd91547e20bda01c1134d",
-    strip_prefix = "abseil-cpp-38db52adb2eabc0969195b33b30763e0a1285ef9",
-    urls = ["https://github.com/abseil/abseil-cpp/archive/38db52adb2eabc0969195b33b30763e0a1285ef9.tar.gz"],  # 2020-07-02
+    sha256 = "0e16b6b6f35dacb4a7b9e99ad75d67efe2c650cf00668ab308a9744845729bc0",
+    strip_prefix = "abseil-cpp-4fd9a1ec5077daac14eeee05df931d658ec0b7b8",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/4fd9a1ec5077daac14eeee05df931d658ec0b7b8.tar.gz"],  # 2020-11-20
 )
 
 # boringssl, required by Grpc.
