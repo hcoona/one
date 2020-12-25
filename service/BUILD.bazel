@@ -1,0 +1,41 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "service",
+    srcs = ["service_impl.cc"],
+    hdrs = [
+        "service.h",
+        "service_impl.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":service_state",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+cc_test(
+    name = "service_test",
+    srcs = ["service_impl_test.cc"],
+    deps = [
+        ":service",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "service_state",
+    srcs = ["service_state.cc"],
+    hdrs = ["service_state.h"],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:any",
+    ],
+)
