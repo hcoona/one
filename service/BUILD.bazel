@@ -1,6 +1,32 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
+    name = "event_dispatcher",
+    hdrs = [
+        "event.h",
+        "event_dispatcher.h",
+        "event_dispatcher_sync_impl.h",
+        "event_handler.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:variant",
+    ],
+)
+
+cc_test(
+    name = "event_dispatcher_test",
+    srcs = ["event_dispatcher_sync_impl_test.cc"],
+    deps = [
+        ":event_dispatcher",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "service",
     srcs = ["service_impl.cc"],
     hdrs = [
