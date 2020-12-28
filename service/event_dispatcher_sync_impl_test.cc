@@ -64,7 +64,7 @@ class BasicEventOneEventHandler
   explicit BasicEventOneEventHandler(
       std::function<absl::Status(const BasicEventOneEvent&)> real_handler)
       : hcoona::EventHandler<BasicEventOneEvent>(),
-        real_handler_(real_handler) {}
+        real_handler_(std::move(real_handler)) {}
 
   // Disallow copy
   BasicEventOneEventHandler(const BasicEventOneEventHandler&) = delete;
@@ -103,7 +103,7 @@ TEST(TestEventDispatcherSyncImpl, SmokeTest01) {
   ASSERT_TRUE(s.ok()) << s;
 
   absl::Time before_handle_time = absl::Now();
-  s = dispatcher.Handle(absl::variant<BasicEventOneEvent>());
+  s = dispatcher.Handle(BasicEventOneEvent());
   absl::Time after_handle_time = absl::Now();
   ASSERT_TRUE(s.ok()) << s;
   EXPECT_LT(before_handle_time, handled_time);
@@ -136,22 +136,16 @@ TEST(TestEventDispatcherSyncImpl, SmokeTest02) {
       std::weak_ptr<BasicEventOneEventHandler>(handler));
   ASSERT_TRUE(s.ok()) << s;
 
-  absl::variant<BasicEventOneEvent, BasicEventTwoEvent> event =
-      BasicEventOneEvent();
-
   absl::Time before_handle_time = absl::Now();
-  s = dispatcher.Handle(std::move(event));
+  s = dispatcher.Handle(BasicEventOneEvent());
   absl::Time after_handle_time = absl::Now();
   ASSERT_TRUE(s.ok()) << s;
   EXPECT_LT(before_handle_time, one_handled_time);
   EXPECT_LT(one_handled_time, after_handle_time);
   EXPECT_EQ(absl::InfinitePast(), two_handled_time);
 
-  event = BasicEventTwoEvent();
-  ASSERT_TRUE(absl::holds_alternative<BasicEventTwoEvent>(event));
-
   absl::Time prev_one_handled_time = one_handled_time;
-  s = dispatcher.Handle(std::move(event));
+  s = dispatcher.Handle(BasicEventTwoEvent());
   ASSERT_FALSE(s.ok()) << "No BasicEventTwoEvent registered to dispatcher";
   EXPECT_EQ(prev_one_handled_time, one_handled_time);
   EXPECT_EQ(absl::InfinitePast(), two_handled_time);

@@ -1,6 +1,7 @@
 #ifndef SERVICE_SERVICE_IMPL_H_
 #define SERVICE_SERVICE_IMPL_H_
 
+#include <memory>
 #include <string>
 
 #include "absl/status/status.h"
@@ -8,6 +9,7 @@
 #include "absl/synchronization/mutex.h"
 #include "absl/synchronization/notification.h"
 #include "absl/time/time.h"
+#include "service/event_dispatcher.h"
 #include "service/service.h"
 #include "service/service_state.h"
 
@@ -15,7 +17,8 @@ namespace hcoona {
 
 class ServiceImpl : public Service {
  public:
-  explicit ServiceImpl(std::string name);
+  ServiceImpl(std::string name, EventDispatcher<ServiceStateChangedEvent>*
+                                    state_changed_event_dispatcher);
   ~ServiceImpl() override = default;
 
   // Disallow copy
@@ -27,13 +30,11 @@ class ServiceImpl : public Service {
   ServiceImpl& operator=(ServiceImpl&& other);
 
   absl::Status Init(absl::any data) final;
-  virtual absl::Status DoInit(absl::any data) = 0;
-
   absl::Status Start() final;
-  virtual absl::Status DoStart() = 0;
-
   absl::Status Stop() final;
-  virtual absl::Status DoStop() = 0;
+
+  absl::Status RegisterStateChangeListener(
+      std::weak_ptr<EventHandler<ServiceStateChangedEvent>> handler) override;
 
   std::string name() const final;
   ServiceState state() const final;
@@ -45,17 +46,28 @@ class ServiceImpl : public Service {
   bool WaitForStateWithDeadline(ServiceState state,
                                 absl::Time deadline) const final;
 
+ protected:
+  virtual absl::Status DoInit(absl::any data) = 0;
+  virtual absl::Status DoStart() = 0;
+  virtual absl::Status DoStop() = 0;
+
  private:
   absl::StatusOr<ServiceState> EnterState(ServiceState new_state)
       ABSL_EXCLUSIVE_LOCKS_REQUIRED(state_mutex_);
 
   absl::Status StopInLock() ABSL_EXCLUSIVE_LOCKS_REQUIRED(state_mutex_);
 
-  std::string name_;
+  void ReportServiceStatusChanging()
+      ABSL_EXCLUSIVE_LOCKS_REQUIRED(state_mutex_);
+
+  const std::string name_;
 
   ServiceState state_ ABSL_GUARDED_BY(state_mutex_);
   absl::Time start_time_ ABSL_GUARDED_BY(state_mutex_);
   mutable absl::Mutex state_mutex_;
+
+  EventDispatcher<ServiceStateChangedEvent>*
+      service_state_changed_event_dispatcher_;
 };
 
 }  // namespace hcoona

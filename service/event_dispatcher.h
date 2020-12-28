@@ -1,6 +1,7 @@
 #ifndef SERVICE_EVENT_DISPATCHER_H_
 #define SERVICE_EVENT_DISPATCHER_H_
 
+#include <functional>
 #include <memory>
 #include <type_traits>
 

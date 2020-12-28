@@ -9,11 +9,14 @@
 
 namespace hcoona {
 
-ServiceImpl::ServiceImpl(std::string name)
+ServiceImpl::ServiceImpl(
+    std::string name,
+    EventDispatcher<ServiceStateChangedEvent>* state_changed_event_dispatcher)
     : name_(std::move(name)),
       state_(ServiceState::kCreated),
       start_time_(absl::InfinitePast()),
-      state_mutex_() {}
+      state_mutex_(),
+      service_state_changed_event_dispatcher_(state_changed_event_dispatcher) {}
 
 absl::Status ServiceImpl::Init(absl::any data) {
   if (is_in_state(ServiceState::kInitialized)) {
@@ -43,7 +46,7 @@ absl::Status ServiceImpl::Init(absl::any data) {
       return s;
     }
 
-    // TODO(zhangshuai.ustc): Notify listeners.
+    ReportServiceStatusChanging();
   }
 
   return absl::OkStatus();
@@ -78,7 +81,7 @@ absl::Status ServiceImpl::Start() {
       return s;
     }
 
-    // TODO(zhangshuai.ustc): Notify listeners.
+    ReportServiceStatusChanging();
   }
 
   return absl::OkStatus();
@@ -92,6 +95,16 @@ absl::Status ServiceImpl::Stop() {
   absl::WriterMutexLock state_mutex_lock(&state_mutex_);
 
   return StopInLock();
+}
+
+absl::Status ServiceImpl::RegisterStateChangeListener(
+    std::weak_ptr<EventHandler<ServiceStateChangedEvent>> handler) {
+  if (!service_state_changed_event_dispatcher_) {
+    return absl::FailedPreconditionError(
+        "Service disallow to register any state change listener");
+  }
+
+  return service_state_changed_event_dispatcher_->RegisterHandler(handler);
 }
 
 absl::Status ServiceImpl::StopInLock() {
@@ -109,10 +122,21 @@ absl::Status ServiceImpl::StopInLock() {
       return s;
     }
 
-    // TODO(zhangshuai.ustc): Notify listeners.
+    ReportServiceStatusChanging();
   }
 
   return absl::OkStatus();
+}
+
+void ServiceImpl::ReportServiceStatusChanging() {
+  if (service_state_changed_event_dispatcher_) {
+    absl::Status s = service_state_changed_event_dispatcher_->Handle(
+        ServiceStateChangedEvent(state_));
+    if (!s.ok()) {
+      LOG(WARNING) << "Failed to notify state changing. service=" << name_
+                   << ", state=" << state_ << ", reason=" << s;
+    }
+  }
 }
 
 std::string ServiceImpl::name() const { return name_; }

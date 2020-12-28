@@ -1,14 +1,22 @@
 #ifndef SERVICE_SERVICE_H_
 #define SERVICE_SERVICE_H_
 
+#include <memory>
 #include <string>
 
 #include "absl/status/status.h"
 #include "absl/time/time.h"
 #include "absl/types/any.h"
+#include "service/event.h"
+#include "service/event_handler.h"
 #include "service/service_state.h"
 
 namespace hcoona {
+
+class ServiceStateChangedEvent : public Event<ServiceState> {
+ public:
+  using Event<ServiceState>::Event;
+};
 
 class Service {
  public:
@@ -27,7 +35,8 @@ class Service {
   virtual absl::Status Start() = 0;
   virtual absl::Status Stop() = 0;
 
-  // TODO(zhangshuai.ustc): Add signal sink for state changing.
+  virtual absl::Status RegisterStateChangeListener(
+      std::weak_ptr<EventHandler<ServiceStateChangedEvent>> handler) = 0;
 
   virtual std::string name() const = 0;
   virtual ServiceState state() const = 0;
