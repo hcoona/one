@@ -46,8 +46,8 @@ absl::Status EventDispatcherSyncImpl<T...>::Handle(
     typename EventDispatcherSyncImpl<T...>::AnyEventT event) {
   return absl::visit(
       [this](auto&& ev) -> absl::Status {
-        auto handler = std::get<std::weak_ptr<EventHandler<
-            typename std::decay<decltype(ev)>::type::EventTypeType>>>(handlers_)
+        auto handler = std::get<std::weak_ptr<
+            EventHandler<typename std::decay<decltype(ev)>::type>>>(handlers_)
                            .lock();
         if (handler) {
           return handler->Handle(ev);

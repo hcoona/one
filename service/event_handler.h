@@ -8,7 +8,7 @@
 
 namespace hcoona {
 
-template <typename T>
+template <typename TEvent>
 class EventHandler {
  public:
   EventHandler() = default;
@@ -24,7 +24,7 @@ class EventHandler {
 
   // UNSTABLE
   // Need change for unifying sync & async.
-  virtual absl::Status Handle(const Event<T>& event) = 0;
+  virtual absl::Status Handle(const TEvent& event) = 0;
 };
 
 }  // namespace hcoona

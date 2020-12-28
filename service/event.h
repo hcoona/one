@@ -15,7 +15,7 @@ class Event {
   static_assert(std::is_enum<T>::value, "T must be an enum for event type.");
 
  public:
-  using EventTypeType = T;
+  using EventTypeT = T;
 
   explicit Event(T event_type)
       : event_type_(event_type), creation_time_(absl::Now()) {}

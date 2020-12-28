@@ -2,7 +2,9 @@
 #define SERVICE_EVENT_DISPATCHER_H_
 
 #include <memory>
+#include <type_traits>
 
+#include "absl/meta/type_traits.h"
 #include "absl/status/status.h"
 #include "absl/types/variant.h"
 #include "service/event.h"
@@ -10,11 +12,12 @@
 
 namespace hcoona {
 
-template <typename... T>
+template <typename... TEvent>
 class EventDispatcher {
  public:
-  using AnyEventHandlerT = absl::variant<std::weak_ptr<EventHandler<T>>...>;
-  using AnyEventT = absl::variant<Event<T>...>;
+  using AnyEventHandlerT =
+      absl::variant<std::weak_ptr<EventHandler<TEvent>>...>;
+  using AnyEventT = absl::variant<TEvent...>;
 
   EventDispatcher() = default;
   virtual ~EventDispatcher() = default;
