@@ -1,0 +1,35 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load(
+    "//bazel/copts:configure.bzl",
+    "ONE_DEFAULT_COPTS",
+    "ONE_DEFAULT_LINKOPTS",
+)
+
+cc_library(
+    name = "broker",
+    srcs = [
+        "broker_impl.cc",
+        "partition.h",
+        "partition_key.cc",
+        "partition_key.h",
+        "streaming_columnar_partition_impl.cc",
+        "streaming_columnar_partition_impl.h",
+        "wal_partition_impl.cc",
+        "wal_partition_impl.h",
+    ],
+    hdrs = [
+        "api.h",
+        "broker_impl.h",
+    ],
+    copts = ONE_DEFAULT_COPTS,
+    linkopts = ONE_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//service",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+    ],
+)
