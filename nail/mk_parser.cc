@@ -3,6 +3,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <list>
+
 #include "nailtool.h"
 #define MAP(f, collection) \
   FOREACH(iter, collection) { f(*iter); }

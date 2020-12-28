@@ -3,6 +3,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <list>
+
 #include "nailtool.h"
 
 /* XXX: We need to get rid of NailStream. Find some way of statically

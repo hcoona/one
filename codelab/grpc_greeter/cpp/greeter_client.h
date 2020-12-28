@@ -2,9 +2,10 @@
 
 #include <memory>
 #include <string>
+
+#include "grpcpp/grpcpp.h"
 #include "codelab/grpc_greeter/proto/hello.grpc.pb.h"
 #include "codelab/grpc_greeter/proto/hello.pb.h"
-#include "grpcpp/grpcpp.h"
 
 namespace codelab {
 

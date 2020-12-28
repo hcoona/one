@@ -4,9 +4,9 @@
 
 #include "gtl/location.h"
 
-#include "gtl/compiler_specific.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "gtl/compiler_specific.h"
 
 namespace gtl {
 

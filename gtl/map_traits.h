@@ -25,7 +25,6 @@ limitations under the License.
 
 #include <utility>
 
-
 namespace gtl {
 
 namespace internal_map_traits {
@@ -70,8 +69,6 @@ auto GetMapped(V&& v)
                                         internal_map_traits::Rank0());
 }
 
-
 }  // namespace gtl
-
 
 #endif  // GTL_MAP_TRAITS_H_

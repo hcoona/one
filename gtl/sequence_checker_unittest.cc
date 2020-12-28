@@ -11,10 +11,10 @@
 #include <string>
 #include <thread>
 
+#include "gtest/gtest.h"
 #include "gtl/macros.h"
 #include "gtl/sequence_token.h"
 #include "gtl/test/gtest_util.h"
-#include "gtest/gtest.h"
 
 namespace gtl {
 
@@ -45,8 +45,7 @@ void ExpectCalledOnValidSequence(SequenceCheckerImpl* sequence_checker) {
 }
 
 void ExpectCalledOnValidSequenceWithSequenceToken(
-    SequenceCheckerImpl* sequence_checker,
-    SequenceToken sequence_token) {
+    SequenceCheckerImpl* sequence_checker, SequenceToken sequence_token) {
   ScopedSetSequenceTokenForCurrentThread
       scoped_set_sequence_token_for_current_thread(sequence_token);
   ExpectCalledOnValidSequence(sequence_checker);
@@ -233,7 +232,7 @@ TEST(SequenceCheckerMacroTest, Macros) {
   EXPECT_DCHECK_DEATH(
       { DCHECK_CALLED_ON_VALID_SEQUENCE(my_sequence_checker); });
 #else
-    // Happily no-ops on non-dcheck builds.
+  // Happily no-ops on non-dcheck builds.
   DCHECK_CALLED_ON_VALID_SEQUENCE(my_sequence_checker);
 #endif
 
@@ -257,7 +256,8 @@ class SequenceCheckerOwner {
   DISALLOW_COPY_AND_ASSIGN(SequenceCheckerOwner);
 };
 
-// // Verifies SequenceCheckerImpl::CalledOnValidSequence() returns true if called
+// // Verifies SequenceCheckerImpl::CalledOnValidSequence() returns true if
+// called
 // // during thread destruction.
 // TEST(SequenceCheckerTest, CalledOnValidSequenceFromThreadDestruction) {
 //   ThreadLocalOwnedPointer<SequenceCheckerOwner> thread_local_owner;

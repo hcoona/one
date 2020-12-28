@@ -8,8 +8,8 @@
 
 #include <memory>
 
-#include "gtl/crypto/secure_hash.h"
 #include "openssl/sha.h"
+#include "gtl/crypto/secure_hash.h"
 
 namespace gtl {
 namespace crypto {

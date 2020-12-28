@@ -73,7 +73,7 @@ TEST(SHA1Test, Test1BytesAndSpan) {
       0x25, 0x71, 0x78, 0x50, 0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d};
 
   gtl::SHA1HashBytes(reinterpret_cast<const unsigned char*>(input.c_str()),
-                      input.size(), output);
+                     input.size(), output);
   for (size_t i = 0; i < gtl::kSHA1Length; i++)
     EXPECT_EQ(kExpected[i], output[i]);
 
@@ -94,7 +94,7 @@ TEST(SHA1Test, Test2BytesAndSpan) {
       0x4a, 0xa1, 0xf9, 0x51, 0x29, 0xe5, 0xe5, 0x46, 0x70, 0xf1};
 
   gtl::SHA1HashBytes(reinterpret_cast<const unsigned char*>(input.c_str()),
-                      input.size(), output);
+                     input.size(), output);
   for (size_t i = 0; i < gtl::kSHA1Length; i++)
     EXPECT_EQ(kExpected[i], output[i]);
 
@@ -114,7 +114,7 @@ TEST(SHA1Test, Test3BytesAndSpan) {
       0xeb, 0x2b, 0xdb, 0xad, 0x27, 0x31, 0x65, 0x34, 0x01, 0x6f};
 
   gtl::SHA1HashBytes(reinterpret_cast<const unsigned char*>(input.c_str()),
-                      input.size(), output);
+                     input.size(), output);
   for (size_t i = 0; i < gtl::kSHA1Length; i++)
     EXPECT_EQ(kExpected[i], output[i]);
 

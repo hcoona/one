@@ -61,7 +61,9 @@ class Scanner {
     RANGLE,
   };
 
-  explicit Scanner(absl::string_view source) : cur_(source) { RestartCapture(); }
+  explicit Scanner(absl::string_view source) : cur_(source) {
+    RestartCapture();
+  }
 
   // Consume the next character of the given class from input. If the next
   // character is not in the class, then GetResult will ultimately return false.

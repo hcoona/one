@@ -5,13 +5,13 @@
 // This file contains the unit tests for the bit utilities.
 
 #include "gtl/bits.h"
-#include "config/config.h"
 
 #include <stddef.h>
 
 #include <limits>
 
 #include "gtest/gtest.h"
+#include "config/config.h"
 
 namespace gtl {
 namespace bits {

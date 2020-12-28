@@ -26,15 +26,15 @@
  * This file contains sample for writing and reading encrypted Parquet file with
  * basic encryption configuration.
  *
- * A detailed description of the Parquet Modular Encryption specification can be found
- * here:
+ * A detailed description of the Parquet Modular Encryption specification can be
+ * found here:
  * https://github.com/apache/parquet-format/blob/encryption/Encryption.md
  *
- * The write sample creates a file with eight columns where two of the columns and the
- * footer are encrypted.
+ * The write sample creates a file with eight columns where two of the columns
+ * and the footer are encrypted.
  *
- * The read sample decrypts using key retriever that holds the keys of two encrypted
- * columns and the footer key.
+ * The read sample decrypts using key retriever that holds the keys of two
+ * encrypted columns and the footer key.
  */
 
 constexpr int NUM_ROWS_PER_ROW_GROUP = 500;
@@ -44,7 +44,6 @@ const std::string kColumnEncryptionKey1 = "1234567890123450";
 const std::string kColumnEncryptionKey2 = "1234567890123451";
 
 int main(int argc, char** argv) {
-
   /**********************************************************************************
                              PARQUET ENCRYPTION WRITER EXAMPLE
   **********************************************************************************/
@@ -60,8 +59,7 @@ int main(int argc, char** argv) {
 
     // Add encryption properties
     // Encryption configuration: Encrypt two columns and the footer.
-    std::map<std::string,
-             std::shared_ptr<parquet::ColumnEncryptionProperties>>
+    std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
         encryption_cols;
 
     parquet::SchemaDescriptor schema_desc;
@@ -69,8 +67,10 @@ int main(int argc, char** argv) {
     auto column_path1 = schema_desc.Column(5)->path()->ToDotString();
     auto column_path2 = schema_desc.Column(4)->path()->ToDotString();
 
-    parquet::ColumnEncryptionProperties::Builder encryption_col_builder0(column_path1);
-    parquet::ColumnEncryptionProperties::Builder encryption_col_builder1(column_path2);
+    parquet::ColumnEncryptionProperties::Builder encryption_col_builder0(
+        column_path1);
+    parquet::ColumnEncryptionProperties::Builder encryption_col_builder1(
+        column_path2);
     encryption_col_builder0.key(kColumnEncryptionKey1)->key_id("kc1");
     encryption_col_builder1.key(kColumnEncryptionKey2)->key_id("kc2");
 
@@ -201,8 +201,8 @@ int main(int argc, char** argv) {
                              PARQUET ENCRYPTION READER EXAMPLE
   **********************************************************************************/
 
-  // Decryption configuration: Decrypt using key retriever callback that holds the keys
-  // of two encrypted columns and the footer key.
+  // Decryption configuration: Decrypt using key retriever callback that holds
+  // the keys of two encrypted columns and the footer key.
   std::shared_ptr<parquet::StringKeyIdRetriever> string_kr1 =
       std::make_shared<parquet::StringKeyIdRetriever>();
   string_kr1->PutKey("kf", kFooterEncryptionKey);
@@ -213,9 +213,9 @@ int main(int argc, char** argv) {
 
   parquet::FileDecryptionProperties::Builder file_decryption_builder;
 
-
   try {
-    parquet::ReaderProperties reader_properties = parquet::default_reader_properties();
+    parquet::ReaderProperties reader_properties =
+        parquet::default_reader_properties();
 
     // Add the current decryption configuration to ReaderProperties.
     reader_properties.file_decryption_properties(
@@ -223,10 +223,12 @@ int main(int argc, char** argv) {
 
     // Create a ParquetReader instance
     std::unique_ptr<parquet::ParquetFileReader> parquet_reader =
-        parquet::ParquetFileReader::OpenFile(PARQUET_FILENAME, false, reader_properties);
+        parquet::ParquetFileReader::OpenFile(PARQUET_FILENAME, false,
+                                             reader_properties);
 
     // Get the File MetaData
-    std::shared_ptr<parquet::FileMetaData> file_metadata = parquet_reader->metadata();
+    std::shared_ptr<parquet::FileMetaData> file_metadata =
+        parquet_reader->metadata();
 
     // Get the number of RowGroups
     int num_row_groups = file_metadata->num_row_groups();
@@ -258,9 +260,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (bool_reader->HasNext()) {
         bool value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = bool_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            bool_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -279,9 +282,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (int32_reader->HasNext()) {
         int32_t value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int32_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            int32_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -299,10 +303,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (int64_reader->HasNext()) {
         int64_t value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int64_reader->ReadBatch(1, &definition_level, &repetition_level,
-                                            &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read = int64_reader->ReadBatch(
+            1, &definition_level, &repetition_level, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -327,9 +331,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (int96_reader->HasNext()) {
         parquet::Int96 value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int96_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            int96_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -342,7 +347,8 @@ int main(int argc, char** argv) {
         for (int j = 0; j < 3; j++) {
           assert(value.value[j] == expected_value.value[j]);
         }
-        ARROW_UNUSED(expected_value);  // suppress compiler warning in release builds
+        ARROW_UNUSED(
+            expected_value);  // suppress compiler warning in release builds
         i++;
       }
 
@@ -354,9 +360,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (float_reader->HasNext()) {
         float value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = float_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            float_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -375,9 +382,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (double_reader->HasNext()) {
         double value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = double_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            double_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -396,10 +404,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (ba_reader->HasNext()) {
         parquet::ByteArray value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read =
-            ba_reader->ReadBatch(1, &definition_level, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read = ba_reader->ReadBatch(1, &definition_level, nullptr, &value,
+                                         &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         ARROW_UNUSED(rows_read);  // suppress compiler warning in release builds
@@ -419,7 +427,8 @@ int main(int argc, char** argv) {
           assert(values_read == 0);
           assert(definition_level == 0);
         }
-        ARROW_UNUSED(expected_value);  // suppress compiler warning in release builds
+        ARROW_UNUSED(
+            expected_value);  // suppress compiler warning in release builds
         i++;
       }
 
@@ -431,9 +440,10 @@ int main(int argc, char** argv) {
       i = 0;
       while (flba_reader->HasNext()) {
         parquet::FixedLenByteArray value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = flba_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            flba_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written

@@ -39,7 +39,8 @@ limitations under the License.
 
 namespace gtl {
 
-bool FileSystem::Match(const std::string& filename, const std::string& pattern) {
+bool FileSystem::Match(const std::string& filename,
+                       const std::string& pattern) {
 #if defined(OS_POSIX)
   // We avoid relying on RE2 on mobile platforms, because it incurs a
   // significant binary size increase.
@@ -90,7 +91,8 @@ absl::Status FileSystem::IsDirectory(const std::string& name) {
   return absl::FailedPreconditionError("Not a directory");
 }
 
-absl::Status FileSystem::HasAtomicMove(const std::string& path, bool* has_atomic_move) {
+absl::Status FileSystem::HasAtomicMove(const std::string& path,
+                                       bool* has_atomic_move) {
   ignore_result(path);
   *has_atomic_move = true;
   return absl::OkStatus();
@@ -203,7 +205,8 @@ absl::Status FileSystem::RecursivelyCreateDir(const std::string& dirname) {
       } else if (absl::IsUnimplemented(directory_status)) {
         return directory_status;
       } else {
-        return absl::FailedPreconditionError(absl::StrCat(remaining_dir, " is not a directory"));
+        return absl::FailedPreconditionError(
+            absl::StrCat(remaining_dir, " is not a directory"));
       }
     }
     if (!absl::IsNotFound(exists_status)) {
@@ -231,13 +234,15 @@ absl::Status FileSystem::RecursivelyCreateDir(const std::string& dirname) {
   return absl::OkStatus();
 }
 
-absl::Status FileSystem::CopyFile(const std::string& src, const std::string& target) {
+absl::Status FileSystem::CopyFile(const std::string& src,
+                                  const std::string& target) {
   return FileSystemCopyFile(this, src, this, target);
 }
 
 char FileSystem::Separator() const { return '/'; }
 
-std::string FileSystem::JoinPathImpl(std::initializer_list<absl::string_view> paths) {
+std::string FileSystem::JoinPathImpl(
+    std::initializer_list<absl::string_view> paths) {
   std::string result;
 
   for (absl::string_view path : paths) {
@@ -289,8 +294,8 @@ std::pair<absl::string_view, absl::string_view> FileSystem::SplitPath(
 
   // Handle the case with no SEP in 'path'.
   if (pos == absl::string_view::npos)
-    return std::make_pair(absl::string_view(uri.begin(), host.end() - uri.begin()),
-                          path);
+    return std::make_pair(
+        absl::string_view(uri.begin(), host.end() - uri.begin()), path);
 
   // Handle the case with a single leading '/' in 'path'.
   if (pos == 0)
@@ -407,8 +412,9 @@ std::string FileSystem::CleanPath(absl::string_view unclean_path) const {
   return path;
 }
 
-void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme,
-                          absl::string_view* host, absl::string_view* path) const {
+void FileSystem::ParseURI(absl::string_view remaining,
+                          absl::string_view* scheme, absl::string_view* host,
+                          absl::string_view* path) const {
   // 0. Parse scheme
   // Make sure scheme matches [a-zA-Z][0-9a-zA-Z.]*
   // TODO(keveman): Allow "+" and "-" in the scheme.
@@ -438,8 +444,9 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
   *path = remaining;
 }
 
-std::string FileSystem::CreateURI(absl::string_view scheme, absl::string_view host,
-                             absl::string_view path) const {
+std::string FileSystem::CreateURI(absl::string_view scheme,
+                                  absl::string_view host,
+                                  absl::string_view path) const {
   if (scheme.empty()) {
     return std::string(path);
   }
@@ -453,7 +460,8 @@ std::string FileSystem::CreateURI(absl::string_view scheme, absl::string_view ho
 constexpr size_t kCopyFileBufferSize = 128 * 1024;
 
 absl::Status FileSystemCopyFile(FileSystem* src_fs, const std::string& src,
-                                FileSystem* target_fs, const std::string& target) {
+                                FileSystem* target_fs,
+                                const std::string& target) {
   std::unique_ptr<RandomAccessFile> src_file;
   absl::Status s = src_fs->NewRandomAccessFile(src, &src_file);
   if (!s.ok()) {

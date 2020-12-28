@@ -2,6 +2,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <list>
+
 #include "nailtool.h"
 
 #define p_arg(x) x.count, (const char*)x.elem

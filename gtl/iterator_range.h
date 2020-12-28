@@ -27,7 +27,6 @@ limitations under the License.
 
 #include <utility>
 
-
 namespace gtl {
 
 // A range adaptor for a pair of iterators.
@@ -63,6 +62,5 @@ iterator_range<T> make_range(T x, T y) {
 }
 
 }  // namespace gtl
-
 
 #endif  // GTL_ITERATOR_RANGE_H_

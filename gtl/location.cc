@@ -22,10 +22,8 @@ Location::Location(const Location& other) = default;
 Location::Location(const char* file_name, const void* program_counter)
     : file_name_(file_name), program_counter_(program_counter) {}
 
-Location::Location(const char* function_name,
-                   const char* file_name,
-                   int line_number,
-                   const void* program_counter)
+Location::Location(const char* function_name, const char* file_name,
+                   int line_number, const void* program_counter)
     : function_name_(function_name),
       file_name_(file_name),
       line_number_(line_number),
@@ -80,8 +78,7 @@ NOINLINE Location Location::CreateFromHere(const char* function_name,
 #if SUPPORTS_LOCATION_BUILTINS && BUILDFLAG(ENABLE_LOCATION_SOURCE)
 // static
 NOINLINE Location Location::Current(const char* function_name,
-                                    const char* file_name,
-                                    int line_number) {
+                                    const char* file_name, int line_number) {
   return Location(function_name, file_name, line_number, RETURN_ADDRESS());
 }
 #elif SUPPORTS_LOCATION_BUILTINS
@@ -97,8 +94,6 @@ NOINLINE Location Location::Current() {
 #endif
 
 //------------------------------------------------------------------------------
-NOINLINE const void* GetProgramCounter() {
-  return RETURN_ADDRESS();
-}
+NOINLINE const void* GetProgramCounter() { return RETURN_ADDRESS(); }
 
 }  // namespace gtl

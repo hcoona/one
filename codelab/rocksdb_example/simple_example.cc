@@ -1,4 +1,5 @@
-// Copied from https://github.com/facebook/rocksdb/blob/v6.2.2/examples/simple_example.cc
+// Copied from
+// https://github.com/facebook/rocksdb/blob/v6.2.2/examples/simple_example.cc
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
 //  This source code is licensed under both the GPLv2 (found in the
 //  COPYING file in the root directory) and Apache 2.0 License
@@ -8,8 +9,8 @@
 #include <string>
 
 #include "rocksdb/db.h"
-#include "rocksdb/slice.h"
 #include "rocksdb/options.h"
+#include "rocksdb/slice.h"
 
 using namespace rocksdb;
 

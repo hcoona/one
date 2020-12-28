@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+
 #include "gsl/gsl"
 
 #if __cplusplus > 201703L

@@ -1,9 +1,9 @@
 #include "codelab/grpc_greeter/cpp/greeter_client.h"
 
-#include "codelab/grpc_greeter/proto/hello.pb.h"
-#include "codelab/grpc_greeter/proto/hello_mock.grpc.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "codelab/grpc_greeter/proto/hello.pb.h"
+#include "codelab/grpc_greeter/proto/hello_mock.grpc.pb.h"
 
 namespace codelab {
 namespace {

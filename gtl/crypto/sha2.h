@@ -10,8 +10,8 @@
 #include <array>
 #include <string>
 
-#include "absl/types/span.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 
 namespace gtl {
 namespace crypto {
@@ -23,8 +23,7 @@ namespace crypto {
 static const size_t kSHA256Length = 32;  // Length in bytes of a SHA-256 hash.
 
 // Computes the SHA-256 hash of |input|.
-std::array<uint8_t, kSHA256Length> SHA256Hash(
-    absl::Span<const uint8_t> input);
+std::array<uint8_t, kSHA256Length> SHA256Hash(absl::Span<const uint8_t> input);
 
 // Convenience version of the above that returns the result in a 32-byte
 // string.
@@ -33,9 +32,7 @@ std::string SHA256HashString(absl::string_view str);
 // Computes the SHA-256 hash of the input string 'str' and stores the first
 // 'len' bytes of the hash in the output buffer 'output'.  If 'len' > 32,
 // only 32 bytes (the full hash) are stored in the 'output' buffer.
-void SHA256HashString(absl::string_view str,
-                                    void* output,
-                                    size_t len);
+void SHA256HashString(absl::string_view str, void* output, size_t len);
 
 }  // namespace crypto
 }  // namespace gtl

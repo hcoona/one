@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "codelab/cpp-smoke-app/library.h"
 
 int main(void) {

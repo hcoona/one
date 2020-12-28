@@ -1,6 +1,7 @@
 #include "codelab/protobuf_encoder/encoder.h"
 
 #include <array>
+
 #include "gtest/gtest.h"
 
 namespace codelab {

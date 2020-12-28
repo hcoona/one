@@ -11,6 +11,7 @@ extern "C" {
 #define N_SEPBY1 N_SEPBY
 #define false 0
 #include <nail/macros_end.h>
+
 #include "newgrammar.h"
 
 #ifndef N_INCLUDE_DONE

@@ -64,8 +64,7 @@ bool ThreadCheckerImpl::CalledOnValidThread() const {
 
     // Always return true when called from the task from which this
     // ThreadCheckerImpl was assigned to a thread.
-    if (task_token_ == TaskToken::GetForCurrentThread())
-      return true;
+    if (task_token_ == TaskToken::GetForCurrentThread()) return true;
 
     // If this ThreadCheckerImpl is bound to a valid SequenceToken, it must be
     // equal to the current SequenceToken and there must be a registered
@@ -88,8 +87,7 @@ void ThreadCheckerImpl::DetachFromThread() {
 }
 
 void ThreadCheckerImpl::EnsureAssignedLockRequired() const {
-  if (thread_id_.has_value())
-    return;
+  if (thread_id_.has_value()) return;
 
   thread_id_ = std::this_thread::get_id();
   task_token_ = TaskToken::GetForCurrentThread();

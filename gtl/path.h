@@ -88,7 +88,7 @@ void ParseURI(absl::string_view uri, absl::string_view* scheme,
 // Creates a URI from a scheme, host, and path. If the scheme is empty, we just
 // return the path.
 std::string CreateURI(absl::string_view scheme, absl::string_view host,
-                 absl::string_view path);
+                      absl::string_view path);
 
 // Creates a temporary file name with an extension.
 std::string GetTempFilename(const std::string& extension);
@@ -103,6 +103,5 @@ std::string GetTempFilename(const std::string& extension);
 bool GetTestUndeclaredOutputsDir(std::string* dir);
 
 }  // namespace gtl
-
 
 #endif  // GTL_PATH_H_

@@ -14,8 +14,8 @@
 #include <type_traits>
 
 #include "glog/logging.h"
-#include "gtl/compiler_specific.h"
 #include "config/config.h"
+#include "gtl/compiler_specific.h"
 
 #if defined(COMPILER_MSVC)
 #include <intrin.h>
@@ -89,12 +89,10 @@ ALWAYS_INLINE
              : 64;
 #else
   uint32_t left = static_cast<uint32_t>(x >> 32);
-  if (LIKELY(_BitScanReverse(&index, left)))
-    return 31 - index;
+  if (LIKELY(_BitScanReverse(&index, left))) return 31 - index;
 
   uint32_t right = static_cast<uint32_t>(x);
-  if (LIKELY(_BitScanReverse(&index, right)))
-    return 63 - index;
+  if (LIKELY(_BitScanReverse(&index, right))) return 63 - index;
 
   return 64;
 #endif
@@ -124,12 +122,10 @@ ALWAYS_INLINE
                                                                      : 64;
 #else
   uint32_t right = static_cast<uint32_t>(x);
-  if (LIKELY(_BitScanForward(&index, right)))
-    return index;
+  if (LIKELY(_BitScanForward(&index, right))) return index;
 
   uint32_t left = static_cast<uint32_t>(x >> 32);
-  if (LIKELY(_BitScanForward(&index, left)))
-    return 32 + index;
+  if (LIKELY(_BitScanForward(&index, left))) return 32 + index;
 
   return 64;
 #endif
@@ -192,9 +188,7 @@ ALWAYS_INLINE size_t CountTrailingZeroBitsSizeT(size_t x) {
 }
 
 // Returns the integer i such as 2^i <= n < 2^(i+1)
-inline int Log2Floor(uint32_t n) {
-  return 31 - CountLeadingZeroBits(n);
-}
+inline int Log2Floor(uint32_t n) { return 31 - CountLeadingZeroBits(n); }
 
 // Returns the integer i such as 2^(i-1) < n <= 2^i
 inline int Log2Ceiling(uint32_t n) {

@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <fstream>
+
 #include "nailtool.h"
 
 #define error(...)                \

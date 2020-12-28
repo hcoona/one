@@ -217,7 +217,7 @@ class PosixRandomAccessFile : public RandomAccessFile {
   }
 
   absl::Status Read(uint64_t offset, size_t n, absl::string_view* result,
-              char* scratch) const override {
+                    char* scratch) const override {
     absl::Status s;
     char* dst = scratch;
     while (n > 0 && s.ok()) {
@@ -344,8 +344,8 @@ absl::Status PosixFileSystem::NewRandomAccessFile(
   return s;
 }
 
-absl::Status PosixFileSystem::NewWritableFile(const std::string& fname,
-                                        std::unique_ptr<WritableFile>* result) {
+absl::Status PosixFileSystem::NewWritableFile(
+    const std::string& fname, std::unique_ptr<WritableFile>* result) {
   std::string translated_fname = TranslateName(fname);
   absl::Status s;
   FILE* f = fopen(translated_fname.c_str(), "w");
@@ -400,7 +400,7 @@ absl::Status PosixFileSystem::FileExists(const std::string& fname) {
 }
 
 absl::Status PosixFileSystem::GetChildren(const std::string& dir,
-                                    std::vector<std::string>* result) {
+                                          std::vector<std::string>* result) {
   std::string translated_dir = TranslateName(dir);
   result->clear();
   DIR* d = opendir(translated_dir.c_str());
@@ -418,8 +418,8 @@ absl::Status PosixFileSystem::GetChildren(const std::string& dir,
   return absl::OkStatus();
 }
 
-absl::Status PosixFileSystem::GetMatchingPaths(const std::string& pattern,
-                                         std::vector<std::string>* results) {
+absl::Status PosixFileSystem::GetMatchingPaths(
+    const std::string& pattern, std::vector<std::string>* results) {
   return internal::GetMatchingPaths(this, pattern, results);
 }
 
@@ -450,7 +450,8 @@ absl::Status PosixFileSystem::DeleteDir(const std::string& name) {
   return result;
 }
 
-absl::Status PosixFileSystem::GetFileSize(const std::string& fname, uint64_t* size) {
+absl::Status PosixFileSystem::GetFileSize(const std::string& fname,
+                                          uint64_t* size) {
   absl::Status s;
   struct stat sbuf;
   if (stat(TranslateName(fname).c_str(), &sbuf) != 0) {
@@ -462,7 +463,8 @@ absl::Status PosixFileSystem::GetFileSize(const std::string& fname, uint64_t* si
   return s;
 }
 
-absl::Status PosixFileSystem::Stat(const std::string& fname, FileStatistics* stats) {
+absl::Status PosixFileSystem::Stat(const std::string& fname,
+                                   FileStatistics* stats) {
   absl::Status s;
   struct stat sbuf;
   if (stat(TranslateName(fname).c_str(), &sbuf) != 0) {
@@ -475,7 +477,8 @@ absl::Status PosixFileSystem::Stat(const std::string& fname, FileStatistics* sta
   return s;
 }
 
-absl::Status PosixFileSystem::RenameFile(const std::string& src, const std::string& target) {
+absl::Status PosixFileSystem::RenameFile(const std::string& src,
+                                         const std::string& target) {
   absl::Status result;
   if (rename(TranslateName(src).c_str(), TranslateName(target).c_str()) != 0) {
     result = IOError(src, errno);
@@ -483,7 +486,8 @@ absl::Status PosixFileSystem::RenameFile(const std::string& src, const std::stri
   return result;
 }
 
-absl::Status PosixFileSystem::CopyFile(const std::string& src, const std::string& target) {
+absl::Status PosixFileSystem::CopyFile(const std::string& src,
+                                       const std::string& target) {
   std::string translated_src = TranslateName(src);
   struct stat sbuf;
   if (stat(translated_src.c_str(), &sbuf) != 0) {

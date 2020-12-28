@@ -1,7 +1,8 @@
+#include "zkclient/zkadapter.h"
+
 #include <cstring>
 
 #include "gtest/gtest.h"
-#include "zkclient/zkadapter.h"
 #include "zookeeper.h"  // NOLINT
 
 static_assert(sizeof(hcoona::zookeeper::Id) == sizeof(Id),

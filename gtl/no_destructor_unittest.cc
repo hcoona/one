@@ -8,8 +8,8 @@
 #include <utility>
 
 #include "glog/logging.h"
-#include "config/config.h"
 #include "gtest/gtest.h"
+#include "config/config.h"
 
 namespace gtl {
 
@@ -95,8 +95,8 @@ namespace {
 //     return subtle::NoBarrier_Load(&constructor_called_);
 //   }
 
-//   // Instructs BlockingConstructor() that it may now unblock its construction.
-//   static void CompleteConstructionNow() {
+//   // Instructs BlockingConstructor() that it may now unblock its
+//   construction. static void CompleteConstructionNow() {
 //     subtle::NoBarrier_Store(&complete_construction_, 1);
 //   }
 
@@ -146,7 +146,8 @@ namespace {
 // // Tests that if the thread assigned to construct the local-static
 // // initialization of the NoDestructor runs at background priority : the
 // // foreground threads will yield to it enough for it to eventually complete
-// // construction. While local-static thread-safe initialization isn't specific to
+// // construction. While local-static thread-safe initialization isn't specific
+// to
 // // NoDestructor, it is tested here as NoDestructor is set to replace
 // // LazyInstance and this is an important regression test for it
 // // (https://crbug.com/797129).
@@ -176,7 +177,8 @@ namespace {
 //   }
 
 //   // This test will hang if the foreground threads become stuck in
-//   // NoDestructor's construction per the background thread never being scheduled
+//   // NoDestructor's construction per the background thread never being
+//   scheduled
 //   // to complete construction.
 //   for (auto& foreground_thread : foreground_threads)
 //     foreground_thread->Join();

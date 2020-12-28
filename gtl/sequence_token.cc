@@ -4,8 +4,8 @@
 
 #include "gtl/sequence_token.h"
 
-#include "gtl/atomic_sequence_num.h"
 #include "glog/logging.h"
+#include "gtl/atomic_sequence_num.h"
 
 namespace gtl {
 
@@ -35,21 +35,16 @@ bool SequenceToken::operator!=(const SequenceToken& other) const {
   return !(*this == other);
 }
 
-bool SequenceToken::IsValid() const {
-  return token_ != kInvalidSequenceToken;
-}
+bool SequenceToken::IsValid() const { return token_ != kInvalidSequenceToken; }
 
-int SequenceToken::ToInternalValue() const {
-  return token_;
-}
+int SequenceToken::ToInternalValue() const { return token_; }
 
 SequenceToken SequenceToken::Create() {
   return SequenceToken(g_sequence_token_generator.GetNext());
 }
 
 SequenceToken SequenceToken::GetForCurrentThread() {
-  const SequenceToken* current_sequence_token =
-      *(GetTlsCurrentSequenceToken());
+  const SequenceToken* current_sequence_token = *(GetTlsCurrentSequenceToken());
   return current_sequence_token ? *current_sequence_token : SequenceToken();
 }
 
@@ -61,9 +56,7 @@ bool TaskToken::operator!=(const TaskToken& other) const {
   return !(*this == other);
 }
 
-bool TaskToken::IsValid() const {
-  return token_ != kInvalidTaskToken;
-}
+bool TaskToken::IsValid() const { return token_ != kInvalidTaskToken; }
 
 TaskToken TaskToken::Create() {
   return TaskToken(g_task_token_generator.GetNext());

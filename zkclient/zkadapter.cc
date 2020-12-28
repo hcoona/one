@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <utility>
+
 #include "zookeeper.h"  // NOLINT
 
 static_assert(sizeof(hcoona::zookeeper::Id) == sizeof(Id),

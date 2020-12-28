@@ -66,8 +66,7 @@ constexpr bool IsValueNegative(T) {
 // larger than max / 2 + 1 (i.e. signed min cast to unsigned).
 template <typename T>
 constexpr typename std::make_signed<T>::type ConditionalNegate(
-    T x,
-    bool is_negative) {
+    T x, bool is_negative) {
   static_assert(std::is_integral<T>::value, "Type must be integral");
   using SignedT = typename std::make_signed<T>::type;
   using UnsignedT = typename std::make_unsigned<T>::type;
@@ -87,17 +86,13 @@ constexpr typename std::make_unsigned<T>::type SafeUnsignedAbs(T value) {
 
 // This allows us to switch paths on known compile-time constants.
 #if defined(__clang__) || defined(__GNUC__)
-constexpr bool CanDetectCompileTimeConstant() {
-  return true;
-}
+constexpr bool CanDetectCompileTimeConstant() { return true; }
 template <typename T>
 constexpr bool IsCompileTimeConstant(const T v) {
   return __builtin_constant_p(v);
 }
 #else
-constexpr bool CanDetectCompileTimeConstant() {
-  return false;
-}
+constexpr bool CanDetectCompileTimeConstant() { return false; }
 template <typename T>
 constexpr bool IsCompileTimeConstant(const T) {
   return false;
@@ -145,8 +140,7 @@ enum NumericRangeRepresentation {
 // Helper templates to statically determine if our destination type can contain
 // maximum and minimum values represented by the source type.
 
-template <typename Dst,
-          typename Src,
+template <typename Dst, typename Src,
           IntegerRepresentation DstSign = std::is_signed<Dst>::value
                                               ? INTEGER_REPRESENTATION_SIGNED
                                               : INTEGER_REPRESENTATION_UNSIGNED,
@@ -168,9 +162,7 @@ struct StaticDstRangeRelationToSrcRange<Dst, Src, Sign, Sign> {
 // Unsigned to signed: Dst is guaranteed to contain source only if its range is
 // larger.
 template <typename Dst, typename Src>
-struct StaticDstRangeRelationToSrcRange<Dst,
-                                        Src,
-                                        INTEGER_REPRESENTATION_SIGNED,
+struct StaticDstRangeRelationToSrcRange<Dst, Src, INTEGER_REPRESENTATION_SIGNED,
                                         INTEGER_REPRESENTATION_UNSIGNED> {
   static const NumericRangeRepresentation value =
       MaxExponent<Dst>::value > MaxExponent<Src>::value
@@ -180,10 +172,8 @@ struct StaticDstRangeRelationToSrcRange<Dst,
 
 // Signed to unsigned: Dst cannot be statically determined to contain Src.
 template <typename Dst, typename Src>
-struct StaticDstRangeRelationToSrcRange<Dst,
-                                        Src,
-                                        INTEGER_REPRESENTATION_UNSIGNED,
-                                        INTEGER_REPRESENTATION_SIGNED> {
+struct StaticDstRangeRelationToSrcRange<
+    Dst, Src, INTEGER_REPRESENTATION_UNSIGNED, INTEGER_REPRESENTATION_SIGNED> {
   static const NumericRangeRepresentation value = NUMERIC_RANGE_NOT_CONTAINED;
 };
 
@@ -247,9 +237,8 @@ struct NarrowingRange {
        SrcLimits::digits < DstLimits::digits)
           ? (DstLimits::digits - SrcLimits::digits)
           : 0;
-  template <
-      typename T,
-      typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+  template <typename T, typename std::enable_if<
+                            std::is_integral<T>::value>::type* = nullptr>
 
   // Masks out the integer bits that are beyond the precision of the
   // intermediate type used for comparison.
@@ -261,9 +250,8 @@ struct NarrowingRange {
                           IsValueNegative(value)));
   }
 
-  template <typename T,
-            typename std::enable_if<std::is_floating_point<T>::value>::type* =
-                nullptr>
+  template <typename T, typename std::enable_if<
+                            std::is_floating_point<T>::value>::type* = nullptr>
   static constexpr T Adjust(T value) {
     static_assert(std::is_same<T, Dst>::value, "");
     static_assert(kShift == 0, "");
@@ -274,9 +262,7 @@ struct NarrowingRange {
   static constexpr Dst lowest() { return Adjust(Bounds<Dst>::lowest()); }
 };
 
-template <typename Dst,
-          typename Src,
-          template <typename> class Bounds,
+template <typename Dst, typename Src, template <typename> class Bounds,
           IntegerRepresentation DstSign = std::is_signed<Dst>::value
                                               ? INTEGER_REPRESENTATION_SIGNED
                                               : INTEGER_REPRESENTATION_UNSIGNED,
@@ -292,16 +278,9 @@ struct DstRangeRelationToSrcRangeImpl;
 // compiler warnings on signed an unsigned comparisons.
 
 // Same sign narrowing: The range is contained for normal limits.
-template <typename Dst,
-          typename Src,
-          template <typename> class Bounds,
-          IntegerRepresentation DstSign,
-          IntegerRepresentation SrcSign>
-struct DstRangeRelationToSrcRangeImpl<Dst,
-                                      Src,
-                                      Bounds,
-                                      DstSign,
-                                      SrcSign,
+template <typename Dst, typename Src, template <typename> class Bounds,
+          IntegerRepresentation DstSign, IntegerRepresentation SrcSign>
+struct DstRangeRelationToSrcRangeImpl<Dst, Src, Bounds, DstSign, SrcSign,
                                       NUMERIC_RANGE_CONTAINED> {
   static constexpr RangeCheck Check(Src value) {
     using SrcLimits = std::numeric_limits<Src>;
@@ -317,12 +296,9 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
 // Signed to signed narrowing: Both the upper and lower boundaries may be
 // exceeded for standard limits.
 template <typename Dst, typename Src, template <typename> class Bounds>
-struct DstRangeRelationToSrcRangeImpl<Dst,
-                                      Src,
-                                      Bounds,
-                                      INTEGER_REPRESENTATION_SIGNED,
-                                      INTEGER_REPRESENTATION_SIGNED,
-                                      NUMERIC_RANGE_NOT_CONTAINED> {
+struct DstRangeRelationToSrcRangeImpl<
+    Dst, Src, Bounds, INTEGER_REPRESENTATION_SIGNED,
+    INTEGER_REPRESENTATION_SIGNED, NUMERIC_RANGE_NOT_CONTAINED> {
   static constexpr RangeCheck Check(Src value) {
     using DstLimits = NarrowingRange<Dst, Src, Bounds>;
     return RangeCheck(value >= DstLimits::lowest(), value <= DstLimits::max());
@@ -332,12 +308,9 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
 // Unsigned to unsigned narrowing: Only the upper bound can be exceeded for
 // standard limits.
 template <typename Dst, typename Src, template <typename> class Bounds>
-struct DstRangeRelationToSrcRangeImpl<Dst,
-                                      Src,
-                                      Bounds,
-                                      INTEGER_REPRESENTATION_UNSIGNED,
-                                      INTEGER_REPRESENTATION_UNSIGNED,
-                                      NUMERIC_RANGE_NOT_CONTAINED> {
+struct DstRangeRelationToSrcRangeImpl<
+    Dst, Src, Bounds, INTEGER_REPRESENTATION_UNSIGNED,
+    INTEGER_REPRESENTATION_UNSIGNED, NUMERIC_RANGE_NOT_CONTAINED> {
   static constexpr RangeCheck Check(Src value) {
     using DstLimits = NarrowingRange<Dst, Src, Bounds>;
     return RangeCheck(
@@ -348,12 +321,9 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
 
 // Unsigned to signed: Only the upper bound can be exceeded for standard limits.
 template <typename Dst, typename Src, template <typename> class Bounds>
-struct DstRangeRelationToSrcRangeImpl<Dst,
-                                      Src,
-                                      Bounds,
-                                      INTEGER_REPRESENTATION_SIGNED,
-                                      INTEGER_REPRESENTATION_UNSIGNED,
-                                      NUMERIC_RANGE_NOT_CONTAINED> {
+struct DstRangeRelationToSrcRangeImpl<
+    Dst, Src, Bounds, INTEGER_REPRESENTATION_SIGNED,
+    INTEGER_REPRESENTATION_UNSIGNED, NUMERIC_RANGE_NOT_CONTAINED> {
   static constexpr RangeCheck Check(Src value) {
     using DstLimits = NarrowingRange<Dst, Src, Bounds>;
     using Promotion = decltype(Src() + Dst());
@@ -368,12 +338,9 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
 // Signed to unsigned: The upper boundary may be exceeded for a narrower Dst,
 // and any negative value exceeds the lower boundary for standard limits.
 template <typename Dst, typename Src, template <typename> class Bounds>
-struct DstRangeRelationToSrcRangeImpl<Dst,
-                                      Src,
-                                      Bounds,
-                                      INTEGER_REPRESENTATION_UNSIGNED,
-                                      INTEGER_REPRESENTATION_SIGNED,
-                                      NUMERIC_RANGE_NOT_CONTAINED> {
+struct DstRangeRelationToSrcRangeImpl<
+    Dst, Src, Bounds, INTEGER_REPRESENTATION_UNSIGNED,
+    INTEGER_REPRESENTATION_SIGNED, NUMERIC_RANGE_NOT_CONTAINED> {
   static constexpr RangeCheck Check(Src value) {
     using SrcLimits = std::numeric_limits<Src>;
     using DstLimits = NarrowingRange<Dst, Src, Bounds>;
@@ -395,8 +362,7 @@ struct IsTypeInRangeForNumericType {
                             NUMERIC_RANGE_CONTAINED;
 };
 
-template <typename Dst,
-          template <typename> class Bounds = std::numeric_limits,
+template <typename Dst, template <typename> class Bounds = std::numeric_limits,
           typename Src>
 constexpr RangeCheck DstRangeRelationToSrcRange(Src value) {
   static_assert(std::is_arithmetic<Src>::value, "Argument must be numeric.");
@@ -445,8 +411,7 @@ enum ArithmeticPromotionCategory {
 };
 
 // Determines the type that can represent the largest positive value.
-template <typename Lhs,
-          typename Rhs,
+template <typename Lhs, typename Rhs,
           ArithmeticPromotionCategory Promotion =
               (MaxExponent<Lhs>::value > MaxExponent<Rhs>::value)
                   ? LEFT_PROMOTION
@@ -464,8 +429,7 @@ struct MaxExponentPromotion<Lhs, Rhs, RIGHT_PROMOTION> {
 };
 
 // Determines the type that can represent the lowest arithmetic value.
-template <typename Lhs,
-          typename Rhs,
+template <typename Lhs, typename Rhs,
           ArithmeticPromotionCategory Promotion =
               std::is_signed<Lhs>::value
                   ? (std::is_signed<Rhs>::value
@@ -492,19 +456,17 @@ struct LowestValuePromotion<Lhs, Rhs, RIGHT_PROMOTION> {
 
 // Determines the type that is best able to represent an arithmetic result.
 template <
-    typename Lhs,
-    typename Rhs = Lhs,
+    typename Lhs, typename Rhs = Lhs,
     bool is_intmax_type =
         std::is_integral<typename MaxExponentPromotion<Lhs, Rhs>::type>::value&&
             IntegerBitsPlusSign<typename MaxExponentPromotion<Lhs, Rhs>::type>::
                 value == IntegerBitsPlusSign<intmax_t>::value,
     bool is_max_exponent =
         StaticDstRangeRelationToSrcRange<
-            typename MaxExponentPromotion<Lhs, Rhs>::type,
-            Lhs>::value ==
+            typename MaxExponentPromotion<Lhs, Rhs>::type, Lhs>::value ==
         NUMERIC_RANGE_CONTAINED&& StaticDstRangeRelationToSrcRange<
-            typename MaxExponentPromotion<Lhs, Rhs>::type,
-            Rhs>::value == NUMERIC_RANGE_CONTAINED>
+            typename MaxExponentPromotion<Lhs, Rhs>::type, Rhs>::value ==
+        NUMERIC_RANGE_CONTAINED>
 struct BigEnoughPromotion;
 
 // The side with the max exponent is big enough.
@@ -549,13 +511,11 @@ struct IsIntegerArithmeticSafe {
 
 // Promotes to a type that can represent any possible result of a binary
 // arithmetic operation with the source types.
-template <typename Lhs,
-          typename Rhs,
+template <typename Lhs, typename Rhs,
           bool is_promotion_possible = IsIntegerArithmeticSafe<
               typename std::conditional<std::is_signed<Lhs>::value ||
                                             std::is_signed<Rhs>::value,
-                                        intmax_t,
-                                        uintmax_t>::type,
+                                        intmax_t, uintmax_t>::type,
               typename MaxExponentPromotion<Lhs, Rhs>::type>::value>
 struct FastIntegerArithmeticPromotion;
 
@@ -687,14 +647,11 @@ as_unsigned(const Src value) {
 }
 
 template <typename L, typename R>
-constexpr bool IsLessImpl(const L lhs,
-                          const R rhs,
-                          const RangeCheck l_range,
+constexpr bool IsLessImpl(const L lhs, const R rhs, const RangeCheck l_range,
                           const RangeCheck r_range) {
   return l_range.IsUnderflow() || r_range.IsOverflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) <
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) <
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -708,14 +665,12 @@ struct IsLess {
 };
 
 template <typename L, typename R>
-constexpr bool IsLessOrEqualImpl(const L lhs,
-                                 const R rhs,
+constexpr bool IsLessOrEqualImpl(const L lhs, const R rhs,
                                  const RangeCheck l_range,
                                  const RangeCheck r_range) {
   return l_range.IsUnderflow() || r_range.IsOverflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) <=
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) <=
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -729,14 +684,11 @@ struct IsLessOrEqual {
 };
 
 template <typename L, typename R>
-constexpr bool IsGreaterImpl(const L lhs,
-                             const R rhs,
-                             const RangeCheck l_range,
+constexpr bool IsGreaterImpl(const L lhs, const R rhs, const RangeCheck l_range,
                              const RangeCheck r_range) {
   return l_range.IsOverflow() || r_range.IsUnderflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) >
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) >
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>
@@ -750,14 +702,12 @@ struct IsGreater {
 };
 
 template <typename L, typename R>
-constexpr bool IsGreaterOrEqualImpl(const L lhs,
-                                    const R rhs,
+constexpr bool IsGreaterOrEqualImpl(const L lhs, const R rhs,
                                     const RangeCheck l_range,
                                     const RangeCheck r_range) {
   return l_range.IsOverflow() || r_range.IsUnderflow() ||
-         (l_range == r_range &&
-          static_cast<decltype(lhs + rhs)>(lhs) >=
-              static_cast<decltype(lhs + rhs)>(rhs));
+         (l_range == r_range && static_cast<decltype(lhs + rhs)>(lhs) >=
+                                    static_cast<decltype(lhs + rhs)>(rhs));
 }
 
 template <typename L, typename R>

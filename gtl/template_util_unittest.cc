@@ -7,8 +7,8 @@
 #include <string>
 #include <type_traits>
 
-#include "gtl/test/move_only_int.h"
 #include "gtest/gtest.h"
+#include "gtl/test/move_only_int.h"
 
 namespace gtl {
 namespace {

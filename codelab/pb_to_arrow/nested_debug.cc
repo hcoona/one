@@ -46,8 +46,8 @@ int main(int argc, char** argv) {
           nested_int32_struct_builder->field_builder(0));
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       nested_int32_struct_builder->AppendNull()));
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
-      inner_int32_builder->AppendNull()));
+  CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(inner_int32_builder->AppendNull()));
 
   std::shared_ptr<arrow::Array> nested_int32_struct_array;
   CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(

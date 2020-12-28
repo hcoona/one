@@ -45,9 +45,7 @@ class Location {
   // Constructor should be called with a long-lived char*, such as __FILE__.
   // It assumes the provided value will persist as a global constant, and it
   // will not make a copy of it.
-  Location(const char* function_name,
-           const char* file_name,
-           int line_number,
+  Location(const char* function_name, const char* file_name, int line_number,
            const void* program_counter);
 
   // Comparator for hash map insertion. The program counter should uniquely
@@ -87,8 +85,7 @@ class Location {
   static Location CreateFromHere(const char* file_name);
 #else
   static Location CreateFromHere(const char* function_name,
-                                 const char* file_name,
-                                 int line_number);
+                                 const char* file_name, int line_number);
 #endif
 #endif
 

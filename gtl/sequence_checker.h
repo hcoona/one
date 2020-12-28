@@ -5,11 +5,11 @@
 #ifndef GTL_SEQUENCE_CHECKER_H_
 #define GTL_SEQUENCE_CHECKER_H_
 
+#include "absl/strings/string_view.h"
 #include "glog/logging.h"
+#include "config/config.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/sequence_checker_impl.h"
-#include "absl/strings/string_view.h"
-#include "config/config.h"
 
 // SequenceChecker is a helper class used to help verify that some methods of a
 // class are called sequentially (for thread-safety). It supports thread safety
@@ -72,7 +72,7 @@
 
 #if DCHECK_IS_ON()
 #define SEQUENCE_CHECKER(name) gtl::SequenceChecker name
-#define DCHECK_CALLED_ON_VALID_SEQUENCE(name, ...)                   \
+#define DCHECK_CALLED_ON_VALID_SEQUENCE(name, ...)                  \
   gtl::ScopedValidateSequenceChecker SEQUENCE_CHECKER_INTERNAL_UID( \
       scoped_validate_sequence_checker_)(name, ##__VA_ARGS__)
 #define DETACH_FROM_SEQUENCE(name) (name).DetachFromSequence()
@@ -109,11 +109,9 @@ class LOCKABLE SequenceCheckerDoNothing {
 };
 
 #if DCHECK_IS_ON()
-class SequenceChecker : public SequenceCheckerImpl {
-};
+class SequenceChecker : public SequenceCheckerImpl {};
 #else
-class SequenceChecker : public SequenceCheckerDoNothing {
-};
+class SequenceChecker : public SequenceCheckerDoNothing {};
 #endif  // DCHECK_IS_ON()
 
 class SCOPED_LOCKABLE ScopedValidateSequenceChecker {

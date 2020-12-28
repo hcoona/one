@@ -29,9 +29,7 @@ class SecureHashSHA256 : public SecureHash {
     memcpy(&ctx_, &other.ctx_, sizeof(ctx_));
   }
 
-  ~SecureHashSHA256() override {
-    OPENSSL_cleanse(&ctx_, sizeof(ctx_));
-  }
+  ~SecureHashSHA256() override { OPENSSL_cleanse(&ctx_, sizeof(ctx_)); }
 
   void Update(const void* input, size_t len) override {
     SHA256_Update(&ctx_, static_cast<const unsigned char*>(input), len);

@@ -3,6 +3,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <list>
+
 #include "nailtool.h"
 class CDataModel {
   std::stringstream out;

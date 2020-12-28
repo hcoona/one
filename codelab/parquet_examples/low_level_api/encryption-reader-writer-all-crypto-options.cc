@@ -16,6 +16,7 @@
 // under the License.
 
 #include <dirent.h>
+
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -25,71 +26,66 @@
 
 #include "arrow/io/file.h"
 #include "arrow/util/logging.h"
-
 #include "parquet/api/reader.h"
 #include "parquet/api/writer.h"
 
-
 /*
- * This file contains samples for writing and reading encrypted Parquet files in different
- * encryption and decryption configurations.
- * Each sample section is dedicated to an independent configuration and shows its creation
- * from beginning to end.
- * The samples have the following goals:
- * 1) Demonstrate usage of different options for data encryption and decryption.
- * 2) Produce encrypted files for interoperability tests with other (eg parquet-mr)
- *    readers that support encryption.
- * 3) Produce encrypted files with plaintext footer, for testing the ability of legacy
- *    readers to parse the footer and read unencrypted columns.
- * 4) Perform interoperability tests with other (eg parquet-mr) writers, by reading
- *    encrypted files produced by these writers.
+ * This file contains samples for writing and reading encrypted Parquet files in
+ * different encryption and decryption configurations. Each sample section is
+ * dedicated to an independent configuration and shows its creation from
+ * beginning to end. The samples have the following goals: 1) Demonstrate usage
+ * of different options for data encryption and decryption. 2) Produce encrypted
+ * files for interoperability tests with other (eg parquet-mr) readers that
+ * support encryption. 3) Produce encrypted files with plaintext footer, for
+ * testing the ability of legacy readers to parse the footer and read
+ * unencrypted columns. 4) Perform interoperability tests with other (eg
+ * parquet-mr) writers, by reading encrypted files produced by these writers.
  *
- * Each write sample produces new independent parquet file, encrypted with a different
- * encryption configuration as described below.
- * The name of each file is in the form of:
- * tester<encryption config number>.parquet.encrypted.
+ * Each write sample produces new independent parquet file, encrypted with a
+ * different encryption configuration as described below. The name of each file
+ * is in the form of: tester<encryption config number>.parquet.encrypted.
  *
- * The read sample creates a set of decryption configurations and then uses each of them
- * to read all encrypted files in the input directory.
+ * The read sample creates a set of decryption configurations and then uses each
+ * of them to read all encrypted files in the input directory.
  *
  * The different encryption and decryption configurations are listed below.
  *
- * Usage: ./encryption-interop-tests <write/read> <path-to-directory-of-parquet-files>
+ * Usage: ./encryption-interop-tests <write/read>
+ * <path-to-directory-of-parquet-files>
  *
- * A detailed description of the Parquet Modular Encryption specification can be found
- * here:
+ * A detailed description of the Parquet Modular Encryption specification can be
+ * found here:
  * https://github.com/apache/parquet-format/blob/encryption/Encryption.md
  *
  * The write sample creates files with four columns in the following
  * encryption configurations:
  *
- *  - Encryption configuration 1:   Encrypt all columns and the footer with the same key.
- *                                  (uniform encryption)
- *  - Encryption configuration 2:   Encrypt two columns and the footer, with different
- *                                  keys.
+ *  - Encryption configuration 1:   Encrypt all columns and the footer with the
+ * same key. (uniform encryption)
+ *  - Encryption configuration 2:   Encrypt two columns and the footer, with
+ * different keys.
  *  - Encryption configuration 3:   Encrypt two columns, with different keys.
- *                                  Don’t encrypt footer (to enable legacy readers)
+ *                                  Don’t encrypt footer (to enable legacy
+ * readers)
  *                                  - plaintext footer mode.
- *  - Encryption configuration 4:   Encrypt two columns and the footer, with different
- *                                  keys. Supply aad_prefix for file identity
- *                                  verification.
- *  - Encryption configuration 5:   Encrypt two columns and the footer, with different
- *                                  keys. Supply aad_prefix, and call
- *                                  disable_aad_prefix_storage to prevent file
- *                                  identity storage in file metadata.
- *  - Encryption configuration 6:   Encrypt two columns and the footer, with different
- *                                  keys. Use the alternative (AES_GCM_CTR_V1) algorithm.
+ *  - Encryption configuration 4:   Encrypt two columns and the footer, with
+ * different keys. Supply aad_prefix for file identity verification.
+ *  - Encryption configuration 5:   Encrypt two columns and the footer, with
+ * different keys. Supply aad_prefix, and call disable_aad_prefix_storage to
+ * prevent file identity storage in file metadata.
+ *  - Encryption configuration 6:   Encrypt two columns and the footer, with
+ * different keys. Use the alternative (AES_GCM_CTR_V1) algorithm.
  *
- * The read sample uses each of the following decryption configurations to read every
- * encrypted files in the input directory:
+ * The read sample uses each of the following decryption configurations to read
+ * every encrypted files in the input directory:
  *
- *  - Decryption configuration 1:   Decrypt using key retriever that holds the keys of
- *                                  two encrypted columns and the footer key.
- *  - Decryption configuration 2:   Decrypt using key retriever that holds the keys of
- *                                  two encrypted columns and the footer key. Supplies
- *                                  aad_prefix to verify file identity.
- *  - Decryption configuration 3:   Decrypt using explicit column and footer keys
- *                                  (instead of key retrieval callback).
+ *  - Decryption configuration 1:   Decrypt using key retriever that holds the
+ * keys of two encrypted columns and the footer key.
+ *  - Decryption configuration 2:   Decrypt using key retriever that holds the
+ * keys of two encrypted columns and the footer key. Supplies aad_prefix to
+ * verify file identity.
+ *  - Decryption configuration 3:   Decrypt using explicit column and footer
+ * keys (instead of key retrieval callback).
  */
 
 constexpr int NUM_ROWS_PER_ROW_GROUP = 500;
@@ -135,16 +131,17 @@ static std::shared_ptr<GroupNode> SetupSchema() {
   fields.push_back(PrimitiveNode::Make("boolean_field", Repetition::REQUIRED,
                                        Type::BOOLEAN, ConvertedType::NONE));
 
-  // Create a primitive node named 'int32_field' with type:INT32, repetition:REQUIRED,
-  // logical type:TIME_MILLIS
-  fields.push_back(PrimitiveNode::Make("int32_field", Repetition::REQUIRED, Type::INT32,
+  // Create a primitive node named 'int32_field' with type:INT32,
+  // repetition:REQUIRED, logical type:TIME_MILLIS
+  fields.push_back(PrimitiveNode::Make("int32_field", Repetition::REQUIRED,
+                                       Type::INT32,
                                        ConvertedType::TIME_MILLIS));
 
-  fields.push_back(PrimitiveNode::Make("float_field", Repetition::REQUIRED, Type::FLOAT,
-                                       ConvertedType::NONE));
+  fields.push_back(PrimitiveNode::Make("float_field", Repetition::REQUIRED,
+                                       Type::FLOAT, ConvertedType::NONE));
 
-  fields.push_back(PrimitiveNode::Make("double_field", Repetition::REQUIRED, Type::DOUBLE,
-                                       ConvertedType::NONE));
+  fields.push_back(PrimitiveNode::Make("double_field", Repetition::REQUIRED,
+                                       Type::DOUBLE, ConvertedType::NONE));
 
   // Create a GroupNode named 'schema' using the primitive nodes defined above
   // This GroupNode is the root node of the schema tree
@@ -161,17 +158,17 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
   std::vector<std::shared_ptr<parquet::FileEncryptionProperties>>
       vector_of_encryption_configurations;
 
-  // Encryption configuration 1: Encrypt all columns and the footer with the same key.
-  // (uniform encryption)
+  // Encryption configuration 1: Encrypt all columns and the footer with the
+  // same key. (uniform encryption)
   parquet::FileEncryptionProperties::Builder file_encryption_builder_1(
       kFooterEncryptionKey);
   // Add to list of encryption configurations.
   vector_of_encryption_configurations.push_back(
       file_encryption_builder_1.footer_key_metadata("kf")->build());
 
-  // Encryption configuration 2: Encrypt two columns and the footer, with different keys.
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnEncryptionProperties>>
+  // Encryption configuration 2: Encrypt two columns and the footer, with
+  // different keys.
+  std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
       encryption_cols2;
   std::string path1 = "double_field";
   std::string path2 = "float_field";
@@ -194,8 +191,7 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
   // Encryption configuration 3: Encrypt two columns, with different keys.
   // Don’t encrypt footer.
   // (plaintext footer mode, readable by legacy readers)
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnEncryptionProperties>>
+  std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
       encryption_cols3;
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_30(path1);
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_31(path2);
@@ -213,10 +209,9 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
           ->set_plaintext_footer()
           ->build());
 
-  // Encryption configuration 4: Encrypt two columns and the footer, with different keys.
-  // Use aad_prefix.
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnEncryptionProperties>>
+  // Encryption configuration 4: Encrypt two columns and the footer, with
+  // different keys. Use aad_prefix.
+  std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
       encryption_cols4;
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_40(path1);
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_41(path2);
@@ -234,10 +229,9 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
           ->aad_prefix(fileName)
           ->build());
 
-  // Encryption configuration 5: Encrypt two columns and the footer, with different keys.
-  // Use aad_prefix and disable_aad_prefix_storage.
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnEncryptionProperties>>
+  // Encryption configuration 5: Encrypt two columns and the footer, with
+  // different keys. Use aad_prefix and disable_aad_prefix_storage.
+  std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
       encryption_cols5;
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_50(path1);
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_51(path2);
@@ -256,10 +250,9 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
           ->disable_aad_prefix_storage()
           ->build());
 
-  // Encryption configuration 6: Encrypt two columns and the footer, with different keys.
-  // Use AES_GCM_CTR_V1 algorithm.
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnEncryptionProperties>>
+  // Encryption configuration 6: Encrypt two columns and the footer, with
+  // different keys. Use AES_GCM_CTR_V1 algorithm.
+  std::map<std::string, std::shared_ptr<parquet::ColumnEncryptionProperties>>
       encryption_cols6;
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_60(path1);
   parquet::ColumnEncryptionProperties::Builder encryption_col_builder_61(path2);
@@ -281,17 +274,18 @@ void InteropTestWriteEncryptedParquetFiles(std::string root_path) {
                                  PARQUET WRITER EXAMPLE
    **********************************************************************************/
 
-  // Iterate over the encryption configurations and for each one write a parquet file.
-  for (unsigned example_id = 0; example_id < vector_of_encryption_configurations.size();
-       ++example_id) {
+  // Iterate over the encryption configurations and for each one write a parquet
+  // file.
+  for (unsigned example_id = 0;
+       example_id < vector_of_encryption_configurations.size(); ++example_id) {
     std::stringstream ss;
     ss << example_id + 1;
     std::string test_number_string = ss.str();
     try {
       // Create a local file output stream instance.
       std::shared_ptr<FileClass> out_file;
-      std::string file =
-          root_path + fileName + std::string(test_number_string) + ".parquet.encrypted";
+      std::string file = root_path + fileName +
+                         std::string(test_number_string) + ".parquet.encrypted";
       std::cout << "Write " << file << std::endl;
       PARQUET_ASSIGN_OR_THROW(out_file, FileClass::Open(file));
 
@@ -368,8 +362,8 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
   std::vector<std::shared_ptr<parquet::FileDecryptionProperties>>
       vector_of_decryption_configurations;
 
-  // Decryption configuration 1: Decrypt using key retriever callback that holds the keys
-  // of two encrypted columns and the footer key.
+  // Decryption configuration 1: Decrypt using key retriever callback that holds
+  // the keys of two encrypted columns and the footer key.
   std::shared_ptr<parquet::StringKeyIdRetriever> string_kr1 =
       std::make_shared<parquet::StringKeyIdRetriever>();
   string_kr1->PutKey("kf", kFooterEncryptionKey);
@@ -382,8 +376,8 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
   vector_of_decryption_configurations.push_back(
       file_decryption_builder_1.key_retriever(kr1)->build());
 
-  // Decryption configuration 2: Decrypt using key retriever callback that holds the keys
-  // of two encrypted columns and the footer key. Supply aad_prefix.
+  // Decryption configuration 2: Decrypt using key retriever callback that holds
+  // the keys of two encrypted columns and the footer key. Supply aad_prefix.
   std::shared_ptr<parquet::StringKeyIdRetriever> string_kr2 =
       std::make_shared<parquet::StringKeyIdRetriever>();
   string_kr2->PutKey("kf", kFooterEncryptionKey);
@@ -394,16 +388,19 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
 
   parquet::FileDecryptionProperties::Builder file_decryption_builder_2;
   vector_of_decryption_configurations.push_back(
-      file_decryption_builder_2.key_retriever(kr2)->aad_prefix(fileName)->build());
+      file_decryption_builder_2.key_retriever(kr2)
+          ->aad_prefix(fileName)
+          ->build());
 
   // Decryption configuration 3: Decrypt using explicit column and footer keys.
   std::string path_double = "double_field";
   std::string path_float = "float_field";
-  std::map<std::string,
-           std::shared_ptr<parquet::ColumnDecryptionProperties>>
+  std::map<std::string, std::shared_ptr<parquet::ColumnDecryptionProperties>>
       decryption_cols;
-  parquet::ColumnDecryptionProperties::Builder decryption_col_builder31(path_double);
-  parquet::ColumnDecryptionProperties::Builder decryption_col_builder32(path_float);
+  parquet::ColumnDecryptionProperties::Builder decryption_col_builder31(
+      path_double);
+  parquet::ColumnDecryptionProperties::Builder decryption_col_builder32(
+      path_float);
 
   decryption_cols[path_double] =
       decryption_col_builder31.key(kColumnEncryptionKey1)->build();
@@ -420,14 +417,15 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
                              PARQUET READER EXAMPLE
   **********************************************************************************/
 
-  // Iterate over the decryption configurations and use each one to read every files
-  // in the input directory.
-  for (unsigned example_id = 0; example_id < vector_of_decryption_configurations.size();
-       ++example_id) {
+  // Iterate over the decryption configurations and use each one to read every
+  // files in the input directory.
+  for (unsigned example_id = 0;
+       example_id < vector_of_decryption_configurations.size(); ++example_id) {
     PrintDecryptionConfiguration(example_id + 1);
     for (auto const& file : files_in_directory) {
       std::string exception_msg = "";
-      if (!FileNameEndsWith(file, "parquet.encrypted"))  // Skip non encrypted files
+      if (!FileNameEndsWith(file,
+                            "parquet.encrypted"))  // Skip non encrypted files
         continue;
       try {
         std::cout << "--> Read file " << file << std::endl;
@@ -445,7 +443,8 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
                                                  reader_properties);
 
         // Get the File MetaData
-        std::shared_ptr<parquet::FileMetaData> file_metadata = parquet_reader->metadata();
+        std::shared_ptr<parquet::FileMetaData> file_metadata =
+            parquet_reader->metadata();
 
         // Get the number of RowGroups
         int num_row_groups = file_metadata->num_row_groups();
@@ -475,9 +474,10 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
           i = 0;
           while (bool_reader->HasNext()) {
             bool value;
-            // Read one value at a time. The number of rows read is returned. values_read
-            // contains the number of non-null rows
-            rows_read = bool_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+            // Read one value at a time. The number of rows read is returned.
+            // values_read contains the number of non-null rows
+            rows_read = bool_reader->ReadBatch(1, nullptr, nullptr, &value,
+                                               &values_read);
             // Ensure only one value is read
             assert(rows_read == 1);
             // There are no NULL values in the rows written
@@ -487,7 +487,8 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
             assert(value == expected_value);
             i++;
           }
-          ARROW_UNUSED(rows_read); // suppress compiler warning in release builds
+          ARROW_UNUSED(
+              rows_read);  // suppress compiler warning in release builds
 
           // Get the Column Reader for the Int32 column
           column_reader = row_group_reader->Column(1);
@@ -497,10 +498,10 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
           i = 0;
           while (int32_reader->HasNext()) {
             int32_t value;
-            // Read one value at a time. The number of rows read is returned. values_read
-            // contains the number of non-null rows
-            rows_read =
-                int32_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+            // Read one value at a time. The number of rows read is returned.
+            // values_read contains the number of non-null rows
+            rows_read = int32_reader->ReadBatch(1, nullptr, nullptr, &value,
+                                                &values_read);
             // Ensure only one value is read
             assert(rows_read == 1);
             // There are no NULL values in the rows written
@@ -518,10 +519,10 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
           i = 0;
           while (float_reader->HasNext()) {
             float value;
-            // Read one value at a time. The number of rows read is returned. values_read
-            // contains the number of non-null rows
-            rows_read =
-                float_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+            // Read one value at a time. The number of rows read is returned.
+            // values_read contains the number of non-null rows
+            rows_read = float_reader->ReadBatch(1, nullptr, nullptr, &value,
+                                                &values_read);
             // Ensure only one value is read
             assert(rows_read == 1);
             // There are no NULL values in the rows written
@@ -540,10 +541,10 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
           i = 0;
           while (double_reader->HasNext()) {
             double value;
-            // Read one value at a time. The number of rows read is returned. values_read
-            // contains the number of non-null rows
-            rows_read =
-                double_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+            // Read one value at a time. The number of rows read is returned.
+            // values_read contains the number of non-null rows
+            rows_read = double_reader->ReadBatch(1, nullptr, nullptr, &value,
+                                                 &values_read);
             // Ensure only one value is read
             assert(rows_read == 1);
             // There are no NULL values in the rows written
@@ -558,7 +559,8 @@ void InteropTestReadEncryptedParquetFiles(std::string root_path) {
         exception_msg = e.what();
       }
       CheckResult(file, example_id, exception_msg);
-      std::cout << "file [" << file << "] Parquet Reading Complete" << std::endl;
+      std::cout << "file [" << file << "] Parquet Reading Complete"
+                << std::endl;
     }
   }
 }
@@ -571,10 +573,12 @@ void PrintDecryptionConfiguration(int configuration) {
               << std::endl;
   else if (configuration == 2)
     std::cout << "2: \n\nDecrypt using key retriever that holds"
-                 " the keys of two encrypted columns and the footer key. Pass aad_prefix."
+                 " the keys of two encrypted columns and the footer key. Pass "
+                 "aad_prefix."
               << std::endl;
   else if (configuration == 3)
-    std::cout << "3: \n\nDecrypt using explicit column and footer keys." << std::endl;
+    std::cout << "3: \n\nDecrypt using explicit column and footer keys."
+              << std::endl;
   else {
     std::cout << "Unknown configuration" << std::endl;
     exit(-1);
@@ -589,33 +593,40 @@ void CheckResult(std::string file, int example_id, std::string exception_msg) {
   std::smatch m;
   std::regex_search(file, m, r);
   if (m.size() == 0) {
-    std::cerr
-        << "Error: Error parsing filename to extract encryption configuration number. "
-        << std::endl;
+    std::cerr << "Error: Error parsing filename to extract encryption "
+                 "configuration number. "
+              << std::endl;
   }
   std::string encryption_configuration_number_str = m.str(1);
-  encryption_configuration_number = atoi(encryption_configuration_number_str.c_str());
-  if (encryption_configuration_number < 1 || encryption_configuration_number > 6) {
-    std::cerr << "Error: Unknown encryption configuration number. " << std::endl;
+  encryption_configuration_number =
+      atoi(encryption_configuration_number_str.c_str());
+  if (encryption_configuration_number < 1 ||
+      encryption_configuration_number > 6) {
+    std::cerr << "Error: Unknown encryption configuration number. "
+              << std::endl;
   }
 
   int decryption_configuration_number = example_id + 1;
 
   // Encryption_configuration number five contains aad_prefix and
   // disable_aad_prefix_storage.
-  // An exception is expected to be thrown if the file is not decrypted with aad_prefix.
+  // An exception is expected to be thrown if the file is not decrypted with
+  // aad_prefix.
   if (encryption_configuration_number == 5) {
-    if (decryption_configuration_number == 1 || decryption_configuration_number == 3) {
+    if (decryption_configuration_number == 1 ||
+        decryption_configuration_number == 3) {
       std::size_t found = exception_msg.find("AAD");
       if (found == std::string::npos)
         std::cout << "Error: Expecting AAD related exception.";
       return;
     }
   }
-  // Decryption configuration number two contains aad_prefix. An exception is expected to
-  // be thrown if the file was not encrypted with the same aad_prefix.
+  // Decryption configuration number two contains aad_prefix. An exception is
+  // expected to be thrown if the file was not encrypted with the same
+  // aad_prefix.
   if (decryption_configuration_number == 2) {
-    if (encryption_configuration_number != 5 && encryption_configuration_number != 4) {
+    if (encryption_configuration_number != 5 &&
+        encryption_configuration_number != 4) {
       std::size_t found = exception_msg.find("AAD");
       if (found == std::string::npos) {
         std::cout << "Error: Expecting AAD related exception." << std::endl;
@@ -642,9 +653,10 @@ int main(int argc, char** argv) {
   std::string root_path;
   Operation operation = write;
   if (argc < 3) {
-    std::cout << "Usage: encryption-reader-writer-all-crypto-options <read/write> "
-                 "<Path-to-parquet-files>"
-              << std::endl;
+    std::cout
+        << "Usage: encryption-reader-writer-all-crypto-options <read/write> "
+           "<Path-to-parquet-files>"
+        << std::endl;
     exit(1);
   }
   root_path = argv[1];

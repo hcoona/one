@@ -29,7 +29,6 @@ limitations under the License.
 
 #include "gtl/map_traits.h"
 
-
 namespace gtl {
 
 // Returns a pointer to the const value associated with the given key if it
@@ -210,6 +209,5 @@ typename Collection::value_type::second_type EraseKeyReturnValuePtr(
 }
 
 }  // namespace gtl
-
 
 #endif  // GTL_MAP_UTIL_H_

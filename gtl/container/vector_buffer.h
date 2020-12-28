@@ -167,8 +167,7 @@ class VectorBuffer {
   }
 
  private:
-  static bool RangesOverlap(const T* from_begin,
-                            const T* from_end,
+  static bool RangesOverlap(const T* from_begin, const T* from_end,
                             const T* to) {
     const auto from_begin_uintptr = get_uintptr(from_begin);
     const auto from_end_uintptr = get_uintptr(from_end);

@@ -5,7 +5,6 @@
 #ifndef GTL_SEQUENCE_TOKEN_H_
 #define GTL_SEQUENCE_TOKEN_H_
 
-
 #include "gtl/macros.h"
 
 namespace gtl {

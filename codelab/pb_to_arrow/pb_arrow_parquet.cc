@@ -63,8 +63,7 @@ int main(int argc, char** argv) {
   LOG(INFO) << kMessageCount << " messages written to " << FLAGS_output;
 
   std::shared_ptr<arrow::io::MemoryMappedFile> input_file =
-      arrow::io::MemoryMappedFile::Open(FLAGS_output,
-      arrow::io::FileMode::READ)
+      arrow::io::MemoryMappedFile::Open(FLAGS_output, arrow::io::FileMode::READ)
           .ValueOrDie();
 
   parquet::arrow::FileReaderBuilder file_reader_builder;
@@ -109,9 +108,10 @@ void FillMessageX(
 
   //   s = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
   //   for (int j = 0; j < s; j++) {
-  //     hcoona::codelab::MessageX_NestedMessageB* b = m->add_my_message_b_value();
-  //     int t = std::max(0, static_cast<int>(absl::Gaussian(bitgen, 5.0)));
-  //     for (int k = 0; k < t; k++) {
+  //     hcoona::codelab::MessageX_NestedMessageB* b =
+  //     m->add_my_message_b_value(); int t = std::max(0,
+  //     static_cast<int>(absl::Gaussian(bitgen, 5.0))); for (int k = 0; k < t;
+  //     k++) {
   //       b->add_my_sfixed64_value(absl::Zipf<int64_t>(bitgen));
   //     }
   //   }
@@ -125,10 +125,10 @@ void FillMessageX(
   //   messages->emplace_back(std::move(m));
   // }
 
-    auto m = std::make_unique<hcoona::codelab::MessageX>();
+  auto m = std::make_unique<hcoona::codelab::MessageX>();
 
-    m->mutable_my_map()->operator[]("1") = 1;
-    m->mutable_my_map()->operator[]("2") = 3;
+  m->mutable_my_map()->operator[]("1") = 1;
+  m->mutable_my_map()->operator[]("2") = 3;
 
-    messages->emplace_back(std::move(m));
+  messages->emplace_back(std::move(m));
 }

@@ -9,15 +9,15 @@ PointerAlignment: Left
 
 # Sort includes
 # Use dev-support/bin/clang-format for LLVM 11 SortPriority feature.
-# IncludeBlocks: Regroup
+IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '<[^\.]+\.h>'  # C Standard Headers
     Priority: 10
   - Regex: '<.+>'  # C++ Standard Headers
-    Priority: 10
-    SortPriority: 20
-  - Regex: '"(codelab|config|directory_manifest|gtl|nail|redirect_launcher|status|util|zkclient)\/.*'  # Project Headers
-    Priority: 500
+    Priority: 20
+  - Regex: '"(codelab|config|directory_manifest|gtl|nail|redirect_launcher|service|status|util|zkclient)\/.*'  # Project Headers
+    Priority: 50
+    SortPriority: 500
   - Regex: '.*'  # Others
     Priority: 50
     SortPriority: 50

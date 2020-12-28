@@ -23,22 +23,19 @@
 #include "codelab/parquet_examples/low_level_api/reader_writer.h"
 
 /*
- * This example describes writing and reading Parquet Files in C++ and serves as a
- * reference to the API.
- * The file contains all the physical data types supported by Parquet.
- * This example uses the RowGroupWriter API that supports writing RowGroups based on a
- *certain size
+ * This example describes writing and reading Parquet Files in C++ and serves as
+ *a reference to the API. The file contains all the physical data types
+ *supported by Parquet. This example uses the RowGroupWriter API that supports
+ *writing RowGroups based on a certain size
  **/
 
 /* Parquet is a structured columnar file format
  * Parquet File = "Parquet data" + "Parquet Metadata"
- * "Parquet data" is simply a vector of RowGroups. Each RowGroup is a batch of rows in a
- * columnar layout
- * "Parquet Metadata" contains the "file schema" and attributes of the RowGroups and their
- * Columns
- * "file schema" is a tree where each node is either a primitive type (leaf nodes) or a
- * complex (nested) type (internal nodes)
- * For specific details, please refer the format here:
+ * "Parquet data" is simply a vector of RowGroups. Each RowGroup is a batch of
+ *rows in a columnar layout "Parquet Metadata" contains the "file schema" and
+ *attributes of the RowGroups and their Columns "file schema" is a tree where
+ *each node is either a primitive type (leaf nodes) or a complex (nested) type
+ *(internal nodes) For specific details, please refer the format here:
  * https://github.com/apache/parquet-format/blob/master/LogicalTypes.md
  **/
 
@@ -52,7 +49,8 @@ int main(int argc, char** argv) {
   **********************************************************************************/
   // parquet::REQUIRED fields do not need definition and repetition level values
   // parquet::OPTIONAL fields require only definition level values
-  // parquet::REPEATED fields require both definition and repetition level values
+  // parquet::REPEATED fields require both definition and repetition level
+  // values
   try {
     // Create a local file output stream instance.
     using FileClass = ::arrow::io::FileOutputStream;
@@ -85,10 +83,12 @@ int main(int argc, char** argv) {
 
       // We need to consider the compressed pages
       // as well as the values that are not compressed yet
-      if ((rg_writer->total_bytes_written() + rg_writer->total_compressed_bytes() +
-           estimated_bytes) > ROW_GROUP_SIZE) {
+      if ((rg_writer->total_bytes_written() +
+           rg_writer->total_compressed_bytes() + estimated_bytes) >
+          ROW_GROUP_SIZE) {
         rg_writer->Close();
-        std::fill(buffered_values_estimate.begin(), buffered_values_estimate.end(), 0);
+        std::fill(buffered_values_estimate.begin(),
+                  buffered_values_estimate.end(), 0);
         rg_writer = file_writer->AppendBufferedRowGroup();
       }
 
@@ -98,7 +98,8 @@ int main(int argc, char** argv) {
           static_cast<parquet::BoolWriter*>(rg_writer->column(col_id));
       bool bool_value = ((i % 2) == 0) ? true : false;
       bool_writer->WriteBatch(1, nullptr, nullptr, &bool_value);
-      buffered_values_estimate[col_id] = bool_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          bool_writer->EstimatedBufferedValueBytes();
 
       // Write the Int32 column
       col_id++;
@@ -106,7 +107,8 @@ int main(int argc, char** argv) {
           static_cast<parquet::Int32Writer*>(rg_writer->column(col_id));
       int32_t int32_value = i;
       int32_writer->WriteBatch(1, nullptr, nullptr, &int32_value);
-      buffered_values_estimate[col_id] = int32_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          int32_writer->EstimatedBufferedValueBytes();
 
       // Write the Int64 column. Each row has repeats twice.
       col_id++;
@@ -115,11 +117,14 @@ int main(int argc, char** argv) {
       int64_t int64_value1 = 2 * i;
       int16_t definition_level = 1;
       int16_t repetition_level = 0;
-      int64_writer->WriteBatch(1, &definition_level, &repetition_level, &int64_value1);
+      int64_writer->WriteBatch(1, &definition_level, &repetition_level,
+                               &int64_value1);
       int64_t int64_value2 = (2 * i + 1);
       repetition_level = 1;  // start of a new record
-      int64_writer->WriteBatch(1, &definition_level, &repetition_level, &int64_value2);
-      buffered_values_estimate[col_id] = int64_writer->EstimatedBufferedValueBytes();
+      int64_writer->WriteBatch(1, &definition_level, &repetition_level,
+                               &int64_value2);
+      buffered_values_estimate[col_id] =
+          int64_writer->EstimatedBufferedValueBytes();
 
       // Write the INT96 column.
       col_id++;
@@ -130,7 +135,8 @@ int main(int argc, char** argv) {
       int96_value.value[1] = i + 1;
       int96_value.value[2] = i + 2;
       int96_writer->WriteBatch(1, nullptr, nullptr, &int96_value);
-      buffered_values_estimate[col_id] = int96_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          int96_writer->EstimatedBufferedValueBytes();
 
       // Write the Float column
       col_id++;
@@ -138,7 +144,8 @@ int main(int argc, char** argv) {
           static_cast<parquet::FloatWriter*>(rg_writer->column(col_id));
       float float_value = static_cast<float>(i) * 1.1f;
       float_writer->WriteBatch(1, nullptr, nullptr, &float_value);
-      buffered_values_estimate[col_id] = float_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          float_writer->EstimatedBufferedValueBytes();
 
       // Write the Double column
       col_id++;
@@ -146,7 +153,8 @@ int main(int argc, char** argv) {
           static_cast<parquet::DoubleWriter*>(rg_writer->column(col_id));
       double double_value = i * 1.1111111;
       double_writer->WriteBatch(1, nullptr, nullptr, &double_value);
-      buffered_values_estimate[col_id] = double_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          double_writer->EstimatedBufferedValueBytes();
 
       // Write the ByteArray column. Make every alternate values NULL
       col_id++;
@@ -166,19 +174,22 @@ int main(int argc, char** argv) {
         int16_t definition_level = 0;
         ba_writer->WriteBatch(1, &definition_level, nullptr, nullptr);
       }
-      buffered_values_estimate[col_id] = ba_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          ba_writer->EstimatedBufferedValueBytes();
 
       // Write the FixedLengthByteArray column
       col_id++;
       parquet::FixedLenByteArrayWriter* flba_writer =
-          static_cast<parquet::FixedLenByteArrayWriter*>(rg_writer->column(col_id));
+          static_cast<parquet::FixedLenByteArrayWriter*>(
+              rg_writer->column(col_id));
       parquet::FixedLenByteArray flba_value;
       char v = static_cast<char>(i);
       char flba[FIXED_LENGTH] = {v, v, v, v, v, v, v, v, v, v};
       flba_value.ptr = reinterpret_cast<const uint8_t*>(&flba[0]);
 
       flba_writer->WriteBatch(1, nullptr, nullptr, &flba_value);
-      buffered_values_estimate[col_id] = flba_writer->EstimatedBufferedValueBytes();
+      buffered_values_estimate[col_id] =
+          flba_writer->EstimatedBufferedValueBytes();
     }
 
     // Close the RowGroupWriter
@@ -203,7 +214,8 @@ int main(int argc, char** argv) {
         parquet::ParquetFileReader::OpenFile(PARQUET_FILENAME, false);
 
     // Get the File MetaData
-    std::shared_ptr<parquet::FileMetaData> file_metadata = parquet_reader->metadata();
+    std::shared_ptr<parquet::FileMetaData> file_metadata =
+        parquet_reader->metadata();
 
     int num_row_groups = file_metadata->num_row_groups();
 
@@ -228,7 +240,7 @@ int main(int argc, char** argv) {
       std::shared_ptr<parquet::ColumnReader> column_reader;
       int col_id = 0;
 
-      ARROW_UNUSED(rows_read); // prevent warning in release build
+      ARROW_UNUSED(rows_read);  // prevent warning in release build
 
       // Get the Column Reader for the boolean column
       column_reader = row_group_reader->Column(col_id);
@@ -238,15 +250,17 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (bool_reader->HasNext()) {
         bool value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = bool_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            bool_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
         assert(values_read == 1);
         // Verify the value written
-        bool expected_value = ((col_row_counts[col_id] % 2) == 0) ? true : false;
+        bool expected_value =
+            ((col_row_counts[col_id] % 2) == 0) ? true : false;
         assert(value == expected_value);
         col_row_counts[col_id]++;
       }
@@ -259,9 +273,10 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (int32_reader->HasNext()) {
         int32_t value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int32_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            int32_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -279,10 +294,10 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (int64_reader->HasNext()) {
         int64_t value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int64_reader->ReadBatch(1, &definition_level, &repetition_level,
-                                            &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read = int64_reader->ReadBatch(
+            1, &definition_level, &repetition_level, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -306,16 +321,17 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (int96_reader->HasNext()) {
         parquet::Int96 value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = int96_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            int96_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
         assert(values_read == 1);
         // Verify the value written
         parquet::Int96 expected_value;
-        ARROW_UNUSED(expected_value); // prevent warning in release build
+        ARROW_UNUSED(expected_value);  // prevent warning in release build
         expected_value.value[0] = col_row_counts[col_id];
         expected_value.value[1] = col_row_counts[col_id] + 1;
         expected_value.value[2] = col_row_counts[col_id] + 2;
@@ -333,15 +349,17 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (float_reader->HasNext()) {
         float value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = float_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            float_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
         assert(values_read == 1);
         // Verify the value written
-        float expected_value = static_cast<float>(col_row_counts[col_id]) * 1.1f;
+        float expected_value =
+            static_cast<float>(col_row_counts[col_id]) * 1.1f;
         assert(value == expected_value);
         col_row_counts[col_id]++;
       }
@@ -354,9 +372,10 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (double_reader->HasNext()) {
         double value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = double_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            double_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written
@@ -375,18 +394,21 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (ba_reader->HasNext()) {
         parquet::ByteArray value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read =
-            ba_reader->ReadBatch(1, &definition_level, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read = ba_reader->ReadBatch(1, &definition_level, nullptr, &value,
+                                         &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // Verify the value written
         char expected_value[FIXED_LENGTH] = "parquet";
-        ARROW_UNUSED(expected_value); // prevent warning in release build
-        expected_value[7] = static_cast<char>('0' + col_row_counts[col_id] / 100);
-        expected_value[8] = static_cast<char>('0' + (col_row_counts[col_id] / 10) % 10);
-        expected_value[9] = static_cast<char>('0' + col_row_counts[col_id] % 10);
+        ARROW_UNUSED(expected_value);  // prevent warning in release build
+        expected_value[7] =
+            static_cast<char>('0' + col_row_counts[col_id] / 100);
+        expected_value[8] =
+            static_cast<char>('0' + (col_row_counts[col_id] / 10) % 10);
+        expected_value[9] =
+            static_cast<char>('0' + col_row_counts[col_id] % 10);
         if (col_row_counts[col_id] % 2 == 0) {  // only alternate values exist
           // There are no NULL values in the rows written
           assert(values_read == 1);
@@ -409,9 +431,10 @@ int main(int argc, char** argv) {
       // Read all the rows in the column
       while (flba_reader->HasNext()) {
         parquet::FixedLenByteArray value;
-        // Read one value at a time. The number of rows read is returned. values_read
-        // contains the number of non-null rows
-        rows_read = flba_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
+        // Read one value at a time. The number of rows read is returned.
+        // values_read contains the number of non-null rows
+        rows_read =
+            flba_reader->ReadBatch(1, nullptr, nullptr, &value, &values_read);
         // Ensure only one value is read
         assert(rows_read == 1);
         // There are no NULL values in the rows written

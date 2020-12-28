@@ -37,10 +37,10 @@ class PosixFileSystem : public FileSystem {
       std::unique_ptr<RandomAccessFile>* result) override;
 
   absl::Status NewWritableFile(const std::string& fname,
-                         std::unique_ptr<WritableFile>* result) override;
+                               std::unique_ptr<WritableFile>* result) override;
 
-  absl::Status NewAppendableFile(const std::string& fname,
-                           std::unique_ptr<WritableFile>* result) override;
+  absl::Status NewAppendableFile(
+      const std::string& fname, std::unique_ptr<WritableFile>* result) override;
 
   absl::Status NewReadOnlyMemoryRegionFromFile(
       const std::string& filename,
@@ -48,12 +48,13 @@ class PosixFileSystem : public FileSystem {
 
   absl::Status FileExists(const std::string& fname) override;
 
-  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override;
+  absl::Status GetChildren(const std::string& dir,
+                           std::vector<std::string>* result) override;
 
   absl::Status Stat(const std::string& fname, FileStatistics* stats) override;
 
   absl::Status GetMatchingPaths(const std::string& pattern,
-                          std::vector<std::string>* results) override;
+                                std::vector<std::string>* results) override;
 
   absl::Status DeleteFile(const std::string& fname) override;
 
@@ -63,9 +64,11 @@ class PosixFileSystem : public FileSystem {
 
   absl::Status GetFileSize(const std::string& fname, uint64_t* size) override;
 
-  absl::Status RenameFile(const std::string& src, const std::string& target) override;
+  absl::Status RenameFile(const std::string& src,
+                          const std::string& target) override;
 
-  absl::Status CopyFile(const std::string& src, const std::string& target) override;
+  absl::Status CopyFile(const std::string& src,
+                        const std::string& target) override;
 };
 
 class LocalPosixFileSystem : public PosixFileSystem {

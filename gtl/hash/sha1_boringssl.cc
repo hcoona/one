@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "gtl/hash/sha1.h"
-
 #include <stdint.h>
 
 #include "glog/logging.h"
 #include "openssl/crypto.h"
 #include "openssl/sha.h"
+#include "gtl/hash/sha1.h"
 
 namespace gtl {
 namespace {
