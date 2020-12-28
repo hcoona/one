@@ -27,7 +27,14 @@ class EventDispatcherSyncImpl : public EventDispatcher<T...> {
   EventDispatcherSyncImpl(EventDispatcherSyncImpl&&) = default;
   EventDispatcherSyncImpl& operator=(EventDispatcherSyncImpl&&) = default;
 
+  // TODO(zhangshuai.ustc): Whether to allow report error in handling?
+  // I think disallow is better, the error could be reported with an error
+  // event.
   absl::Status Handle(AnyEventT event) override;
+
+  // TODO(zhangshuai.ustc): Whether to allow multi-broadcast.
+  // I think it better to support multi-broadcast if we disallow report error in
+  // handling.
   absl::Status RegisterHandler(AnyEventHandlerT event_handler) override;
 
  private:

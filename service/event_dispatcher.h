@@ -28,7 +28,10 @@ class EventDispatcher {
   EventDispatcher& operator=(EventDispatcher&&) = default;
 
   virtual absl::Status Handle(AnyEventT event) = 0;
+
   virtual absl::Status RegisterHandler(AnyEventHandlerT event_handler) = 0;
+
+  // TODO(zhangshuai.ustc): Support deregister handlers.
 };
 
 }  // namespace hcoona
