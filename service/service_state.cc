@@ -17,10 +17,13 @@ std::string ServiceState_Name(ServiceState service_state) {
     case ServiceState::kStopped:
       return "STOPPED";
     default:
+#if defined(DCHECK_IS_ON) && DCHECK_IS_ON()
       DCHECK(false) << "Unknown service_state="
                     << static_cast<std::underlying_type<ServiceState>::type>(
                            service_state);
+#else
       return "UNKNOWN";
+#endif
   }
 }
 
