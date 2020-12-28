@@ -17,7 +17,7 @@ class EventDispatcherSyncImpl : public EventDispatcher<T...> {
   using typename EventDispatcher<T...>::AnyEventHandlerT;
 
   EventDispatcherSyncImpl() = default;
-  virtual ~EventDispatcherSyncImpl() = default;
+  ~EventDispatcherSyncImpl() override = default;
 
   // Disallow copy.
   EventDispatcherSyncImpl(const EventDispatcherSyncImpl&) = delete;

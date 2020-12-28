@@ -19,10 +19,13 @@ std::string BasicEventType_Name(BasicEventType basic_event_type) {
     case BasicEventType::EventOne:
       return "EVENT_ONE";
     default:
+#if defined(DCHECK_IS_ON) && DCHECK_IS_ON()
       DCHECK(false) << "Unknown BasicEventType="
                     << static_cast<std::underlying_type<BasicEventType>::type>(
                            basic_event_type);
+#else
       return "UNKNOWN";
+#endif
   }
 }
 
@@ -34,6 +37,10 @@ class BasicEventOneEvent : public hcoona::Event<BasicEventType> {
  public:
   BasicEventOneEvent()
       : hcoona::Event<BasicEventType>(BasicEventType::EventOne) {}
+
+  // Disallow copy
+  BasicEventOneEvent(const BasicEventOneEvent&) = delete;
+  BasicEventOneEvent& operator=(const BasicEventOneEvent&) = delete;
 };
 
 class BasicEventHandler : public hcoona::EventHandler<BasicEventType> {
@@ -42,6 +49,10 @@ class BasicEventHandler : public hcoona::EventHandler<BasicEventType> {
       std::function<absl::Status(const hcoona::Event<BasicEventType>&)>
           real_handler)
       : hcoona::EventHandler<BasicEventType>(), real_handler_(real_handler) {}
+
+  // Disallow copy
+  BasicEventHandler(const BasicEventHandler&) = delete;
+  BasicEventHandler& operator=(const BasicEventHandler&) = delete;
 
   absl::Status Handle(const hcoona::Event<BasicEventType>& event) override;
 
