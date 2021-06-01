@@ -171,7 +171,7 @@ load("@rules_python//python:pip.bzl", "pip_parse")
 
 # Create a central repo that knows about the dependencies needed from
 # requirements.txt. The requirements.txt is generated from
-# poetry export -f requirements.txt --output requirements.txt
+# poetry export -f requirements.txt --output requirements.txt --dev
 pip_parse(
     name = "one_pip_deps",
     requirements_lock = "//:requirements.txt",
@@ -205,6 +205,8 @@ MAVEN_SLF4J_VERSION = "1.7.30"
 MAVEN_LOGBACK_VERSION = "1.2.3"
 
 MAVEN_JUNIT_VERSION = "4.13.2"
+
+load("@//bazel:junit5.bzl", "JUNIT5_ARTIFACTS")
 
 maven_install(
     artifacts = [
@@ -252,7 +254,7 @@ maven_install(
             MAVEN_JUNIT_VERSION,
             testonly = True,
         ),
-    ] + [
+    ] + JUNIT5_ARTIFACTS + [
         # Generate with `dev-support/bin/refresh_maven_dependencies.sh`.
         "ch.qos.logback:logback-classic:1.2.3",
         "commons-cli:commons-cli:1.4",
