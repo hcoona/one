@@ -11,7 +11,6 @@ RULES_JVM_EXTERNAL_TAG = "4.1"
 RULES_JVM_EXTERNAL_SHA = "f36441aa876c4f6427bfb2d1f2d723b48e9d930b62662bf723ddfb8fc80f0140"
 
 MAVEN_REPOSITORIES = [
-    "https://maven.byted.org/repository/public/",
     "https://maven.aliyun.com/nexus/content/groups/public/",
     "https://repo1.maven.org/maven2",
 ]
