@@ -8,8 +8,8 @@
 // potential thread safety issues.
 //
 // Note that the annotations we use are described as deprecated in the Clang
-// documentation, linked below. E.g. we use ABSL_EXCLUSIVE_LOCKS_REQUIRED where
-// the Clang docs use REQUIRES.
+// documentation, linked below. E.g. we use ABSL_EXCLUSIVE_LOCKS_REQUIRED where the
+// Clang docs use REQUIRES.
 //
 // http://clang.llvm.org/docs/ThreadSafetyAnalysis.html
 //
@@ -32,7 +32,7 @@
 #ifndef GTL_THREAD_ANNOTATIONS_H_
 #define GTL_THREAD_ANNOTATIONS_H_
 
-#include "absl/base/thread_annotations.h"
+#include "third_party/absl/base/thread_annotations.h"
 #include "glog/logging.h"
 
 // The above is imported as-is from abseil-cpp. The following Chromium-specific
@@ -45,10 +45,9 @@
 // TODO(etiennep): Update comment above once clang's error message is updated.
 #define GTL_GUARDED_BY_CONTEXT(name) ABSL_GUARDED_BY(name)
 
-// Equivalent to ABSL_EXCLUSIVE_LOCKS_REQUIRED for
-// SequenceChecker/ThreadChecker. Currently, clang's error message "requires
-// holding mutex" is misleading. Usage of this macro is discouraged until the
-// message is updated.
+// Equivalent to ABSL_EXCLUSIVE_LOCKS_REQUIRED for SequenceChecker/ThreadChecker.
+// Currently, clang's error message "requires holding mutex" is misleading.
+// Usage of this macro is discouraged until the message is updated.
 // TODO(etiennep): Update comment above once clang's error message is updated.
 #define GTL_VALID_CONTEXT_REQUIRED(name) ABSL_EXCLUSIVE_LOCKS_REQUIRED(name)
 

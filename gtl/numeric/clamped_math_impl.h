@@ -39,8 +39,9 @@ constexpr T SaturatedNegWrapper(T value) {
   return T(0);
 }
 
-template <typename T, typename std::enable_if<
-                          std::is_floating_point<T>::value>::type* = nullptr>
+template <
+    typename T,
+    typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T SaturatedNegWrapper(T value) {
   return -value;
 }
@@ -60,8 +61,9 @@ constexpr T SaturatedAbsWrapper(T value) {
                         IsValueNegative<T>(SafeUnsignedAbs(value)));
 }
 
-template <typename T, typename std::enable_if<
-                          std::is_floating_point<T>::value>::type* = nullptr>
+template <
+    typename T,
+    typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T SaturatedAbsWrapper(T value) {
   return value < 0 ? -value : value;
 }
@@ -70,7 +72,8 @@ template <typename T, typename U, class Enable = void>
 struct ClampedAddOp {};
 
 template <typename T, typename U>
-struct ClampedAddOp<T, U,
+struct ClampedAddOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
@@ -95,7 +98,8 @@ template <typename T, typename U, class Enable = void>
 struct ClampedSubOp {};
 
 template <typename T, typename U>
-struct ClampedSubOp<T, U,
+struct ClampedSubOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
@@ -121,7 +125,8 @@ template <typename T, typename U, class Enable = void>
 struct ClampedMulOp {};
 
 template <typename T, typename U>
-struct ClampedMulOp<T, U,
+struct ClampedMulOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
@@ -144,7 +149,8 @@ template <typename T, typename U, class Enable = void>
 struct ClampedDivOp {};
 
 template <typename T, typename U>
-struct ClampedDivOp<T, U,
+struct ClampedDivOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
@@ -163,15 +169,17 @@ template <typename T, typename U, class Enable = void>
 struct ClampedModOp {};
 
 template <typename T, typename U>
-struct ClampedModOp<T, U,
+struct ClampedModOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
     V result = {};
-    return GTL_NUMERIC_LIKELY((CheckedModOp<T, U>::Do(x, y, &result))) ? result
-                                                                       : x;
+    return GTL_NUMERIC_LIKELY((CheckedModOp<T, U>::Do(x, y, &result)))
+               ? result
+               : x;
   }
 };
 
@@ -181,7 +189,8 @@ struct ClampedLshOp {};
 // Left shift. Non-zero values saturate in the direction of the sign. A zero
 // shifted by any value always results in zero.
 template <typename T, typename U>
-struct ClampedLshOp<T, U,
+struct ClampedLshOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = T;
@@ -192,7 +201,8 @@ struct ClampedLshOp<T, U,
       // Shift as unsigned to avoid undefined behavior.
       V result = static_cast<V>(as_unsigned(x) << shift);
       // If the shift can be reversed, we know it was valid.
-      if (GTL_NUMERIC_LIKELY(result >> shift == x)) return result;
+      if (GTL_NUMERIC_LIKELY(result >> shift == x))
+        return result;
     }
     return x ? CommonMaxOrMin<V>(IsValueNegative(x)) : 0;
   }
@@ -203,7 +213,8 @@ struct ClampedRshOp {};
 
 // Right shift. Negative values saturate to -1. Positive or 0 saturates to 0.
 template <typename T, typename U>
-struct ClampedRshOp<T, U,
+struct ClampedRshOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = T;
@@ -222,7 +233,8 @@ template <typename T, typename U, class Enable = void>
 struct ClampedAndOp {};
 
 template <typename T, typename U>
-struct ClampedAndOp<T, U,
+struct ClampedAndOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename std::make_unsigned<
@@ -238,7 +250,8 @@ struct ClampedOrOp {};
 
 // For simplicity we promote to unsigned integers.
 template <typename T, typename U>
-struct ClampedOrOp<T, U,
+struct ClampedOrOp<T,
+                   U,
                    typename std::enable_if<std::is_integral<T>::value &&
                                            std::is_integral<U>::value>::type> {
   using result_type = typename std::make_unsigned<
@@ -254,7 +267,8 @@ struct ClampedXorOp {};
 
 // For simplicity we support only unsigned integers.
 template <typename T, typename U>
-struct ClampedXorOp<T, U,
+struct ClampedXorOp<T,
+                    U,
                     typename std::enable_if<std::is_integral<T>::value &&
                                             std::is_integral<U>::value>::type> {
   using result_type = typename std::make_unsigned<
@@ -270,7 +284,8 @@ struct ClampedMaxOp {};
 
 template <typename T, typename U>
 struct ClampedMaxOp<
-    T, U,
+    T,
+    U,
     typename std::enable_if<std::is_arithmetic<T>::value &&
                             std::is_arithmetic<U>::value>::type> {
   using result_type = typename MaxExponentPromotion<T, U>::type;
@@ -286,7 +301,8 @@ struct ClampedMinOp {};
 
 template <typename T, typename U>
 struct ClampedMinOp<
-    T, U,
+    T,
+    U,
     typename std::enable_if<std::is_arithmetic<T>::value &&
                             std::is_arithmetic<U>::value>::type> {
   using result_type = typename LowestValuePromotion<T, U>::type;
@@ -299,7 +315,7 @@ struct ClampedMinOp<
 
 // This is just boilerplate that wraps the standard floating point arithmetic.
 // A macro isn't the nicest solution, but it beats rewriting these repeatedly.
-#define GTL_FLOAT_ARITHMETIC_OPS(NAME, OP)                               \
+#define GTL_FLOAT_ARITHMETIC_OPS(NAME, OP)                              \
   template <typename T, typename U>                                      \
   struct Clamped##NAME##Op<                                              \
       T, U,                                                              \

@@ -10,7 +10,8 @@
 #include <array>
 #include <string>
 
-#include "absl/types/span.h"
+
+#include "third_party/absl/types/span.h"
 
 namespace gtl {
 
@@ -30,7 +31,9 @@ std::string SHA1HashString(const std::string& str);
 
 // Computes the SHA-1 hash of the |len| bytes in |data| and puts the hash
 // in |hash|. |hash| must be kSHA1Length bytes long.
-void SHA1HashBytes(const unsigned char* data, size_t len, unsigned char* hash);
+void SHA1HashBytes(const unsigned char* data,
+                               size_t len,
+                               unsigned char* hash);
 
 }  // namespace gtl
 

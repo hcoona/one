@@ -3,33 +3,33 @@ index a19ddc6..73dc228 100644
 --- a/gtl/top_n_test.cc
 +++ b/gtl/top_n_test.cc
 @@ -17,20 +17,19 @@ limitations under the License.
- 
+
  #include "gtl/top_n.h"
- 
+
 +#include <memory>
  #include <string>
 +#include <utility>
  #include <vector>
- 
+
 -#include "tensorflow/core/lib/random/simple_philox.h"
-+#include "absl/random/random.h"
++#include "third_party/absl/random/random.h"
  #include "glog/logging.h"
  #include "gtest/gtest.h"
 -#include "gtl/types.h"
- 
+
  namespace {
- 
+
 -using tensorflow::string;
 -using tensorflow::gtl::TopN;
 -using tensorflow::random::PhiloxRandom;
 -using tensorflow::random::SimplePhilox;
 +using std::string;
 +using gtl::TopN;
- 
+
  // Move the contents from an owned raw pointer, returning by value.
  // Objects are easier to manage by value.
 @@ -43,14 +42,16 @@ T ConsumeRawPtr(T *p) {
- 
+
  template <class Cmp>
  void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp &cmp,
 -                       SimplePhilox *random, bool test_peek,
@@ -48,7 +48,7 @@ index a19ddc6..73dc228 100644
    std::sort(shadow.begin(), shadow.end(), cmp);
    size_t top_size = std::min(limit, n_elements);
 @@ -74,7 +75,7 @@ void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp &cmp,
- 
+
  template <class Cmp>
  void TestIntTopN(size_t limit, size_t n_elements, const Cmp &cmp,
 -                 SimplePhilox *random) {
@@ -58,12 +58,12 @@ index a19ddc6..73dc228 100644
    // Test Extract()
 @@ -86,8 +87,7 @@ void TestIntTopN(size_t limit, size_t n_elements, const Cmp &cmp,
  }
- 
+
  TEST(TopNTest, Misc) {
 -  PhiloxRandom philox(1, 1);
 -  SimplePhilox random(&philox);
 +  absl::BitGen random;
- 
+
    TestIntTopN(0, 5, std::greater<int>(), &random);
    TestIntTopN(32, 0, std::greater<int>(), &random);
 @@ -263,4 +263,5 @@ TEST(TopNTest, Iteration) {

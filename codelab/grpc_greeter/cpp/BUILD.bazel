@@ -34,7 +34,7 @@ cc_test(
     tags = ["exclusive"],
     deps = [
         ":greeter_client",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest",
+        "//third_party/googletest:gtest_main",
     ],
 )

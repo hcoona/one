@@ -23,8 +23,8 @@ limitations under the License.
 
 #include <vector>
 
-#include "absl/strings/str_cat.h"
-#include "absl/synchronization/mutex.h"
+#include "third_party/absl/strings/str_cat.h"
+#include "third_party/absl/synchronization/mutex.h"
 #include "glog/logging.h"
 #include "gtl/scanner.h"
 
@@ -90,8 +90,7 @@ std::string JoinPathImpl(std::initializer_list<absl::string_view> paths) {
 // no "/" in the path, the first part of the output is the scheme and host, and
 // the second is the path. If the only "/" in the path is the first character,
 // it is included in the first part of the output.
-std::pair<absl::string_view, absl::string_view> SplitPath(
-    absl::string_view uri) {
+std::pair<absl::string_view, absl::string_view> SplitPath(absl::string_view uri) {
   absl::string_view scheme, host, path;
   ParseURI(uri, &scheme, &host, &path);
 
@@ -101,8 +100,8 @@ std::pair<absl::string_view, absl::string_view> SplitPath(
 #endif
   // Handle the case with no '/' in 'path'.
   if (pos == absl::string_view::npos)
-    return std::make_pair(
-        absl::string_view(uri.begin(), host.end() - uri.begin()), path);
+    return std::make_pair(absl::string_view(uri.begin(), host.end() - uri.begin()),
+                          path);
 
   // Handle the case with a single leading '/' in 'path'.
   if (pos == 0)
@@ -118,14 +117,12 @@ std::pair<absl::string_view, absl::string_view> SplitPath(
 // Return the parts of the basename of path, split on the final ".".
 // If there is no "." in the basename or "." is the final character in the
 // basename, the second value will be empty.
-std::pair<absl::string_view, absl::string_view> SplitBasename(
-    absl::string_view path) {
+std::pair<absl::string_view, absl::string_view> SplitBasename(absl::string_view path) {
   path = Basename(path);
 
   auto pos = path.rfind('.');
   if (pos == absl::string_view::npos)
-    return std::make_pair(path,
-                          absl::string_view(path.data() + path.size(), 0));
+    return std::make_pair(path, absl::string_view(path.data() + path.size(), 0));
   return std::make_pair(
       absl::string_view(path.data(), pos),
       absl::string_view(path.data() + pos + 1, path.size() - (pos + 1)));
@@ -230,8 +227,8 @@ std::string CleanPath(absl::string_view unclean_path) {
   return path;
 }
 
-void ParseURI(absl::string_view remaining, absl::string_view* scheme,
-              absl::string_view* host, absl::string_view* path) {
+void ParseURI(absl::string_view remaining, absl::string_view* scheme, absl::string_view* host,
+              absl::string_view* path) {
   // 0. Parse scheme
   // Make sure scheme matches [a-zA-Z][0-9a-zA-Z.]*
   // TODO(keveman): Allow "+" and "-" in the scheme.
@@ -261,8 +258,7 @@ void ParseURI(absl::string_view remaining, absl::string_view* scheme,
   *path = remaining;
 }
 
-std::string CreateURI(absl::string_view scheme, absl::string_view host,
-                      absl::string_view path) {
+std::string CreateURI(absl::string_view scheme, absl::string_view host, absl::string_view path) {
   if (scheme.empty()) {
     return std::string(path);
   }
@@ -311,13 +307,14 @@ std::string GetTempFilename(const std::string& extension) {
       std::string tmp_filepath;
       int fd;
       if (extension.length()) {
-        tmp_filepath =
-            JoinPath(dir, absl::StrCat("tmp_file_tensorflow_", UniqueId(),
-                                       "_XXXXXX.", extension));
+        tmp_filepath = JoinPath(
+            dir, absl::StrCat("tmp_file_tensorflow_", UniqueId(), "_XXXXXX.",
+                                 extension));
         fd = mkstemps(&tmp_filepath[0], extension.length() + 1);
       } else {
         tmp_filepath = JoinPath(
-            dir, absl::StrCat("tmp_file_tensorflow_", UniqueId(), "_XXXXXX"));
+            dir,
+            absl::StrCat("tmp_file_tensorflow_", UniqueId(), "_XXXXXX"));
         fd = mkstemp(&tmp_filepath[0]);
       }
       if (fd < 0) {
@@ -337,3 +334,4 @@ bool GetTestUndeclaredOutputsDir(std::string* dir) {
 }
 
 }  // namespace gtl
+

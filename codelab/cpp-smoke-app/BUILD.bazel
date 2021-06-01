@@ -28,6 +28,6 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":library",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest_main",
     ],
 )

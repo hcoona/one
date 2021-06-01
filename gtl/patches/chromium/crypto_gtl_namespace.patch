@@ -5,14 +5,14 @@ index bc593a4..6913171 100644
 @@ -14,6 +14,7 @@
  #include "openssl/crypto.h"
  #include "openssl/err.h"
- 
+
 +namespace gtl {
  namespace crypto {
- 
+
  namespace {
 @@ -53,3 +54,4 @@ void ClearOpenSSLERRStack(const gtl::Location& location) {
  }
- 
+
  }  // namespace crypto
 +}  // namespace gtl
 diff --git a/gtl/crypto/openssl_util.h b/gtl/crypto/openssl_util.h
@@ -22,18 +22,18 @@ index 553f7fe..8aad2df 100644
 @@ -11,7 +11,7 @@
  #include "gtl/location.h"
  #include "gtl/macros.h"
- 
+
 -
 +namespace gtl {
  namespace crypto {
- 
+
  // Provides a buffer of at least MIN_SIZE bytes, for use when calling OpenSSL's
 @@ -88,5 +88,6 @@ class OpenSSLErrStackTracer {
  };
- 
+
  }  // namespace crypto
 +}  // namespace gtl
- 
+
  #endif  // GTL_CRYPTO_OPENSSL_UTIL_H_
 diff --git a/gtl/crypto/secure_hash.cc b/gtl/crypto/secure_hash.cc
 index 171c413..cdd8ae7 100644
@@ -42,14 +42,14 @@ index 171c413..cdd8ae7 100644
 @@ -11,6 +11,7 @@
  #include "openssl/sha.h"
  #include "gtl/crypto/openssl_util.h"
- 
+
 +namespace gtl {
  namespace crypto {
- 
+
  namespace {
 @@ -65,3 +66,4 @@ std::unique_ptr<SecureHash> SecureHash::Create(Algorithm algorithm) {
  }
- 
+
  }  // namespace crypto
 +}  // namespace gtl
 diff --git a/gtl/crypto/secure_hash.h b/gtl/crypto/secure_hash.h
@@ -57,20 +57,20 @@ index b26a96a..3a85a79 100644
 --- a/gtl/crypto/secure_hash.h
 +++ b/gtl/crypto/secure_hash.h
 @@ -11,7 +11,7 @@
- 
+
  #include "gtl/macros.h"
- 
+
 -
 +namespace gtl {
  namespace crypto {
- 
+
  // A wrapper to calculate secure hashes incrementally, allowing to
 @@ -43,5 +43,6 @@ class SecureHash {
  };
- 
+
  }  // namespace crypto
 +}  // namespace gtl
- 
+
  #endif  // GTL_CRYPTO_SECURE_HASH_H_
 diff --git a/gtl/crypto/sha2.cc b/gtl/crypto/sha2.cc
 index 38b0f96..5f07384 100644
@@ -79,14 +79,14 @@ index 38b0f96..5f07384 100644
 @@ -11,6 +11,7 @@
  #include "gtl/crypto/secure_hash.h"
  #include "openssl/sha.h"
- 
+
 +namespace gtl {
  namespace crypto {
- 
+
  std::array<uint8_t, kSHA256Length> SHA256Hash(absl::Span<const uint8_t> input) {
 @@ -32,3 +33,4 @@ std::string SHA256HashString(absl::string_view str) {
  }
- 
+
  }  // namespace crypto
 +}  // namespace gtl
 diff --git a/gtl/crypto/sha2.h b/gtl/crypto/sha2.h
@@ -94,18 +94,18 @@ index c45ab89..c963b02 100644
 --- a/gtl/crypto/sha2.h
 +++ b/gtl/crypto/sha2.h
 @@ -13,7 +13,7 @@
- #include "absl/types/span.h"
- #include "absl/strings/string_view.h"
- 
+ #include "third_party/absl/types/span.h"
+ #include "third_party/absl/strings/string_view.h"
+
 -
 +namespace gtl {
  namespace crypto {
- 
+
  // These functions perform SHA-256 operations.
 @@ -38,5 +38,6 @@ void SHA256HashString(absl::string_view str,
                                      size_t len);
- 
+
  }  // namespace crypto
 +}  // namespace gtl
- 
+
  #endif  // GTL_CRYPTO_SHA2_H_

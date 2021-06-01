@@ -1,0 +1,69 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+# Referenced https://github.com/nelhage/rules_boost/blob/c13a880269cc044c4b5e90046625339836771d77/BUILD.zstd
+
+# TODO(zhangshuai.ustc): Move xxhash into separate position (and with Arrow vendored xxhash).
+
+cc_library(
+    name = "zstd",
+    srcs = glob([
+        "lib/compress/zstd*.h",
+        "lib/compress/zstd*.c",
+    ]) + [
+        "lib/compress/hist.c",
+    ] + glob([
+        "lib/decompress/*_impl.h",
+        "lib/decompress/zstd*.c",
+    ]) + [
+        "lib/decompress/zstd_decompress_internal.h",
+        "lib/decompress/zstd_decompress_block.h",
+        "lib/decompress/zstd_ddict.h",
+    ] + glob([
+        "lib/deprecated/*.h",
+        "lib/deprecated/*.c",
+        "lib/legacy/*.h",
+        "lib/legacy/*.c",
+    ]) + [
+        "lib/common/compiler.h",
+        "lib/common/cpu.h",
+        "lib/common/bitstream.h",
+        "lib/common/mem.h",
+        "lib/common/pool.c",
+        "lib/common/pool.h",
+        "lib/common/threading.c",
+        "lib/common/threading.h",
+        "lib/common/fse.h",
+        "lib/common/huf.h",
+        "lib/common/entropy_common.c",
+        "lib/common/fse_decompress.c",
+        "lib/compress/fse_compress.c",
+        "lib/compress/hist.h",
+        "lib/compress/huf_compress.c",
+        "lib/decompress/huf_decompress.c",
+        "lib/common/error_private.h",
+        "lib/common/zstd_errors.h",
+        "lib/common/error_private.c",
+        "lib/common/xxhash.h",
+        "lib/common/xxhash.c",
+        "lib/common/zstd_common.c",
+        "lib/common/zstd_internal.h",
+        "lib/common/debug.c",
+        "lib/common/debug.h",
+    ],
+    hdrs = ["lib/zstd.h"],
+    copts = [
+        "-Wno-uninitialized",
+        "-Ithird_party/zstd/lib/common",
+        "-Ithird_party/zstd/lib/legacy",
+        "-Ithird_party/zstd/lib/",
+    ],
+    linkopts = [
+        "-pthread",
+    ],
+    local_defines = [
+        "ZSTD_LEGACY_SUPPORT=4",
+        "ZSTD_MULTITHREAD",
+        "XXH_NAMESPACE=ZSTD_",
+    ],
+    visibility = ["//visibility:public"],
+)

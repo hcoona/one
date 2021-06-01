@@ -3,12 +3,12 @@
 #include <memory>
 #include <utility>
 
-#include "absl/base/casts.h"
-#include "absl/status/status.h"
-#include "absl/types/span.h"
-#include "arrow/api.h"
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "third_party/absl/base/casts.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/types/span.h"
+#include "third_party/arrow/src/arrow/api.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
 

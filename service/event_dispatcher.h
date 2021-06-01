@@ -5,9 +5,9 @@
 #include <memory>
 #include <type_traits>
 
-#include "absl/meta/type_traits.h"
-#include "absl/status/status.h"
-#include "absl/types/variant.h"
+#include "third_party/absl/meta/type_traits.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/types/variant.h"
 #include "service/event.h"
 #include "service/event_handler.h"
 

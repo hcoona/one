@@ -24,7 +24,7 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "absl/status/status.h"
+#include "third_party/absl/status/status.h"
 #include "gtl/file_statistics.h"
 #include "gtl/macros.h"
 
@@ -100,8 +100,7 @@ class FileSystem {
   /// The ownership of the returned ReadOnlyMemoryRegion is passed to the caller
   /// and the object should be deleted when is not used.
   virtual absl::Status NewReadOnlyMemoryRegionFromFile(
-      const std::string& fname,
-      std::unique_ptr<ReadOnlyMemoryRegion>* result) = 0;
+      const std::string& fname, std::unique_ptr<ReadOnlyMemoryRegion>* result) = 0;
 
   /// Returns OK if the named path exists and NOT_FOUND otherwise.
   virtual absl::Status FileExists(const std::string& fname) = 0;
@@ -116,7 +115,7 @@ class FileSystem {
   ///
   /// The returned paths are relative to 'dir'.
   virtual absl::Status GetChildren(const std::string& dir,
-                                   std::vector<std::string>* result) = 0;
+                                         std::vector<std::string>* result) = 0;
 
   /// \brief Given a pattern, stores in *results the set of paths that matches
   /// that pattern. *results is cleared.
@@ -151,7 +150,8 @@ class FileSystem {
   virtual bool Match(const std::string& filename, const std::string& pattern);
 
   /// \brief Obtains statistics for the given path.
-  virtual absl::Status Stat(const std::string& fname, FileStatistics* stat) = 0;
+  virtual absl::Status Stat(const std::string& fname,
+                                  FileStatistics* stat) = 0;
 
   /// \brief Deletes the named file.
   virtual absl::Status DeleteFile(const std::string& fname) = 0;
@@ -211,8 +211,7 @@ class FileSystem {
                                   const std::string& target) = 0;
 
   /// \brief Copy the src to target.
-  virtual absl::Status CopyFile(const std::string& src,
-                                const std::string& target);
+  virtual absl::Status CopyFile(const std::string& src, const std::string& target);
 
   /// \brief Translate an URI to a filename for the FileSystem implementation.
   ///
@@ -244,8 +243,7 @@ class FileSystem {
   ///         so has_atomic_move holds the above information.
   ///  * UNIMPLEMENTED - The file system of the path hasn't been implemented in
   ///  TF
-  virtual absl::Status HasAtomicMove(const std::string& path,
-                                     bool* has_atomic_move);
+  virtual absl::Status HasAtomicMove(const std::string& path, bool* has_atomic_move);
 
   /// \brief Flushes any cached filesystem objects from memory.
   virtual void FlushCaches();
@@ -260,8 +258,7 @@ class FileSystem {
   /// \brief Split a path to its basename and dirname.
   ///
   /// Helper function for Basename and Dirname.
-  std::pair<absl::string_view, absl::string_view> SplitPath(
-      absl::string_view uri) const;
+  std::pair<absl::string_view, absl::string_view> SplitPath(absl::string_view uri) const;
 
   /// \brief returns the final file name in the given path.
   ///
@@ -293,7 +290,7 @@ class FileSystem {
   ///
   /// If the scheme is empty, we just return the path.
   std::string CreateURI(absl::string_view scheme, absl::string_view host,
-                        absl::string_view path) const;
+                   absl::string_view path) const;
 
   ///  \brief Creates a temporary file name with an extension.
   std::string GetTempFilename(const std::string& extension) const;
@@ -331,13 +328,12 @@ class FileSystem {
   /// contents of uri, even if empty.
   ///
   /// Corner cases:
-  /// - If the URI is invalid, scheme and host are set to empty std::strings and
-  /// the
+  /// - If the URI is invalid, scheme and host are set to empty std::strings and the
   ///  passed std::string is assumed to be a path
   /// - If the URI omits the path (e.g. file://host), then the path is left
   /// empty.
-  void ParseURI(absl::string_view remaining, absl::string_view* scheme,
-                absl::string_view* host, absl::string_view* path) const;
+  void ParseURI(absl::string_view remaining, absl::string_view* scheme, absl::string_view* host,
+                absl::string_view* path) const;
 
   FileSystem() = default;
 
@@ -374,11 +370,12 @@ class RandomAccessFile {
   /// because of EOF.
   ///
   /// Safe for concurrent use by multiple threads.
-  virtual absl::Status Read(uint64_t offset, size_t n,
-                            absl::string_view* result, char* scratch) const = 0;
+  virtual absl::Status Read(uint64_t offset, size_t n, absl::string_view* result,
+                                  char* scratch) const = 0;
 
   /// \brief Read up to `n` bytes from the file starting at `offset`.
-  virtual absl::Status Read(uint64_t offset, size_t n, absl::Cord* cord) const {
+  virtual absl::Status Read(uint64_t offset, size_t n,
+                                  absl::Cord* cord) const {
     ignore_result(offset);
     ignore_result(n);
     ignore_result(cord);
@@ -508,9 +505,10 @@ class FileSystemRegistry {
   typedef std::function<FileSystem*()> Factory;
 
   virtual ~FileSystemRegistry() = default;
-  virtual absl::Status Register(const std::string& scheme, Factory factory) = 0;
   virtual absl::Status Register(const std::string& scheme,
-                                std::unique_ptr<FileSystem> filesystem) = 0;
+                                      Factory factory) = 0;
+  virtual absl::Status Register(
+      const std::string& scheme, std::unique_ptr<FileSystem> filesystem) = 0;
   virtual FileSystem* Lookup(const std::string& scheme) = 0;
   virtual absl::Status GetRegisteredFileSystemSchemes(
       std::vector<std::string>* schemes) = 0;
@@ -519,8 +517,7 @@ class FileSystemRegistry {
 /// A utility routine: copy contents of `src` in file system `src_fs`
 /// to `target` in file system `target_fs`.
 absl::Status FileSystemCopyFile(FileSystem* src_fs, const std::string& src,
-                                FileSystem* target_fs,
-                                const std::string& target);
+                                FileSystem* target_fs, const std::string& target);
 
 }  // namespace gtl
 

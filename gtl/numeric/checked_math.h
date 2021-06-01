@@ -224,7 +224,8 @@ class CheckedNumeric {
 
   // These perform the actual math operations on the CheckedNumerics.
   // Binary arithmetic operations.
-  template <template <typename, typename, typename> class M, typename L,
+  template <template <typename, typename, typename> class M,
+            typename L,
             typename R>
   static constexpr CheckedNumeric MathOp(const L lhs, const R rhs) {
     using Math = typename MathWrapper<M, L, R>::math;
@@ -300,7 +301,8 @@ constexpr StrictNumeric<Dst> ValueOrDieForType(
 
 template <typename Dst, typename Src, typename Default>
 constexpr StrictNumeric<Dst> ValueOrDefaultForType(
-    const CheckedNumeric<Src> value, const Default default_value) {
+    const CheckedNumeric<Src> value,
+    const Default default_value) {
   return value.template ValueOrDefault<Dst>(default_value);
 }
 
@@ -313,18 +315,22 @@ constexpr CheckedNumeric<typename UnderlyingType<T>::type> MakeCheckedNum(
 }
 
 // These implement the variadic wrapper for the math operations.
-template <template <typename, typename, typename> class M, typename L,
+template <template <typename, typename, typename> class M,
+          typename L,
           typename R>
 constexpr CheckedNumeric<typename MathWrapper<M, L, R>::type> CheckMathOp(
-    const L lhs, const R rhs) {
+    const L lhs,
+    const R rhs) {
   using Math = typename MathWrapper<M, L, R>::math;
   return CheckedNumeric<typename Math::result_type>::template MathOp<M>(lhs,
                                                                         rhs);
 }
 
 // General purpose wrapper template for arithmetic operations.
-template <template <typename, typename, typename> class M, typename L,
-          typename R, typename... Args>
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
 constexpr CheckedNumeric<typename ResultType<M, L, R, Args...>::type>
 CheckMathOp(const L lhs, const R rhs, const Args... args) {
   return CheckMathOp<M>(CheckMathOp<M>(lhs, rhs), args...);
@@ -364,23 +370,23 @@ L* operator-(L* lhs, const StrictNumeric<R> rhs) {
 
 }  // namespace internal
 
-using internal::CheckAdd;
-using internal::CheckAnd;
-using internal::CheckDiv;
 using internal::CheckedNumeric;
-using internal::CheckLsh;
+using internal::IsValidForType;
+using internal::ValueOrDieForType;
+using internal::ValueOrDefaultForType;
+using internal::MakeCheckedNum;
 using internal::CheckMax;
 using internal::CheckMin;
-using internal::CheckMod;
-using internal::CheckMul;
-using internal::CheckOr;
-using internal::CheckRsh;
+using internal::CheckAdd;
 using internal::CheckSub;
+using internal::CheckMul;
+using internal::CheckDiv;
+using internal::CheckMod;
+using internal::CheckLsh;
+using internal::CheckRsh;
+using internal::CheckAnd;
+using internal::CheckOr;
 using internal::CheckXor;
-using internal::IsValidForType;
-using internal::MakeCheckedNum;
-using internal::ValueOrDefaultForType;
-using internal::ValueOrDieForType;
 
 }  // namespace gtl
 

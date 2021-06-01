@@ -4,17 +4,17 @@ index f88cf75..0b40d2d 100644
 +++ b/gtl/thread_checker_impl.cc
 @@ -5,8 +5,6 @@
  #include "gtl/thread_checker_impl.h"
- 
+
  #include "glog/logging.h"
 -#include "gtl/thread_local.h"
 -#include "gtl/thread_task_runner_handle.h"
- 
+
  namespace gtl {
- 
+
 @@ -29,7 +27,7 @@ ThreadCheckerImpl::ThreadCheckerImpl(ThreadCheckerImpl&& other) {
    task_token_ = other.task_token_;
    sequence_token_ = other.sequence_token_;
- 
+
 -  other.thread_id_ = PlatformThreadRef();
 +  other.thread_id_.reset();
    other.task_token_ = TaskToken();
@@ -23,19 +23,19 @@ index f88cf75..0b40d2d 100644
 @@ -47,7 +45,7 @@ ThreadCheckerImpl& ThreadCheckerImpl::operator=(ThreadCheckerImpl&& other) {
    TS_UNCHECKED_READ(task_token_) = TS_UNCHECKED_READ(other.task_token_);
    TS_UNCHECKED_READ(sequence_token_) = TS_UNCHECKED_READ(other.sequence_token_);
- 
+
 -  TS_UNCHECKED_READ(other.thread_id_) = PlatformThreadRef();
 +  TS_UNCHECKED_READ(other.thread_id_).reset();
    TS_UNCHECKED_READ(other.task_token_) = TaskToken();
    TS_UNCHECKED_READ(other.sequence_token_) = SequenceToken();
- 
+
 @@ -55,7 +53,7 @@ ThreadCheckerImpl& ThreadCheckerImpl::operator=(ThreadCheckerImpl&& other) {
  }
- 
+
  bool ThreadCheckerImpl::CalledOnValidThread() const {
 -  const bool has_thread_been_destroyed = ThreadLocalStorage::HasBeenDestroyed();
 +  const bool has_thread_been_destroyed = false;
- 
+
    absl::MutexLock mutex_lock(&lock_);
    // TaskToken/SequenceToken access thread-local storage. During destruction
 @@ -74,32 +72,26 @@ bool ThreadCheckerImpl::CalledOnValidThread() const {
@@ -53,11 +53,11 @@ index f88cf75..0b40d2d 100644
 -    // tls destruction may result in the wrong TaskToken/SequenceToken.
 -    thread_id_ = PlatformThread::CurrentRef();
    }
- 
+
 -  return thread_id_ == PlatformThread::CurrentRef();
 +  return thread_id_ == std::this_thread::get_id();
  }
- 
+
  void ThreadCheckerImpl::DetachFromThread() {
    absl::MutexLock mutex_lock(&lock_);
 -  thread_id_ = PlatformThreadRef();
@@ -65,12 +65,12 @@ index f88cf75..0b40d2d 100644
    task_token_ = TaskToken();
    sequence_token_ = SequenceToken();
  }
- 
+
  void ThreadCheckerImpl::EnsureAssignedLockRequired() const {
 -  if (!thread_id_.is_null())
 +  if (thread_id_.has_value())
      return;
- 
+
 -  thread_id_ = PlatformThread::CurrentRef();
 +  thread_id_ = std::this_thread::get_id();
    task_token_ = TaskToken::GetForCurrentThread();
@@ -83,26 +83,26 @@ index 6c2a1a3..cf710fb 100644
 @@ -5,12 +5,13 @@
  #ifndef GTL_THREAD_CHECKER_IMPL_H_
  #define GTL_THREAD_CHECKER_IMPL_H_
- 
+
 +#include <thread>
- 
-+#include "absl/synchronization/mutex.h"
-+#include "absl/types/optional.h"
+
++#include "third_party/absl/synchronization/mutex.h"
++#include "third_party/absl/types/optional.h"
  #include "gtl/compiler_specific.h"
  #include "gtl/sequence_token.h"
--#include "absl/synchronization/mutex.h"
+-#include "third_party/absl/synchronization/mutex.h"
  #include "gtl/thread_annotations.h"
 -#include "gtl/platform_thread.h"
- 
+
  namespace gtl {
- 
+
 @@ -52,7 +53,7 @@ class LOCKABLE ThreadCheckerImpl {
    mutable absl::Mutex lock_;
- 
+
    // Thread on which CalledOnValidThread() may return true.
 -  mutable PlatformThreadRef thread_id_ ABSL_GUARDED_BY(lock_);
 +  mutable absl::optional<std::thread::id> thread_id_ ABSL_GUARDED_BY(lock_);
- 
+
    // TaskToken for which CalledOnValidThread() always returns true. This allows
    // CalledOnValidThread() to return true when called multiple times from the
 diff --git a/gtl/thread_checker_unittest.cc b/gtl/thread_checker_unittest.cc
@@ -110,13 +110,13 @@ index 714cc31..6b020e7 100644
 --- a/gtl/thread_checker_unittest.cc
 +++ b/gtl/thread_checker_unittest.cc
 @@ -4,44 +4,22 @@
- 
+
  #include "gtl/thread_checker.h"
- 
+
 +#include <functional>
  #include <memory>
 +#include <thread>
- 
+
 -#include "gtl/bind.h"
 -#include "gtl/bind_helpers.h"
 +#include "gtest/gtest.h"
@@ -130,10 +130,10 @@ index 714cc31..6b020e7 100644
 -#include "gtl/thread_local.h"
 -#include "gtl/thread_task_runner_handle.h"
 -#include "gtest/gtest.h"
- 
+
  namespace gtl {
  namespace {
- 
+
 -// A thread that runs a callback.
 -class RunCallbackThread : public SimpleThread {
 - public:
@@ -158,7 +158,7 @@ index 714cc31..6b020e7 100644
 +  std::thread t(std::move(callback));
 +  t.join();
  }
- 
+
  void ExpectCalledOnValidThread(ThreadCheckerImpl* thread_checker) {
 @@ -64,8 +42,6 @@ void ExpectNotCalledOnValidThread(ThreadCheckerImpl* thread_checker) {
  void ExpectNotCalledOnValidThreadWithSequenceTokenAndThreadTaskRunnerHandle(
@@ -170,7 +170,7 @@ index 714cc31..6b020e7 100644
        scoped_set_sequence_token_for_current_thread(sequence_token);
    ExpectNotCalledOnValidThread(thread_checker);
 @@ -80,9 +56,6 @@ TEST(ThreadCheckerTest, AllowedSameThreadNoSequenceToken) {
- 
+
  TEST(ThreadCheckerTest,
       AllowedSameThreadAndSequenceDifferentTasksWithThreadTaskRunnerHandle) {
 -  ThreadTaskRunnerHandle thread_task_runner_handle(
@@ -178,7 +178,7 @@ index 714cc31..6b020e7 100644
 -
    std::unique_ptr<ThreadCheckerImpl> thread_checker;
    const SequenceToken sequence_token = SequenceToken::Create();
- 
+
 @@ -127,12 +100,10 @@ TEST(ThreadCheckerTest,
  TEST(ThreadCheckerTest, DisallowedDifferentThreadsNoSequenceToken) {
    ThreadCheckerImpl thread_checker;
@@ -186,17 +186,17 @@ index 714cc31..6b020e7 100644
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&thread_checker)));
 +      [&thread_checker]() { ExpectNotCalledOnValidThread(&thread_checker); });
  }
- 
+
  TEST(ThreadCheckerTest, DisallowedDifferentThreadsSameSequence) {
 -  ThreadTaskRunnerHandle thread_task_runner_handle(
 -      MakeRefCounted<TestSimpleTaskRunner>());
    const SequenceToken sequence_token(SequenceToken::Create());
- 
+
    ScopedSetSequenceTokenForCurrentThread
 @@ -140,17 +111,15 @@ TEST(ThreadCheckerTest, DisallowedDifferentThreadsSameSequence) {
    ThreadCheckerImpl thread_checker;
    EXPECT_TRUE(thread_checker.CalledOnValidThread());
- 
+
 -  RunCallbackOnNewThreadSynchronously(BindOnce(
 -      &ExpectNotCalledOnValidThreadWithSequenceTokenAndThreadTaskRunnerHandle,
 -      Unretained(&thread_checker), sequence_token));
@@ -205,10 +205,10 @@ index 714cc31..6b020e7 100644
 +        &thread_checker, sequence_token);
 +  });
  }
- 
+
  TEST(ThreadCheckerTest, DisallowedSameThreadDifferentSequence) {
    std::unique_ptr<ThreadCheckerImpl> thread_checker;
- 
+
 -  ThreadTaskRunnerHandle thread_task_runner_handle(
 -      MakeRefCounted<TestSimpleTaskRunner>());
 -
@@ -221,10 +221,10 @@ index 714cc31..6b020e7 100644
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&thread_checker)));
 +      [&thread_checker]() { ExpectCalledOnValidThread(&thread_checker); });
- 
+
    EXPECT_FALSE(thread_checker.CalledOnValidThread());
  }
- 
+
  TEST(ThreadCheckerTest, DetachFromThreadWithSequenceToken) {
 -  ThreadTaskRunnerHandle thread_task_runner_handle(
 -      MakeRefCounted<TestSimpleTaskRunner>());
@@ -237,7 +237,7 @@ index 714cc31..6b020e7 100644
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&thread_checker)));
 +      [&thread_checker]() { ExpectCalledOnValidThread(&thread_checker); });
- 
+
    EXPECT_FALSE(thread_checker.CalledOnValidThread());
  }
 @@ -215,19 +182,19 @@ class ThreadCheckerOwner {
@@ -253,7 +253,7 @@ index 714cc31..6b020e7 100644
 +    thread_local_owner = std::make_unique<ThreadCheckerOwner>(false);
 +  });
  }
- 
+
  // Variant of CalledOnValidThreadFromThreadDestruction that calls
  // ThreadCheckerImpl::DetachFromThread().
  TEST(ThreadCheckerTest, CalledOnValidThreadFromThreadDestructionDetached) {
@@ -266,7 +266,7 @@ index 714cc31..6b020e7 100644
 +    thread_local_owner = std::make_unique<ThreadCheckerOwner>(true);
 +  });
  }
- 
+
  TEST(ThreadCheckerTest, Move) {
 @@ -244,13 +211,13 @@ TEST(ThreadCheckerTest, Move) {
    // The two ThreadCheckerImpls moved from should be able to rebind to another
@@ -277,66 +277,66 @@ index 714cc31..6b020e7 100644
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&move_constructed)));
 +      [&move_constructed]() { ExpectCalledOnValidThread(&move_constructed); });
- 
+
    // But the latest one shouldn't be able to run on another thread.
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
 +      [&move_assigned]() { ExpectNotCalledOnValidThread(&move_assigned); });
- 
+
    EXPECT_TRUE(move_assigned.CalledOnValidThread());
  }
 @@ -264,11 +231,11 @@ TEST(ThreadCheckerTest, MoveAssignIntoDetached) {
- 
+
    // |initial| is detached after move.
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
 +      [&initial]() { ExpectCalledOnValidThread(&initial); });
- 
+
    // |move_assigned| should be associated with the main thread.
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&move_assigned)));
 +      [&move_assigned]() { ExpectNotCalledOnValidThread(&move_assigned); });
- 
+
    EXPECT_TRUE(move_assigned.CalledOnValidThread());
  }
 @@ -281,11 +248,11 @@ TEST(ThreadCheckerTest, MoveFromDetachedRebinds) {
- 
+
    // |initial| is still detached after move.
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&initial)));
 +      [&initial]() { ExpectCalledOnValidThread(&initial); });
- 
+
    // |moved_into| is bound to the current thread as part of the move.
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectNotCalledOnValidThread, Unretained(&moved_into)));
 +      [&moved_into]() { ExpectNotCalledOnValidThread(&moved_into); });
    EXPECT_TRUE(moved_into.CalledOnValidThread());
  }
- 
+
 @@ -295,7 +262,7 @@ TEST(ThreadCheckerTest, MoveOffThreadBanned) {
    ThreadCheckerImpl other_thread;
    other_thread.DetachFromThread();
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ExpectCalledOnValidThread, Unretained(&other_thread)));
 +      [&other_thread]() { ExpectCalledOnValidThread(&other_thread); });
- 
+
    EXPECT_DCHECK_DEATH(ThreadCheckerImpl main_thread(std::move(other_thread)));
  }
 @@ -338,14 +305,13 @@ TEST_F(ThreadCheckerMacroTest, Macros) {
- 
+
    THREAD_CHECKER(my_thread_checker);
- 
+
 -  RunCallbackOnNewThreadSynchronously(BindOnce(
 -      &ThreadCheckerMacroTest::ExpectDeathOnOtherThread, Unretained(this)));
 +  RunCallbackOnNewThreadSynchronously(
 +      [this]() { ExpectDeathOnOtherThread(); });
- 
+
    DETACH_FROM_THREAD(thread_checker_);
- 
+
    RunCallbackOnNewThreadSynchronously(
 -      BindOnce(&ThreadCheckerMacroTest::ExpectNoDeathOnOtherThreadAfterDetach,
 -               Unretained(this)));
 +      [this]() { ExpectNoDeathOnOtherThreadAfterDetach(); });
  }
- 
+
  }  // namespace gtl

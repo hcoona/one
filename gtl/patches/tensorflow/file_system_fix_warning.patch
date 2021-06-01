@@ -4,7 +4,7 @@ index 052a3a2..051f626 100644
 +++ b/gtl/file_system.cc
 @@ -91,6 +91,7 @@ absl::Status FileSystem::IsDirectory(const std::string& name) {
  }
- 
+
  absl::Status FileSystem::HasAtomicMove(const std::string& path, bool* has_atomic_move) {
 +  ignore_result(path);
    *has_atomic_move = true;
@@ -15,11 +15,11 @@ index 155a5b1..169adfa 100644
 --- a/gtl/file_system.h
 +++ b/gtl/file_system.h
 @@ -26,6 +26,7 @@ limitations under the License.
- 
- #include "absl/status/status.h"
+
+ #include "third_party/absl/status/status.h"
  #include "gtl/file_statistics.h"
 +#include "gtl/macros.h"
- 
+
  #ifdef OS_WIN
  #undef DeleteFile
 @@ -350,6 +351,7 @@ class RandomAccessFile {
@@ -29,7 +29,7 @@ index 155a5b1..169adfa 100644
 +    ignore_result(result);
      return absl::UnimplementedError("This filesystem does not support Name()");
    }
- 
+
 @@ -374,6 +376,10 @@ class RandomAccessFile {
    /// \brief Read up to `n` bytes from the file starting at `offset`.
    virtual absl::Status Read(uint64_t offset, size_t n,
@@ -42,13 +42,13 @@ index 155a5b1..169adfa 100644
          "Read(uint64_t, size_t, absl::Cord*) is not "
          "implemented");
 @@ -398,6 +404,7 @@ class WritableFile {
- 
+
    // \brief Append 'data' to the file.
    virtual absl::Status Append(const absl::Cord& cord) {
 +    ignore_result(cord);
      return absl::UnimplementedError("Append(absl::Cord) is not implemented");
    }
- 
+
 @@ -427,6 +434,7 @@ class WritableFile {
    /// This is an optional operation that may not be implemented by every
    /// filesystem.
@@ -56,14 +56,14 @@ index 155a5b1..169adfa 100644
 +    ignore_result(result);
      return absl::UnimplementedError("This filesystem does not support Name()");
    }
- 
+
 diff --git a/gtl/posix_file_system.cc b/gtl/posix_file_system.cc
 index e248fae..4d00b1f 100644
 --- a/gtl/posix_file_system.cc
 +++ b/gtl/posix_file_system.cc
 @@ -192,6 +192,7 @@ absl::StatusCode ErrnoToCode(int err_number) {
  }  // namespace
- 
+
  absl::Status IOError(const std::string& context, int err_number) {
 +  ignore_result(context);
    auto code = ErrnoToCode(err_number);
@@ -76,9 +76,9 @@ index 7553f16..36bbc62 100644
 @@ -77,6 +77,8 @@ class LocalPosixFileSystem : public PosixFileSystem {
    }
  };
- 
+
 +absl::Status IOError(const std::string& context, int err_number);
 +
  }  // namespace gtl
- 
+
  #endif  // GTL_POSIX_FILE_SYSTEM_H_

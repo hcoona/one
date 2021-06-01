@@ -4,9 +4,9 @@ cc_binary(
     name = "google_benchmark_lab",
     srcs = ["main.cc"],
     deps = [
-        "@com_github_google_benchmark//:benchmark_main",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/random",
-        "@com_google_absl//absl/strings",
+        "//third_party/benchmark:benchmark_main",
+        "//third_party/glog",
+        "//third_party/absl/random",
+        "//third_party/absl/strings",
     ],
 )

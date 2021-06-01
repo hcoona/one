@@ -5,9 +5,9 @@
 #ifndef GTL_THREAD_CHECKER_H_
 #define GTL_THREAD_CHECKER_H_
 
-#include "absl/strings/string_view.h"
 #include "glog/logging.h"
 #include "gtl/compiler_specific.h"
+#include "third_party/absl/strings/string_view.h"
 #include "gtl/thread_annotations.h"
 #include "gtl/thread_checker_impl.h"
 
@@ -78,7 +78,7 @@
 
 #if DCHECK_IS_ON()
 #define THREAD_CHECKER(name) gtl::ThreadChecker name
-#define DCHECK_CALLED_ON_VALID_THREAD(name, ...)                \
+#define DCHECK_CALLED_ON_VALID_THREAD(name, ...)                 \
   gtl::ScopedValidateThreadChecker THREAD_CHECKER_INTERNAL_UID( \
       scoped_validate_thread_checker_)(name, ##__VA_ARGS__);
 #define DETACH_FROM_THREAD(name) (name).DetachFromThread()
@@ -117,9 +117,11 @@ class LOCKABLE ThreadCheckerDoNothing {
 // even if the tasks happen to run on the same thread (e.g. two independent
 // SingleThreadTaskRunners on the ThreadPool that happen to share a thread).
 #if DCHECK_IS_ON()
-class ThreadChecker : public ThreadCheckerImpl {};
+class ThreadChecker : public ThreadCheckerImpl {
+};
 #else
-class ThreadChecker : public ThreadCheckerDoNothing {};
+class ThreadChecker : public ThreadCheckerDoNothing {
+};
 #endif  // DCHECK_IS_ON()
 
 class SCOPED_LOCKABLE ScopedValidateThreadChecker {

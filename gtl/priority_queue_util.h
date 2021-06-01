@@ -20,6 +20,7 @@ limitations under the License.
 #include <queue>
 #include <utility>
 
+
 namespace gtl {
 
 // Removes the top element from a std::priority_queue and returns it.
@@ -49,5 +50,6 @@ T ConsumeTop(std::priority_queue<T, Container, Comparator>* q) {
 }
 
 }  // namespace gtl
+
 
 #endif  // GTL_PRIORITY_QUEUE_UTIL_H_

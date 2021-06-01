@@ -70,7 +70,8 @@ SequenceCheckerImpl& SequenceCheckerImpl::operator=(
 
 bool SequenceCheckerImpl::CalledOnValidSequence() const {
   absl::MutexLock mutex_lock(&lock_);
-  if (!core_) core_ = std::make_unique<Core>();
+  if (!core_)
+    core_ = std::make_unique<Core>();
   return core_->CalledOnValidSequence();
 }
 

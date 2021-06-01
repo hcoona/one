@@ -1,6 +1,1415 @@
 """Maintaining files from external source.
 """
 
+THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
+    core.replace(
+        before = "@com_google_absl//absl/",
+        after = "//third_party/absl/",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "//absl",
+        after = "//third_party/absl",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "\"absl/",
+        after = "\"third_party/absl/",
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "//googletest",
+        after = "//third_party/googletest/googletest",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "@com_google_googletest//",
+        after = "//third_party/googletest",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "${start}gmock/${header}${end}",
+        after = "\"third_party/googletest/googlemock/include/gmock/${header}\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+.h",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "${start}gtest/${header}${end}",
+        after = "\"third_party/googletest/googletest/include/gtest/${header}\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+.h",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "@com_github_google_benchmark//",
+        after = "//third_party/benchmark",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "\"benchmark/",
+        after = "\"third_party/benchmark/include/benchmark/",
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "#include <benchmark/benchmark.h>",
+        after = "#include \"third_party/benchmark/include/benchmark/benchmark.h\"",
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "@com_github_gflags_gflags//",
+        after = "//third_party/gflags",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "@com_github_google_glog//",
+        after = "//third_party/glog",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "@zlib//",
+        after = "//third_party/zlib",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "@com_github_madler_zlib//",
+        after = "//third_party/zlib",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}zlib.h${end}",
+        after = "include \"third_party/zlib/zlib.h\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}zconf.h${end}",
+        after = "include \"third_party/zlib/zconf.h\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}snappy.h${end}",
+        after = "include \"third_party/snappy/snappy.h\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}rapidjson/${header}.h${end}",
+        after = "include \"third_party/rapidjson/include/rapidjson/${header}.h\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}thrift/${header}.h${end}",
+        after = "include \"third_party/thrift/src/thrift/${header}.h\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "@com_google_protobuf//",
+        after = "//third_party/protobuf",
+        paths = glob([
+            "**/BUILD",
+            "**/BUILD.bazel",
+            "**.bzl",
+        ]),
+    ),
+    core.replace(
+        before = "include ${start}google/protobuf/${header}${end}",
+        after = "include \"third_party/protobuf/src/google/protobuf/${header}\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+\.(h|hpp|inc)",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob(
+            include = [
+                "**.c",
+                "**.cc",
+                "**.cpp",
+                "**.h",
+                "**.inc",
+            ],
+            exclude = [
+                "**.pb.cc",
+                "**.pb.h",
+            ],
+        ),
+    ),
+    core.replace(
+        before = "include ${start}bzlib.h${end}",
+        after = "include \"third_party/bzip2/bzlib.h\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob(
+            include = [
+                "**.c",
+                "**.cc",
+                "**.cpp",
+                "**.h",
+                "**.inc",
+            ],
+            exclude = [
+                "**.pb.cc",
+                "**.pb.h",
+            ],
+        ),
+    ),
+    core.replace(
+        before = "include ${start}zstd.h${end}",
+        after = "include \"third_party/zstd/lib/zstd.h\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob(
+            include = [
+                "**.c",
+                "**.cc",
+                "**.cpp",
+                "**.h",
+                "**.inc",
+            ],
+            exclude = [
+                "**.pb.cc",
+                "**.pb.h",
+            ],
+        ),
+    ),
+    core.replace(
+        before = "#include ${start}${header_dir}/${header}${end}",
+        after = "#include \"third_party/cpprestsdk/include/${header_dir}/${header}\"",
+        regex_groups = {
+            "header_dir": "(cpprest|pplx)",
+            "header": r"[A-Za-z0-9\-_\/]+\.(h|hpp|dat)?",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+        ]),
+    ),
+    core.replace(
+        before = "#include ${start}xsimd/xsimd.hpp${end}",
+        after = "#include \"third_party/xsimd/xsimd.hpp\"",
+        regex_groups = {
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+        paths = glob([
+            "**.c",
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.hpp",
+            "**.inc",
+        ]),
+    ),
+]
+
+core.workflow(
+    name = "com_google_absl",  # 2021-03-05
+    origin = git.origin(
+        url = "https://github.com/abseil/abseil-cpp/",
+        ref = "ab21820d47e4f83875dda008b600514d3520fd35",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "absl/**",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/absl/**",
+        ],
+        exclude = [
+            "third_party/absl/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party"),
+        # TODO(zhangshuai.ustc): Move all platform constraints to unified place.
+        core.replace(
+            before = "Flags from absl/flags/internal/",
+            after = "Flags from third_party/absl/flags/internal/",
+            paths = glob([
+                "third_party/absl/flags/internal/usage_test.cc",
+            ]),
+        ),
+        patch.apply([
+            "third_party/absl/patches/0001-support-windows-platform.patch",
+        ]),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        patch.apply([
+            "third_party/absl/patches/0002-fix-program-name-test.patch",
+            "third_party/absl/patches/0003-mark-inlined-vector-benchmark-size-large.patch",
+            "third_party/absl/patches/0004-suppress-macro-undef-warning.patch",
+        ]),
+    ],
+)
+
+core.workflow(
+    name = "com_google_googletest",  # 2021-03-10
+    origin = git.origin(
+        url = "https://github.com/google/googletest/",
+        ref = "763eaa430540926fa16060654427149802c97fba",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "googlemock/**",
+            "googletest/**",
+            "BUILD.bazel",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/googletest/googlemock/**",
+            "third_party/googletest/googletest/**",
+            "third_party/googletest/BUILD.bazel",
+        ],
+        exclude = [
+            "third_party/googletest/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/googletest"),
+        core.replace(
+            before = "//:windows",
+            after = "//third_party/absl:windows",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+        patch.apply([
+            "third_party/googletest/patches/0000-always-use-absl.patch",
+        ]),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "//:g",
+            after = "//third_party/googletest:g",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+    ],
+)
+
+core.workflow(
+    name = "com_github_google_benchmark",  # 2020-11-06
+    origin = git.origin(
+        url = "https://github.com/google/benchmark/",
+        ref = "348aa2c964494b5947c0e7f96b82c1fe844d684f",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "include/benchmark/**",
+            "docs/**",
+            "src/**",
+            "test/**",
+            "BUILD.bazel",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/benchmark/**",
+        ],
+        exclude = [
+            "third_party/benchmark/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("test/BUILD", "test/BUILD.bazel"),
+        core.move("", "third_party/benchmark"),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "//:benchmark",
+            after = "//third_party/benchmark:benchmark",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+        core.replace(
+            before = "//test:",
+            after = "//third_party/benchmark/test:",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+        patch.apply([
+            "third_party/benchmark/patches/0000-remove-strip-include-prefix.patch",
+            "third_party/benchmark/patches/0001-use-expect-double-eq.patch",
+        ]),
+    ],
+)
+
+core.workflow(
+    name = "com_github_gflags_gflags",  # 2020-10-03
+    origin = git.origin(
+        url = "https://github.com/gflags/gflags/",
+        ref = "827c769e5fc98e0f2a34c47cef953cc6328abced",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "bazel/**",
+            "doc/**",
+            "src/**",
+            "test/**",
+            "BUILD",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**/*.cmake",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/gflags/**",
+        ],
+        exclude = [
+            "third_party/gflags/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("BUILD", "BUILD.bazel"),
+        core.move("bazel/expanded_template/BUILD", "bazel/expanded_template/BUILD.bazel"),
+        core.move("", "third_party/gflags"),
+        core.replace(
+            before = "//bazel/expanded_template",
+            after = "//third_party/gflags/bazel/expanded_template",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+        core.replace(
+            before = "//:x64_windows",
+            after = "//third_party/absl:windows",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "\"${header}\"",
+            after = "\"third_party/gflags/src/${header}\"",
+            regex_groups = {
+                "header": "(config.h|mutex.h|util.h|windows_port.h)",
+            },
+            paths = glob([
+                "**.cc",
+                "**.h",
+                "**.in",
+                "**.inc",
+            ]),
+        ),
+    ],
+)
+
+core.workflow(
+    name = "com_github_google_glog",  # 2021-03-02
+    origin = git.origin(
+        url = "https://github.com/google/glog/",
+        ref = "d4e8ebab7e295f20f86cae9557da0d5087a02f73",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "bazel/**",
+            "src/**",
+            "BUILD.bazel",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**/*.cmake",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/glog/**",
+        ],
+        exclude = [
+            "third_party/glog/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/glog"),
+        core.replace(
+            before = "//:glog",
+            after = "//third_party/glog:glog",
+            paths = glob([
+                "**/BUILD",
+                "**/BUILD.bazel",
+                "**.bzl",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "\"config.h\"",
+            after = "\"third_party/glog/glog_internal/config.h\"",
+            paths = glob([
+                "**.cc",
+                "**.h",
+                "**.in",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "\"mutex.h\"",
+            after = "\"third_party/glog/src/base/mutex.h\"",
+            paths = glob([
+                "**.cc",
+                "**.h",
+                "**.in",
+                "**.inc",
+            ]),
+        ),
+        patch.apply([
+            "third_party/glog/patches/0001-add-have-cxx11-atomic.patch",
+        ])
+    ],
+)
+
+core.workflow(
+    name = "com_github_madler_zlib",  # 2017-01-16
+    origin = git.origin(
+        url = "https://github.com/madler/zlib",
+        ref = "v1.2.11",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**.cmakein",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/zlib/**",
+        ],
+        exclude = [
+            "third_party/zlib/BUILD.bazel",  # Hand-writing one.
+            "third_party/zlib/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/zlib"),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/zlib/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9]+",
+            },
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.inc",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_github_google_snappy",  # 2021-03-09
+    origin = git.origin(
+        url = "https://github.com/google/snappy",
+        ref = "5e7c14bd05ee72a4294f413ac386032a47578eac",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "CMakeLists.txt",
+            "**/CMakeLists.txt",
+            "**.cmakein",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/snappy/**",
+        ],
+        exclude = [
+            "third_party/snappy/BUILD.bazel",  # Hand-writing one.
+            # TODO(zhangshuai.ds): Support LZ4.
+            "third_party/snappy/config.h",  # Hand-writing one.
+            "third_party/snappy/snappy-stubs-public.h",  # Hand-writing one.
+            "third_party/snappy/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/snappy"),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/snappy/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+",
+            },
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include \"third_party/snappy/zlib.h\"",
+            after = "include \"third_party/zlib/zlib.h\"",
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.inc",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        patch.apply([
+            "third_party/snappy/patches/0000-add-inline-modifier.patch",
+            "third_party/snappy/patches/0001-unittest-load-data-from-runfiles.patch",
+        ]),
+    ],
+)
+
+# TODO(zhangshuai.ustc): Move third_party out.
+# TODO(zhangshuai.ustc): Support LZ4, bzip, ...
+core.workflow(
+    name = "org_apache_arrow",  # 2021-05-19
+    origin = git.origin(
+        url = "https://github.com/apache/arrow/",
+        ref = "apache-arrow-4.0.1",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "cpp/**",
+            "java/**",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**.cmake",
+            "**.cmakein",
+            "**.cmake.in",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/arrow/**",
+            "third_party/arrow_java/**",
+        ],
+        exclude = [
+            "third_party/arrow/BUILD.bazel",  # Hand-writing one.
+            "third_party/arrow/src/arrow/util/config.h",  # Hand-writing one.
+            "third_party/arrow/src/parquet/parquet_version.h",  # Hand-writing one.
+            "third_party/arrow/patches/**",
+            "third_party/arrow_java/**/BUILD.bazel",
+            "third_party/arrow_java/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("cpp", "third_party/arrow"),
+        core.move("java", "third_party/arrow_java"),
+        core.replace(
+            before = "include \"arrow/${header}\"",
+            after = "include \"third_party/arrow/src/arrow/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.h(pp)?",
+            },
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.hpp",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include \"parquet/${header}\"",
+            after = "include \"third_party/arrow/src/parquet/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.h",
+            },
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.hpp",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include <hdfs.h>",
+            after = "include \"third_party/arrow/thirdparty/hadoop/include/hdfs.h\"",
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.hpp",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include \"flatbuffers/${header}\"",
+            after = "include \"third_party/arrow/thirdparty/flatbuffers/include/flatbuffers/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+.h",
+            },
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.hpp",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include <flatbuffers/flatbuffers.h>",
+            after = "include \"third_party/arrow/thirdparty/flatbuffers/include/flatbuffers/flatbuffers.h\"",
+            paths = glob([
+                "**.c",
+                "**.cc",
+                "**.h",
+                "**.hpp",
+                "**.inc",
+            ]),
+        ),
+        core.replace(
+            before = "include \"org_apache_arrow_dataset_${CharUnderscore}.h\"",
+            after = "include \"third_party/arrow_java/dataset/org_apache_arrow_dataset_${CharUnderscore}.h\"",
+            regex_groups = {
+                "CharUnderscore": r"[A-Za-z0-9_]+",
+            },
+            paths = glob([
+                "third_party/arrow/src/jni/dataset/*.cc",
+                "third_party/arrow/src/jni/dataset/*.h",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        patch.apply([
+            "third_party/arrow/patches/0001-suppress-glog-redefine-macro-warnings.patch",
+        ]),
+    ],
+)
+
+core.workflow(
+    name = "com_github_tencent_rapidjson",  # 2021-03-02
+    origin = git.origin(
+        url = "https://github.com/Tencent/rapidjson",
+        ref = "1c2c8e085a8b2561dff17bedb689d2eb0609b689",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**.cmakein",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/rapidjson/**",
+        ],
+        exclude = [
+            "third_party/rapidjson/BUILD.bazel",  # Hand-writing one.
+            "third_party/rapidjson/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/rapidjson"),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/rapidjson/include/rapidjson/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+",
+            },
+            paths = glob([
+                "third_party/rapidjson/include/rapidjson/*.h",
+            ]),
+        ),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/rapidjson/include/rapidjson/error/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+",
+            },
+            paths = glob([
+                "third_party/rapidjson/include/rapidjson/error/*.h",
+            ]),
+        ),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/rapidjson/include/rapidjson/internal/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+",
+            },
+            paths = glob([
+                "third_party/rapidjson/include/rapidjson/internal/*.h",
+            ]),
+        ),
+        core.replace(
+            before = "include \"${header}.h\"",
+            after = "include \"third_party/rapidjson/include/rapidjson/msinttypes/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_]+",
+            },
+            paths = glob([
+                "third_party/rapidjson/include/rapidjson/msinttypes/*.h",
+            ]),
+        ),
+        core.replace(
+            before = "include \"rapidjson/${header}.h\"",
+            after = "include \"third_party/rapidjson/include/rapidjson/${header}.h\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+",
+            },
+            paths = glob([
+                "**.h",
+                "**.cpp",
+            ]),
+        ),
+        core.replace(
+            before = "include \"perftest.h\"",
+            after = "include \"third_party/rapidjson/test/perftest/perftest.h\"",
+            paths = glob([
+                "third_party/rapidjson/test/perftest/*.cpp",
+            ]),
+        ),
+        core.replace(
+            before = "include \"unittest.h\"",
+            after = "include \"third_party/rapidjson/test/unittest/unittest.h\"",
+            paths = glob([
+                "third_party/rapidjson/test/unittest/*.cpp",
+            ]),
+        ),
+        core.replace(
+            before = "include \"third_party/rapidjson/include/rapidjson/gtest/gtest.h\"",
+            after = "include \"third_party/googletest/googletest/include/gtest/gtest.h\"",
+            paths = glob([
+                "third_party/rapidjson/test/perftest/*.cpp",
+                "third_party/rapidjson/test/perftest/*.h",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "org_apache_thrift",  # 2019-10-12
+    origin = git.origin(
+        url = "https://github.com/apache/thrift",
+        ref = "v0.13.0",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "lib/cpp/**",
+        ],
+        exclude = [
+            "**/CMakeLists.txt",
+            "**.cmakein",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/thrift/**",
+        ],
+        exclude = [
+            "third_party/thrift/BUILD.bazel",  # Hand-writing one.
+            "third_party/thrift/src/thrift/config.h",  # Hand-writing one.
+            "third_party/thrift/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("lib/cpp/", "third_party/thrift"),
+        core.replace(
+            before = "${start}thrift/${header}${end}",
+            after = "\"third_party/thrift/src/thrift/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.(h|tcc)",
+                "start": "(\"|<)",
+                "end": "(\"|>)",
+            },
+            paths = glob([
+                "third_party/thrift/**.cpp",
+                "third_party/thrift/**.h",
+                "third_party/thrift/**.tcc",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        patch.apply([
+            "third_party/thrift/patches/0001-build-with-boringssl.patch",
+        ]),
+    ],
+)
+
+core.workflow(
+    name = "com_google_protobuf",  # 2021-03-12
+    origin = git.origin(
+        url = "https://github.com/protocolbuffers/protobuf/",
+        ref = "v3.15.6",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "WORKSPACE",
+            "**/CMakeLists.txt",
+            "**.cmake",
+            "**.cmakein",
+            "**.cmake.in",
+            "java/**",
+            "js/**",
+            "objectivec/**",
+            "ruby/**",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/protobuf/**",
+        ],
+        exclude = [
+            "third_party/protobuf/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("BUILD", "BUILD.bazel"),
+        core.move("", "third_party/protobuf"),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        patch.apply([
+            "third_party/protobuf/patches/0000-only-build-cxx-python.patch",
+            "third_party/protobuf/patches/0001-fix-test-data-loading.patch",
+        ]),
+    ],
+)
+
+core.workflow(
+    name = "io_kythe",  # 2021-03-13
+    origin = git.origin(
+        url = "https://github.com/kythe/kythe",
+        ref = "1b9d0266f395acfc6023322034deed8358aa26a7",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "kythe/cxx/common/init.h",
+            "kythe/cxx/common/init.cc",
+            "kythe/cxx/tools/generate_compile_commands/extract_compile_command.cc",
+            "third_party/bazel/src/main/protobuf/extra_actions_base.proto",
+            "tools/cpp/generate_compilation_database.sh",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/kythe/**",
+            "third_party/bazel/src/main/protobuf/extra_actions_base.proto",
+            "tools/bin/generate_compilation_database.sh",
+        ],
+        exclude = [
+            "third_party/kythe/BUILD.bazel",
+            "third_party/bazel/src/main/protobuf/BUILD.bazel",
+            "third_party/kythe/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("kythe", "third_party/kythe"),
+        core.move("tools/cpp/generate_compilation_database.sh", "tools/bin/generate_compilation_database.sh"),
+        core.replace(
+            before = "include \"kythe/",
+            after = "include \"third_party/kythe/",
+            paths = glob([
+                "**.cc",
+                "**.h",
+            ]),
+        ),
+        core.replace(
+            before = "//kythe/cxx/tools/generate_compile_commands:extract_json",
+            after = "//third_party/kythe:extract_json",
+            paths = glob([
+                "tools/bin/generate_compilation_database.sh",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "org_bzip_bzip2",  # 2020-09-12
+    origin = git.origin(
+        url = "https://gitlab.com/federicomenaquintero/bzip2.git",
+        ref = "6211b6500c8bec13a17707440d3a84ca8b34eed5",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "cmake/**",
+            "CMakeLists.txt",
+            "CMakeOptions.txt",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/bzip2/**",
+        ],
+        exclude = [
+            "third_party/bzip2/BUILD.bazel",
+            "third_party/bzip2/bz_version.h",
+            "third_party/bzip2/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/bzip2"),
+        core.replace(
+            before = "#${spaces1}include${spaces2}\"${header}\"",
+            after = "#${spaces1}include${spaces2}\"third_party/bzip2/${header}\"",
+            regex_groups = {
+                "spaces1": r" *",
+                "spaces2": r" +",
+                "header": r"[A-Za-z0-9\-_\/]+\.h",
+            },
+            paths = glob([
+                "**.c",
+                "**.h",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "org_tukaani_xz",  # 2020-03-17
+    origin = git.origin(
+        url = "https://git.tukaani.org/xz.git",
+        ref = "v5.2.5",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/xz/**",
+        ],
+        exclude = [
+            "third_party/xz/BUILD.bazel",
+            # from https://github.com/nelhage/rules_boost/blob/c13a880269cc044c4b5e90046625339836771d77/config.lzma-linux.h
+            "third_party/xz/config.h",
+            "third_party/xz/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/xz"),
+        core.replace(
+            before = "#	include <config.h>",
+            after = "# include \"third_party/xz/config.h\"",
+            paths = glob([
+                "third_party/xz/src/**.c",
+                "third_party/xz/src/**.h",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_facebook_zstd",  # 2019-11-06
+    origin = git.origin(
+        url = "https://github.com/facebook/zstd/",
+        ref = "v1.4.4",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/zstd/**",
+        ],
+        exclude = [
+            "third_party/zstd/BUILD.bazel",
+            "third_party/zstd/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/zstd"),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_google_boringssl",  # 2021-03-24
+    origin = git.origin(
+        url = "https://github.com/google/boringssl/",
+        ref = "464e8eb557e9bc933a3928a439224d75634b0125",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "**",
+        ],
+        exclude = [
+            "WORKSPACE",
+            "src/third_party/googletest/**",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/boringssl/**",
+        ],
+        exclude = [
+            "third_party/boringssl/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/boringssl"),
+        core.move("third_party/boringssl/BUILD", "third_party/boringssl/BUILD.bazel"),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_github_microsoft_cpprestsdk",  # 2021-02-02
+    origin = git.origin(
+        url = "https://github.com/microsoft/cpprestsdk",
+        ref = "v2.10.18",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "Release/**",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/cpprestsdk/**",
+        ],
+        exclude = [
+            "third_party/cpprestsdk/BUILD.bazel",
+            "third_party/cpprestsdk/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("Release", "third_party/cpprestsdk"),
+        core.replace(
+            before = "#include \"stdafx.h\"",
+            after = "#include \"third_party/cpprestsdk/src/pch/stdafx.h\"",
+            paths = glob([
+                "third_party/cpprestsdk/**.cpp",
+                "third_party/cpprestsdk/**.h",
+            ]),
+        ),
+        core.replace(
+            before = "#include \"../common/x509_cert_utilities.h\"",
+            after = "#include \"third_party/cpprestsdk/src/http/common/x509_cert_utilities.h\"",
+            paths = glob(["third_party/cpprestsdk/src/http/client/x509_cert_utilities.cpp"]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_github_xtensor_stack_xsimd",  # 2021-04-21
+    origin = git.origin(
+        url = "https://github.com/xtensor-stack/xsimd",
+        ref = "7.5.0",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "include/xsimd/**",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/xsimd/**",
+        ],
+        exclude = [
+            "third_party/xsimd/BUILD.bazel",
+            "third_party/xsimd/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("include/xsimd", "third_party/xsimd"),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/config/${header}\"",
+            paths = glob([
+                "third_party/xsimd/config/**.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/math/${header}\"",
+            paths = glob([
+                "third_party/xsimd/math/**.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/memory/${header}\"",
+            paths = glob([
+                "third_party/xsimd/memory/**.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/stl/${header}\"",
+            paths = glob([
+                "third_party/xsimd/stl/**.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/types/${header}\"",
+            paths = glob([
+                "third_party/xsimd/types/**.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+        core.replace(
+            before = "#include \"third_party/xsimd/${folder}/xsimd/${header}\"",
+            after = "#include \"third_party/xsimd/${header}\"",
+            paths = glob([
+                "third_party/xsimd/**/*.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+                "folder": r"[A-Za-z0-9\-_]+",
+            },
+        ),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/xsimd/${header}\"",
+            paths = glob([
+                "third_party/xsimd/xsimd.hpp",
+            ]),
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.hpp",
+            },
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
 core.workflow(
     name = "gtl_tensorflow",
     origin = git.origin(
@@ -183,6 +1592,7 @@ core.workflow(
     #     url = "https://github.com/chromium/chromium.git",
     #     ref = "2dcb87aab462363932219cc2e9c6d11dcd2c8452",  # 2020-07-02
     # ),
+    # Download from https://chromium.googlesource.com/chromium/src.git/+archive/2dcb87aab462363932219cc2e9c6d11dcd2c8452.tar.gz
     origin = folder.origin(),
     destination = folder.destination(),
     origin_files = glob(
@@ -417,7 +1827,7 @@ core.workflow(
         # optional
         core.replace(
             before = "#include \"base/optional.h\"",
-            after = "#include \"absl/types/optional.h\"",
+            after = "#include \"third_party/absl/types/optional.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
@@ -434,22 +1844,22 @@ core.workflow(
         # absl header paths
         core.replace(
             before = "#include \"base/strings/string_piece.h\"",
-            after = "#include \"absl/strings/string_view.h\"",
+            after = "#include \"third_party/absl/strings/string_view.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/synchronization/lock.h\"",
-            after = "#include \"absl/synchronization/mutex.h\"",
+            after = "#include \"third_party/absl/synchronization/mutex.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/containers/span.h\"",
-            after = "#include \"absl/types/span.h\"",
+            after = "#include \"third_party/absl/types/span.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/containers/flat_set.h\"",
-            after = "#include \"absl/container/flat_hash_set.h\"",
+            after = "#include \"third_party/absl/container/flat_hash_set.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         # glog header paths

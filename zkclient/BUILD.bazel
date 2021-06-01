@@ -22,7 +22,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "@com_github_microsoft_gsl//:gsl",
-        "@com_google_absl//absl/strings",
+        "//third_party/absl/strings",
         "@org_apache_zookeeper//:libzookeeper_mt",
     ],
 )
@@ -46,6 +46,6 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":zkclient",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest_main",
     ],
 )

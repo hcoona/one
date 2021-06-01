@@ -5,12 +5,12 @@ index bd9ad37..4ab2360 100644
 @@ -16,24 +16,22 @@ limitations under the License.
  #ifndef GTL_FILE_STATISTICS_H_
  #define GTL_FILE_STATISTICS_H_
- 
+
 -#include "gtl/types.h"
 -
 -
 +namespace gtl {
- 
+
  struct FileStatistics {
    // The length of the file or -1 if finding file length is not supported.
 -  int64 length = -1;
@@ -20,31 +20,31 @@ index bd9ad37..4ab2360 100644
 +  int64_t mtime_nsec = 0;
    // True if the file is a directory, otherwise false.
    bool is_directory = false;
- 
+
    FileStatistics() {}
 -  FileStatistics(int64 length, int64 mtime_nsec, bool is_directory)
 +  FileStatistics(int64_t length, int64_t mtime_nsec, bool is_directory)
        : length(length), mtime_nsec(mtime_nsec), is_directory(is_directory) {}
    ~FileStatistics() {}
  };
- 
+
 -
 +}  // namespace gtl
- 
+
  #endif  // GTL_FILE_STATISTICS_H_
 diff --git a/gtl/file_system.cc b/gtl/file_system.cc
 index a7d4ce9..052a3a2 100644
 --- a/gtl/file_system.cc
 +++ b/gtl/file_system.cc
 @@ -19,43 +19,44 @@ limitations under the License.
- 
+
  #include <algorithm>
  #include <deque>
 +#include <memory>
  #include <string>
  #include <utility>
  #include <vector>
- 
+
 -#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 -#include <fnmatch.h>
 -#else
@@ -54,23 +54,23 @@ index a7d4ce9..052a3a2 100644
 -#include "gtl/env.h"
 -#include "gtl/errors.h"
 -#include "gtl/platform.h"
-+#include "absl/strings/str_cat.h"
-+#include "absl/strings/str_replace.h"
++#include "third_party/absl/strings/str_cat.h"
++#include "third_party/absl/strings/str_replace.h"
 +#include "glog/logging.h"
 +#include "config/config.h"
 +#include "gtl/path.h"
  #include "gtl/scanner.h"
 -#include "gtl/str_util.h"
 -#include "gtl/strcat.h"
- 
+
 +#if defined(OS_POSIX)
 +#include <fnmatch.h>
 +#else
 +#include "re2/re2.h"
 +#endif  // defined(OS_POSIX)
- 
+
 +namespace gtl {
- 
+
 -bool FileSystem::Match(const string& filename, const string& pattern) {
 -#if defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 +bool FileSystem::Match(const std::string& filename, const std::string& pattern) {
@@ -95,7 +95,7 @@ index a7d4ce9..052a3a2 100644
 -#endif  // defined(OS_POSIX) || defined(IS_MOBILE_PLATFORM)
 +#endif
  }
- 
+
 -string FileSystem::TranslateName(const string& name) const {
 +std::string FileSystem::TranslateName(const std::string& name) const {
    // If the name is empty, CleanPath returns "." which is incorrect and
@@ -104,7 +104,7 @@ index a7d4ce9..052a3a2 100644
 @@ -70,29 +71,37 @@ string FileSystem::TranslateName(const string& name) const {
    return this->CleanPath(path);
  }
- 
+
 -Status FileSystem::IsDirectory(const string& name) {
 +absl::Status FileSystem::IsDirectory(const std::string& name) {
    // Check if path exists.
@@ -128,16 +128,16 @@ index a7d4ce9..052a3a2 100644
 -  return Status(tensorflow::error::FAILED_PRECONDITION, "Not a directory");
 +  return absl::FailedPreconditionError("Not a directory");
  }
- 
+
 -Status FileSystem::HasAtomicMove(const string& path, bool* has_atomic_move) {
 +absl::Status FileSystem::HasAtomicMove(const std::string& path, bool* has_atomic_move) {
    *has_atomic_move = true;
 -  return Status::OK();
 +  return absl::OkStatus();
  }
- 
+
  void FileSystem::FlushCaches() {}
- 
+
 -bool FileSystem::FilesExist(const std::vector<string>& files,
 -                            std::vector<Status>* status) {
 +bool FileSystem::FilesExist(const std::vector<std::string>& files,
@@ -152,7 +152,7 @@ index a7d4ce9..052a3a2 100644
 @@ -104,16 +113,16 @@ bool FileSystem::FilesExist(const std::vector<string>& files,
    return result;
  }
- 
+
 -Status FileSystem::DeleteRecursively(const string& dirname,
 -                                     int64* undeleted_files,
 -                                     int64* undeleted_dirs) {
@@ -161,7 +161,7 @@ index a7d4ce9..052a3a2 100644
 +                                           int64_t* undeleted_dirs) {
    CHECK_NOTNULL(undeleted_files);
    CHECK_NOTNULL(undeleted_dirs);
- 
+
    *undeleted_files = 0;
    *undeleted_dirs = 0;
    // Make sure that dirname exists;
@@ -171,7 +171,7 @@ index a7d4ce9..052a3a2 100644
      (*undeleted_dirs)++;
      return exists_status;
 @@ -121,39 +130,39 @@ Status FileSystem::DeleteRecursively(const string& dirname,
- 
+
    // If given path to a single file, we should just delete it.
    if (!IsDirectory(dirname).ok()) {
 -    Status delete_root_status = DeleteFile(dirname);
@@ -179,7 +179,7 @@ index a7d4ce9..052a3a2 100644
      if (!delete_root_status.ok()) (*undeleted_files)++;
      return delete_root_status;
    }
- 
+
 -  std::deque<string> dir_q;      // Queue for the BFS
 -  std::vector<string> dir_list;  // List of all dirs discovered
 +  std::deque<std::string> dir_q;      // Queue for the BFS
@@ -236,7 +236,7 @@ index a7d4ce9..052a3a2 100644
 @@ -176,31 +185,31 @@ Status FileSystem::DeleteRecursively(const string& dirname,
    return ret;
  }
- 
+
 -Status FileSystem::RecursivelyCreateDir(const string& dirname) {
 +absl::Status FileSystem::RecursivelyCreateDir(const std::string& dirname) {
    absl::string_view scheme, host, remaining_dir;
@@ -274,7 +274,7 @@ index a7d4ce9..052a3a2 100644
      remaining_dir = this->Dirname(remaining_dir);
 @@ -210,45 +219,45 @@ Status FileSystem::RecursivelyCreateDir(const string& dirname) {
    std::reverse(sub_dirs.begin(), sub_dirs.end());
- 
+
    // Now create the directories.
 -  string built_path(remaining_dir);
 +  std::string built_path(remaining_dir);
@@ -290,28 +290,28 @@ index a7d4ce9..052a3a2 100644
 -  return Status::OK();
 +  return absl::OkStatus();
  }
- 
+
 -Status FileSystem::CopyFile(const string& src, const string& target) {
 +absl::Status FileSystem::CopyFile(const std::string& src, const std::string& target) {
    return FileSystemCopyFile(this, src, this, target);
  }
- 
+
  char FileSystem::Separator() const { return '/'; }
- 
+
 -string FileSystem::JoinPathImpl(std::initializer_list<absl::string_view> paths) {
 -  string result;
 +std::string FileSystem::JoinPathImpl(std::initializer_list<absl::string_view> paths) {
 +  std::string result;
- 
+
    for (absl::string_view path : paths) {
      if (path.empty()) continue;
- 
+
      if (result.empty()) {
 -      result = string(path);
 +      result = std::string(path);
        continue;
      }
- 
+
      if (result[result.size() - 1] == '/') {
        if (this->IsAbsolutePath(path)) {
 -        strings::StrAppend(&result, path.substr(1));
@@ -348,7 +348,7 @@ index a7d4ce9..052a3a2 100644
 @@ -316,10 +325,10 @@ absl::string_view FileSystem::Extension(absl::string_view path) const {
    }
  }
- 
+
 -string FileSystem::CleanPath(absl::string_view unclean_path) const {
 -  string path(unclean_path);
 +std::string FileSystem::CleanPath(absl::string_view unclean_path) const {
@@ -356,7 +356,7 @@ index a7d4ce9..052a3a2 100644
    const char* src = path.c_str();
 -  string::iterator dst = path.begin();
 +  std::string::iterator dst = path.begin();
- 
+
    // Check for absolute path and determine initial backtrack limit.
    const bool is_absolute_path = *src == '/';
 @@ -327,7 +336,7 @@ string FileSystem::CleanPath(absl::string_view unclean_path) const {
@@ -365,12 +365,12 @@ index a7d4ce9..052a3a2 100644
    }
 -  string::const_iterator backtrack_limit = dst;
 +  std::string::const_iterator backtrack_limit = dst;
- 
+
    // Process all parts
    while (*src) {
 @@ -383,7 +392,7 @@ string FileSystem::CleanPath(absl::string_view unclean_path) const {
    }
- 
+
    // Calculate and check the length of the cleaned path.
 -  string::difference_type path_length = dst - path.begin();
 +  std::string::difference_type path_length = dst - path.begin();
@@ -397,7 +397,7 @@ index a7d4ce9..052a3a2 100644
      *path = remaining;
 @@ -417,7 +426,7 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
    }
- 
+
    // 1. Parse host
 -  if (!strings::Scanner(remaining).ScanUntil('/').GetResult(&remaining, host)) {
 +  if (!gtl::Scanner(remaining).ScanUntil('/').GetResult(&remaining, host)) {
@@ -407,7 +407,7 @@ index a7d4ce9..052a3a2 100644
 @@ -428,12 +437,58 @@ void FileSystem::ParseURI(absl::string_view remaining, absl::string_view* scheme
    *path = remaining;
  }
- 
+
 -string FileSystem::CreateURI(absl::string_view scheme, absl::string_view host,
 +std::string FileSystem::CreateURI(absl::string_view scheme, absl::string_view host,
                               absl::string_view path) const {
@@ -418,7 +418,7 @@ index a7d4ce9..052a3a2 100644
 -  return strings::StrCat(scheme, "://", host, path);
 +  return absl::StrCat(scheme, "://", host, path);
  }
- 
+
 +// Copied from
 +// https://github.com/tensorflow/tensorflow/blob/v2.2.0/tensorflow/core/platform/env.
 +
@@ -464,7 +464,7 @@ index a7d4ce9..052a3a2 100644
 +  }
 +  return target_file->Close();
 +}
- 
+
 +}  // namespace gtl
 diff --git a/gtl/file_system.h b/gtl/file_system.h
 index 0ccc705..155a5b1 100644
@@ -473,25 +473,25 @@ index 0ccc705..155a5b1 100644
 @@ -24,13 +24,8 @@ limitations under the License.
  #include <utility>
  #include <vector>
- 
+
 -#include "gtl/cord.h"
 -#include "gtl/errors.h"
-+#include "absl/status/status.h"
++#include "third_party/absl/status/status.h"
  #include "gtl/file_statistics.h"
 -#include "gtl/macros.h"
 -#include "gtl/platform.h"
 -#include "gtl/stringpiece.h"
 -#include "gtl/types.h"
- 
+
  #ifdef OS_WIN
  #undef DeleteFile
 @@ -38,7 +33,7 @@ limitations under the License.
  #undef TranslateName
  #endif
- 
+
 -
 +namespace gtl {
- 
+
  class RandomAccessFile;
  class ReadOnlyMemoryRegion;
 @@ -61,8 +56,8 @@ class FileSystem {
@@ -502,7 +502,7 @@ index 0ccc705..155a5b1 100644
 -      const string& fname, std::unique_ptr<RandomAccessFile>* result) = 0;
 +  virtual absl::Status NewRandomAccessFile(
 +      const std::string& fname, std::unique_ptr<RandomAccessFile>* result) = 0;
- 
+
    /// \brief Creates an object that writes to a new file with the specified
    /// name.
 @@ -76,8 +71,8 @@ class FileSystem {
@@ -513,7 +513,7 @@ index 0ccc705..155a5b1 100644
 -      const string& fname, std::unique_ptr<WritableFile>* result) = 0;
 +  virtual absl::Status NewWritableFile(
 +      const std::string& fname, std::unique_ptr<WritableFile>* result) = 0;
- 
+
    /// \brief Creates an object that either appends to an existing file, or
    /// writes to a new file (if the file does not exist to begin with).
 @@ -90,8 +85,8 @@ class FileSystem {
@@ -524,7 +524,7 @@ index 0ccc705..155a5b1 100644
 -      const string& fname, std::unique_ptr<WritableFile>* result) = 0;
 +  virtual absl::Status NewAppendableFile(
 +      const std::string& fname, std::unique_ptr<WritableFile>* result) = 0;
- 
+
    /// \brief Creates a readonly region of memory with the file context.
    ///
 @@ -103,23 +98,23 @@ class FileSystem {
@@ -535,11 +535,11 @@ index 0ccc705..155a5b1 100644
 -      const string& fname, std::unique_ptr<ReadOnlyMemoryRegion>* result) = 0;
 +  virtual absl::Status NewReadOnlyMemoryRegionFromFile(
 +      const std::string& fname, std::unique_ptr<ReadOnlyMemoryRegion>* result) = 0;
- 
+
    /// Returns OK if the named path exists and NOT_FOUND otherwise.
 -  virtual tensorflow::Status FileExists(const string& fname) = 0;
 +  virtual absl::Status FileExists(const std::string& fname) = 0;
- 
+
    /// Returns true if all the listed files exist, false otherwise.
    /// if status is not null, populate the vector with a detailed status
    /// for each file.
@@ -547,7 +547,7 @@ index 0ccc705..155a5b1 100644
 -                          std::vector<Status>* status);
 +  virtual bool FilesExist(const std::vector<std::string>& files,
 +                          std::vector<absl::Status>* status);
- 
+
    /// \brief Returns the immediate children in the given directory.
    ///
    /// The returned paths are relative to 'dir'.
@@ -555,7 +555,7 @@ index 0ccc705..155a5b1 100644
 -                                         std::vector<string>* result) = 0;
 +  virtual absl::Status GetChildren(const std::string& dir,
 +                                         std::vector<std::string>* result) = 0;
- 
+
    /// \brief Given a pattern, stores in *results the set of paths that matches
    /// that pattern. *results is cleared.
 @@ -143,29 +138,29 @@ class FileSystem {
@@ -566,7 +566,7 @@ index 0ccc705..155a5b1 100644
 -                                              std::vector<string>* results) = 0;
 +  virtual absl::Status GetMatchingPaths(const std::string& pattern,
 +                                        std::vector<std::string>* results) = 0;
- 
+
    /// \brief Checks if the given filename matches the pattern.
    ///
    /// This function provides the equivalent of posix fnmatch, however it is
@@ -574,16 +574,16 @@ index 0ccc705..155a5b1 100644
    /// filesystems on windows. For windows filesystems, it uses PathMatchSpec.
 -  virtual bool Match(const string& filename, const string& pattern);
 +  virtual bool Match(const std::string& filename, const std::string& pattern);
- 
+
    /// \brief Obtains statistics for the given path.
 -  virtual tensorflow::Status Stat(const string& fname,
 +  virtual absl::Status Stat(const std::string& fname,
                                    FileStatistics* stat) = 0;
- 
+
    /// \brief Deletes the named file.
 -  virtual tensorflow::Status DeleteFile(const string& fname) = 0;
 +  virtual absl::Status DeleteFile(const std::string& fname) = 0;
- 
+
    /// \brief Creates the specified directory.
    /// Typical return codes:
    ///  * OK - successfully created the directory.
@@ -591,7 +591,7 @@ index 0ccc705..155a5b1 100644
    ///  * PERMISSION_DENIED - dirname is not writable.
 -  virtual tensorflow::Status CreateDir(const string& dirname) = 0;
 +  virtual absl::Status CreateDir(const std::string& dirname) = 0;
- 
+
    /// \brief Creates the specified directory and all the necessary
    /// subdirectories.
 @@ -173,10 +168,10 @@ class FileSystem {
@@ -600,11 +600,11 @@ index 0ccc705..155a5b1 100644
    ///  * PERMISSION_DENIED - dirname or some subdirectory is not writable.
 -  virtual tensorflow::Status RecursivelyCreateDir(const string& dirname);
 +  virtual absl::Status RecursivelyCreateDir(const std::string& dirname);
- 
+
    /// \brief Deletes the specified directory.
 -  virtual tensorflow::Status DeleteDir(const string& dirname) = 0;
 +  virtual absl::Status DeleteDir(const std::string& dirname) = 0;
- 
+
    /// \brief Deletes the specified directory and all subdirectories and files
    /// underneath it. This is accomplished by traversing the directory tree
 @@ -202,20 +197,20 @@ class FileSystem {
@@ -617,23 +617,23 @@ index 0ccc705..155a5b1 100644
 +  virtual absl::Status DeleteRecursively(const std::string& dirname,
 +                                         int64_t* undeleted_files,
 +                                         int64_t* undeleted_dirs);
- 
+
    /// \brief Stores the size of `fname` in `*file_size`.
 -  virtual tensorflow::Status GetFileSize(const string& fname,
 -                                         uint64* file_size) = 0;
 +  virtual absl::Status GetFileSize(const std::string& fname,
 +                                   uint64_t* file_size) = 0;
- 
+
    /// \brief Overwrites the target if it exists.
 -  virtual tensorflow::Status RenameFile(const string& src,
 -                                        const string& target) = 0;
 +  virtual absl::Status RenameFile(const std::string& src,
 +                                  const std::string& target) = 0;
- 
+
    /// \brief Copy the src to target.
 -  virtual tensorflow::Status CopyFile(const string& src, const string& target);
 +  virtual absl::Status CopyFile(const std::string& src, const std::string& target);
- 
+
    /// \brief Translate an URI to a filename for the FileSystem implementation.
    ///
 @@ -224,8 +219,8 @@ class FileSystem {
@@ -644,7 +644,7 @@ index 0ccc705..155a5b1 100644
 -  virtual string TranslateName(const string& name) const;
 +  /// purely std::string manipulation, completely independent of process state.
 +  virtual std::string TranslateName(const std::string& name) const;
- 
+
    /// \brief Returns whether the given path is a directory or not.
    ///
 @@ -235,7 +230,7 @@ class FileSystem {
@@ -653,7 +653,7 @@ index 0ccc705..155a5b1 100644
    ///  * UNIMPLEMENTED - The file factory doesn't support directories.
 -  virtual tensorflow::Status IsDirectory(const string& fname);
 +  virtual absl::Status IsDirectory(const std::string& fname);
- 
+
    /// \brief Returns whether the given path is on a file system
    /// that has atomic move capabilities. This can be used
 @@ -247,7 +242,7 @@ class FileSystem {
@@ -662,7 +662,7 @@ index 0ccc705..155a5b1 100644
    ///  TF
 -  virtual Status HasAtomicMove(const string& path, bool* has_atomic_move);
 +  virtual absl::Status HasAtomicMove(const std::string& path, bool* has_atomic_move);
- 
+
    /// \brief Flushes any cached filesystem objects from memory.
    virtual void FlushCaches();
 @@ -287,20 +282,20 @@ class FileSystem {
@@ -673,22 +673,22 @@ index 0ccc705..155a5b1 100644
 -  string CleanPath(absl::string_view path) const;
 +  /// purely std::string manipulation, completely independent of process state.
 +  std::string CleanPath(absl::string_view path) const;
- 
+
    /// \brief Creates a URI from a scheme, host, and path.
    ///
    /// If the scheme is empty, we just return the path.
 -  string CreateURI(absl::string_view scheme, absl::string_view host,
 +  std::string CreateURI(absl::string_view scheme, absl::string_view host,
                     absl::string_view path) const;
- 
+
    ///  \brief Creates a temporary file name with an extension.
 -  string GetTempFilename(const string& extension) const;
 +  std::string GetTempFilename(const std::string& extension) const;
- 
+
    /// \brief Return true if path is absolute.
 -  bool IsAbsolutePath(tensorflow::absl::string_view path) const;
 +  bool IsAbsolutePath(absl::string_view path) const;
- 
+
  #ifndef SWIG  // variadic templates
    /// \brief Join multiple paths together.
 @@ -315,16 +310,16 @@ class FileSystem {
@@ -707,10 +707,10 @@ index 0ccc705..155a5b1 100644
      return JoinPathImpl({args...});
    }
  #endif /* SWIG */
- 
+
 -  string JoinPathImpl(std::initializer_list<tensorflow::absl::string_view> paths);
 +  std::string JoinPathImpl(std::initializer_list<absl::string_view> paths);
- 
+
    /// \brief Populates the scheme, host, and path from a URI.
    ///
 @@ -332,14 +327,14 @@ class FileSystem {
@@ -725,10 +725,10 @@ index 0ccc705..155a5b1 100644
    /// empty.
    void ParseURI(absl::string_view remaining, absl::string_view* scheme, absl::string_view* host,
                  absl::string_view* path) const;
- 
+
 -  FileSystem() {}
 +  FileSystem() = default;
- 
+
    virtual ~FileSystem() = default;
  };
 @@ -354,8 +349,8 @@ class RandomAccessFile {
@@ -740,7 +740,7 @@ index 0ccc705..155a5b1 100644
 +  virtual absl::Status Name(absl::string_view* result) const {
 +    return absl::UnimplementedError("This filesystem does not support Name()");
    }
- 
+
    /// \brief Reads up to `n` bytes from the file starting at `offset`.
 @@ -373,22 +368,20 @@ class RandomAccessFile {
    /// because of EOF.
@@ -749,7 +749,7 @@ index 0ccc705..155a5b1 100644
 -  virtual tensorflow::Status Read(uint64 offset, size_t n, absl::string_view* result,
 +  virtual absl::Status Read(uint64_t offset, size_t n, absl::string_view* result,
                                    char* scratch) const = 0;
- 
+
 -  // TODO(ebrevdo): Remove this ifdef when absl is updated.
 -#if defined(PLATFORM_GOOGLE)
    /// \brief Read up to `n` bytes from the file starting at `offset`.
@@ -763,21 +763,21 @@ index 0ccc705..155a5b1 100644
          "implemented");
    }
 -#endif
- 
+
   private:
 -  TF_DISALLOW_COPY_AND_ASSIGN(RandomAccessFile);
 +  RandomAccessFile(const RandomAccessFile&) = delete;
 +  RandomAccessFile& operator=(const RandomAccessFile&) = delete;
  };
- 
+
  /// \brief A file abstraction for sequential writing.
 @@ -401,15 +394,12 @@ class WritableFile {
    virtual ~WritableFile() = default;
- 
+
    /// \brief Append 'data' to the file.
 -  virtual tensorflow::Status Append(absl::string_view data) = 0;
 +  virtual absl::Status Append(absl::string_view data) = 0;
- 
+
 -  // TODO(ebrevdo): Remove this ifdef when absl is updated.
 -#if defined(PLATFORM_GOOGLE)
    // \brief Append 'data' to the file.
@@ -787,7 +787,7 @@ index 0ccc705..155a5b1 100644
 +    return absl::UnimplementedError("Append(absl::Cord) is not implemented");
    }
 -#endif
- 
+
    /// \brief Close the file.
    ///
 @@ -418,7 +408,7 @@ class WritableFile {
@@ -796,7 +796,7 @@ index 0ccc705..155a5b1 100644
    ///  * Other codes, as returned from Flush()
 -  virtual tensorflow::Status Close() = 0;
 +  virtual absl::Status Close() = 0;
- 
+
    /// \brief Flushes the file and optionally syncs contents to filesystem.
    ///
 @@ -430,14 +420,14 @@ class WritableFile {
@@ -805,7 +805,7 @@ index 0ccc705..155a5b1 100644
    /// persisted, depending on the implementation.
 -  virtual tensorflow::Status Flush() = 0;
 +  virtual absl::Status Flush() = 0;
- 
+
    // \brief Returns the name of the file.
    ///
    /// This is an optional operation that may not be implemented by every
@@ -815,7 +815,7 @@ index 0ccc705..155a5b1 100644
 +  virtual absl::Status Name(absl::string_view* result) const {
 +    return absl::UnimplementedError("This filesystem does not support Name()");
    }
- 
+
    /// \brief Syncs contents of file to filesystem.
 @@ -446,20 +436,21 @@ class WritableFile {
    /// of the file have been persisted to the filesystem; if the OS
@@ -823,7 +823,7 @@ index 0ccc705..155a5b1 100644
    /// be properly saved.
 -  virtual tensorflow::Status Sync() = 0;
 +  virtual absl::Status Sync() = 0;
- 
+
    /// \brief Retrieves the current write position in the file, or -1 on
    /// error.
    ///
@@ -835,26 +835,26 @@ index 0ccc705..155a5b1 100644
 -    return errors::Unimplemented("This filesystem does not support Tell()");
 +    return absl::UnimplementedError("This filesystem does not support Tell()");
    }
- 
+
   private:
 -  TF_DISALLOW_COPY_AND_ASSIGN(WritableFile);
 +  WritableFile(const WritableFile&) = delete;
 +  WritableFile& operator=(const WritableFile&) = delete;
  };
- 
+
  /// \brief A readonly memmapped file abstraction.
 @@ -475,7 +466,7 @@ class ReadOnlyMemoryRegion {
    virtual const void* data() = 0;
- 
+
    /// \brief Returns the length of the memory region in bytes.
 -  virtual uint64 length() = 0;
 +  virtual uint64_t length() = 0;
  };
- 
+
  /// \brief A registry for file system implementations.
 @@ -506,15 +497,20 @@ class FileSystemRegistry {
    typedef std::function<FileSystem*()> Factory;
- 
+
    virtual ~FileSystemRegistry() = default;
 -  virtual tensorflow::Status Register(const std::string& scheme,
 +  virtual absl::Status Register(const std::string& scheme,
@@ -867,32 +867,32 @@ index 0ccc705..155a5b1 100644
 +  virtual absl::Status GetRegisteredFileSystemSchemes(
        std::vector<std::string>* schemes) = 0;
  };
- 
+
 +/// A utility routine: copy contents of `src` in file system `src_fs`
 +/// to `target` in file system `target_fs`.
 +absl::Status FileSystemCopyFile(FileSystem* src_fs, const std::string& src,
 +                                FileSystem* target_fs, const std::string& target);
- 
+
 +}  // namespace gtl
- 
+
  #endif  // GTL_FILE_SYSTEM_H_
 diff --git a/gtl/file_system_helper.cc b/gtl/file_system_helper.cc
 index b68cd5d..09b4c28 100644
 --- a/gtl/file_system_helper.cc
 +++ b/gtl/file_system_helper.cc
 @@ -15,19 +15,18 @@ limitations under the License.
- 
+
  #include "gtl/file_system_helper.h"
- 
+
 +#include <algorithm>
  #include <deque>
 +#include <functional>
  #include <string>
  #include <vector>
- 
+
 -#include "gtl/env.h"
-+#include "absl/status/status.h"
-+#include "absl/strings/match.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/match.h"
  #include "gtl/file_system.h"
  #include "gtl/path.h"
 -#include "gtl/platform.h"
@@ -900,10 +900,10 @@ index b68cd5d..09b4c28 100644
 -#include "gtl/str_util.h"
 -#include "gtl/threadpool.h"
 -
- 
+
 +namespace gtl {
  namespace internal {
- 
+
  namespace {
 @@ -37,7 +36,8 @@ constexpr int kNumThreads = 8;
  // Run a function in parallel using a ThreadPool, but skip the ThreadPool
@@ -916,9 +916,9 @@ index b68cd5d..09b4c28 100644
      f(i);
    }
 @@ -52,38 +52,38 @@ void ForEach(int first, int last, const std::function<void(int)>& f) {
- 
+
  }  // namespace
- 
+
 -Status GetMatchingPaths(FileSystem* fs, Env* env, const string& pattern,
 -                        std::vector<string>* results) {
 +absl::Status GetMatchingPaths(FileSystem* fs, const std::string& pattern,
@@ -942,7 +942,7 @@ index b68cd5d..09b4c28 100644
 +    fixed_prefix = JoinPath(dir, fixed_prefix);
 +    eval_pattern = JoinPath(dir, pattern);
    }
- 
+
    // Setup a BFS to explore everything under dir.
 -  std::deque<string> dir_q;
 +  std::deque<std::string> dir_q;
@@ -997,7 +997,7 @@ index b68cd5d..09b4c28 100644
        // If the child is a directory add it to the queue.
 @@ -127,4 +127,4 @@ Status GetMatchingPaths(FileSystem* fs, Env* env, const string& pattern,
  }
- 
+
  }  // namespace internal
 -
 +}  // namespace gtl
@@ -1008,18 +1008,18 @@ index 247df1b..5a66587 100644
 @@ -19,12 +19,11 @@ limitations under the License.
  #include <string>
  #include <vector>
- 
+
 -#include "gtl/status.h"
 -
-+#include "absl/status/status.h"
- 
++#include "third_party/absl/status/status.h"
+
 +namespace gtl {
- 
+
  class FileSystem;
 -class Env;
- 
+
  namespace internal {
- 
+
 @@ -42,10 +41,10 @@ namespace internal {
  //   results: will be cleared and may not be null.
  //
@@ -1028,25 +1028,25 @@ index 247df1b..5a66587 100644
 -                        std::vector<string>* results);
 +absl::Status GetMatchingPaths(FileSystem* fs, const std::string& pattern,
 +                              std::vector<std::string>* results);
- 
+
  }  // namespace internal
 -
 +}  // namespace gtl
- 
+
  #endif  // GTL_FILE_SYSTEM_HELPER_H_
 diff --git a/gtl/file_system_test.cc b/gtl/file_system_test.cc
 index 64f1da1..efa88ab 100644
 --- a/gtl/file_system_test.cc
 +++ b/gtl/file_system_test.cc
 @@ -17,151 +17,155 @@ limitations under the License.
- 
+
  #include <sys/stat.h>
- 
+
 -#include "tensorflow/core/lib/core/status_test_util.h"
-+#include "absl/status/status.h"
-+#include "absl/strings/match.h"
-+#include "absl/strings/str_join.h"
-+#include "absl/strings/str_split.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/match.h"
++#include "third_party/absl/strings/str_join.h"
++#include "third_party/absl/strings/str_split.h"
 +#include "glog/logging.h"
 +#include "gtest/gtest.h"
  #include "gtl/null_file_system.h"
@@ -1055,13 +1055,13 @@ index 64f1da1..efa88ab 100644
 -#include "gtl/strcat.h"
 -#include "gtest/gtest.h"
 -
- 
+
 +// Macros for testing the results of functions that return tensorflow::Status.
 +#define TF_EXPECT_OK(statement) \
 +  EXPECT_TRUE((statement).ok())
- 
+
  static const char* const kPrefix = "ipfs://solarsystem";
- 
+
  // A file system that has Planets, Satellites and Sub Satellites. Sub satellites
  // cannot have children further.
 -class InterPlanetaryFileSystem : public NullFileSystem {
@@ -1079,7 +1079,7 @@ index 64f1da1..efa88ab 100644
 -    return Status(tensorflow::error::NOT_FOUND, "File does not exist");
 +    return absl::NotFoundError("File does not exist");
    }
- 
+
    // Adds the dir to the parent's children list and creates an entry for itself.
 -  Status CreateDir(const string& dirname) override {
 -    string parsed_path;
@@ -1142,7 +1142,7 @@ index 64f1da1..efa88ab 100644
 -    return Status(tensorflow::error::FAILED_PRECONDITION, "Failed to create");
 +    return absl::FailedPreconditionError("Failed to create");
    }
- 
+
 -  Status IsDirectory(const string& dirname) override {
 -    string parsed_path;
 +  absl::Status IsDirectory(const std::string& dirname) override {
@@ -1165,7 +1165,7 @@ index 64f1da1..efa88ab 100644
 -    return Status(tensorflow::error::FAILED_PRECONDITION, "Not a dir");
 +    return absl::FailedPreconditionError("Not a dir");
    }
- 
+
 -  Status GetChildren(const string& dir, std::vector<string>* result) override {
 -    TF_RETURN_IF_ERROR(IsDirectory(dir));
 -    string parsed_path;
@@ -1181,13 +1181,13 @@ index 64f1da1..efa88ab 100644
 -    return Status::OK();
 +    return absl::OkStatus();
    }
- 
+
   private:
 -  bool BodyExists(const string& name) {
 +  bool BodyExists(const std::string& name) {
      return celestial_bodies_.find(name) != celestial_bodies_.end();
    }
- 
+
 -  void ParsePath(const string& name, string* parsed_path) {
 +  void ParsePath(const std::string& name, std::string* parsed_path) {
      absl::string_view scheme, host, path;
@@ -1198,7 +1198,7 @@ index 64f1da1..efa88ab 100644
 -    *parsed_path = string(path);
 +    *parsed_path = std::string(path);
    }
- 
+
 -  std::map<string, std::set<string>> celestial_bodies_ = {
 -      std::pair<string, std::set<string>>(
 +  std::map<std::string, std::set<std::string>> celestial_bodies_ = {
@@ -1231,7 +1231,7 @@ index 64f1da1..efa88ab 100644
 +      std::pair<std::string, std::set<std::string>>("Jupiter/Io", {}),
 +      std::pair<std::string, std::set<std::string>>("Jupiter/Ganymede", {})};
  };
- 
+
 -// Returns all the matched entries as a comma separated string removing the
 +// Returns all the matched entries as a comma separated std::string removing the
  // common prefix of BaseDir().
@@ -1257,7 +1257,7 @@ index 64f1da1..efa88ab 100644
      }
      return absl::StrJoin(trimmed_results, ",");
 @@ -253,7 +257,7 @@ TEST(InterPlanetaryFileSystemTest, MatchMultipleWildcards) {
- 
+
  TEST(InterPlanetaryFileSystemTest, RecursivelyCreateAlreadyExistingDir) {
    InterPlanetaryFileSystem ipfs;
 -  const string dirname = ipfs.JoinPath(kPrefix, "match-00/abc/00");
@@ -1266,7 +1266,7 @@ index 64f1da1..efa88ab 100644
    // We no longer check for recursively creating the directory again because
    // `ipfs.IsDirectory` is badly implemented, fixing it will break other tests
 @@ -263,36 +267,36 @@ TEST(InterPlanetaryFileSystemTest, RecursivelyCreateAlreadyExistingDir) {
- 
+
  TEST(InterPlanetaryFileSystemTest, HasAtomicMove) {
    InterPlanetaryFileSystem ipfs;
 -  const string dirname = io::JoinPath(kPrefix, "match-00/abc/00");
@@ -1275,7 +1275,7 @@ index 64f1da1..efa88ab 100644
    TF_EXPECT_OK(ipfs.HasAtomicMove(dirname, &has_atomic_move));
    EXPECT_EQ(has_atomic_move, true);
  }
- 
+
  // A simple file system with a root directory and a single file underneath it.
 -class TestFileSystem : public NullFileSystem {
 +class TestFileSystem : public gtl::NullFileSystem {
@@ -1290,7 +1290,7 @@ index 64f1da1..efa88ab 100644
 -    return Status(tensorflow::error::FAILED_PRECONDITION, "Not a dir");
 +    return absl::FailedPreconditionError("Not a dir");
    }
- 
+
    // Simulating a FS with a root dir and a single file underneath it.
 -  Status GetChildren(const string& dir, std::vector<string>* result) override {
 +  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
@@ -1301,7 +1301,7 @@ index 64f1da1..efa88ab 100644
 +    return absl::OkStatus();
    }
  };
- 
+
  // Making sure that ./<pattern> and <pattern> have the same result.
  TEST(TestFileSystemTest, RootDirectory) {
    TestFileSystem fs;
@@ -1317,27 +1317,27 @@ index f1f00f9..6d1f930 100644
 @@ -20,11 +20,12 @@ limitations under the License.
  #include <string>
  #include <vector>
- 
+
 -#include "gtl/env.h"
-+#include "absl/status/status.h"
++#include "third_party/absl/status/status.h"
 +#include "gtl/file_statistics.h"
  #include "gtl/file_system.h"
  #include "gtl/file_system_helper.h"
- 
+
 -
 +namespace gtl {
- 
+
  // START_SKIP_DOXYGEN
- 
+
 @@ -32,73 +33,73 @@ limitations under the License.
  // Degenerate file system that provides no implementations.
  class NullFileSystem : public FileSystem {
   public:
 -  NullFileSystem() {}
 +  NullFileSystem() = default;
- 
+
    ~NullFileSystem() override = default;
- 
+
 -  Status NewRandomAccessFile(
 -      const string& fname, std::unique_ptr<RandomAccessFile>* result) override {
 -    return errors::Unimplemented("NewRandomAccessFile unimplemented");
@@ -1345,21 +1345,21 @@ index f1f00f9..6d1f930 100644
 +      const std::string& fname, std::unique_ptr<RandomAccessFile>* result) override {
 +    return absl::UnimplementedError("NewRandomAccessFile unimplemented");
    }
- 
+
 -  Status NewWritableFile(const string& fname,
 +  absl::Status NewWritableFile(const std::string& fname,
                           std::unique_ptr<WritableFile>* result) override {
 -    return errors::Unimplemented("NewWritableFile unimplemented");
 +    return absl::UnimplementedError("NewWritableFile unimplemented");
    }
- 
+
 -  Status NewAppendableFile(const string& fname,
 +  absl::Status NewAppendableFile(const std::string& fname,
                             std::unique_ptr<WritableFile>* result) override {
 -    return errors::Unimplemented("NewAppendableFile unimplemented");
 +    return absl::UnimplementedError("NewAppendableFile unimplemented");
    }
- 
+
 -  Status NewReadOnlyMemoryRegionFromFile(
 -      const string& fname,
 +  absl::Status NewReadOnlyMemoryRegionFromFile(
@@ -1369,19 +1369,19 @@ index f1f00f9..6d1f930 100644
 +    return absl::UnimplementedError(
          "NewReadOnlyMemoryRegionFromFile unimplemented");
    }
- 
+
 -  Status FileExists(const string& fname) override {
 -    return errors::Unimplemented("FileExists unimplemented");
 +  absl::Status FileExists(const std::string& fname) override {
 +    return absl::UnimplementedError("FileExists unimplemented");
    }
- 
+
 -  Status GetChildren(const string& dir, std::vector<string>* result) override {
 -    return errors::Unimplemented("GetChildren unimplemented");
 +  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
 +    return absl::UnimplementedError("GetChildren unimplemented");
    }
- 
+
 -  Status GetMatchingPaths(const string& pattern,
 -                          std::vector<string>* results) override {
 -    return internal::GetMatchingPaths(this, Env::Default(), pattern, results);
@@ -1389,37 +1389,37 @@ index f1f00f9..6d1f930 100644
 +                          std::vector<std::string>* results) override {
 +    return internal::GetMatchingPaths(this, pattern, results);
    }
- 
+
 -  Status DeleteFile(const string& fname) override {
 -    return errors::Unimplemented("DeleteFile unimplemented");
 +  absl::Status DeleteFile(const std::string& fname) override {
 +    return absl::UnimplementedError("DeleteFile unimplemented");
    }
- 
+
 -  Status CreateDir(const string& dirname) override {
 -    return errors::Unimplemented("CreateDir unimplemented");
 +  absl::Status CreateDir(const std::string& dirname) override {
 +    return absl::UnimplementedError("CreateDir unimplemented");
    }
- 
+
 -  Status DeleteDir(const string& dirname) override {
 -    return errors::Unimplemented("DeleteDir unimplemented");
 +  absl::Status DeleteDir(const std::string& dirname) override {
 +    return absl::UnimplementedError("DeleteDir unimplemented");
    }
- 
+
 -  Status GetFileSize(const string& fname, uint64* file_size) override {
 -    return errors::Unimplemented("GetFileSize unimplemented");
 +  absl::Status GetFileSize(const std::string& fname, uint64_t* file_size) override {
 +    return absl::UnimplementedError("GetFileSize unimplemented");
    }
- 
+
 -  Status RenameFile(const string& src, const string& target) override {
 -    return errors::Unimplemented("RenameFile unimplemented");
 +  absl::Status RenameFile(const std::string& src, const std::string& target) override {
 +    return absl::UnimplementedError("RenameFile unimplemented");
    }
- 
+
 -  Status Stat(const string& fname, FileStatistics* stat) override {
 -    return errors::Unimplemented("Stat unimplemented");
 +  absl::Status Stat(const std::string& fname, FileStatistics* stat) override {
@@ -1427,12 +1427,12 @@ index f1f00f9..6d1f930 100644
    }
  };
  #endif
- 
+
  // END_SKIP_DOXYGEN
- 
+
 -
 +}  // namespace gtl
- 
+
  #endif  // GTL_NULL_FILE_SYSTEM_H_
 diff --git a/gtl/posix_file_system.cc b/gtl/posix_file_system.cc
 index 834dc65..e248fae 100644
@@ -1441,7 +1441,7 @@ index 834dc65..e248fae 100644
 @@ -13,31 +13,188 @@ See the License for the specific language governing permissions and
  limitations under the License.
  ==============================================================================*/
- 
+
 +#include "gtl/posix_file_system.h"
 +
  #include <dirent.h>
@@ -1458,13 +1458,13 @@ index 834dc65..e248fae 100644
  #include <sys/types.h>
  #include <time.h>
  #include <unistd.h>
- 
+
 -#include "gtl/default/posix_file_system.h"
 -#include "gtl/env.h"
 -#include "gtl/error.h"
 -#include "gtl/file_system_helper.h"
-+#include "absl/status/status.h"
-+#include "absl/strings/str_cat.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/str_cat.h"
  #include "glog/logging.h"
 -#include "gtl/status.h"
 -#include "gtl/strcat.h"
@@ -1627,14 +1627,14 @@ index 834dc65..e248fae 100644
 +  }
 +  return code;
 +}
- 
+
 +}  // namespace
- 
+
 +absl::Status IOError(const std::string& context, int err_number) {
 +  auto code = ErrnoToCode(err_number);
 +  return absl::Status(code, absl::StrCat(context, "; ", strerror(err_number)));
 +}
- 
+
  // 128KB of copy buffer
  constexpr size_t kPosixCopyFileBufferSize = 128 * 1024;
 @@ -45,22 +202,22 @@ constexpr size_t kPosixCopyFileBufferSize = 128 * 1024;
@@ -1644,20 +1644,20 @@ index 834dc65..e248fae 100644
 -  string filename_;
 +  std::string filename_;
    int fd_;
- 
+
   public:
 -  PosixRandomAccessFile(const string& fname, int fd)
 +  PosixRandomAccessFile(const std::string& fname, int fd)
        : filename_(fname), fd_(fd) {}
    ~PosixRandomAccessFile() override { close(fd_); }
- 
+
 -  Status Name(absl::string_view* result) const override {
 +  absl::Status Name(absl::string_view* result) const override {
      *result = filename_;
 -    return Status::OK();
 +    return absl::OkStatus();
    }
- 
+
 -  Status Read(uint64 offset, size_t n, absl::string_view* result,
 +  absl::Status Read(uint64_t offset, size_t n, absl::string_view* result,
                char* scratch) const override {
@@ -1676,23 +1676,23 @@ index 834dc65..e248fae 100644
          // Retry
        } else {
 @@ -92,11 +249,11 @@ class PosixRandomAccessFile : public RandomAccessFile {
- 
+
  class PosixWritableFile : public WritableFile {
   private:
 -  string filename_;
 +  std::string filename_;
    FILE* file_;
- 
+
   public:
 -  PosixWritableFile(const string& fname, FILE* f)
 +  PosixWritableFile(const std::string& fname, FILE* f)
        : filename_(fname), file_(f) {}
- 
+
    ~PosixWritableFile() override {
 @@ -106,19 +263,19 @@ class PosixWritableFile : public WritableFile {
      }
    }
- 
+
 -  Status Append(absl::string_view data) override {
 +  absl::Status Append(absl::string_view data) override {
      size_t r = fwrite(data.data(), 1, data.size(), file_);
@@ -1702,7 +1702,7 @@ index 834dc65..e248fae 100644
 -    return Status::OK();
 +    return absl::OkStatus();
    }
- 
+
 -  Status Close() override {
 +  absl::Status Close() override {
      if (file_ == nullptr) {
@@ -1716,7 +1716,7 @@ index 834dc65..e248fae 100644
 @@ -126,28 +283,28 @@ class PosixWritableFile : public WritableFile {
      return result;
    }
- 
+
 -  Status Flush() override {
 +  absl::Status Flush() override {
      if (fflush(file_) != 0) {
@@ -1725,14 +1725,14 @@ index 834dc65..e248fae 100644
 -    return Status::OK();
 +    return absl::OkStatus();
    }
- 
+
 -  Status Name(absl::string_view* result) const override {
 +  absl::Status Name(absl::string_view* result) const override {
      *result = filename_;
 -    return Status::OK();
 +    return absl::OkStatus();
    }
- 
+
 -  Status Sync() override {
 -    Status s;
 +  absl::Status Sync() override {
@@ -1742,16 +1742,16 @@ index 834dc65..e248fae 100644
      }
      return s;
    }
- 
+
 -  Status Tell(int64* position) override {
 -    Status s;
 +  absl::Status Tell(int64_t* position) override {
 +    absl::Status s;
      *position = ftell(file_);
- 
+
      if (*position == -1) {
 @@ -160,23 +317,23 @@ class PosixWritableFile : public WritableFile {
- 
+
  class PosixReadOnlyMemoryRegion : public ReadOnlyMemoryRegion {
   public:
 -  PosixReadOnlyMemoryRegion(const void* address, uint64 length)
@@ -1763,13 +1763,13 @@ index 834dc65..e248fae 100644
    const void* data() override { return address_; }
 -  uint64 length() override { return length_; }
 +  uint64_t length() override { return length_; }
- 
+
   private:
    const void* const address_;
 -  const uint64 length_;
 +  const uint64_t length_;
  };
- 
+
 -Status PosixFileSystem::NewRandomAccessFile(
 -    const string& fname, std::unique_ptr<RandomAccessFile>* result) {
 -  string translated_fname = TranslateName(fname);
@@ -1784,7 +1784,7 @@ index 834dc65..e248fae 100644
 @@ -186,10 +343,10 @@ Status PosixFileSystem::NewRandomAccessFile(
    return s;
  }
- 
+
 -Status PosixFileSystem::NewWritableFile(const string& fname,
 +absl::Status PosixFileSystem::NewWritableFile(const std::string& fname,
                                          std::unique_ptr<WritableFile>* result) {
@@ -1798,7 +1798,7 @@ index 834dc65..e248fae 100644
 @@ -199,10 +356,10 @@ Status PosixFileSystem::NewWritableFile(const string& fname,
    return s;
  }
- 
+
 -Status PosixFileSystem::NewAppendableFile(
 -    const string& fname, std::unique_ptr<WritableFile>* result) {
 -  string translated_fname = TranslateName(fname);
@@ -1813,7 +1813,7 @@ index 834dc65..e248fae 100644
 @@ -212,10 +369,10 @@ Status PosixFileSystem::NewAppendableFile(
    return s;
  }
- 
+
 -Status PosixFileSystem::NewReadOnlyMemoryRegionFromFile(
 -    const string& fname, std::unique_ptr<ReadOnlyMemoryRegion>* result) {
 -  string translated_fname = TranslateName(fname);
@@ -1828,7 +1828,7 @@ index 834dc65..e248fae 100644
 @@ -234,16 +391,16 @@ Status PosixFileSystem::NewReadOnlyMemoryRegionFromFile(
    return s;
  }
- 
+
 -Status PosixFileSystem::FileExists(const string& fname) {
 +absl::Status PosixFileSystem::FileExists(const std::string& fname) {
    if (access(TranslateName(fname).c_str(), F_OK) == 0) {
@@ -1838,7 +1838,7 @@ index 834dc65..e248fae 100644
 -  return errors::NotFound(fname, " not found");
 +  return absl::NotFoundError(absl::StrCat(fname, " not found"));
  }
- 
+
 -Status PosixFileSystem::GetChildren(const string& dir,
 -                                    std::vector<string>* result) {
 -  string translated_dir = TranslateName(dir);
@@ -1855,7 +1855,7 @@ index 834dc65..e248fae 100644
 -  return Status::OK();
 +  return absl::OkStatus();
  }
- 
+
 -Status PosixFileSystem::GetMatchingPaths(const string& pattern,
 -                                         std::vector<string>* results) {
 -  return internal::GetMatchingPaths(this, Env::Default(), pattern, results);
@@ -1863,7 +1863,7 @@ index 834dc65..e248fae 100644
 +                                         std::vector<std::string>* results) {
 +  return internal::GetMatchingPaths(this, pattern, results);
  }
- 
+
 -Status PosixFileSystem::DeleteFile(const string& fname) {
 -  Status result;
 +absl::Status PosixFileSystem::DeleteFile(const std::string& fname) {
@@ -1873,7 +1873,7 @@ index 834dc65..e248fae 100644
    }
    return result;
  }
- 
+
 -Status PosixFileSystem::CreateDir(const string& name) {
 -  string translated = TranslateName(name);
 +absl::Status PosixFileSystem::CreateDir(const std::string& name) {
@@ -1888,7 +1888,7 @@ index 834dc65..e248fae 100644
 -  return Status::OK();
 +  return absl::OkStatus();
  }
- 
+
 -Status PosixFileSystem::DeleteDir(const string& name) {
 -  Status result;
 +absl::Status PosixFileSystem::DeleteDir(const std::string& name) {
@@ -1898,7 +1898,7 @@ index 834dc65..e248fae 100644
    }
    return result;
  }
- 
+
 -Status PosixFileSystem::GetFileSize(const string& fname, uint64* size) {
 -  Status s;
 +absl::Status PosixFileSystem::GetFileSize(const std::string& fname, uint64_t* size) {
@@ -1909,7 +1909,7 @@ index 834dc65..e248fae 100644
 @@ -304,8 +461,8 @@ Status PosixFileSystem::GetFileSize(const string& fname, uint64* size) {
    return s;
  }
- 
+
 -Status PosixFileSystem::Stat(const string& fname, FileStatistics* stats) {
 -  Status s;
 +absl::Status PosixFileSystem::Stat(const std::string& fname, FileStatistics* stats) {
@@ -1920,7 +1920,7 @@ index 834dc65..e248fae 100644
 @@ -317,16 +474,16 @@ Status PosixFileSystem::Stat(const string& fname, FileStatistics* stats) {
    return s;
  }
- 
+
 -Status PosixFileSystem::RenameFile(const string& src, const string& target) {
 -  Status result;
 +absl::Status PosixFileSystem::RenameFile(const std::string& src, const std::string& target) {
@@ -1930,7 +1930,7 @@ index 834dc65..e248fae 100644
    }
    return result;
  }
- 
+
 -Status PosixFileSystem::CopyFile(const string& src, const string& target) {
 -  string translated_src = TranslateName(src);
 +absl::Status PosixFileSystem::CopyFile(const std::string& src, const std::string& target) {
@@ -1966,13 +1966,13 @@ index 834dc65..e248fae 100644
 @@ -374,22 +531,22 @@ Status PosixFileSystem::CopyFile(const string& src, const string& target) {
      }
    }
- 
+
 -  Status result = Status::OK();
 +  absl::Status result = absl::OkStatus();
    if (rc < 0) {
      result = IOError(target, errno);
    }
- 
+
    // Keep the error code
    rc = close(target_fd);
 -  if (rc < 0 && result == Status::OK()) {
@@ -1984,10 +1984,10 @@ index 834dc65..e248fae 100644
 +  if (rc < 0 && result == absl::OkStatus()) {
      result = IOError(target, errno);
    }
- 
+
    return result;
  }
- 
+
 -
 +}  // namespace gtl
 diff --git a/gtl/posix_file_system.h b/gtl/posix_file_system.h
@@ -1997,80 +1997,80 @@ index 8378ddd..7553f16 100644
 @@ -16,64 +16,67 @@ limitations under the License.
  #ifndef GTL_POSIX_FILE_SYSTEM_H_
  #define GTL_POSIX_FILE_SYSTEM_H_
- 
+
 -#include "gtl/env.h"
 -#include "gtl/path.h"
 +#include <memory>
 +#include <string>
 +#include <vector>
- 
-+#include "absl/status/status.h"
+
++#include "third_party/absl/status/status.h"
 +#include "gtl/file_system.h"
 +#include "gtl/path.h"
- 
+
 +namespace gtl {
- 
+
  class PosixFileSystem : public FileSystem {
   public:
 -  PosixFileSystem() {}
 +  PosixFileSystem() = default;
- 
+
 -  ~PosixFileSystem() {}
 +  ~PosixFileSystem() override = default;
- 
+
 -  Status NewRandomAccessFile(
 -      const string& filename,
 +  absl::Status NewRandomAccessFile(
 +      const std::string& filename,
        std::unique_ptr<RandomAccessFile>* result) override;
- 
+
 -  Status NewWritableFile(const string& fname,
 +  absl::Status NewWritableFile(const std::string& fname,
                           std::unique_ptr<WritableFile>* result) override;
- 
+
 -  Status NewAppendableFile(const string& fname,
 +  absl::Status NewAppendableFile(const std::string& fname,
                             std::unique_ptr<WritableFile>* result) override;
- 
+
 -  Status NewReadOnlyMemoryRegionFromFile(
 -      const string& filename,
 +  absl::Status NewReadOnlyMemoryRegionFromFile(
 +      const std::string& filename,
        std::unique_ptr<ReadOnlyMemoryRegion>* result) override;
- 
+
 -  Status FileExists(const string& fname) override;
 +  absl::Status FileExists(const std::string& fname) override;
- 
+
 -  Status GetChildren(const string& dir, std::vector<string>* result) override;
 +  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override;
- 
+
 -  Status Stat(const string& fname, FileStatistics* stats) override;
 +  absl::Status Stat(const std::string& fname, FileStatistics* stats) override;
- 
+
 -  Status GetMatchingPaths(const string& pattern,
 -                          std::vector<string>* results) override;
 +  absl::Status GetMatchingPaths(const std::string& pattern,
 +                          std::vector<std::string>* results) override;
- 
+
 -  Status DeleteFile(const string& fname) override;
 +  absl::Status DeleteFile(const std::string& fname) override;
- 
+
 -  Status CreateDir(const string& name) override;
 +  absl::Status CreateDir(const std::string& name) override;
- 
+
 -  Status DeleteDir(const string& name) override;
 +  absl::Status DeleteDir(const std::string& name) override;
- 
+
 -  Status GetFileSize(const string& fname, uint64* size) override;
 +  absl::Status GetFileSize(const std::string& fname, uint64_t* size) override;
- 
+
 -  Status RenameFile(const string& src, const string& target) override;
 +  absl::Status RenameFile(const std::string& src, const std::string& target) override;
- 
+
 -  Status CopyFile(const string& src, const string& target) override;
 +  absl::Status CopyFile(const std::string& src, const std::string& target) override;
  };
- 
+
 -Status IOError(const string& context, int err_number);
 -
  class LocalPosixFileSystem : public PosixFileSystem {
@@ -2084,8 +2084,8 @@ index 8378ddd..7553f16 100644
 +    return std::string(path);
    }
  };
- 
+
 -
 +}  // namespace gtl
- 
+
  #endif  // GTL_POSIX_FILE_SYSTEM_H_

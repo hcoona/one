@@ -2,9 +2,9 @@
 
 #include <utility>
 
-#include "absl/container/flat_hash_map.h"
-#include "absl/strings/str_cat.h"
 #include "glog/logging.h"
+#include "third_party/absl/container/flat_hash_map.h"
+#include "third_party/absl/strings/str_cat.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
 

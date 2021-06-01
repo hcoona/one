@@ -15,18 +15,18 @@
 #include <limits>
 #include <type_traits>
 
-#include "config/config.h"
 #include "gtl/numeric/safe_conversions.h"
+#include "config/config.h"
 
 #if defined(OS_ASMJS)
 // Optimized safe math instructions are incompatible with asmjs.
 #define GTL_HAS_OPTIMIZED_SAFE_MATH (0)
 // Where available use builtin math overflow support on Clang and GCC.
-#elif !defined(__native_client__) &&                       \
-    ((defined(__clang__) &&                                \
-      ((__clang_major__ > 3) ||                            \
-       (__clang_major__ == 3 && __clang_minor__ >= 4))) || \
-     (defined(__GNUC__) && __GNUC__ >= 5))
+#elif !defined(__native_client__) &&                         \
+      ((defined(__clang__) &&                                \
+        ((__clang_major__ > 3) ||                            \
+         (__clang_major__ == 3 && __clang_minor__ >= 4))) || \
+       (defined(__GNUC__) && __GNUC__ >= 5))
 #include "gtl/numeric/safe_math_clang_gcc_impl.h"
 #define GTL_HAS_OPTIMIZED_SAFE_MATH (1)
 #else
@@ -114,7 +114,8 @@ struct ClampedNegFastOp {
 // template instantiations even though we don't actually support the operations.
 // However, there is no corresponding implementation of e.g. SafeUnsignedAbs,
 // so the float versions will not compile.
-template <typename Numeric, bool IsInteger = std::is_integral<Numeric>::value,
+template <typename Numeric,
+          bool IsInteger = std::is_integral<Numeric>::value,
           bool IsFloat = std::is_floating_point<Numeric>::value>
 struct UnsignedOrFloatForSize;
 
@@ -141,8 +142,9 @@ constexpr T NegateWrapper(T value) {
   return static_cast<T>(UnsignedT(0) - static_cast<UnsignedT>(value));
 }
 
-template <typename T, typename std::enable_if<
-                          std::is_floating_point<T>::value>::type* = nullptr>
+template <
+    typename T,
+    typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T NegateWrapper(T value) {
   return -value;
 }
@@ -159,34 +161,42 @@ constexpr T AbsWrapper(T value) {
   return static_cast<T>(SafeUnsignedAbs(value));
 }
 
-template <typename T, typename std::enable_if<
-                          std::is_floating_point<T>::value>::type* = nullptr>
+template <
+    typename T,
+    typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T AbsWrapper(T value) {
   return value < 0 ? -value : value;
 }
 
-template <template <typename, typename, typename> class M, typename L,
+template <template <typename, typename, typename> class M,
+          typename L,
           typename R>
 struct MathWrapper {
   using math = M<typename UnderlyingType<L>::type,
-                 typename UnderlyingType<R>::type, void>;
+                 typename UnderlyingType<R>::type,
+                 void>;
   using type = typename math::result_type;
 };
 
 // These variadic templates work out the return types.
 // TODO(jschuh): Rip all this out once we have C++14 non-trailing auto support.
-template <template <typename, typename, typename> class M, typename L,
-          typename R, typename... Args>
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
 struct ResultType;
 
-template <template <typename, typename, typename> class M, typename L,
+template <template <typename, typename, typename> class M,
+          typename L,
           typename R>
 struct ResultType<M, L, R> {
   using type = typename MathWrapper<M, L, R>::type;
 };
 
-template <template <typename, typename, typename> class M, typename L,
-          typename R, typename... Args>
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
 struct ResultType {
   using type =
       typename ResultType<M, typename ResultType<M, L, R>::type, Args...>::type;
@@ -195,7 +205,7 @@ struct ResultType {
 // The following macros are just boilerplate for the standard arithmetic
 // operator overloads and variadic function templates. A macro isn't the nicest
 // solution, but it beats rewriting these over and over again.
-#define GTL_NUMERIC_ARITHMETIC_VARIADIC(CLASS, CL_ABBR, OP_NAME)        \
+#define GTL_NUMERIC_ARITHMETIC_VARIADIC(CLASS, CL_ABBR, OP_NAME)       \
   template <typename L, typename R, typename... Args>                   \
   constexpr CLASS##Numeric<                                             \
       typename ResultType<CLASS##OP_NAME##Op, L, R, Args...>::type>     \
@@ -205,24 +215,24 @@ struct ResultType {
   }
 
 #define GTL_NUMERIC_ARITHMETIC_OPERATORS(CLASS, CL_ABBR, OP_NAME, OP, CMP_OP) \
-  /* Binary arithmetic operator for all CLASS##Numeric operations. */         \
-  template <typename L, typename R,                                           \
-            typename std::enable_if<Is##CLASS##Op<L, R>::value>::type* =      \
-                nullptr>                                                      \
-  constexpr CLASS##Numeric<                                                   \
-      typename MathWrapper<CLASS##OP_NAME##Op, L, R>::type>                   \
-  operator OP(const L lhs, const R rhs) {                                     \
-    return decltype(lhs OP rhs)::template MathOp<CLASS##OP_NAME##Op>(lhs,     \
-                                                                     rhs);    \
-  }                                                                           \
-  /* Assignment arithmetic operator implementation from CLASS##Numeric. */    \
-  template <typename L>                                                       \
-  template <typename R>                                                       \
-  constexpr CLASS##Numeric<L>& CLASS##Numeric<L>::operator CMP_OP(            \
-      const R rhs) {                                                          \
-    return MathOp<CLASS##OP_NAME##Op>(rhs);                                   \
-  }                                                                           \
-  /* Variadic arithmetic functions that return CLASS##Numeric. */             \
+  /* Binary arithmetic operator for all CLASS##Numeric operations. */          \
+  template <typename L, typename R,                                            \
+            typename std::enable_if<Is##CLASS##Op<L, R>::value>::type* =       \
+                nullptr>                                                       \
+  constexpr CLASS##Numeric<                                                    \
+      typename MathWrapper<CLASS##OP_NAME##Op, L, R>::type>                    \
+  operator OP(const L lhs, const R rhs) {                                      \
+    return decltype(lhs OP rhs)::template MathOp<CLASS##OP_NAME##Op>(lhs,      \
+                                                                     rhs);     \
+  }                                                                            \
+  /* Assignment arithmetic operator implementation from CLASS##Numeric. */     \
+  template <typename L>                                                        \
+  template <typename R>                                                        \
+  constexpr CLASS##Numeric<L>& CLASS##Numeric<L>::operator CMP_OP(             \
+      const R rhs) {                                                           \
+    return MathOp<CLASS##OP_NAME##Op>(rhs);                                    \
+  }                                                                            \
+  /* Variadic arithmetic functions that return CLASS##Numeric. */              \
   GTL_NUMERIC_ARITHMETIC_VARIADIC(CLASS, CL_ABBR, OP_NAME)
 
 }  // namespace internal

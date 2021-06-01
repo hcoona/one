@@ -40,13 +40,13 @@ limitations under the License.
 #define GTL_TOP_N_H_
 
 #include <stddef.h>
-
 #include <algorithm>
 #include <functional>
 #include <string>
 #include <vector>
 
 #include "glog/logging.h"
+
 
 namespace gtl {
 
@@ -90,7 +90,7 @@ class TopN {
 
   // 'limit' is the maximum number of top results to return.
   explicit TopN(size_t limit) : TopN(limit, Cmp()) {}
-  TopN(size_t limit, const Cmp& cmp) : limit_(limit), cmp_(cmp) {}
+  TopN(size_t limit, const Cmp &cmp) : limit_(limit), cmp_(cmp) {}
 
   size_t limit() const { return limit_; }
 
@@ -110,38 +110,38 @@ class TopN {
   // exceeded, 'dropped' will remain unchanged. 'dropped' may be omitted or
   // nullptr, in which case it is not filled in.
   // Requires: T is CopyAssignable, Swappable
-  void push(const T& v) { push(v, nullptr); }
-  void push(const T& v, T* dropped) { PushInternal(v, dropped); }
+  void push(const T &v) { push(v, nullptr); }
+  void push(const T &v, T *dropped) { PushInternal(v, dropped); }
 
   // Move overloads of push.
   // Requires: T is MoveAssignable, Swappable
-  void push(T&& v) {  // NOLINT(build/c++11)
+  void push(T &&v) {  // NOLINT(build/c++11)
     push(std::move(v), nullptr);
   }
-  void push(T&& v, T* dropped) {  // NOLINT(build/c++11)
+  void push(T &&v, T *dropped) {  // NOLINT(build/c++11)
     PushInternal(std::move(v), dropped);
   }
 
   // Peeks the bottom result without calling Extract()
-  const T& peek_bottom();
+  const T &peek_bottom();
 
   // Extract the elements as a vector sorted in descending order.  The caller
   // assumes ownership of the vector and must delete it when done.  This is a
   // destructive operation.  The only method that can be called immediately
   // after Extract() is Reset().
-  std::vector<T>* Extract();
+  std::vector<T> *Extract();
 
   // Similar to Extract(), but makes no guarantees the elements are in sorted
   // order.  As with Extract(), the caller assumes ownership of the vector and
   // must delete it when done.  This is a destructive operation.  The only
   // method that can be called immediately after ExtractUnsorted() is Reset().
-  std::vector<T>* ExtractUnsorted();
+  std::vector<T> *ExtractUnsorted();
 
   // A non-destructive version of Extract(). Copy the elements in a new vector
   // sorted in descending order and return it.  The caller assumes ownership of
   // the new vector and must delete it when done.  After calling
   // ExtractNondestructive(), the caller can continue to push() new elements.
-  std::vector<T>* ExtractNondestructive() const;
+  std::vector<T> *ExtractNondestructive() const;
 
   // A non-destructive version of Extract(). Copy the elements to a given
   // vector sorted in descending order. After calling
@@ -151,14 +151,14 @@ class TopN {
   //  2. Any data contained in the vector prior to the call will be deleted
   //     from it. After the call the vector will contain only the elements
   //     from the data structure.
-  void ExtractNondestructive(std::vector<T>* output) const;
+  void ExtractNondestructive(std::vector<T> *output) const;
 
   // A non-destructive version of ExtractUnsorted(). Copy the elements in a new
   // vector and return it, with no guarantees the elements are in sorted order.
   // The caller assumes ownership of the new vector and must delete it when
   // done.  After calling ExtractUnsortedNondestructive(), the caller can
   // continue to push() new elements.
-  std::vector<T>* ExtractUnsortedNondestructive() const;
+  std::vector<T> *ExtractUnsortedNondestructive() const;
 
   // A non-destructive version of ExtractUnsorted(). Copy the elements into
   // a given vector, with no guarantees the elements are in sorted order.
@@ -169,7 +169,7 @@ class TopN {
   //  2. Any data contained in the vector prior to the call will be deleted
   //     from it. After the call the vector will contain only the elements
   //     from the data structure.
-  void ExtractUnsortedNondestructive(std::vector<T>* output) const;
+  void ExtractUnsortedNondestructive(std::vector<T> *output) const;
 
   // Return an iterator to the beginning (end) of the container,
   // with no guarantees about the order of iteration. These iterators are
@@ -178,7 +178,7 @@ class TopN {
   UnsortedIterator unsorted_end() const { return elements_.begin() + size(); }
 
   // Accessor for comparator template argument.
-  Cmp* comparator() { return &cmp_; }
+  Cmp *comparator() { return &cmp_; }
 
   // This removes all elements.  If Extract() or ExtractUnsorted() have been
   // called, this will put it back in an empty but useable state.
@@ -186,7 +186,7 @@ class TopN {
 
  private:
   template <typename U>
-  void PushInternal(U&& v, T* dropped);  // NOLINT(build/c++11)
+  void PushInternal(U &&v, T *dropped);  // NOLINT(build/c++11)
 
   // elements_ can be in one of two states:
   //   elements_.size() <= limit_:  elements_ is an unsorted vector of elements
@@ -207,7 +207,7 @@ class TopN {
 
 template <class T, class Cmp>
 template <typename U>
-void TopN<T, Cmp>::PushInternal(U&& v, T* dropped) {  // NOLINT(build/c++11)
+void TopN<T, Cmp>::PushInternal(U &&v, T *dropped) {  // NOLINT(build/c++11)
   if (limit_ == 0) {
     if (dropped) *dropped = std::forward<U>(v);  // NOLINT(build/c++11)
     return;
@@ -254,7 +254,7 @@ void TopN<T, Cmp>::PushInternal(U&& v, T* dropped) {  // NOLINT(build/c++11)
 }
 
 template <class T, class Cmp>
-const T& TopN<T, Cmp>::peek_bottom() {
+const T &TopN<T, Cmp>::peek_bottom() {
   CHECK(!empty());
   if (state_ == UNORDERED) {
     // We need to do a linear scan to find out the bottom element
@@ -276,7 +276,7 @@ const T& TopN<T, Cmp>::peek_bottom() {
 }
 
 template <class T, class Cmp>
-std::vector<T>* TopN<T, Cmp>::Extract() {
+std::vector<T> *TopN<T, Cmp>::Extract() {
   auto out = new std::vector<T>;
   out->swap(elements_);
   if (state_ != HEAP_SORTED) {
@@ -289,7 +289,7 @@ std::vector<T>* TopN<T, Cmp>::Extract() {
 }
 
 template <class T, class Cmp>
-std::vector<T>* TopN<T, Cmp>::ExtractUnsorted() {
+std::vector<T> *TopN<T, Cmp>::ExtractUnsorted() {
   auto out = new std::vector<T>;
   out->swap(elements_);
   if (state_ == HEAP_SORTED) {
@@ -300,14 +300,14 @@ std::vector<T>* TopN<T, Cmp>::ExtractUnsorted() {
 }
 
 template <class T, class Cmp>
-std::vector<T>* TopN<T, Cmp>::ExtractNondestructive() const {
+std::vector<T> *TopN<T, Cmp>::ExtractNondestructive() const {
   auto out = new std::vector<T>;
   ExtractNondestructive(out);
   return out;
 }
 
 template <class T, class Cmp>
-void TopN<T, Cmp>::ExtractNondestructive(std::vector<T>* output) const {
+void TopN<T, Cmp>::ExtractNondestructive(std::vector<T> *output) const {
   CHECK(output);
   *output = elements_;
   if (state_ != HEAP_SORTED) {
@@ -319,14 +319,14 @@ void TopN<T, Cmp>::ExtractNondestructive(std::vector<T>* output) const {
 }
 
 template <class T, class Cmp>
-std::vector<T>* TopN<T, Cmp>::ExtractUnsortedNondestructive() const {
+std::vector<T> *TopN<T, Cmp>::ExtractUnsortedNondestructive() const {
   auto elements = new std::vector<T>;
   ExtractUnsortedNondestructive(elements);
   return elements;
 }
 
 template <class T, class Cmp>
-void TopN<T, Cmp>::ExtractUnsortedNondestructive(std::vector<T>* output) const {
+void TopN<T, Cmp>::ExtractUnsortedNondestructive(std::vector<T> *output) const {
   CHECK(output);
   *output = elements_;
   if (state_ == HEAP_SORTED) {
@@ -342,5 +342,6 @@ void TopN<T, Cmp>::Reset() {
 }
 
 }  // namespace gtl
+
 
 #endif  // GTL_TOP_N_H_

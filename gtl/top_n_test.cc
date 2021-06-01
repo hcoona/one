@@ -22,27 +22,27 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "absl/random/random.h"
+#include "third_party/absl/random/random.h"
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 
 namespace {
 
-using gtl::TopN;
 using std::string;
+using gtl::TopN;
 
 // Move the contents from an owned raw pointer, returning by value.
 // Objects are easier to manage by value.
 template <class T>
-T ConsumeRawPtr(T* p) {
+T ConsumeRawPtr(T *p) {
   T tmp = std::move(*p);
   delete p;
   return tmp;
 }
 
 template <class Cmp>
-void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp& cmp,
-                       absl::BitGen* random, bool test_peek,
+void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp &cmp,
+                       absl::BitGen *random, bool test_peek,
                        bool test_extract_unsorted) {
   LOG(INFO) << "Testing limit=" << limit << ", n_elements=" << n_elements
             << ", test_peek=" << test_peek
@@ -74,8 +74,8 @@ void TestIntTopNHelper(size_t limit, size_t n_elements, const Cmp& cmp,
 }
 
 template <class Cmp>
-void TestIntTopN(size_t limit, size_t n_elements, const Cmp& cmp,
-                 absl::BitGen* random) {
+void TestIntTopN(size_t limit, size_t n_elements, const Cmp &cmp,
+                 absl::BitGen *random) {
   // Test peek_bottom() and Extract()
   TestIntTopNHelper(limit, n_elements, cmp, random, true, false);
   // Test Extract()
@@ -169,21 +169,21 @@ TEST(TopNTest, String) {
 // of push().
 TEST(TopNTest, Ptr) {
   LOG(INFO) << "Testing 2-argument push()";
-  TopN<string*> topn(3);
+  TopN<string *> topn(3);
   for (int i = 0; i < 8; ++i) {
-    string* dropped = nullptr;
+    string *dropped = nullptr;
     topn.push(new string(std::to_string(i)), &dropped);
     delete dropped;
   }
 
   for (int i = 8; i > 0; --i) {
-    string* dropped = nullptr;
+    string *dropped = nullptr;
     topn.push(new string(std::to_string(i)), &dropped);
     delete dropped;
   }
 
-  std::vector<string*> extract = ConsumeRawPtr(topn.Extract());
-  for (auto& temp : extract) {
+  std::vector<string *> extract = ConsumeRawPtr(topn.Extract());
+  for (auto &temp : extract) {
     delete temp;
   }
   extract.clear();
@@ -191,7 +191,7 @@ TEST(TopNTest, Ptr) {
 
 struct PointeeGreater {
   template <typename T>
-  bool operator()(const T& a, const T& b) const {
+  bool operator()(const T &a, const T &b) const {
     return *a > *b;
   }
 };

@@ -3,40 +3,40 @@ index 3f2ae4d..1d151fb 100644
 --- a/gtl/scanner.cc
 +++ b/gtl/scanner.cc
 @@ -15,8 +15,7 @@ limitations under the License.
- 
+
  #include "gtl/scanner.h"
- 
+
 -
 -namespace strings {
 +namespace gtl {
- 
+
  void Scanner::ScanUntilImpl(char end_ch, bool escaped) {
    for (;;) {
 @@ -55,5 +54,5 @@ bool Scanner::GetResult(absl::string_view* remaining, absl::string_view* capture
    return true;
  }
- 
+
 -}  // namespace strings
 +}  // namespace gtl
- 
+
 diff --git a/gtl/scanner.h b/gtl/scanner.h
 index e96bbf9..3039a2c 100644
 --- a/gtl/scanner.h
 +++ b/gtl/scanner.h
 @@ -18,12 +18,10 @@ limitations under the License.
- 
+
  #include <string>
- 
+
 -#include "gtl/macros.h"
 -#include "gtl/str_util.h"
 -#include "gtl/stringpiece.h"
-+#include "absl/strings/string_view.h"
-+#include "absl/strings/strip.h"
- 
++#include "third_party/absl/strings/string_view.h"
++#include "third_party/absl/strings/strip.h"
+
 -
 -namespace strings {
 +namespace gtl {
- 
+
  // Scanner provides simplified string parsing, in which a string is parsed as a
  // series of scanning calls (e.g. One, Any, Many, OneLiteral, Eos), and then
 @@ -78,14 +76,14 @@ class Scanner {
@@ -47,7 +47,7 @@ index e96bbf9..3039a2c 100644
 +    absl::ConsumePrefix(&cur_, s);
      return *this;
    }
- 
+
    // Consume the next s.size() characters of the input, if they match <s>. If
    // they don't match <s>, then GetResult will ultimately return false.
    Scanner& OneLiteral(absl::string_view s) {
@@ -58,34 +58,34 @@ index e96bbf9..3039a2c 100644
      return *this;
 @@ -236,10 +234,10 @@ class Scanner {
    bool error_ = false;
- 
+
    friend class ScannerTest;
 -  TF_DISALLOW_COPY_AND_ASSIGN(Scanner);
 +  Scanner(const Scanner&) = delete;
 +  Scanner& operator=(const Scanner&) = delete;
  };
- 
+
 -}  // namespace strings
 -
 +}  // namespace gtl
- 
+
  #endif  // GTL_SCANNER_H_
 diff --git a/gtl/scanner_test.cc b/gtl/scanner_test.cc
 index 0627d7e..1385a7d 100644
 --- a/gtl/scanner_test.cc
 +++ b/gtl/scanner_test.cc
 @@ -15,17 +15,18 @@ limitations under the License.
- 
+
  #include "gtl/scanner.h"
- 
+
 -#include "gtest/gtest.h"
 +#include <climits>
- 
+
 +#include "gtest/gtest.h"
- 
+
 -namespace strings {
 +namespace gtl {
- 
+
  class ScannerTest : public ::testing::Test {
   protected:
    // Returns a string with all chars that are in <clz>, in byte value order.
@@ -100,7 +100,7 @@ index 0627d7e..1385a7d 100644
          s += ch;
 @@ -276,7 +277,7 @@ TEST_F(ScannerTest, DefaultCapturesAll) {
  }
- 
+
  TEST_F(ScannerTest, AllCharClasses) {
 -  EXPECT_EQ(256, ClassStr(Scanner::ALL).size());
 +  EXPECT_EQ(CHAR_MAX, ClassStr(Scanner::ALL).size());
@@ -110,7 +110,7 @@ index 0627d7e..1385a7d 100644
 @@ -322,5 +323,4 @@ TEST_F(ScannerTest, Peek) {
    EXPECT_EQ('\0', Scanner("0123A").Any(Scanner::LETTER_DIGIT).Peek());
  }
- 
+
 -}  // namespace strings
 -
 +}  // namespace gtl

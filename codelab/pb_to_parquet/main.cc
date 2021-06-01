@@ -1,7 +1,5 @@
 #include <string>
 
-#include "absl/container/flat_hash_map.h"
-#include "absl/status/status.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "google/protobuf/compiler/importer.h"
@@ -11,9 +9,11 @@
 #include "google/protobuf/message.h"
 #include "google/protobuf/reflection.h"
 #include "google/protobuf/repeated_field.h"
-#include "parquet/api/io.h"
-#include "parquet/api/schema.h"
-#include "parquet/api/writer.h"
+#include "third_party/absl/container/flat_hash_map.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/arrow/src/parquet/api/io.h"
+#include "third_party/arrow/src/parquet/api/schema.h"
+#include "third_party/arrow/src/parquet/api/writer.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "codelab/pb_to_parquet/converter.h"
 #include "gtl/file_system.h"

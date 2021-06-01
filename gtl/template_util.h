@@ -6,15 +6,14 @@
 #define GTL_TEMPLATE_UTIL_H_
 
 #include <stddef.h>
-
 #include <iosfwd>
 #include <iterator>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "absl/meta/type_traits.h"
 #include "config/config.h"
+#include "third_party/absl/meta/type_traits.h"
 
 // Some versions of libstdc++ have partial support for type_traits, but misses
 // a smaller subset while removing some of the older non-standard stuff. Assume
@@ -40,12 +39,9 @@
 
 namespace gtl {
 
-template <class T>
-struct is_non_const_reference : std::false_type {};
-template <class T>
-struct is_non_const_reference<T&> : std::true_type {};
-template <class T>
-struct is_non_const_reference<const T&> : std::false_type {};
+template <class T> struct is_non_const_reference : std::false_type {};
+template <class T> struct is_non_const_reference<T&> : std::true_type {};
+template <class T> struct is_non_const_reference<const T&> : std::false_type {};
 
 namespace internal {
 
@@ -72,8 +68,9 @@ namespace internal {
 template <typename T, typename = void>
 struct SupportsOstreamOperator : std::false_type {};
 template <typename T>
-struct SupportsOstreamOperator<T, decltype(void(std::declval<std::ostream&>()
-                                                << std::declval<T>()))>
+struct SupportsOstreamOperator<T,
+                               decltype(void(std::declval<std::ostream&>()
+                                             << std::declval<T>()))>
     : std::true_type {};
 
 template <typename T, typename = void>

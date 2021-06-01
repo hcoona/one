@@ -1,0 +1,46 @@
+diff --git a/third_party/protobuf/python/compatibility_tests/v2.5.0/tests/google/protobuf/internal/test_util.py b/third_party/protobuf/python/compatibility_tests/v2.5.0/tests/google/protobuf/internal/test_util.py
+index e2c9db0..64f6052 100644
+--- a/third_party/protobuf/python/compatibility_tests/v2.5.0/tests/google/protobuf/internal/test_util.py
++++ b/third_party/protobuf/python/compatibility_tests/v2.5.0/tests/google/protobuf/internal/test_util.py
+@@ -573,6 +573,17 @@ def GoldenFile(filename):
+       return open(full_path, 'rb')
+     path = os.path.join(path, '..')
+ 
++  # Search internally.
++  path = '.'
++  while os.path.exists(path):
++    full_path = os.path.join(path, 'third_party/protobuf/python/tests/google/protobuf/internal',
++                            filename)
++    if os.path.exists(full_path):
++        # Found it.  Load the golden file from the testdata directory.
++        full_path = os.path.join(path, 'third_party/protobuf/python/tests/google/protobuf/internal', filename)
++        return open(full_path, 'rb')
++    path = os.path.join(path, '..')
++
+   raise RuntimeError(
+     'Could not find golden files.  This test must be run from within the '
+     'protobuf source package so that it can read test data files from the '
+diff --git a/third_party/protobuf/python/google/protobuf/internal/test_util.py b/third_party/protobuf/python/google/protobuf/internal/test_util.py
+index a6e34ef..69a94e1 100644
+--- a/third_party/protobuf/python/google/protobuf/internal/test_util.py
++++ b/third_party/protobuf/python/google/protobuf/internal/test_util.py
+@@ -628,11 +628,14 @@ def GoldenFile(filename):
+ 
+   # Search internally.
+   path = '.'
+-  full_path = os.path.join(path, 'third_party/py/google/protobuf/testdata',
+-                           filename)
+-  if os.path.exists(full_path):
+-    # Found it.  Load the golden file from the testdata directory.
+-    return open(full_path, 'rb')
++  while os.path.exists(path):
++    full_path = os.path.join(path, 'third_party/protobuf/src/google/protobuf/testdata',
++                            filename)
++    if os.path.exists(full_path):
++        # Found it.  Load the golden file from the testdata directory.
++        full_path = os.path.join(path, 'third_party/protobuf/src/google/protobuf/testdata', filename)
++        return open(full_path, 'rb')
++    path = os.path.join(path, '..')
+ 
+   raise RuntimeError(
+       'Could not find golden files.  This test must be run from within the '

@@ -1,0 +1,17 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "casts",
+    hdrs = ["casts.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/absl/debugging:demangle_internal",
+        "//third_party/glog",
+    ],
+)
+
+cc_library(
+    name = "macros",
+    hdrs = ["macros.h"],
+    visibility = ["//visibility:public"],
+)

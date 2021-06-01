@@ -7,9 +7,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/random/random.h"
-#include "absl/strings/ascii.h"
-#include "absl/strings/str_format.h"
+#include "third_party/absl/strings/ascii.h"
+#include "third_party/absl/strings/str_format.h"
+#include "third_party/absl/random/random.h"
 
 namespace gtl {
 
@@ -25,12 +25,14 @@ bool IsValidGUIDInternal(StringPieceType guid, bool strict) {
   using CharType = typename StringPieceType::value_type;
 
   const size_t kGUIDLength = 36U;
-  if (guid.length() != kGUIDLength) return false;
+  if (guid.length() != kGUIDLength)
+    return false;
 
   for (size_t i = 0; i < guid.length(); ++i) {
     CharType current = guid[i];
     if (i == 8 || i == 13 || i == 18 || i == 23) {
-      if (current != '-') return false;
+      if (current != '-')
+        return false;
     } else {
       if (strict ? !IsLowerHexDigit(current) : !absl::ascii_isxdigit(current))
         return false;
@@ -79,12 +81,12 @@ bool IsValidGUIDOutputString(absl::string_view guid) {
 }
 
 std::string RandomDataToGUIDString(const uint64_t bytes[2]) {
-  return absl::StrFormat(
-      "%08x-%04x-%04x-%04x-%012llx", static_cast<unsigned int>(bytes[0] >> 32),
-      static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
-      static_cast<unsigned int>(bytes[0] & 0x0000ffff),
-      static_cast<unsigned int>(bytes[1] >> 48),
-      bytes[1] & 0x0000ffff'ffffffffULL);
+  return absl::StrFormat("%08x-%04x-%04x-%04x-%012llx",
+                      static_cast<unsigned int>(bytes[0] >> 32),
+                      static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
+                      static_cast<unsigned int>(bytes[0] & 0x0000ffff),
+                      static_cast<unsigned int>(bytes[1] >> 48),
+                      bytes[1] & 0x0000ffff'ffffffffULL);
 }
 
 }  // namespace gtl

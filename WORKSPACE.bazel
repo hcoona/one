@@ -1,0 +1,326 @@
+workspace(name = "com_github_hcoona_one")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+##############################
+# Constants                  #
+##############################
+
+RULES_JVM_EXTERNAL_TAG = "4.1"
+
+RULES_JVM_EXTERNAL_SHA = "f36441aa876c4f6427bfb2d1f2d723b48e9d930b62662bf723ddfb8fc80f0140"
+
+MAVEN_REPOSITORIES = [
+    "https://maven.byted.org/repository/public/",
+    "https://maven.aliyun.com/nexus/content/groups/public/",
+    "https://repo1.maven.org/maven2",
+]
+
+##############################
+# Starlark libraries         #
+##############################
+
+http_archive(
+    name = "bazel_skylib",  # 2020-08-27
+    sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
+    urls = [
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "platforms",  # 2021-02-26
+    sha256 = "079945598e4b6cc075846f7fd6a9d0857c33a7afc0de868c2ccb96405225135d",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.4/platforms-0.0.4.tar.gz",
+        "https://github.com/bazelbuild/platforms/releases/download/0.0.4/platforms-0.0.4.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
+    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz"],
+)
+
+http_archive(
+    name = "rules_cc",  # 2020-10-05T06:01:24Z
+    sha256 = "35ea62c63cd71d4000efe85f9f4f17e8afb23896c37ee9510952db2e9d8fbb70",
+    strip_prefix = "rules_cc-f055da4ff0cb2b3c73de1fe2f094ebdfb8b3acb9",
+    urls = [
+        "https://github.com/bazelbuild/rules_cc/archive/f055da4ff0cb2b3c73de1fe2f094ebdfb8b3acb9.zip",
+    ],
+)
+
+http_archive(
+    name = "rules_python",  # 2021-04-07T13:45:21Z
+    sha256 = "8c1e24d8ff6a495aa06396617afc80f3f0a6554c5f74ae63f5b5d6b683be9eb9",
+    strip_prefix = "rules_python-bc256eff477eb08045f13bea58213672efb25d4e",
+    urls = [
+        "https://github.com/bazelbuild/rules_python/archive/bc256eff477eb08045f13bea58213672efb25d4e.zip",
+    ],
+)
+
+http_archive(
+    name = "rules_java",
+    sha256 = "f5a3e477e579231fca27bf202bb0e8fbe4fc6339d63b38ccb87c2760b533d1c3",
+    strip_prefix = "rules_java-981f06c3d2bd10225e85209904090eb7b5fb26bd",
+    urls = ["https://github.com/bazelbuild/rules_java/archive/981f06c3d2bd10225e85209904090eb7b5fb26bd.tar.gz"],
+)
+
+http_archive(
+    name = "rules_fuzzing",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/rules_fuzzing/patches:0000-use-provided.patch",
+    ],
+    sha256 = "94f25c7a18db0502ace26a3ef7d0a25fd7c195c4e9770ddd1b1ec718e8936091",
+    strip_prefix = "rules_fuzzing-0.1.3",
+    urls = ["https://github.com/bazelbuild/rules_fuzzing/archive/v0.1.3.zip"],
+)
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
+)
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "d1ffd055969c8f8d431e2d439813e42326961d0942bdf734d2c95dc30c369566",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
+    ],
+)
+
+######
+# Remove later
+######
+
+bind(
+    name = "python_headers",
+    actual = "//third_party/protobuf/util/python:python_headers",
+)
+
+http_archive(
+    name = "six",
+    build_file = "//third_party/protobuf:third_party/six.BUILD",
+    sha256 = "d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73",
+    urls = ["https://pypi.python.org/packages/source/s/six/six-1.12.0.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_nelhage_rules_boost",  # 2021-03-01
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/boost:patches/0000-rules-boost-use-third-party.patch",
+    ],
+    sha256 = "07ba4580f4ff3197c4952d3a3164c7c1d4106f9e42fa405496d5843e2e659040",
+    strip_prefix = "rules_boost-c13a880269cc044c4b5e90046625339836771d77",
+    urls = [
+        "https://github.com/nelhage/rules_boost/archive/c13a880269cc044c4b5e90046625339836771d77.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ustc): move boost into third_party.
+http_archive(
+    name = "boost",  # 2020-12-11
+    build_file = "@com_github_nelhage_rules_boost//:BUILD.boost",
+    patch_cmds = ["rm -f doc/pdf/BUILD"],
+    patch_cmds_win = ["Remove-Item -Force doc/pdf/BUILD"],
+    sha256 = "aeb26f80e80945e82ee93e5939baebdca47b9dee80a07d3144be1e1a6a66dd6a",
+    strip_prefix = "boost_1_75_0",
+    urls = [
+        "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ustc): move gsl into third_party.
+http_archive(
+    name = "com_github_microsoft_gsl",
+    build_file = "//third_party/gsl:gsl.BUILD",
+    sha256 = "8216dbcecb54682c6a79b7faf171ce08631150f4559ab59dd6ec7dd3ea7e14e4",
+    strip_prefix = "GSL-98002ab60135fe70f4acd7e5b8a34f9ad1427807",
+    urls = ["https://github.com/microsoft/GSL/archive/98002ab60135fe70f4acd7e5b8a34f9ad1427807.zip"],  # 2020-06-11
+)
+
+http_archive(
+    name = "com_googlesource_code_re2",
+    sha256 = "428735aea6e8007c14d2e75c69f66cf5b71a009d9933ba6e51e3cbeb52f12f7d",
+    strip_prefix = "re2-b83705e2d297f21b0805202bac86c935670634f8",
+    url = "https://github.com/google/re2/archive/b83705e2d297f21b0805202bac86c935670634f8.tar.gz",  # 2020-07-01
+)
+
+##############################
+# Load repositories methods  #
+##############################
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+##############################
+# Load Python Dependencies   #
+##############################
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+# Create a central repo that knows about the dependencies needed from
+# requirements.txt. The requirements.txt is generated from
+# poetry export -f requirements.txt --output requirements.txt --dev
+pip_parse(
+    name = "one_pip_deps",
+    requirements_lock = "//:requirements.txt",
+)
+
+# Load the starlark macro which will define your dependencies.
+load("@one_pip_deps//:requirements.bzl", "install_deps")
+
+# Call it to define repos for your requirements.
+install_deps()
+
+##############################
+# Load Java Dependencies     #
+##############################
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("@rules_jvm_external//:specs.bzl", "maven")
+
+MAVEN_ARROW_VERSION = "4.0.0"
+
+MAVEN_AVRO_VERSION = "1.10.0"
+
+MAVEN_PARQUET_VERSION = "1.12.0"
+
+MAVEN_HADOOP_VERSION = "2.7.1"
+
+MAVEN_NETTY_VERSION = "4.1.64.Final"
+
+MAVEN_SLF4J_VERSION = "1.7.30"
+
+MAVEN_LOGBACK_VERSION = "1.2.3"
+
+MAVEN_JUNIT_VERSION = "4.13.2"
+
+load("@//bazel:junit5.bzl", "JUNIT5_ARTIFACTS")
+
+maven_install(
+    artifacts = [
+        "org.apache.arrow:" + name + ":" + MAVEN_ARROW_VERSION
+        for name in [
+            "arrow-avro",
+            # TODO(zhangshuai.ustc): repack arrow-dataset for Linux JNI binary.
+            "arrow-dataset",
+            "arrow-memory-core",
+            "arrow-memory-unsafe",
+            "arrow-memory-netty",
+            "arrow-vector",
+        ]
+    ] + [
+        "org.apache.avro:avro:" + MAVEN_AVRO_VERSION,
+    ] + [
+        "org.apache.parquet:" + name + ":" + MAVEN_PARQUET_VERSION
+        for name in [
+            "parquet-avro",
+            "parquet-hadoop",
+        ]
+    ] + [
+        "org.apache.hadoop:" + name + ":" + MAVEN_HADOOP_VERSION
+        for name in [
+            "hadoop-common",
+            "hadoop-mapreduce-client-core",
+        ]
+    ] + [
+        "io.netty:" + name + ":" + MAVEN_NETTY_VERSION
+        for name in [
+            "netty-buffer",
+            "netty-common",
+        ]
+    ] + [
+        "org.slf4j:" + name + ":" + MAVEN_SLF4J_VERSION
+        for name in [
+            "slf4j-api",
+        ]
+    ] + [
+        "ch.qos.logback:logback-classic:" + MAVEN_LOGBACK_VERSION,
+    ] + [
+        maven.artifact(
+            "junit",
+            "junit",
+            MAVEN_JUNIT_VERSION,
+            testonly = True,
+        ),
+    ] + JUNIT5_ARTIFACTS + [
+        # Generate with `dev-support/bin/refresh_maven_dependencies.sh`.
+        "ch.qos.logback:logback-classic:1.2.3",
+        "commons-cli:commons-cli:1.4",
+        "com.google.guava:guava:26.0-jre",
+        "javax.annotation:javax.annotation-api:1.3.2",
+        "junit:junit:4.12",
+        "net.java.dev.jna:jna:5.4.0",
+        "net.java.dev.jna:jna-platform:5.4.0",
+        "org.apache.commons:commons-lang3:3.9",
+        "org.apache.commons:commons-math3:3.6.1",
+        "org.slf4j:slf4j-api:1.7.25",
+        "org.assertj:assertj-core:3.13.2",
+        # TODO(zhangshuai.ustc): Add it to Maven.
+        "commons-codec:commons-codec:1.13",  # directory_manifest
+        "com.google.googlejavaformat:google-java-format:1.7",  # tools/google-java-format
+    ],
+    excluded_artifacts = [
+        "org.slf4j:slf4j-log4j12",
+    ],
+    maven_install_json = "@//:maven_install.json",
+    repositories = MAVEN_REPOSITORIES,
+)
+
+load("@maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
+
+##############################
+# Load Java Dependencies     #
+##############################
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+##############################
+# Tools Dependencies         #
+##############################
+
+http_archive(
+    name = "bazel_gazelle",
+    sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+    ],
+)
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+# TODO(zhangshuai.ds): remove it later.
+gazelle_dependencies(go_repository_default_config = "@//:WORKSPACE.bazel")
+
+load("@rules_fuzzing//fuzzing/private/oss_fuzz:repository.bzl", "oss_fuzz_repository")
+
+oss_fuzz_repository(
+    name = "rules_fuzzing_oss_fuzz",
+)
+
+pip_parse(
+    name = "fuzzing_py_deps",
+    requirements_lock = "@rules_fuzzing//fuzzing:requirements.txt",
+)
+
+load("@fuzzing_py_deps//:requirements.bzl", fuzzing_py_install_deps = "install_deps")
+
+fuzzing_py_install_deps()

@@ -17,17 +17,18 @@ limitations under the License.
 
 #include <sys/stat.h>
 
-#include "absl/status/status.h"
-#include "absl/strings/match.h"
-#include "absl/strings/str_join.h"
-#include "absl/strings/str_split.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/strings/match.h"
+#include "third_party/absl/strings/str_join.h"
+#include "third_party/absl/strings/str_split.h"
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "gtl/null_file_system.h"
 #include "gtl/path.h"
 
 // Macros for testing the results of functions that return tensorflow::Status.
-#define TF_EXPECT_OK(statement) EXPECT_TRUE((statement).ok())
+#define TF_EXPECT_OK(statement) \
+  EXPECT_TRUE((statement).ok())
 
 static const char* const kPrefix = "ipfs://solarsystem";
 
@@ -76,8 +77,7 @@ class InterPlanetaryFileSystem : public gtl::NullFileSystem {
       return absl::OkStatus();
     }
     if (split_path.size() == 3) {
-      const std::string& parent_path =
-          this->JoinPath(split_path[0], split_path[1]);
+      const std::string& parent_path = this->JoinPath(split_path[0], split_path[1]);
       if (!BodyExists(parent_path)) {
         return absl::FailedPreconditionError("Base dir not created");
       }
@@ -106,8 +106,7 @@ class InterPlanetaryFileSystem : public gtl::NullFileSystem {
     return absl::FailedPreconditionError("Not a dir");
   }
 
-  absl::Status GetChildren(const std::string& dir,
-                           std::vector<std::string>* result) override {
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
     absl::Status s = IsDirectory(dir);
     if (!s.ok()) {
       return s;
@@ -141,8 +140,8 @@ class InterPlanetaryFileSystem : public gtl::NullFileSystem {
       std::pair<std::string, std::set<std::string>>("Venus", {}),
       std::pair<std::string, std::set<std::string>>("Earth", {"Moon"}),
       std::pair<std::string, std::set<std::string>>("Mars", {}),
-      std::pair<std::string, std::set<std::string>>(
-          "Jupiter", {"Europa", "Io", "Ganymede"}),
+      std::pair<std::string, std::set<std::string>>("Jupiter",
+                                          {"Europa", "Io", "Ganymede"}),
       std::pair<std::string, std::set<std::string>>("Saturn", {}),
       std::pair<std::string, std::set<std::string>>("Uranus", {}),
       std::pair<std::string, std::set<std::string>>("Neptune", {}),
@@ -154,8 +153,7 @@ class InterPlanetaryFileSystem : public gtl::NullFileSystem {
 
 // Returns all the matched entries as a comma separated std::string removing the
 // common prefix of BaseDir().
-std::string Match(InterPlanetaryFileSystem* ipfs,
-                  const std::string& suffix_pattern) {
+std::string Match(InterPlanetaryFileSystem* ipfs, const std::string& suffix_pattern) {
   std::vector<std::string> results;
   absl::Status s =
       ipfs->GetMatchingPaths(ipfs->JoinPath(kPrefix, suffix_pattern), &results);
@@ -287,8 +285,7 @@ class TestFileSystem : public gtl::NullFileSystem {
   }
 
   // Simulating a FS with a root dir and a single file underneath it.
-  absl::Status GetChildren(const std::string& dir,
-                           std::vector<std::string>* result) override {
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
     if (dir == "." || dir.empty()) {
       result->push_back("test");
     }
@@ -307,3 +304,5 @@ TEST(TestFileSystemTest, RootDirectory) {
   EXPECT_EQ(1, results.size());
   EXPECT_EQ("./test", results[0]);
 }
+
+

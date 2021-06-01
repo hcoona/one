@@ -9,8 +9,8 @@
 
 #include <string>
 
-#include "absl/strings/string_view.h"
 #include "glog/logging.h"
+#include "third_party/absl/strings/string_view.h"
 #include "openssl/crypto.h"
 #include "openssl/err.h"
 
@@ -43,7 +43,8 @@ void EnsureOpenSSLInit() {
 void ClearOpenSSLERRStack(const gtl::Location& location) {
   if (DCHECK_IS_ON() && VLOG_IS_ON(1)) {
     uint32_t error_num = ERR_peek_error();
-    if (error_num == 0) return;
+    if (error_num == 0)
+      return;
 
     DVLOG(1) << "OpenSSL ERR_get_error stack from " << location.ToString();
     ERR_print_errors_cb(&OpenSSLErrorCallback, NULL);

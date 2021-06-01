@@ -1,0 +1,20 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "gtest_main",
+    srcs = ["gtest_main.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/absl/debugging:failure_signal_handler",
+        "//third_party/absl/debugging:symbolize",
+        "//third_party/gflags",
+        "//third_party/glog",
+        "//third_party/googletest:gtest",
+    ],
+)
+
+cc_library(
+    name = "macros",
+    hdrs = ["macros.h"],
+    visibility = ["//visibility:public"],
+)

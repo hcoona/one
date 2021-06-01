@@ -2,16 +2,17 @@
 #include <string>
 #include <utility>
 
-#include "absl/base/casts.h"
-#include "absl/random/random.h"
-#include "absl/status/status.h"
-#include "absl/types/span.h"
-#include "arrow/api.h"
-#include "arrow/io/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-#include "parquet/arrow/reader.h"
-#include "parquet/arrow/writer.h"
+#include "third_party/absl/base/casts.h"
+#include "third_party/absl/random/random.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/types/span.h"
+#include "third_party/arrow/src/arrow/api.h"
+#include "third_party/arrow/src/arrow/io/api.h"
+#include "third_party/arrow/src/parquet/arrow/reader.h"
+#include "third_party/arrow/src/parquet/arrow/writer.h"
+#include "base/macros.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
@@ -21,8 +22,7 @@ namespace {
 constexpr const size_t kMessageCount = 10;
 constexpr const char kMyString[] = "Hello World!";
 
-bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
-  ignore_result(flag_name);
+bool FlagStringNotEmpty(const char* /*flag_name*/, const std::string& value) {
   return !value.empty();
 }
 

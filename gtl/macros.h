@@ -15,7 +15,8 @@
 // //styleguide/c++/c++-dos-and-donts.md for more information.
 
 // Put this in the declarations for a class to be uncopyable.
-#define DISALLOW_COPY(TypeName) TypeName(const TypeName&) = delete
+#define DISALLOW_COPY(TypeName) \
+  TypeName(const TypeName&) = delete
 
 // Put this in the declarations for a class to be unassignable.
 #define DISALLOW_ASSIGN(TypeName) TypeName& operator=(const TypeName&) = delete
@@ -40,7 +41,8 @@
 //   if (TakeOwnership(my_var.get()) == SUCCESS)
 //     ignore_result(my_var.release());
 //
-template <typename T>
-inline void ignore_result(const T&) {}
+template<typename T>
+inline void ignore_result(const T&) {
+}
 
 #endif  // GTL_MACROS_H_

@@ -20,7 +20,7 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "absl/status/status.h"
+#include "third_party/absl/status/status.h"
 #include "gtl/file_statistics.h"
 #include "gtl/file_system.h"
 #include "gtl/file_system_helper.h"
@@ -38,19 +38,17 @@ class NullFileSystem : public FileSystem {
   ~NullFileSystem() override = default;
 
   absl::Status NewRandomAccessFile(
-      const std::string& fname,
-      std::unique_ptr<RandomAccessFile>* result) override {
+      const std::string& fname, std::unique_ptr<RandomAccessFile>* result) override {
     return absl::UnimplementedError("NewRandomAccessFile unimplemented");
   }
 
   absl::Status NewWritableFile(const std::string& fname,
-                               std::unique_ptr<WritableFile>* result) override {
+                         std::unique_ptr<WritableFile>* result) override {
     return absl::UnimplementedError("NewWritableFile unimplemented");
   }
 
-  absl::Status NewAppendableFile(
-      const std::string& fname,
-      std::unique_ptr<WritableFile>* result) override {
+  absl::Status NewAppendableFile(const std::string& fname,
+                           std::unique_ptr<WritableFile>* result) override {
     return absl::UnimplementedError("NewAppendableFile unimplemented");
   }
 
@@ -65,13 +63,12 @@ class NullFileSystem : public FileSystem {
     return absl::UnimplementedError("FileExists unimplemented");
   }
 
-  absl::Status GetChildren(const std::string& dir,
-                           std::vector<std::string>* result) override {
+  absl::Status GetChildren(const std::string& dir, std::vector<std::string>* result) override {
     return absl::UnimplementedError("GetChildren unimplemented");
   }
 
   absl::Status GetMatchingPaths(const std::string& pattern,
-                                std::vector<std::string>* results) override {
+                          std::vector<std::string>* results) override {
     return internal::GetMatchingPaths(this, pattern, results);
   }
 
@@ -87,13 +84,11 @@ class NullFileSystem : public FileSystem {
     return absl::UnimplementedError("DeleteDir unimplemented");
   }
 
-  absl::Status GetFileSize(const std::string& fname,
-                           uint64_t* file_size) override {
+  absl::Status GetFileSize(const std::string& fname, uint64_t* file_size) override {
     return absl::UnimplementedError("GetFileSize unimplemented");
   }
 
-  absl::Status RenameFile(const std::string& src,
-                          const std::string& target) override {
+  absl::Status RenameFile(const std::string& src, const std::string& target) override {
     return absl::UnimplementedError("RenameFile unimplemented");
   }
 

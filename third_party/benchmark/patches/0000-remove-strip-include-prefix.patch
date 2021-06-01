@@ -1,0 +1,20 @@
+diff --git a/third_party/benchmark/BUILD.bazel b/third_party/benchmark/BUILD.bazel
+index cc03f9b..ce129f6 100644
+--- a/third_party/benchmark/BUILD.bazel
++++ b/third_party/benchmark/BUILD.bazel
+@@ -24,7 +24,6 @@ cc_library(
+         ":windows": ["-DEFAULTLIB:shlwapi.lib"],
+         "//conditions:default": ["-pthread"],
+     }),
+-    strip_include_prefix = "include",
+     visibility = ["//visibility:public"],
+ )
+ 
+@@ -32,7 +31,6 @@ cc_library(
+     name = "benchmark_main",
+     srcs = ["src/benchmark_main.cc"],
+     hdrs = ["include/benchmark/benchmark.h"],
+-    strip_include_prefix = "include",
+     visibility = ["//visibility:public"],
+     deps = [":benchmark"],
+ )

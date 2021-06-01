@@ -1,6 +1,6 @@
 #include <string>
 
-#include "absl/status/status.h"
+#include "third_party/absl/status/status.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "directory_manifest/generator.h"

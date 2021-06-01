@@ -1,0 +1,280 @@
+diff --git a/fuzzing/replay/BUILD b/fuzzing/replay/BUILD
+index f8e335e..30d000d 100644
+--- a/fuzzing/replay/BUILD
++++ b/fuzzing/replay/BUILD
+@@ -27,9 +27,9 @@ cc_library(
+     hdrs = ["file_util.h"],
+     deps = [
+         ":status_util",
+-        "@com_google_absl//absl/functional:function_ref",
+-        "@com_google_absl//absl/status",
+-        "@com_google_absl//absl/strings",
++        "@com_github_hcoona_one//third_party/absl/functional:function_ref",
++        "@com_github_hcoona_one//third_party/absl/status",
++        "@com_github_hcoona_one//third_party/absl/strings",
+     ],
+ )
+
+@@ -38,9 +38,9 @@ cc_library(
+     srcs = ["replay_main.cc"],
+     deps = [
+         ":test_replayer",
+-        "@com_google_absl//absl/status",
+-        "@com_google_absl//absl/strings",
+-        "@com_google_absl//absl/strings:str_format",
++        "@com_github_hcoona_one//third_party/absl/status",
++        "@com_github_hcoona_one//third_party/absl/strings",
++        "@com_github_hcoona_one//third_party/absl/strings:str_format",
+     ],
+     alwayslink = True,
+ )
+@@ -50,8 +50,8 @@ cc_library(
+     srcs = ["status_util.cc"],
+     hdrs = ["status_util.h"],
+     deps = [
+-        "@com_google_absl//absl/status",
+-        "@com_google_absl//absl/strings",
++        "@com_github_hcoona_one//third_party/absl/status",
++        "@com_github_hcoona_one//third_party/absl/strings",
+     ],
+ )
+
+@@ -61,8 +61,8 @@ cc_library(
+     hdrs = ["test_file_buffer.h"],
+     deps = [
+         ":status_util",
+-        "@com_google_absl//absl/status",
+-        "@com_google_absl//absl/strings",
++        "@com_github_hcoona_one//third_party/absl/status",
++        "@com_github_hcoona_one//third_party/absl/strings",
+     ],
+ )
+
+@@ -73,9 +73,9 @@ cc_library(
+     deps = [
+         ":file_util",
+         ":test_file_buffer",
+-        "@com_google_absl//absl/status",
+-        "@com_google_absl//absl/strings",
+-        "@com_google_absl//absl/strings:str_format",
++        "@com_github_hcoona_one//third_party/absl/status",
++        "@com_github_hcoona_one//third_party/absl/strings",
++        "@com_github_hcoona_one//third_party/absl/strings:str_format",
+     ],
+ )
+
+@@ -88,8 +88,8 @@ cc_test(
+     srcs = ["file_util_test.cc"],
+     deps = [
+         ":file_util",
+-        "@com_google_absl//absl/strings",
+-        "@com_google_absl//absl/strings:str_format",
++        "@com_github_hcoona_one//third_party/absl/strings",
++        "@com_github_hcoona_one//third_party/absl/strings:str_format",
+         "@com_google_googletest//:gtest",
+         "@com_google_googletest//:gtest_main",
+     ],
+@@ -113,7 +113,7 @@ cc_test(
+     deps = [
+         ":file_util",
+         ":test_file_buffer",
+-        "@com_google_absl//absl/strings",
++        "@com_github_hcoona_one//third_party/absl/strings",
+         "@com_google_googletest//:gtest",
+         "@com_google_googletest//:gtest_main",
+     ],
+@@ -126,7 +126,7 @@ cc_test(
+     deps = [
+         ":file_util",
+         ":test_replayer",
+-        "@com_google_absl//absl/strings",
++        "@com_github_hcoona_one//third_party/absl/strings",
+         "@com_google_googletest//:gtest",
+         "@com_google_googletest//:gtest_main",
+     ],
+diff --git a/fuzzing/replay/file_util.cc b/fuzzing/replay/file_util.cc
+index 16c31ac..b47de95 100644
+--- a/fuzzing/replay/file_util.cc
++++ b/fuzzing/replay/file_util.cc
+@@ -23,11 +23,11 @@
+ #include <cstdio>
+ #include <string>
+
+-#include "absl/functional/function_ref.h"
+-#include "absl/status/status.h"
+-#include "absl/strings/match.h"
+-#include "absl/strings/str_cat.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/functional/function_ref.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/match.h"
++#include "third_party/absl/strings/str_cat.h"
++#include "third_party/absl/strings/string_view.h"
+ #include "fuzzing/replay/status_util.h"
+
+ namespace fuzzing {
+diff --git a/fuzzing/replay/file_util.h b/fuzzing/replay/file_util.h
+index 4c6ce86..9de20db 100644
+--- a/fuzzing/replay/file_util.h
++++ b/fuzzing/replay/file_util.h
+@@ -19,9 +19,9 @@
+
+ #include <sys/stat.h>
+
+-#include "absl/functional/function_ref.h"
+-#include "absl/status/status.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/functional/function_ref.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/string_view.h"
+
+ namespace fuzzing {
+
+diff --git a/fuzzing/replay/file_util_test.cc b/fuzzing/replay/file_util_test.cc
+index 4867e22..066c04b 100644
+--- a/fuzzing/replay/file_util_test.cc
++++ b/fuzzing/replay/file_util_test.cc
+@@ -22,9 +22,9 @@
+ #include <string>
+ #include <vector>
+
+-#include "absl/strings/str_cat.h"
+-#include "absl/strings/str_format.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/strings/str_cat.h"
++#include "third_party/absl/strings/str_format.h"
++#include "third_party/absl/strings/string_view.h"
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+
+diff --git a/fuzzing/replay/replay_main.cc b/fuzzing/replay/replay_main.cc
+index 97842b8..6d421a0 100644
+--- a/fuzzing/replay/replay_main.cc
++++ b/fuzzing/replay/replay_main.cc
+@@ -16,8 +16,8 @@
+ #include <cstdint>
+ #include <cstdlib>
+
+-#include "absl/status/status.h"
+-#include "absl/strings/str_format.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/str_format.h"
+ #include "fuzzing/replay/test_replayer.h"
+
+ extern "C" {
+diff --git a/fuzzing/replay/status_util.cc b/fuzzing/replay/status_util.cc
+index 6c50185..ca49547 100644
+--- a/fuzzing/replay/status_util.cc
++++ b/fuzzing/replay/status_util.cc
+@@ -17,8 +17,8 @@
+ #include <cstring>
+ #include <string>
+
+-#include "absl/status/status.h"
+-#include "absl/strings/str_cat.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/str_cat.h"
+
+ namespace fuzzing {
+
+diff --git a/fuzzing/replay/status_util.h b/fuzzing/replay/status_util.h
+index 8bcc1d0..ce1f5bb 100644
+--- a/fuzzing/replay/status_util.h
++++ b/fuzzing/replay/status_util.h
+@@ -17,8 +17,8 @@
+ #ifndef FUZZING_REPLAY_STATUS_UTIL_H_
+ #define FUZZING_REPLAY_STATUS_UTIL_H_
+
+-#include "absl/status/status.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/string_view.h"
+
+ namespace fuzzing {
+
+diff --git a/fuzzing/replay/test_file_buffer.cc b/fuzzing/replay/test_file_buffer.cc
+index 6a2700c..00b9db7 100644
+--- a/fuzzing/replay/test_file_buffer.cc
++++ b/fuzzing/replay/test_file_buffer.cc
+@@ -18,8 +18,8 @@
+ #include <cstdio>
+ #include <string>
+
+-#include "absl/status/status.h"
+-#include "absl/strings/str_cat.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/str_cat.h"
+ #include "fuzzing/replay/status_util.h"
+
+ namespace fuzzing {
+diff --git a/fuzzing/replay/test_file_buffer.h b/fuzzing/replay/test_file_buffer.h
+index 6313142..0e145c8 100644
+--- a/fuzzing/replay/test_file_buffer.h
++++ b/fuzzing/replay/test_file_buffer.h
+@@ -18,8 +18,8 @@
+ #include <cstddef>
+ #include <memory>
+
+-#include "absl/status/status.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/string_view.h"
+
+ namespace fuzzing {
+
+diff --git a/fuzzing/replay/test_file_buffer_test.cc b/fuzzing/replay/test_file_buffer_test.cc
+index b380756..d72ec10 100644
+--- a/fuzzing/replay/test_file_buffer_test.cc
++++ b/fuzzing/replay/test_file_buffer_test.cc
+@@ -17,7 +17,7 @@
+ #include <cstdlib>
+ #include <string>
+
+-#include "absl/strings/str_cat.h"
++#include "third_party/absl/strings/str_cat.h"
+ #include "fuzzing/replay/file_util.h"
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+diff --git a/fuzzing/replay/test_replayer.cc b/fuzzing/replay/test_replayer.cc
+index 17122c6..73f8ca2 100644
+--- a/fuzzing/replay/test_replayer.cc
++++ b/fuzzing/replay/test_replayer.cc
+@@ -20,8 +20,8 @@
+
+ #include <memory>
+
+-#include "absl/strings/str_cat.h"
+-#include "absl/strings/str_format.h"
++#include "third_party/absl/strings/str_cat.h"
++#include "third_party/absl/strings/str_format.h"
+ #include "fuzzing/replay/file_util.h"
+
+ namespace fuzzing {
+diff --git a/fuzzing/replay/test_replayer.h b/fuzzing/replay/test_replayer.h
+index a09db98..c0015db 100644
+--- a/fuzzing/replay/test_replayer.h
++++ b/fuzzing/replay/test_replayer.h
+@@ -21,8 +21,8 @@
+ #include <string>
+ #include <utility>
+
+-#include "absl/status/status.h"
+-#include "absl/strings/string_view.h"
++#include "third_party/absl/status/status.h"
++#include "third_party/absl/strings/string_view.h"
+ #include "fuzzing/replay/test_file_buffer.h"
+
+ namespace fuzzing {
+diff --git a/fuzzing/replay/test_replayer_test.cc b/fuzzing/replay/test_replayer_test.cc
+index bfe5842..778739e 100644
+--- a/fuzzing/replay/test_replayer_test.cc
++++ b/fuzzing/replay/test_replayer_test.cc
+@@ -20,7 +20,7 @@
+ #include <string>
+ #include <vector>
+
+-#include "absl/strings/str_cat.h"
++#include "third_party/absl/strings/str_cat.h"
+ #include "fuzzing/replay/file_util.h"
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"

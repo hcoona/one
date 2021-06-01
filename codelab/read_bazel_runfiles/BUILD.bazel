@@ -15,9 +15,9 @@ cc_binary(
         "//gtl:macros",
         "//gtl:posix_file_system",
         "@bazel_tools//tools/cpp/runfiles",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "//third_party/gflags",
+        "//third_party/glog",
+        "//third_party/absl/status",
+        "//third_party/absl/strings",
     ],
 )
