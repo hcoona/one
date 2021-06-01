@@ -1,0 +1,35 @@
+name: CI_Linux
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  BAZEL_APT_Linux:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install GCC 10
+        run: sudo apt install gcc-10
+      - name: Install LLVM 12
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 12
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          clean: true
+          fetch-depth: 1
+      - name: Install Bazelisk
+        uses: bazelbuild/setup-bazelisk@v1
+      - name: Mount bazel cache  # Optional
+        uses: actions/cache@v2
+        with:
+          path: "~/.cache/bazel"
+          key: bazel
+      - run: bazel build //...
