@@ -1,0 +1,12 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "extra_actions_base_proto",
+    srcs = ["extra_actions_base.proto"],
+)
+
+cc_proto_library(
+    name = "extra_actions_base_cc_proto",
+    deps = [":extra_actions_base_proto"],
+    visibility = ["//visibility:public"],
+)

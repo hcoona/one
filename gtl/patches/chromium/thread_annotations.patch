@@ -5,8 +5,8 @@ index a0fb845..80e5f7e 100644
 @@ -32,211 +32,8 @@
  #ifndef GTL_THREAD_ANNOTATIONS_H_
  #define GTL_THREAD_ANNOTATIONS_H_
- 
-+#include "absl/base/thread_annotations.h"
+
++#include "third_party/absl/base/thread_annotations.h"
  #include "glog/logging.h"
 -#include "config/config.h"
 -
@@ -212,7 +212,7 @@ index a0fb845..80e5f7e 100644
 -}
 -
 -}  // namespace thread_safety_analysis
- 
+
  // The above is imported as-is from abseil-cpp. The following Chromium-specific
  // synonyms are added for Chromium concepts (SequenceChecker/ThreadChecker).
 diff --git a/gtl/thread_annotations_unittest.cc b/gtl/thread_annotations_unittest.cc
@@ -221,10 +221,10 @@ index c2daa11..8433fd5 100644
 +++ b/gtl/thread_annotations_unittest.cc
 @@ -42,7 +42,7 @@ void ThreadSafe::ExplicitIncrement() {
  }
- 
+
  void ThreadSafe::ImplicitIncrement() {
 -  absl::MutexLock mutex_lock(&lock_);
 +  AutoLock auto_lock(lock_);
    counter_++;
  }
- 
+

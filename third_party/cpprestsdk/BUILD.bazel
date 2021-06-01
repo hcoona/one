@@ -1,0 +1,116 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+CPPRESTSDK_FLAGS = [
+    "-Wunused-parameter",
+    "-Wcast-align",
+    "-Wcast-qual",
+    "-Wconversion",
+    "-Wformat=2 ",
+    "-Winit-self",
+    "-Winvalid-pch",
+    "-Wmissing-format-attribute",
+    # "-Wmissing-include-dirs",
+    "-Wpacked",
+    "-Wredundant-decls ",
+    "-Wunreachable-code",
+    "-fno-strict-aliasing",
+]
+
+HEADERS_CPPREST = glob([
+    "include/cpprest/*.h",
+    "include/cpprest/*.hpp",
+])
+
+TEXTURE_HEADERS_CPPREST = glob([
+    "include/cpprest/*.dat",
+])
+
+HEADER_PPLX_THREADPOOL = ["include/pplx/threadpool.h"]
+
+HEADERS_PPLX = glob(
+    [
+        "include/pplx/*.h",
+        "include/pplx/*.hpp",
+    ],
+    exclude = HEADER_PPLX_THREADPOOL,
+)
+
+HEADERS_DETAILS = glob([
+    "include/cpprest/details/*.h",
+    "include/cpprest/details/*.hpp",
+    "include/pplx/*.hpp",
+])
+
+TEXTURE_HEADERS_DETAILS = glob([
+    "include/cpprest/details/*.dat",
+    "include/pplx/*.dat",
+])
+
+SOURCES = HEADERS_CPPREST + HEADERS_PPLX + HEADERS_DETAILS + [
+    "src/pch/stdafx.h",
+    "src/http/client/http_client.cpp",
+    "src/http/client/http_client_impl.h",
+    "src/http/client/http_client_msg.cpp",
+    "src/http/common/connection_pool_helpers.h",
+    "src/http/common/http_compression.cpp",
+    "src/http/common/http_helpers.cpp",
+    "src/http/common/http_msg.cpp",
+    "src/http/common/internal_http_helpers.h",
+    "src/http/listener/http_listener.cpp",
+    "src/http/listener/http_listener_msg.cpp",
+    "src/http/listener/http_server_api.cpp",
+    "src/http/listener/http_server_impl.h",
+    "src/http/oauth/oauth1.cpp",
+    "src/http/oauth/oauth2.cpp",
+    "src/json/json.cpp",
+    "src/json/json_parsing.cpp",
+    "src/json/json_serialization.cpp",
+    "src/uri/uri.cpp",
+    "src/uri/uri_builder.cpp",
+    "src/utilities/asyncrt_utils.cpp",
+    "src/utilities/base64.cpp",
+    "src/utilities/web_utilities.cpp",
+]
+
+cc_library(
+    name = "cpprest",
+    srcs = SOURCES + [
+        "src/pplx/pplxlinux.cpp",
+        "src/pplx/pplx.cpp",
+        "src/pplx/threadpool.cpp",
+        "include/pplx/threadpool.h",
+    ] + [
+        "src/http/client/http_client_asio.cpp",
+        "src/http/client/x509_cert_utilities.cpp",
+        "src/http/common/x509_cert_utilities.h",
+    ] + [
+        "src/streams/fileio_posix.cpp",
+    ] + [
+        "src/http/listener/http_server_asio.cpp",
+    ],
+    hdrs = glob([
+        "include/**/*.h",
+    ]),
+    copts = CPPRESTSDK_FLAGS + [
+        "-pedantic",
+    ],
+    defines = [
+        "CPPREST_EXCLUDE_WEBSOCKETS=1",
+        "CPPREST_FORCE_HTTP_CLIENT_ASIO",
+        "CPPREST_FORCE_HTTP_LISTENER_ASIO",
+    ],
+    linkopts = [
+        "-lpthread",
+    ],
+    local_defines = [
+        "CPPREST_EXCLUDE_BROTLI=1",
+    ],
+    textual_hdrs = TEXTURE_HEADERS_CPPREST + TEXTURE_HEADERS_DETAILS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/zlib",
+        "@boost//:asio_ssl",
+        "@boost//:bind",
+        "@boost//:thread",
+    ],
+)

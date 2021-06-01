@@ -1,0 +1,33 @@
+cc_binary(
+    name = "extract_compile_command",
+    srcs = [
+        "cxx/common/init.cc",
+        "cxx/common/init.h",
+        "cxx/tools/generate_compile_commands/extract_compile_command.cc",
+    ],
+    deps = [
+        "//third_party/absl/debugging:failure_signal_handler",
+        "//third_party/absl/debugging:symbolize",
+        "//third_party/absl/strings:str_format",
+        "//third_party/bazel/src/main/protobuf:extra_actions_base_cc_proto",
+        "//third_party/glog",
+        "//third_party/protobuf",
+        "//third_party/rapidjson",
+    ],
+)
+
+action_listener(
+    name = "extract_json",
+    extra_actions = [":extra_action"],
+    mnemonics = ["CppCompile"],
+    visibility = ["//visibility:public"],
+)
+
+extra_action(
+    name = "extra_action",
+    cmd = "$(location :extract_compile_command) \
+        $(EXTRA_ACTION_FILE) \
+        $(output $(ACTION_ID).compile_command.json)",
+    out_templates = ["$(ACTION_ID).compile_command.json"],
+    tools = [":extract_compile_command"],
+)

@@ -8,8 +8,8 @@
 
 #include <limits>
 
-#include "absl/strings/ascii.h"
 #include "gtest/gtest.h"
+#include "third_party/absl/strings/ascii.h"
 
 namespace gtl {
 

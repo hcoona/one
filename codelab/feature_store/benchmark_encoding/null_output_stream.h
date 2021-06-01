@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "arrow/api.h"
-#include "arrow/io/api.h"
+#include "third_party/arrow/src/arrow/api.h"
+#include "third_party/arrow/src/arrow/io/api.h"
 
 namespace hcoona {
 namespace codelab {

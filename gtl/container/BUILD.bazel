@@ -17,7 +17,7 @@ cc_library(
         "//gtl:macros",
         "//gtl:stl_util",
         "//gtl:template_util",
-        "@com_github_google_glog//:glog",
+        "//third_party/glog",
     ],
 )
 
@@ -30,7 +30,7 @@ cc_test(
         ":circular_deque",
         "//gtl/test:copy_only_int",
         "//gtl/test:move_only_int",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest_main",
     ],
 )
 
@@ -42,8 +42,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//gtl:sequence_checker",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/container:flat_hash_set",
+        "//third_party/glog",
+        "//third_party/absl/container:flat_hash_set",
     ],
 )
 
@@ -59,7 +59,7 @@ cc_test(
     deps = [
         ":id_map",
         "//gtl/test:gtest_util",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest_main",
     ],
 )
 
@@ -70,7 +70,7 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_google_glog//:glog",
+        "//third_party/glog",
     ],
 )
 
@@ -91,7 +91,7 @@ cc_library(
         ":util",
         "//gtl:template_util",
         "//gtl/numeric:checked_math",
-        "@com_github_google_glog//:glog",
+        "//third_party/glog",
     ],
 )
 
@@ -105,6 +105,6 @@ cc_test(
         "//gtl/test:copy_only_int",
         "//gtl/test:gtest_util",
         "//gtl/test:move_only_int",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/googletest:gtest_main",
     ],
 )

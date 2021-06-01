@@ -6,23 +6,23 @@
 #include <utility>
 #include <vector>
 
-#include "absl/container/btree_set.h"
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
-#include "absl/status/status.h"
-#include "absl/strings/str_cat.h"
-#include "absl/strings/string_view.h"
-#include "arrow/api.h"
-#include "arrow/io/api.h"
 #include "glog/logging.h"
-#include "parquet/api/schema.h"
-#include "parquet/api/writer.h"
-#include "parquet/arrow/writer.h"
+#include "third_party/absl/container/btree_set.h"
+#include "third_party/absl/container/flat_hash_map.h"
+#include "third_party/absl/container/flat_hash_set.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/strings/str_cat.h"
+#include "third_party/absl/strings/string_view.h"
+#include "third_party/arrow/src/arrow/api.h"
+#include "third_party/arrow/src/arrow/io/api.h"
+#include "third_party/arrow/src/parquet/api/schema.h"
+#include "third_party/arrow/src/parquet/api/writer.h"
+#include "third_party/arrow/src/parquet/arrow/writer.h"
+#include "base/casts.h"
+#include "base/macros.h"
 #include "codelab/feature_store/benchmark_encoding/null_output_stream.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"
 #include "codelab/pb_to_arrow/status_util.h"
-#include "status/status_util.h"
-#include "util/casts.h"
 
 namespace hcoona {
 namespace codelab {

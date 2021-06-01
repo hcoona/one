@@ -18,8 +18,8 @@ limitations under the License.
 
 #include <string>
 
-#include "absl/strings/string_view.h"
-#include "absl/strings/strip.h"
+#include "third_party/absl/strings/string_view.h"
+#include "third_party/absl/strings/strip.h"
 
 namespace gtl {
 

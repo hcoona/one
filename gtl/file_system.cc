@@ -24,9 +24,9 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "absl/strings/str_cat.h"
-#include "absl/strings/str_replace.h"
 #include "glog/logging.h"
+#include "third_party/absl/strings/str_cat.h"
+#include "third_party/absl/strings/str_replace.h"
 #include "config/config.h"
 #include "gtl/path.h"
 #include "gtl/scanner.h"

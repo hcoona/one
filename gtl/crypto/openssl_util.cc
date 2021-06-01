@@ -9,10 +9,10 @@
 
 #include <string>
 
-#include "absl/strings/string_view.h"
 #include "glog/logging.h"
 #include "openssl/crypto.h"
 #include "openssl/err.h"
+#include "third_party/absl/strings/string_view.h"
 
 namespace gtl {
 namespace crypto {

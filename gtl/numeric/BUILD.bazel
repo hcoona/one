@@ -93,7 +93,7 @@ cc_test(
         "//config",
         "//gtl:compiler_specific",
         "//gtl/test:gtest_util",
-        "@com_github_google_glog//:glog",
-        "@com_google_googletest//:gtest_main",
+        "//third_party/glog",
+        "//third_party/googletest:gtest_main",
     ],
 )

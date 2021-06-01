@@ -1,0 +1,13 @@
+third_party_bak
+nail
+
+# Need to recover later
+tools
+codelab/grpc_greeter
+codelab/rocksdb_example
+native-named-mutex
+java-transient-fault-handling
+zkclient
+configuration_flattener
+util
+status

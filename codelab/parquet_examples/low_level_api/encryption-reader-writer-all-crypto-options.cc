@@ -24,10 +24,10 @@
 #include <regex>
 #include <sstream>
 
-#include "arrow/io/file.h"
-#include "arrow/util/logging.h"
-#include "parquet/api/reader.h"
-#include "parquet/api/writer.h"
+#include "third_party/arrow/src/arrow/io/file.h"
+#include "third_party/arrow/src/arrow/util/logging.h"
+#include "third_party/arrow/src/parquet/api/reader.h"
+#include "third_party/arrow/src/parquet/api/writer.h"
 
 /*
  * This file contains samples for writing and reading encrypted Parquet files in

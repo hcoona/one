@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 
-#include "absl/status/status.h"
-#include "absl/time/time.h"
-#include "absl/types/any.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/time/time.h"
+#include "third_party/absl/types/any.h"
 #include "service/event.h"
 #include "service/event_handler.h"
 #include "service/service_state.h"

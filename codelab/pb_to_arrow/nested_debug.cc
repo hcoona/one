@@ -1,15 +1,16 @@
 #include <memory>
 
-#include "absl/base/casts.h"
-#include "absl/status/status.h"
-#include "absl/types/span.h"
-#include "arrow/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "third_party/absl/base/casts.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/types/span.h"
+#include "third_party/arrow/src/arrow/api.h"
+#include "base/casts.h"
+#include "base/macros.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
-#include "util/casts.h"
 
 int main(int argc, char** argv) {
   google::ParseCommandLineFlags(&argc, &argv, true);

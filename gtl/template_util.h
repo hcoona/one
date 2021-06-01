@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-#include "absl/meta/type_traits.h"
+#include "third_party/absl/meta/type_traits.h"
 #include "config/config.h"
 
 // Some versions of libstdc++ have partial support for type_traits, but misses

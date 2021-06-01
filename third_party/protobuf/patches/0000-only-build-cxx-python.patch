@@ -1,0 +1,247 @@
+diff --git a/third_party/protobuf/BUILD.bazel b/third_party/protobuf/BUILD.bazel
+index 6b1b3b3..4ce6e96 100644
+--- a/third_party/protobuf/BUILD.bazel
++++ b/third_party/protobuf/BUILD.bazel
+@@ -1,7 +1,7 @@
+ # Bazel (https://bazel.build/) BUILD file for Protobuf.
+ 
+ load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test", "objc_library", native_cc_proto_library = "cc_proto_library")
++load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test", native_cc_proto_library = "cc_proto_library")
+ load("@rules_proto//proto:defs.bzl", "proto_lang_toolchain", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load(":cc_proto_blacklist_test.bzl", "cc_proto_blacklist_test")
+@@ -28,23 +28,9 @@ config_setting(
+     },
+ )
+ 
+-GTEST = select({
+-    "//:use_com_google_googletest": [
+-        "//third_party/googletest:gtest",
+-    ],
+-    "//conditions:default": [
+-        "//external:gtest",
+-    ],
+-})
++GTEST = ["//third_party/googletest:gtest"]
+ 
+-GTEST_MAIN = select({
+-    "//:use_com_google_googletest": [
+-        "//third_party/googletest:gtest_main",
+-    ],
+-    "//conditions:default": [
+-        "//external:gtest_main",
+-    ],
+-})
++GTEST_MAIN = ["//third_party/googletest:gtest_main"]
+ 
+ ################################################################################
+ # ZLIB configuration
+@@ -674,7 +660,7 @@ cc_test(
+     ] + select({
+         "//conditions:default": [
+             # AUTOGEN(non_msvc_test_srcs)
+-            "src/google/protobuf/compiler/command_line_interface_unittest.cc",
++            # "src/google/protobuf/compiler/command_line_interface_unittest.cc",
+         ],
+         ":msvc": [],
+     }),
+@@ -698,48 +684,6 @@ cc_test(
+     ] + PROTOBUF_DEPS + GTEST_MAIN,
+ )
+ 
+-################################################################################
+-# Java support
+-################################################################################
+-
+-internal_gen_well_known_protos_java(
+-    name = "gen_well_known_protos_java",
+-    deps = [proto + "_proto" for proto in WELL_KNOWN_PROTO_MAP.keys()],
+-    visibility = [
+-        "//java:__subpackages__",
+-    ],
+-)
+-
+-alias(
+-    name = "protobuf_java",
+-    actual = "//java/core",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "protobuf_javalite",
+-    actual = "//java/lite",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "protobuf_java_util",
+-    actual = "//java/util",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "java_toolchain",
+-    actual = "//java/core:toolchain",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "javalite_toolchain",
+-    actual = "//java/lite:toolchain",
+-    visibility = ["//visibility:public"],
+-)
+-
+ ################################################################################
+ # Python support
+ ################################################################################
+@@ -974,18 +918,6 @@ proto_lang_toolchain(
+     visibility = ["//visibility:public"],
+ )
+ 
+-alias(
+-    name = "objectivec",
+-    actual = "//objectivec",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "protobuf_objc",
+-    actual = "//objectivec",
+-    visibility = ["//visibility:public"],
+-)
+-
+ ################################################################################
+ # Test generated proto support
+ ################################################################################
+@@ -994,13 +926,13 @@ genrule(
+     name = "generated_protos",
+     srcs = ["src/google/protobuf/unittest_import.proto"],
+     outs = ["unittest_gen.proto"],
+-    cmd = "cat $(SRCS) | sed 's|google/|src/google/|' >  $(OUTS)",
++    cmd = "cat $(SRCS) | sed 's|google/|third_party/protobuf/src/google/|' >  $(OUTS)",
+ )
+ 
+ proto_library(
+     name = "generated_protos_proto",
+     srcs = [
+-        "src/google/protobuf/unittest_import_public.proto",
++        "//third_party/protobuf:src/google/protobuf/unittest_import_public.proto",
+         "unittest_gen.proto",
+     ],
+ )
+@@ -1008,7 +940,7 @@ proto_library(
+ py_proto_library(
+     name = "generated_protos_py",
+     srcs = [
+-        "src/google/protobuf/unittest_import_public.proto",
++        "//third_party/protobuf:src/google/protobuf/unittest_import_public.proto",
+         "unittest_gen.proto",
+     ],
+     default_runtime = "",
+@@ -1119,20 +1051,3 @@ cc_binary(
+         ":text_format_conformance_suite",
+     ],
+ )
+-
+-sh_test(
+-    name = "build_files_updated_unittest",
+-    srcs = [
+-        "build_files_updated_unittest.sh",
+-    ],
+-    data = [
+-        "BUILD",
+-        "cmake/extract_includes.bat.in",
+-        "cmake/libprotobuf.cmake",
+-        "cmake/libprotobuf-lite.cmake",
+-        "cmake/libprotoc.cmake",
+-        "cmake/tests.cmake",
+-        "src/Makefile.am",
+-        "update_file_lists.sh",
+-    ],
+-)
+diff --git a/third_party/protobuf/examples/BUILD b/third_party/protobuf/examples/BUILD
+index e9e1e9b..05befcb 100644
+--- a/third_party/protobuf/examples/BUILD
++++ b/third_party/protobuf/examples/BUILD
+@@ -5,7 +5,6 @@
+ # example.
+ 
+ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_proto_library")
+-load("@rules_java//java:defs.bzl", "java_binary", "java_lite_proto_library", "java_proto_library")
+ load("@rules_proto//proto:defs.bzl", "proto_library")
+ 
+ # For each .proto file, a proto_library target should be defined. This target
+@@ -36,70 +35,12 @@ cc_binary(
+     name = "add_person_cpp",
+     srcs = ["add_person.cc"],
+     deps = [":addressbook_cc_proto"],
++    includes = ["."],
+ )
+ 
+ cc_binary(
+     name = "list_people_cpp",
+     srcs = ["list_people.cc"],
+     deps = [":addressbook_cc_proto"],
+-)
+-
+-# Similar to cc_proto_library but for Java.
+-#
+-# Remote repository "com_google_protobuf_java" must be defined to use this rule.
+-java_proto_library(
+-    name = "addressbook_java_proto",
+-    deps = [":addressbook_proto"],
+-)
+-
+-java_binary(
+-    name = "add_person_java",
+-    srcs = ["AddPerson.java"],
+-    main_class = "AddPerson",
+-    deps = [":addressbook_java_proto"],
+-)
+-
+-java_binary(
+-    name = "list_people_java",
+-    srcs = ["ListPeople.java"],
+-    main_class = "ListPeople",
+-    deps = [":addressbook_java_proto"],
+-)
+-
+-# Java lite.
+-#
+-# Remote repository "com_google_protobuf_javalite" must be defined to use this
+-# rule.
+-java_lite_proto_library(
+-    name = "addressbook_java_lite_proto",
+-    deps = [":addressbook_proto"],
+-)
+-
+-# Java lite API is a subset of the regular Java API so if you only uses this
+-# subset in your code, you can actually compile your code against both (i.e.,
+-# share code between server build and Android build).
+-#
+-# The lite version has a smaller code size, and you can see that by comparing
+-# the resulted .jar file:
+-#
+-#   $ bazel build :add_person_java_deploy.jar :add_person_java_lite_deploy.jar
+-#   $ ls -l bazel-bin/*_deploy.jar
+-#   -r-xr-xr-x 1 xiaofeng eng 1230797 Sep  8 12:24 bazel-bin/add_person_java_deploy.jar
+-#   -r-xr-xr-x 1 xiaofeng eng  236166 Sep  8 12:24 bazel-bin/add_person_java_lite_deploy.jar
+-#
+-# In the above example, the lite .jar file is 6 times smaller. With proper
+-# proguard inlining/stripping, the difference can be much more larger than
+-# that.
+-java_binary(
+-    name = "add_person_java_lite",
+-    srcs = ["AddPerson.java"],
+-    main_class = "AddPerson",
+-    deps = [":addressbook_java_lite_proto"],
+-)
+-
+-java_binary(
+-    name = "list_people_java_lite",
+-    srcs = ["ListPeople.java"],
+-    main_class = "ListPeople",
+-    deps = [":addressbook_java_lite_proto"],
++    includes = ["."],
+ )

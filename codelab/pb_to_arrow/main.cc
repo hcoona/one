@@ -1,9 +1,5 @@
 #include <string>
 
-#include "absl/container/flat_hash_map.h"
-#include "absl/status/status.h"
-#include "absl/types/span.h"
-#include "arrow/api.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "google/protobuf/compiler/importer.h"
@@ -13,7 +9,12 @@
 #include "google/protobuf/message.h"
 #include "google/protobuf/reflection.h"
 #include "google/protobuf/repeated_field.h"
+#include "third_party/absl/container/flat_hash_map.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/types/span.h"
+#include "third_party/arrow/src/arrow/api.h"
 #include "tools/cpp/runfiles/runfiles.h"
+#include "base/macros.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/file_system.h"

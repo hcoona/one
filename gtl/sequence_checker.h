@@ -5,8 +5,8 @@
 #ifndef GTL_SEQUENCE_CHECKER_H_
 #define GTL_SEQUENCE_CHECKER_H_
 
-#include "absl/strings/string_view.h"
 #include "glog/logging.h"
+#include "third_party/absl/strings/string_view.h"
 #include "config/config.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/sequence_checker_impl.h"

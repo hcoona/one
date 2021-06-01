@@ -20,8 +20,7 @@ class AssignPartitionRequest {
   int32_t partition_id;
 };
 
-class AssignPartitionResponse {
-};
+class AssignPartitionResponse {};
 
 class UnassignPartitionRequest {
  public:
@@ -29,8 +28,7 @@ class UnassignPartitionRequest {
   int32_t partition_id;
 };
 
-class UnassignPartitionResponse {
-};
+class UnassignPartitionResponse {};
 
 }  // namespace codelab
 }  // namespace hcoona

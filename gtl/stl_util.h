@@ -23,8 +23,8 @@
 #include <utility>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "glog/logging.h"
+#include "third_party/absl/types/optional.h"
 #include "gtl/template_util.h"
 
 namespace gtl {

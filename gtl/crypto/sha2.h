@@ -10,8 +10,8 @@
 #include <array>
 #include <string>
 
-#include "absl/strings/string_view.h"
-#include "absl/types/span.h"
+#include "third_party/absl/strings/string_view.h"
+#include "third_party/absl/types/span.h"
 
 namespace gtl {
 namespace crypto {

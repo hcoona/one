@@ -32,8 +32,8 @@
 #ifndef GTL_THREAD_ANNOTATIONS_H_
 #define GTL_THREAD_ANNOTATIONS_H_
 
-#include "absl/base/thread_annotations.h"
 #include "glog/logging.h"
+#include "third_party/absl/base/thread_annotations.h"
 
 // The above is imported as-is from abseil-cpp. The following Chromium-specific
 // synonyms are added for Chromium concepts (SequenceChecker/ThreadChecker).

@@ -1,0 +1,13 @@
+diff --git a/third_party/absl/flags/internal/program_name_test.cc b/third_party/absl/flags/internal/program_name_test.cc
+index 3282dca..02b76b0 100644
+--- a/third_party/absl/flags/internal/program_name_test.cc
++++ b/third_party/absl/flags/internal/program_name_test.cc
+@@ -49,7 +49,7 @@ TEST(FlagsPathUtilTest, TestProgamNameInterfaces) {
+   EXPECT_EQ(flags::ProgramInvocationName(), "a/my_test");
+   EXPECT_EQ(flags::ShortProgramInvocationName(), "my_test");
+ 
+-  absl::string_view not_null_terminated("third_party/absl/aaa/bbb");
++  absl::string_view not_null_terminated("absl/aaa/bbb");
+   not_null_terminated = not_null_terminated.substr(1, 10);
+ 
+   flags::SetProgramInvocationName(not_null_terminated);

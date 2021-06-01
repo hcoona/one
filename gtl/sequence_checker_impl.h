@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "absl/synchronization/mutex.h"
+#include "third_party/absl/synchronization/mutex.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/macros.h"
 #include "gtl/thread_annotations.h"

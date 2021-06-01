@@ -4,10 +4,10 @@ index 23ec485..9c8049f 100644
 +++ b/gtl/template_util.h
 @@ -13,6 +13,7 @@
  #include <vector>
- 
+
  #include "config/config.h"
-+#include "absl/meta/type_traits.h"
- 
++#include "third_party/absl/meta/type_traits.h"
+
  // Some versions of libstdc++ have partial support for type_traits, but misses
  // a smaller subset while removing some of the older non-standard stuff. Assume
 @@ -112,44 +113,13 @@ struct is_iterator<T,
@@ -46,7 +46,7 @@ index 23ec485..9c8049f 100644
 -    : std::is_trivially_copy_constructible<T> {};
 +using is_trivially_copyable =
 +    absl::type_traits_internal::is_trivially_copyable<T>;
- 
+
 -template <typename... T>
 -struct is_trivially_copy_constructible<std::vector<T...>> : std::false_type {};
 -#else
@@ -56,7 +56,7 @@ index 23ec485..9c8049f 100644
 -#endif
 +using is_trivially_copy_constructible =
 +    absl::is_trivially_copy_constructible<T>;
- 
+
  // gtl::in_place_t is an implementation of std::in_place_t from
  // C++17. A tag type used to request in-place construction in template vararg
 diff --git a/gtl/template_util_unittest.cc b/gtl/template_util_unittest.cc
@@ -66,8 +66,8 @@ index 2e4197f..b060f06 100644
 @@ -7,7 +7,6 @@
  #include <string>
  #include <type_traits>
- 
+
 -#include "gtl/container/flat_tree.h"
  #include "gtl/test/move_only_int.h"
  #include "gtest/gtest.h"
- 
+

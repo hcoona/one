@@ -1,0 +1,40 @@
+diff --git a/third_party/googletest/googletest/test/BUILD.bazel b/third_party/googletest/googletest/test/BUILD.bazel
+index 9db15ac..b741f37 100644
+--- a/third_party/googletest/googletest/test/BUILD.bazel
++++ b/third_party/googletest/googletest/test/BUILD.bazel
+@@ -186,10 +186,7 @@ py_test(
+     name = "googletest-output-test",
+     size = "small",
+     srcs = ["googletest-output-test.py"],
+-    args = select({
+-        "//:has_absl": [],
+-        "//conditions:default": ["--no_stacktrace_support"],
+-    }),
++    args = [""],
+     data = [
+         "googletest-output-test-golden-lin.txt",
+         ":googletest-output-test_",
+@@ -417,10 +414,7 @@ py_test(
+         "gtest_xml_output_unittest.py",
+         "gtest_xml_test_utils.py",
+     ],
+-    args = select({
+-        "//:has_absl": [],
+-        "//conditions:default": ["--no_stacktrace_support"],
+-    }),
++    args = [""],
+     data = [
+         # We invoke gtest_no_test_unittest to verify the XML output
+         # when the test program contains no test definition.
+@@ -525,10 +519,7 @@ py_test(
+         "googletest-json-output-unittest.py",
+         "gtest_json_test_utils.py",
+     ],
+-    args = select({
+-        "//:has_absl": [],
+-        "//conditions:default": ["--no_stacktrace_support"],
+-    }),
++    args = [""],
+     data = [
+         # We invoke gtest_no_test_unittest to verify the JSON output
+         # when the test program contains no test definition.

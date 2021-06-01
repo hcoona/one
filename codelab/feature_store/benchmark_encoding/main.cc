@@ -4,17 +4,18 @@
 #include <utility>
 #include <vector>
 
-#include "absl/base/internal/endian.h"
-#include "absl/status/status.h"
-#include "arrow/api.h"
-#include "benchmark/benchmark.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/util/delimited_message_util.h"
-#include "parquet/api/writer.h"
+#include "third_party/absl/base/internal/endian.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/arrow/src/arrow/api.h"
+#include "third_party/arrow/src/parquet/api/writer.h"
+#include "third_party/benchmark/include/benchmark/benchmark.h"
 #include "tools/cpp/runfiles/runfiles.h"
+#include "base/macros.h"
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
 #include "codelab/feature_store/benchmark_encoding/null_output_stream.h"
@@ -23,7 +24,6 @@
 #include "gtl/macros.h"
 #include "gtl/no_destructor.h"
 #include "gtl/posix_file_system.h"
-#include "status/status_util.h"
 
 namespace {
 

@@ -5,8 +5,8 @@
 #include <string>
 #include <utility>
 
-#include "absl/status/status.h"
-#include "absl/synchronization/mutex.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/synchronization/mutex.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "directory_manifest/macros.h"

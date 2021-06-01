@@ -19,7 +19,7 @@ limitations under the License.
 #include <initializer_list>
 #include <string>
 
-#include "absl/strings/string_view.h"
+#include "third_party/absl/strings/string_view.h"
 
 namespace gtl {
 namespace internal {

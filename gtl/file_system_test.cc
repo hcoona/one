@@ -17,12 +17,12 @@ limitations under the License.
 
 #include <sys/stat.h>
 
-#include "absl/status/status.h"
-#include "absl/strings/match.h"
-#include "absl/strings/str_join.h"
-#include "absl/strings/str_split.h"
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/strings/match.h"
+#include "third_party/absl/strings/str_join.h"
+#include "third_party/absl/strings/str_split.h"
 #include "gtl/null_file_system.h"
 #include "gtl/path.h"
 

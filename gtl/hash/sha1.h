@@ -10,7 +10,7 @@
 #include <array>
 #include <string>
 
-#include "absl/types/span.h"
+#include "third_party/absl/types/span.h"
 
 namespace gtl {
 

@@ -11,8 +11,8 @@
 #include <functional>
 #include <string>
 
-#include "absl/hash/hash.h"
-#include "absl/types/span.h"
+#include "third_party/absl/hash/hash.h"
+#include "third_party/absl/types/span.h"
 #include "config/config.h"
 
 namespace gtl {

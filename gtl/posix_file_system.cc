@@ -27,9 +27,9 @@ limitations under the License.
 #include <time.h>
 #include <unistd.h>
 
-#include "absl/status/status.h"
-#include "absl/strings/str_cat.h"
 #include "glog/logging.h"
+#include "third_party/absl/status/status.h"
+#include "third_party/absl/strings/str_cat.h"
 #include "config/config.h"
 #include "gtl/file_system_helper.h"
 
