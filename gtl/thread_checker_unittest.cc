@@ -40,7 +40,8 @@ void ExpectNotCalledOnValidThread(ThreadCheckerImpl* thread_checker) {
 }
 
 void ExpectNotCalledOnValidThreadWithSequenceTokenAndThreadTaskRunnerHandle(
-    ThreadCheckerImpl* thread_checker, SequenceToken sequence_token) {
+    ThreadCheckerImpl* thread_checker,
+    SequenceToken sequence_token) {
   ScopedSetSequenceTokenForCurrentThread
       scoped_set_sequence_token_for_current_thread(sequence_token);
   ExpectNotCalledOnValidThread(thread_checker);
@@ -167,7 +168,8 @@ TEST(ThreadCheckerTest, DetachFromThreadWithSequenceToken) {
 class ThreadCheckerOwner {
  public:
   explicit ThreadCheckerOwner(bool detach_from_thread) {
-    if (detach_from_thread) checker_.DetachFromThread();
+    if (detach_from_thread)
+      checker_.DetachFromThread();
   }
   ~ThreadCheckerOwner() { EXPECT_TRUE(checker_.CalledOnValidThread()); }
 
@@ -303,7 +305,8 @@ TEST_F(ThreadCheckerMacroTest, Macros) {
 
   THREAD_CHECKER(my_thread_checker);
 
-  RunCallbackOnNewThreadSynchronously([this]() { ExpectDeathOnOtherThread(); });
+  RunCallbackOnNewThreadSynchronously(
+      [this]() { ExpectDeathOnOtherThread(); });
 
   DETACH_FROM_THREAD(thread_checker_);
 

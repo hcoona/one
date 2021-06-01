@@ -26,11 +26,11 @@
 #endif
 
 #include "glog/logging.h"
-#include "gtest/gtest.h"
-#include "config/config.h"
 #include "gtl/numeric/safe_conversions.h"
 #include "gtl/numeric/safe_math.h"
 #include "gtl/test/gtest_util.h"
+#include "config/config.h"
+#include "gtest/gtest.h"
 
 #if defined(COMPILER_MSVC) && defined(ARCH_CPU_32_BITS)
 #include <mmintrin.h>
@@ -200,7 +200,8 @@ void TestStrictPointerMath() {
 // Signed integer arithmetic.
 template <typename Dst>
 static void TestSpecializedArithmetic(
-    const char* dst, int line,
+    const char* dst,
+    int line,
     typename std::enable_if<numeric_limits<Dst>::is_integer &&
                                 numeric_limits<Dst>::is_signed,
                             int>::type = 0) {
@@ -404,7 +405,8 @@ static void TestSpecializedArithmetic(
 // Unsigned integer arithmetic.
 template <typename Dst>
 static void TestSpecializedArithmetic(
-    const char* dst, int line,
+    const char* dst,
+    int line,
     typename std::enable_if<numeric_limits<Dst>::is_integer &&
                                 !numeric_limits<Dst>::is_signed,
                             int>::type = 0) {
@@ -561,7 +563,8 @@ static void TestSpecializedArithmetic(
 // Floating point arithmetic.
 template <typename Dst>
 void TestSpecializedArithmetic(
-    const char* dst, int line,
+    const char* dst,
+    int line,
     typename std::enable_if<numeric_limits<Dst>::is_iec559, int>::type = 0) {
   using DstLimits = SaturationDefaultLimits<Dst>;
   TEST_EXPECTED_SUCCESS(-CheckedNumeric<Dst>(DstLimits::lowest()));
@@ -1356,7 +1359,8 @@ size_t TestOverload(size_t) {  // Overload succeeds.
 }
 
 static_assert(
-    std::is_same<decltype(TestOverload(StrictNumeric<int>())), int>::value, "");
+    std::is_same<decltype(TestOverload(StrictNumeric<int>())), int>::value,
+    "");
 static_assert(std::is_same<decltype(TestOverload(StrictNumeric<size_t>())),
                            size_t>::value,
               "");

@@ -3,7 +3,7 @@
 
 THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
     core.replace(
-        before = "//third_party/absl/",
+        before = "@com_google_absl//absl/",
         after = "//third_party/absl/",
         paths = glob([
             "**/BUILD",
@@ -1589,6 +1589,7 @@ core.workflow(
     #     url = "https://github.com/chromium/chromium.git",
     #     ref = "2dcb87aab462363932219cc2e9c6d11dcd2c8452",  # 2020-07-02
     # ),
+    # Download from https://chromium.googlesource.com/chromium/src.git/+archive/2dcb87aab462363932219cc2e9c6d11dcd2c8452.tar.gz
     origin = folder.origin(),
     destination = folder.destination(),
     origin_files = glob(
@@ -1823,7 +1824,7 @@ core.workflow(
         # optional
         core.replace(
             before = "#include \"base/optional.h\"",
-            after = "#include \"absl/types/optional.h\"",
+            after = "#include \"third_party/absl/types/optional.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
@@ -1840,22 +1841,22 @@ core.workflow(
         # absl header paths
         core.replace(
             before = "#include \"base/strings/string_piece.h\"",
-            after = "#include \"absl/strings/string_view.h\"",
+            after = "#include \"third_party/absl/strings/string_view.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/synchronization/lock.h\"",
-            after = "#include \"absl/synchronization/mutex.h\"",
+            after = "#include \"third_party/absl/synchronization/mutex.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/containers/span.h\"",
-            after = "#include \"absl/types/span.h\"",
+            after = "#include \"third_party/absl/types/span.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         core.replace(
             before = "#include \"base/containers/flat_set.h\"",
-            after = "#include \"absl/container/flat_hash_set.h\"",
+            after = "#include \"third_party/absl/container/flat_hash_set.h\"",
             paths = glob(["**/*.h", "**/*.cc", "**/*.nc"]),
         ),
         # glog header paths

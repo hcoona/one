@@ -115,8 +115,6 @@ ABSL_LLVM_TEST_FLAGS = [
     "-Wno-used-but-marked-unused",
     "-Wno-zero-as-null-pointer-constant",
     "-Wno-gnu-zero-variadic-macro-arguments",
-    "-Wno-undef",
-    "-Wno-inconsistent-missing-override",
 ]
 
 ABSL_MSVC_FLAGS = [

@@ -21,11 +21,13 @@ namespace crypto {
 // sufficient size, but if not it will write to temporary |min_sized_buffer_|
 // of required size and then its content is automatically copied out on
 // destruction, with truncation as appropriate.
-template <int MIN_SIZE>
+template<int MIN_SIZE>
 class ScopedOpenSSLSafeSizeBuffer {
  public:
   ScopedOpenSSLSafeSizeBuffer(unsigned char* output, size_t output_len)
-      : output_(output), output_len_(output_len) {}
+      : output_(output),
+        output_len_(output_len) {
+  }
 
   ~ScopedOpenSSLSafeSizeBuffer() {
     if (output_len_ < MIN_SIZE) {
@@ -75,7 +77,9 @@ class OpenSSLErrStackTracer {
       : location_(location) {
     EnsureOpenSSLInit();
   }
-  ~OpenSSLErrStackTracer() { ClearOpenSSLERRStack(location_); }
+  ~OpenSSLErrStackTracer() {
+    ClearOpenSSLERRStack(location_);
+  }
 
  private:
   const gtl::Location location_;

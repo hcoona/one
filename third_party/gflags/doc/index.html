@@ -160,11 +160,11 @@ git_repository(
 )
 </pre>
 
-<p>You can then add <code>//third_party/gflags</code> to the <code>deps</code> section of a
+<p>You can then add <code>@com_github_gflags_gflags//:gflags</code> to the <code>deps</code> section of a
 <code>cc_binary</code> or <code>cc_library</code> rule, and <code>#include "gflags/gflags.h"</code> to
 include it in your source code. This uses the shared gflags library with multi-threading enabled.
 In order to use the single-threaded shared gflags library, use the dependency
-<code>//third_party/gflags_nothreads</code> instead.</p>
+<code>@com_github_gflags_gflags//:gflags_nothreads</code> instead.</p>
 
 <p>For example, see the following <code>BUILD</code> rule of the gflags/example project:</p>
 
@@ -172,7 +172,7 @@ In order to use the single-threaded shared gflags library, use the dependency
 cc_binary(
     name = "foo",
     srcs = ["main.cc"],
-    deps = ["//third_party/gflags"],
+    deps = ["@com_github_gflags_gflags//:gflags"],
 )
 </pre>
 
@@ -474,7 +474,7 @@ the application to print some information about itself and exit.</p>
      (in case -help changes in the future)</td>
 </tr><tr valign=top>
   <td><code>--helpshort</code></td>
-  <td>shows only flags for the file with the same name as the executable
+  <td>shows only flags for the file with the same name as the executable 
       (usually the one containing <code>main()</code>)</td>
 </tr><tr valign=top>
   <td><code>--helpxml</code></td>

@@ -4,9 +4,9 @@
 
 #include "gtl/container/vector_buffer.h"
 
-#include "gtest/gtest.h"
 #include "gtl/test/copy_only_int.h"
 #include "gtl/test/move_only_int.h"
+#include "gtest/gtest.h"
 
 namespace gtl {
 namespace internal {
@@ -14,23 +14,27 @@ namespace internal {
 TEST(VectorBuffer, DeletePOD) {
   constexpr int size = 10;
   VectorBuffer<int> buffer(size);
-  for (int i = 0; i < size; i++) buffer.begin()[i] = i + 1;
+  for (int i = 0; i < size; i++)
+    buffer.begin()[i] = i + 1;
 
   buffer.DestructRange(buffer.begin(), buffer.end());
 
   // Delete should do nothing.
-  for (int i = 0; i < size; i++) EXPECT_EQ(i + 1, buffer.begin()[i]);
+  for (int i = 0; i < size; i++)
+    EXPECT_EQ(i + 1, buffer.begin()[i]);
 }
 
 TEST(VectorBuffer, DeleteMoveOnly) {
   constexpr int size = 10;
   VectorBuffer<MoveOnlyInt> buffer(size);
-  for (int i = 0; i < size; i++) new (buffer.begin() + i) MoveOnlyInt(i + 1);
+  for (int i = 0; i < size; i++)
+    new (buffer.begin() + i) MoveOnlyInt(i + 1);
 
   buffer.DestructRange(buffer.begin(), buffer.end());
 
   // Delete should have reset all of the values to 0.
-  for (int i = 0; i < size; i++) EXPECT_EQ(0, buffer.begin()[i].data());
+  for (int i = 0; i < size; i++)
+    EXPECT_EQ(0, buffer.begin()[i].data());
 }
 
 TEST(VectorBuffer, PODMove) {
@@ -38,10 +42,12 @@ TEST(VectorBuffer, PODMove) {
   VectorBuffer<int> dest(size);
 
   VectorBuffer<int> original(size);
-  for (int i = 0; i < size; i++) original.begin()[i] = i + 1;
+  for (int i = 0; i < size; i++)
+    original.begin()[i] = i + 1;
 
   original.MoveRange(original.begin(), original.end(), dest.begin());
-  for (int i = 0; i < size; i++) EXPECT_EQ(i + 1, dest.begin()[i]);
+  for (int i = 0; i < size; i++)
+    EXPECT_EQ(i + 1, dest.begin()[i]);
 }
 
 TEST(VectorBuffer, MovableMove) {
@@ -49,7 +55,8 @@ TEST(VectorBuffer, MovableMove) {
   VectorBuffer<MoveOnlyInt> dest(size);
 
   VectorBuffer<MoveOnlyInt> original(size);
-  for (int i = 0; i < size; i++) new (original.begin() + i) MoveOnlyInt(i + 1);
+  for (int i = 0; i < size; i++)
+    new (original.begin() + i) MoveOnlyInt(i + 1);
 
   original.MoveRange(original.begin(), original.end(), dest.begin());
 
@@ -65,7 +72,8 @@ TEST(VectorBuffer, CopyToMove) {
   VectorBuffer<CopyOnlyInt> dest(size);
 
   VectorBuffer<CopyOnlyInt> original(size);
-  for (int i = 0; i < size; i++) new (original.begin() + i) CopyOnlyInt(i + 1);
+  for (int i = 0; i < size; i++)
+    new (original.begin() + i) CopyOnlyInt(i + 1);
 
   original.MoveRange(original.begin(), original.end(), dest.begin());
 

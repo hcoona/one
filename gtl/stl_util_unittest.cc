@@ -21,9 +21,9 @@
 #include <unordered_set>
 #include <vector>
 
+#include "third_party/absl/container/flat_hash_set.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "third_party/absl/container/flat_hash_set.h"
 #include "gtl/container/circular_deque.h"
 
 namespace {
@@ -89,8 +89,9 @@ void RunEraseIfTest() {
     size_t expected_erased =
         GetSize(test_case.input) - GetSize(test_case.erase_even);
     EXPECT_EQ(expected_erased,
-              gtl::EraseIf(test_case.input,
-                           [](const auto& elem) { return !(elem.first & 1); }));
+              gtl::EraseIf(test_case.input, [](const auto& elem) {
+                return !(elem.first & 1);
+              }));
     EXPECT_EQ(test_case.erase_even, test_case.input);
   }
 
@@ -99,7 +100,7 @@ void RunEraseIfTest() {
         GetSize(test_case.input) - GetSize(test_case.erase_odd);
     EXPECT_EQ(expected_erased,
               gtl::EraseIf(test_case.input,
-                           [](const auto& elem) { return elem.first & 1; }));
+                            [](const auto& elem) { return elem.first & 1; }));
     EXPECT_EQ(test_case.erase_odd, test_case.input);
   }
 }
@@ -165,7 +166,8 @@ TEST(STLUtilTest, Size) {
   {
     std::array<int, 4> array = {{1, 2, 3, 4}};
     static_assert(
-        std::is_same<decltype(gtl::size(array)), decltype(array.size())>::value,
+        std::is_same<decltype(gtl::size(array)),
+                     decltype(array.size())>::value,
         "gtl::size(array) should have the same type as array.size()");
     static_assert(gtl::size(array) == array.size(),
                   "gtl::size(array) should be equal to array.size()");
@@ -250,7 +252,8 @@ TEST(STLUtilTest, Data) {
   {
     std::array<int, 4> array = {{1, 2, 3, 4}};
     static_assert(
-        std::is_same<decltype(gtl::data(array)), decltype(array.data())>::value,
+        std::is_same<decltype(gtl::data(array)),
+                     decltype(array.data())>::value,
         "gtl::data(array) should have the same type as array.data()");
     // std::array::data() is not constexpr prior to C++17, hence the runtime
     // check.
@@ -406,7 +409,7 @@ TEST(STLUtilTest, STLSetDifference) {
     std::set<int> difference;
     difference.insert(1);
     difference.insert(2);
-    EXPECT_EQ(difference, STLSetDifference<std::set<int>>(a1, a2));
+    EXPECT_EQ(difference, STLSetDifference<std::set<int> >(a1, a2));
   }
 
   {
@@ -414,14 +417,14 @@ TEST(STLUtilTest, STLSetDifference) {
     difference.insert(5);
     difference.insert(6);
     difference.insert(7);
-    EXPECT_EQ(difference, STLSetDifference<std::set<int>>(a2, a1));
+    EXPECT_EQ(difference, STLSetDifference<std::set<int> >(a2, a1));
   }
 
   {
     std::vector<int> difference;
     difference.push_back(1);
     difference.push_back(2);
-    EXPECT_EQ(difference, STLSetDifference<std::vector<int>>(a1, a2));
+    EXPECT_EQ(difference, STLSetDifference<std::vector<int> >(a1, a2));
   }
 
   {
@@ -429,7 +432,7 @@ TEST(STLUtilTest, STLSetDifference) {
     difference.push_back(5);
     difference.push_back(6);
     difference.push_back(7);
-    EXPECT_EQ(difference, STLSetDifference<std::vector<int>>(a2, a1));
+    EXPECT_EQ(difference, STLSetDifference<std::vector<int> >(a2, a1));
   }
 }
 
@@ -456,7 +459,7 @@ TEST(STLUtilTest, STLSetUnion) {
     result.insert(5);
     result.insert(6);
     result.insert(7);
-    EXPECT_EQ(result, STLSetUnion<std::set<int>>(a1, a2));
+    EXPECT_EQ(result, STLSetUnion<std::set<int> >(a1, a2));
   }
 
   {
@@ -468,7 +471,7 @@ TEST(STLUtilTest, STLSetUnion) {
     result.insert(5);
     result.insert(6);
     result.insert(7);
-    EXPECT_EQ(result, STLSetUnion<std::set<int>>(a2, a1));
+    EXPECT_EQ(result, STLSetUnion<std::set<int> >(a2, a1));
   }
 
   {
@@ -480,7 +483,7 @@ TEST(STLUtilTest, STLSetUnion) {
     result.push_back(5);
     result.push_back(6);
     result.push_back(7);
-    EXPECT_EQ(result, STLSetUnion<std::vector<int>>(a1, a2));
+    EXPECT_EQ(result, STLSetUnion<std::vector<int> >(a1, a2));
   }
 
   {
@@ -492,7 +495,7 @@ TEST(STLUtilTest, STLSetUnion) {
     result.push_back(5);
     result.push_back(6);
     result.push_back(7);
-    EXPECT_EQ(result, STLSetUnion<std::vector<int>>(a2, a1));
+    EXPECT_EQ(result, STLSetUnion<std::vector<int> >(a2, a1));
   }
 }
 
@@ -514,28 +517,28 @@ TEST(STLUtilTest, STLSetIntersection) {
     std::set<int> result;
     result.insert(3);
     result.insert(4);
-    EXPECT_EQ(result, STLSetIntersection<std::set<int>>(a1, a2));
+    EXPECT_EQ(result, STLSetIntersection<std::set<int> >(a1, a2));
   }
 
   {
     std::set<int> result;
     result.insert(3);
     result.insert(4);
-    EXPECT_EQ(result, STLSetIntersection<std::set<int>>(a2, a1));
+    EXPECT_EQ(result, STLSetIntersection<std::set<int> >(a2, a1));
   }
 
   {
     std::vector<int> result;
     result.push_back(3);
     result.push_back(4);
-    EXPECT_EQ(result, STLSetIntersection<std::vector<int>>(a1, a2));
+    EXPECT_EQ(result, STLSetIntersection<std::vector<int> >(a1, a2));
   }
 
   {
     std::vector<int> result;
     result.push_back(3);
     result.push_back(4);
-    EXPECT_EQ(result, STLSetIntersection<std::vector<int>>(a2, a1));
+    EXPECT_EQ(result, STLSetIntersection<std::vector<int> >(a2, a1));
   }
 }
 
@@ -555,19 +558,17 @@ TEST(STLUtilTest, STLIncludes) {
   a3.insert(4);
   a3.insert(5);
 
-  EXPECT_TRUE(STLIncludes<std::set<int>>(a1, a2));
-  EXPECT_FALSE(STLIncludes<std::set<int>>(a1, a3));
-  EXPECT_FALSE(STLIncludes<std::set<int>>(a2, a1));
-  EXPECT_FALSE(STLIncludes<std::set<int>>(a2, a3));
-  EXPECT_FALSE(STLIncludes<std::set<int>>(a3, a1));
-  EXPECT_TRUE(STLIncludes<std::set<int>>(a3, a2));
+  EXPECT_TRUE(STLIncludes<std::set<int> >(a1, a2));
+  EXPECT_FALSE(STLIncludes<std::set<int> >(a1, a3));
+  EXPECT_FALSE(STLIncludes<std::set<int> >(a2, a1));
+  EXPECT_FALSE(STLIncludes<std::set<int> >(a2, a3));
+  EXPECT_FALSE(STLIncludes<std::set<int> >(a3, a1));
+  EXPECT_TRUE(STLIncludes<std::set<int> >(a3, a2));
 }
 
 TEST(Erase, String) {
   const std::pair<std::string, std::string> test_data[] = {
-      {"", ""},
-      {"abc", "bc"},
-      {"abca", "bc"},
+      {"", ""}, {"abc", "bc"}, {"abca", "bc"},
   };
 
   for (auto test_case : test_data) {

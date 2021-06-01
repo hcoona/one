@@ -8,14 +8,15 @@
 
 #include <memory>
 
-#include "gtest/gtest.h"
 #include "gtl/test/gtest_util.h"
+#include "gtest/gtest.h"
 
 namespace gtl {
 
 namespace {
 
-class TestObject {};
+class TestObject {
+};
 
 class DestructorCounter {
  public:
@@ -106,7 +107,8 @@ TEST(IDMapTest, IteratorRemainsValidWhenRemovingOtherElements) {
   const int kCount = 5;
   TestObject obj[kCount];
 
-  for (auto& i : obj) map.Add(&i);
+  for (auto& i : obj)
+    map.Add(&i);
 
   // IDMap has no predictable iteration order.
   int32_t ids_in_iteration_order[kCount];
@@ -215,7 +217,8 @@ TEST(IDMapTest, IteratorRemainsValidWhenClearing) {
   const int kCount = 5;
   TestObject obj[kCount];
 
-  for (auto& i : obj) map.Add(&i);
+  for (auto& i : obj)
+    map.Add(&i);
 
   // IDMap has no predictable iteration order.
   int32_t ids_in_iteration_order[kCount];

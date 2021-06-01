@@ -178,7 +178,8 @@ class circular_deque_const_iterator {
 
   // Random access mutation.
   friend circular_deque_const_iterator operator+(
-      const circular_deque_const_iterator& iter, difference_type offset) {
+      const circular_deque_const_iterator& iter,
+      difference_type offset) {
     circular_deque_const_iterator ret = iter;
     ret.Add(offset);
     return ret;
@@ -188,7 +189,8 @@ class circular_deque_const_iterator {
     return *this;
   }
   friend circular_deque_const_iterator operator-(
-      const circular_deque_const_iterator& iter, difference_type offset) {
+      const circular_deque_const_iterator& iter,
+      difference_type offset) {
     circular_deque_const_iterator ret = iter;
     ret.Add(-offset);
     return ret;
@@ -256,7 +258,8 @@ class circular_deque_const_iterator {
     CheckUnstableUsage();
     parent_deque_->CheckValidIndex(index_);
     index_++;
-    if (index_ == parent_deque_->buffer_.capacity()) index_ = 0;
+    if (index_ == parent_deque_->buffer_.capacity())
+      index_ = 0;
   }
   void Decrement() {
     CheckUnstableUsage();
@@ -278,7 +281,8 @@ class circular_deque_const_iterator {
     // empty and the iterator points to end(). The modulo below will divide
     // by 0 if the buffer capacity is empty, so it's important to check for
     // this case explicitly.
-    if (delta == 0) return;
+    if (delta == 0)
+      return;
 
     difference_type new_offset = OffsetFromBegin() + delta;
     DCHECK(new_offset >= 0 &&
@@ -448,14 +452,16 @@ class circular_deque {
   // All of these may invalidate iterators and references.
 
   circular_deque& operator=(const circular_deque& other) {
-    if (&other == this) return *this;
+    if (&other == this)
+      return *this;
 
     reserve(other.size());
     assign(other.begin(), other.end());
     return *this;
   }
   circular_deque& operator=(circular_deque&& other) noexcept {
-    if (&other == this) return *this;
+    if (&other == this)
+      return *this;
 
     // We're about to overwrite the buffer, so don't free it in clear to
     // avoid doing it twice.
@@ -479,7 +485,8 @@ class circular_deque {
   void assign(size_type count, const value_type& value) {
     ClearRetainCapacity();
     reserve(count);
-    for (size_t i = 0; i < count; i++) emplace_back(value);
+    for (size_t i = 0; i < count; i++)
+      emplace_back(value);
     IncrementGeneration();
   }
 
@@ -492,7 +499,8 @@ class circular_deque {
     // iterators we can use std::difference to preallocate the space required
     // and only do one copy.
     ClearRetainCapacity();
-    for (; first != last; ++first) emplace_back(*first);
+    for (; first != last; ++first)
+      emplace_back(*first);
     IncrementGeneration();
   }
 
@@ -509,7 +517,8 @@ class circular_deque {
   const value_type& at(size_type i) const {
     DCHECK(i < size());
     size_t right_size = buffer_.capacity() - begin_;
-    if (begin_ <= end_ || i < right_size) return buffer_[begin_ + i];
+    if (begin_ <= end_ || i < right_size)
+      return buffer_[begin_ + i];
     return buffer_[i - right_size];
   }
   value_type& at(size_type i) {
@@ -575,7 +584,8 @@ class circular_deque {
   // As a result, it's only worthwhile to call reserve() when you're adding
   // many things at once with no intermediate operations.
   void reserve(size_type new_capacity) {
-    if (new_capacity > capacity()) SetCapacityTo(new_capacity);
+    if (new_capacity > capacity())
+      SetCapacityTo(new_capacity);
   }
 
   size_type capacity() const {
@@ -587,7 +597,8 @@ class circular_deque {
     if (empty()) {
       // Optimize empty case to really delete everything if there was
       // something.
-      if (buffer_.capacity()) buffer_ = VectorBuffer();
+      if (buffer_.capacity())
+        buffer_ = VectorBuffer();
     } else {
       SetCapacityTo(size());
     }
@@ -607,7 +618,8 @@ class circular_deque {
   bool empty() const { return begin_ == end_; }
 
   size_type size() const {
-    if (begin_ <= end_) return end_ - begin_;
+    if (begin_ <= end_)
+      return end_ - begin_;
     return buffer_.capacity() - begin_ + end_;
   }
 
@@ -630,7 +642,8 @@ class circular_deque {
       // one-by-one will typically be small relative to calling the constructor
       // for every item.
       ExpandCapacityIfNecessary(count - size());
-      while (size() < count) emplace_back();
+      while (size() < count)
+        emplace_back();
     } else if (count < size()) {
       size_t new_end = (begin_ + count) % buffer_.capacity();
       DestructRange(new_end, end_);
@@ -644,7 +657,8 @@ class circular_deque {
     // SEE ABOVE VERSION if you change this. The code is mostly the same.
     if (count > size()) {
       ExpandCapacityIfNecessary(count - size());
-      while (size() < count) emplace_back(value);
+      while (size() < count)
+        emplace_back(value);
     } else if (count < size()) {
       size_t new_end = (begin_ + count) % buffer_.capacity();
       DestructRange(new_end, end_);
@@ -675,7 +689,8 @@ class circular_deque {
     // Optimize insert at the beginning.
     if (pos == begin()) {
       ExpandCapacityIfNecessary(count);
-      for (size_t i = 0; i < count; i++) push_front(value);
+      for (size_t i = 0; i < count; i++)
+        push_front(value);
       return;
     }
 
@@ -848,7 +863,8 @@ class circular_deque {
     DCHECK(size());
     buffer_.DestructRange(&buffer_[begin_], &buffer_[begin_ + 1]);
     begin_++;
-    if (begin_ == buffer_.capacity()) begin_ = 0;
+    if (begin_ == buffer_.capacity())
+      begin_ = 0;
 
     ShrinkCapacityIfNecessary();
 
@@ -891,9 +907,12 @@ class circular_deque {
   // Moves the items in the given circular buffer to the current one. The
   // source is moved from so will become invalid. The destination buffer must
   // have already been allocated with enough size.
-  static void MoveBuffer(VectorBuffer& from_buf, size_t from_begin,
-                         size_t from_end, VectorBuffer* to_buf,
-                         size_t* to_begin, size_t* to_end) {
+  static void MoveBuffer(VectorBuffer& from_buf,
+                         size_t from_begin,
+                         size_t from_end,
+                         VectorBuffer* to_buf,
+                         size_t* to_begin,
+                         size_t* to_end) {
     size_t from_capacity = from_buf.capacity();
 
     *to_begin = 0;
@@ -928,7 +947,8 @@ class circular_deque {
   }
   void ExpandCapacityIfNecessary(size_t additional_elts) {
     size_t min_new_capacity = size() + additional_elts;
-    if (capacity() >= min_new_capacity) return;  // Already enough room.
+    if (capacity() >= min_new_capacity)
+      return;  // Already enough room.
 
     min_new_capacity =
         std::max(min_new_capacity, internal::kCircularBufferInitialCapacity);
@@ -943,12 +963,14 @@ class circular_deque {
 
   void ShrinkCapacityIfNecessary() {
     // Don't auto-shrink below this size.
-    if (capacity() <= internal::kCircularBufferInitialCapacity) return;
+    if (capacity() <= internal::kCircularBufferInitialCapacity)
+      return;
 
     // Shrink when 100% of the size() is wasted.
     size_t sz = size();
     size_t empty_spaces = capacity() - sz;
-    if (empty_spaces < sz) return;
+    if (empty_spaces < sz)
+      return;
 
     // Leave 1/4 the size as free capacity, not going below the initial
     // capacity.
@@ -1010,7 +1032,8 @@ class circular_deque {
     // Move the elements. This will always involve shifting logically to the
     // right, so move in a right-to-left order.
     while (true) {
-      if (src == *insert_begin) break;
+      if (src == *insert_begin)
+        break;
       --src;
       --dest;
       buffer_.MoveRange(&buffer_[src.index_], &buffer_[src.index_ + 1],
@@ -1031,7 +1054,8 @@ class circular_deque {
 
   // Asserts the given index is either dereferencable or points to end().
   void CheckValidIndexOrEnd(size_t i) const {
-    if (i != end_) CheckValidIndex(i);
+    if (i != end_)
+      CheckValidIndex(i);
   }
 
   void ValidateIterator(const const_iterator& i) const {

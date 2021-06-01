@@ -40,8 +40,7 @@ void Scanner::ScanUntilImpl(char end_ch, bool escaped) {
   }
 }
 
-bool Scanner::GetResult(absl::string_view* remaining,
-                        absl::string_view* capture) {
+bool Scanner::GetResult(absl::string_view* remaining, absl::string_view* capture) {
   if (error_) {
     return false;
   }
@@ -56,3 +55,4 @@ bool Scanner::GetResult(absl::string_view* remaining,
 }
 
 }  // namespace gtl
+

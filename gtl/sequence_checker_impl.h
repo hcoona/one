@@ -7,9 +7,10 @@
 
 #include <memory>
 
-#include "third_party/absl/synchronization/mutex.h"
+
 #include "gtl/compiler_specific.h"
 #include "gtl/macros.h"
+#include "third_party/absl/synchronization/mutex.h"
 #include "gtl/thread_annotations.h"
 
 namespace gtl {

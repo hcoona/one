@@ -4,9 +4,9 @@
 
 #include "gtl/container/circular_deque.h"
 
-#include "gtest/gtest.h"
 #include "gtl/test/copy_only_int.h"
 #include "gtl/test/move_only_int.h"
+#include "gtest/gtest.h"
 
 using gtl::internal::VectorBuffer;
 
@@ -16,7 +16,8 @@ namespace {
 
 circular_deque<int> MakeSequence(size_t max) {
   circular_deque<int> ret;
-  for (size_t i = 0; i < max; i++) ret.push_back(i);
+  for (size_t i = 0; i < max; i++)
+    ret.push_back(i);
   return ret;
 }
 
@@ -58,7 +59,8 @@ TEST(CircularDeque, FillConstructor) {
     EXPECT_EQ(num_elts, buf.size());
     EXPECT_EQ(num_elts, static_cast<size_t>(buf.end() - buf.begin()));
 
-    for (size_t i = 0; i < num_elts; i++) EXPECT_EQ(0, buf[i]);
+    for (size_t i = 0; i < num_elts; i++)
+      EXPECT_EQ(0, buf[i]);
   }
 
   // Fill with explicit value.
@@ -69,7 +71,8 @@ TEST(CircularDeque, FillConstructor) {
     EXPECT_EQ(num_elts, buf.size());
     EXPECT_EQ(num_elts, static_cast<size_t>(buf.end() - buf.begin()));
 
-    for (size_t i = 0; i < num_elts; i++) EXPECT_EQ(value, buf[i]);
+    for (size_t i = 0; i < num_elts; i++)
+      EXPECT_EQ(value, buf[i]);
   }
 }
 
@@ -79,7 +82,8 @@ TEST(CircularDeque, CopyAndRangeConstructor) {
 
   circular_deque<CopyOnlyInt> second(first);
   EXPECT_EQ(6u, second.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, second[i].data());
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, second[i].data());
 }
 
 TEST(CircularDeque, MoveConstructor) {
@@ -89,7 +93,8 @@ TEST(CircularDeque, MoveConstructor) {
   circular_deque<MoveOnlyInt> second(std::move(first));
   EXPECT_TRUE(first.empty());
   EXPECT_EQ(6u, second.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, second[i].data());
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, second[i].data());
 }
 
 TEST(CircularDeque, InitializerListConstructor) {
@@ -98,7 +103,8 @@ TEST(CircularDeque, InitializerListConstructor) {
 
   circular_deque<int> first({1, 2, 3, 4, 5, 6});
   EXPECT_EQ(6u, first.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, first[i]);
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, first[i]);
 }
 
 TEST(CircularDeque, Destructor) {
@@ -152,7 +158,8 @@ TEST(CircularDeque, EqualsMove) {
   move = std::move(first);
   EXPECT_TRUE(first.empty());
   EXPECT_EQ(6u, move.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, move[i]);
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, move[i]);
 }
 
 // Tests that self-assignment is a no-op.
@@ -160,7 +167,8 @@ TEST(CircularDeque, EqualsSelf) {
   circular_deque<int> q = {1, 2, 3, 4, 5, 6};
   q = *&q;  // The *& defeats Clang's -Wself-assign warning.
   EXPECT_EQ(6u, q.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, q[i]);
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, q[i]);
 }
 
 TEST(CircularDeque, EqualsInitializerList) {
@@ -168,7 +176,8 @@ TEST(CircularDeque, EqualsInitializerList) {
   EXPECT_TRUE(q.empty());
   q = {1, 2, 3, 4, 5, 6};
   EXPECT_EQ(6u, q.size());
-  for (int i = 0; i < 6; i++) EXPECT_EQ(i + 1, q[i]);
+  for (int i = 0; i < 6; i++)
+    EXPECT_EQ(i + 1, q[i]);
 }
 
 TEST(CircularDeque, AssignCountValue) {
@@ -182,7 +191,8 @@ TEST(CircularDeque, AssignCountValue) {
   full.assign(count, value);
   EXPECT_EQ(count, full.size());
 
-  for (size_t i = 0; i < count; i++) EXPECT_EQ(value, full[i]);
+  for (size_t i = 0; i < count; i++)
+    EXPECT_EQ(value, full[i]);
 }
 
 TEST(CircularDeque, AssignIterator) {
@@ -195,7 +205,8 @@ TEST(CircularDeque, AssignIterator) {
   circular_deque<int> full;
   full.assign(std::begin(range), std::end(range));
   EXPECT_EQ(8u, full.size());
-  for (size_t i = 0; i < 8; i++) EXPECT_EQ(range[i], full[i]);
+  for (size_t i = 0; i < 8; i++)
+    EXPECT_EQ(range[i], full[i]);
 }
 
 TEST(CircularDeque, AssignInitializerList) {
@@ -206,7 +217,8 @@ TEST(CircularDeque, AssignInitializerList) {
   circular_deque<int> full;
   full.assign({11, 12, 13, 14, 15, 16, 17, 18});
   EXPECT_EQ(8u, full.size());
-  for (int i = 0; i < 8; i++) EXPECT_EQ(11 + i, full[i]);
+  for (int i = 0; i < 8; i++)
+    EXPECT_EQ(11 + i, full[i]);
 }
 
 // Tests [] and .at().
@@ -312,10 +324,12 @@ TEST(CircularDeque, Swap) {
 
   a.swap(b);
   EXPECT_EQ(100u, a.size());
-  for (int i = 0; i < 100; i++) EXPECT_EQ(i, a[i]);
+  for (int i = 0; i < 100; i++)
+    EXPECT_EQ(i, a[i]);
 
   EXPECT_EQ(10u, b.size());
-  for (int i = 0; i < 10; i++) EXPECT_EQ(i, b[i]);
+  for (int i = 0; i < 10; i++)
+    EXPECT_EQ(i, b[i]);
 }
 
 TEST(CircularDeque, Iteration) {
@@ -528,7 +542,8 @@ TEST(CircularDeque, CapacityReserveShrink) {
   EXPECT_EQ(new_capacity, q.capacity());
 
   // Adding that many items should not cause a resize.
-  for (size_t i = 0; i < new_capacity; i++) q.push_back(i);
+  for (size_t i = 0; i < new_capacity; i++)
+    q.push_back(i);
   EXPECT_EQ(new_capacity, q.size());
   EXPECT_EQ(new_capacity, q.capacity());
 
@@ -548,7 +563,8 @@ TEST(CircularDeque, CapacityAutoShrink) {
   size_t big_capacity = q.capacity();
 
   // Delete 3/4 of the items.
-  for (size_t i = 0; i < big_size / 4 * 3; i++) q.pop_back();
+  for (size_t i = 0; i < big_size / 4 * 3; i++)
+    q.pop_back();
 
   // The capacity should have shrunk by deleting that many items.
   size_t medium_capacity = q.capacity();
@@ -589,14 +605,17 @@ TEST(CircularDeque, Resize) {
   size_t first_size = 10;
   q.resize(first_size);
   EXPECT_EQ(first_size, q.size());
-  for (size_t i = 0; i < first_size; i++) EXPECT_EQ(0, q[i]);
+  for (size_t i = 0; i < first_size; i++)
+    EXPECT_EQ(0, q[i]);
 
   // Resize with different value.
   size_t second_expand = 10;
   q.resize(first_size + second_expand, 3);
   EXPECT_EQ(first_size + second_expand, q.size());
-  for (size_t i = 0; i < first_size; i++) EXPECT_EQ(0, q[i]);
-  for (size_t i = 0; i < second_expand; i++) EXPECT_EQ(3, q[i + first_size]);
+  for (size_t i = 0; i < first_size; i++)
+    EXPECT_EQ(0, q[i]);
+  for (size_t i = 0; i < second_expand; i++)
+    EXPECT_EQ(3, q[i + first_size]);
 
   // Erase from the end and add to the beginning so resize is forced to cross
   // a circular buffer wrap boundary.

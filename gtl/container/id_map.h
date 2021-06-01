@@ -120,7 +120,8 @@ class IDMap final {
   T* Lookup(KeyType id) const {
     DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
     typename HashTable::const_iterator i = data_.find(id);
-    if (i == data_.end() || !i->second || IsRemoved(id)) return nullptr;
+    if (i == data_.end() || !i->second || IsRemoved(id))
+      return nullptr;
     return &*i->second;
   }
 
@@ -130,19 +131,23 @@ class IDMap final {
   }
 
 #if defined(UNIT_TEST)
-  int iteration_depth() const { return iteration_depth_; }
+  int iteration_depth() const {
+    return iteration_depth_;
+  }
 #endif  // defined(UNIT_TEST)
 
   // It is safe to remove elements from the map during iteration. All iterators
   // will remain valid.
-  template <class ReturnType>
+  template<class ReturnType>
   class Iterator {
    public:
     Iterator(IDMap<V, K>* map) : map_(map), iter_(map_->data_.begin()) {
       Init();
     }
 
-    Iterator(const Iterator& iter) : map_(iter.map_), iter_(iter.iter_) {
+    Iterator(const Iterator& iter)
+        : map_(iter.map_),
+          iter_(iter.iter_) {
       Init();
     }
 
@@ -160,7 +165,8 @@ class IDMap final {
       // zero so that it doesn't become negative.
       DCHECK_LT(0, map_->iteration_depth_);
 
-      if (--map_->iteration_depth_ == 0) map_->Compact();
+      if (--map_->iteration_depth_ == 0)
+        map_->Compact();
     }
 
     bool IsAtEnd() const {
@@ -175,7 +181,8 @@ class IDMap final {
 
     ReturnType* GetCurrentValue() const {
       DCHECK_CALLED_ON_VALID_SEQUENCE(map_->sequence_checker_);
-      if (!iter_->second || map_->IsRemoved(iter_->first)) return nullptr;
+      if (!iter_->second || map_->IsRemoved(iter_->first))
+        return nullptr;
       return &*iter_->second;
     }
 
@@ -253,7 +260,8 @@ class IDMap final {
 
   void Compact() {
     DCHECK_EQ(0, iteration_depth_);
-    for (const auto& i : removed_ids_) data_.erase(i);
+    for (const auto& i : removed_ids_)
+      data_.erase(i);
     removed_ids_.clear();
   }
 
