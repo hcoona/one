@@ -132,7 +132,9 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
             "@bazel_tools//src/conditions:windows": "/src/windows",
             "//conditions:default": "src",
         }),
-        defines = select({
+        defines = [
+            "HAVE_CXX11_ATOMIC",
+        ] + select({
             # We need to override the default GOOGLE_GLOG_DLL_DECL from
             # src/windows/glog/*.h to match src/windows/config.h.
             "@bazel_tools//src/conditions:windows": ["GOOGLE_GLOG_DLL_DECL=__declspec(dllexport)"],

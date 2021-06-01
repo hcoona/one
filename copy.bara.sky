@@ -618,6 +618,9 @@ core.workflow(
                 "**.inc",
             ]),
         ),
+        patch.apply([
+            "third_party/glog/patches/0001-add-have-cxx11-atomic.patch",
+        ])
     ],
 )
 
