@@ -29,6 +29,9 @@ ARROW_FLAGS = [
     "-DARROW_WITH_ZLIB",
     "-DARROW_WITH_ZSTD",
 ] + [
+    # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/src/arrow/CMakeLists.txt#L418
+    "-DARROW_HDFS",
+] + [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/src/arrow/CMakeLists.txt#L524
     "-DARROW_WITH_BACKTRACE",
 ] + [
