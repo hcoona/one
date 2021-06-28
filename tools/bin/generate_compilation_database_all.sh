@@ -27,7 +27,10 @@ mv compile_commands.json{.tmp,}
 popd > /dev/null
 
 BAZEL_WORKSPACE="$(bazel info workspace)"
-"$BAZEL_WORKSPACE/bazel-bin/codelab/compdb_purger/main" \
-  --logtostderr \
-  --input "$BAZEL_ROOT/compile_commands.json" \
-  --output "$BAZEL_WORKSPACE/compile_commands.json"
+# "$BAZEL_WORKSPACE/bazel-bin/codelab/compdb_purger/main" \
+#   --logtostderr \
+#   --input "$BAZEL_ROOT/compile_commands.json" \
+#   --output "$BAZEL_WORKSPACE/compile_commands.json"
+cp -f "$BAZEL_ROOT/compile_commands.json" "$BAZEL_WORKSPACE/compile_commands.json"
+sed -i 's/ external/ bazel-one\/external/g' "$BAZEL_WORKSPACE/compile_commands.json"
+sed -i 's/\"external/\"bazel-one\/external/g' "$BAZEL_WORKSPACE/compile_commands.json"
