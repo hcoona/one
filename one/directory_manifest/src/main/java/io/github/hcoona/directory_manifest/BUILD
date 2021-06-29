@@ -1,7 +1,7 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 
 package(
-    default_visibility = ["//directory_manifest/src:__subpackages__"],
+    default_visibility = ["//one/directory_manifest/src:__subpackages__"],
 )
 
 java_binary(

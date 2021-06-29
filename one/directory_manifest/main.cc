@@ -1,12 +1,12 @@
 #include <string>
 
-#include "third_party/absl/status/status.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-#include "directory_manifest/generator.h"
-#include "directory_manifest/macros.h"
+#include "third_party/absl/status/status.h"
 #include "gtl/file_system.h"
 #include "gtl/posix_file_system.h"
+#include "one/directory_manifest/generator.h"
+#include "one/directory_manifest/macros.h"
 
 namespace {
 
