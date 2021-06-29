@@ -1,16 +1,16 @@
 import ast
-import pathlib
 import functools
+import pathlib
 
-import src.builtin_operators
 from absl import app
 from absl import flags
 from absl import logging
 
+import one.yadm_package_installer.src.builtin_operators
+
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string("input", None,
-                    "The input compile_commands.json file path.")
+flags.DEFINE_string("input", None, "The input compile_commands.json file path.")
 
 flags.mark_flag_as_required("input")
 
@@ -29,13 +29,19 @@ def main(argv):
     eval(
         f, None, {
             "config_setting":
-            functools.partial(src.builtin_operators.config_setting, operators),
+                functools.partial(
+                    one.yadm_package_installer.src.builtin_operators.
+                    config_setting, operators),
             "select":
-            src.builtin_operators.select,
+                one.yadm_package_installer.src.builtin_operators.select,
             "apt_install":
-            functools.partial(src.builtin_operators.apt_install, operators),
+                functools.partial(
+                    one.yadm_package_installer.src.builtin_operators.
+                    apt_install, operators),
             "bash_exec":
-            functools.partial(src.builtin_operators.bash_exec, operators)
+                functools.partial(
+                    one.yadm_package_installer.src.builtin_operators.bash_exec,
+                    operators)
         })
     logging.info("operators=%s", operators)
 

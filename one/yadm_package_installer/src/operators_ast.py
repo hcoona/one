@@ -1,6 +1,6 @@
+from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import absolute_import
 
 from typing import Any
 from typing import Union
@@ -25,6 +25,7 @@ def format_string_any_dict(d: "dict[str, Any]"):
 
 class Operator:
     """An interface for all operators."""
+
     def __init__(self, name: "str"):
         self.name = name
 
@@ -39,6 +40,7 @@ class Macro:
 
 class ConfigSettingOperator(Operator):
     """ConfigSetting AST node."""
+
     def __init__(self, name: "str", values: "dict[str, Any]"):
         super(ConfigSettingOperator, self).__init__(name)
         self.values = values
@@ -50,6 +52,7 @@ class ConfigSettingOperator(Operator):
 
 class SelectMacro(Macro):
     """Select macro AST node."""
+
     def __init__(self, condition: "dict[str, Any]"):
         super(Macro, self).__init__()
         self.condition = condition
@@ -57,6 +60,7 @@ class SelectMacro(Macro):
 
 class ActionOperatorBase(Operator):
     """The base definition for action operators."""
+
     def __init__(self, name: "str", deps: StrListT):
         super(ActionOperatorBase, self).__init__(name)
         self.deps = deps
@@ -68,6 +72,7 @@ class ActionOperatorBase(Operator):
 
 class AptInstallOperator(ActionOperatorBase):
     """An AST node for apt install."""
+
     def __init__(self, name: "str", deps: StrListT, packages: StrListT):
         super(AptInstallOperator, self).__init__(name, deps)
         self.packages = packages
@@ -80,6 +85,7 @@ class AptInstallOperator(ActionOperatorBase):
 
 class BashExecOperator(ActionOperatorBase):
     """An AST node for bash execution."""
+
     def __init__(self, name: "str", deps: StrListT, commands: StrListT,
                  sudo: "bool"):
         super(BashExecOperator, self).__init__(name, deps)

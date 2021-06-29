@@ -1,6 +1,6 @@
+from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import absolute_import
 
 import ast
 
@@ -10,6 +10,7 @@ from rules_python.python.runfiles import runfiles
 
 
 class LoaderTest(absltest.TestCase):
+
     def test_smoke_test_01(self):
         r = runfiles.Create()
         with open(
