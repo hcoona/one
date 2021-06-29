@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
   std::shared_ptr<arrow::Table> table;
   absl::Status s = hcoona::codelab::ConvertTable(*(message->GetDescriptor()),
                                                  messages, pool, &table);
-  CHECK_STATUS_OK(s);
+  ONE_CHECK_STATUS_OK(s);
   s = hcoona::codelab::FromArrowStatus(table->ValidateFull());
   if (!s.ok()) {
     LOG(ERROR) << s.ToString();
@@ -45,13 +45,13 @@ int main(int argc, char** argv) {
   arrow::Int32Builder* inner_int32_builder =
       hcoona::down_cast<arrow::Int32Builder*>(
           nested_int32_struct_builder->field_builder(0));
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       nested_int32_struct_builder->AppendNull()));
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::FromArrowStatus(inner_int32_builder->AppendNull()));
 
   std::shared_ptr<arrow::Array> nested_int32_struct_array;
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       nested_int32_struct_builder->Finish(&nested_int32_struct_array)));
   table = arrow::Table::Make(
       arrow::schema({arrow::field(

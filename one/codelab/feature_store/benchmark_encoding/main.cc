@@ -15,15 +15,15 @@
 #include "third_party/arrow/src/parquet/api/writer.h"
 #include "third_party/benchmark/include/benchmark/benchmark.h"
 #include "tools/cpp/runfiles/runfiles.h"
+#include "gtl/file_system.h"
+#include "gtl/macros.h"
+#include "gtl/no_destructor.h"
+#include "gtl/posix_file_system.h"
 #include "one/base/macros.h"
 #include "one/codelab/feature_store/benchmark_encoding/dump.h"
 #include "one/codelab/feature_store/benchmark_encoding/feature.pb.h"
 #include "one/codelab/feature_store/benchmark_encoding/null_output_stream.h"
 #include "one/codelab/feature_store/benchmark_encoding/row.h"
-#include "gtl/file_system.h"
-#include "gtl/macros.h"
-#include "gtl/no_destructor.h"
-#include "gtl/posix_file_system.h"
 
 namespace {
 
@@ -266,10 +266,10 @@ absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
                       std::vector<hcoona::codelab::feature_store::Row>* rows,
                       uint64_t* rows_bytes) {
-  RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
+  ONE_RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
 
   std::unique_ptr<gtl::ReadOnlyMemoryRegion> memory_region;
-  RETURN_STATUS_IF_NOT_OK(
+  ONE_RETURN_STATUS_IF_NOT_OK(
       file_system->NewReadOnlyMemoryRegionFromFile(input_file, &memory_region));
 
   std::vector<std::future<idl::euclid::common::Example>> futures;

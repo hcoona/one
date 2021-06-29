@@ -14,13 +14,13 @@
 #include "third_party/absl/types/span.h"
 #include "third_party/arrow/src/arrow/api.h"
 #include "tools/cpp/runfiles/runfiles.h"
-#include "one/base/macros.h"
-#include "one/codelab/pb_to_arrow/converter.h"
-#include "one/codelab/pb_to_arrow/status_util.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"
 #include "gtl/map_util.h"
 #include "gtl/posix_file_system.h"
+#include "one/base/macros.h"
+#include "one/codelab/pb_to_arrow/converter.h"
+#include "one/codelab/pb_to_arrow/status_util.h"
 
 namespace {
 
@@ -124,17 +124,19 @@ int main(int argc, char** argv) {
       static_cast<arrow::ListBuilder*>(message_c_builder.field_builder(0));
   arrow::Int64Builder* inner_inner_builder =
       static_cast<arrow::Int64Builder*>(inner_builder->value_builder());
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(message_c_builder.Append()));
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(inner_builder->Append()));
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(message_c_builder.Append()));
+  ONE_CHECK_STATUS_OK(
+      hcoona::codelab::FromArrowStatus(inner_builder->Append()));
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(23)));
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(29)));
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::FromArrowStatus(inner_inner_builder->Append(31)));
 
   std::shared_ptr<arrow::StructArray> message_c_column_trunk;
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       message_c_builder.Finish(&message_c_column_trunk)));
   LOG(INFO) << "message_c_column_trunk: " << message_c_column_trunk->ToString();
 
@@ -147,10 +149,10 @@ int main(int argc, char** argv) {
       absl::MakeConstSpan(&message, 1);
 
   std::shared_ptr<arrow::Table> table;
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::ConvertTable(*descriptor, messages, pool, &table));
   LOG(INFO) << "Table: " << table->ToString();
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
 
   return 0;
 }

@@ -50,15 +50,15 @@ int main(int argc, char** argv) {
 
   arrow::MemoryPool* pool = arrow::default_memory_pool();
   std::shared_ptr<arrow::Table> table;
-  CHECK_STATUS_OK(hcoona::codelab::ConvertTable(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::ConvertTable(
       *hcoona::codelab::MessageX::GetDescriptor(),
       absl::MakeConstSpan(messages), pool, &table));
   LOG(INFO) << "Table: " << table->ToString();
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(table->ValidateFull()));
 
   std::shared_ptr<arrow::io::FileOutputStream> output_file =
       arrow::io::FileOutputStream::Open(FLAGS_output).ValueOrDie();
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       parquet::arrow::WriteTable(*table, pool, output_file, 128)));
   LOG(INFO) << kMessageCount << " messages written to " << FLAGS_output;
 
@@ -67,17 +67,17 @@ int main(int argc, char** argv) {
           .ValueOrDie();
 
   parquet::arrow::FileReaderBuilder file_reader_builder;
-  CHECK_STATUS_OK(
+  ONE_CHECK_STATUS_OK(
       hcoona::codelab::FromArrowStatus(file_reader_builder.Open(input_file)));
 
   std::unique_ptr<parquet::arrow::FileReader> file_reader;
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       file_reader_builder.Build(&file_reader)));
 
   std::vector<int> column_indices = {1, 8};
   // std::shared_ptr<arrow::Table> table;
   table.reset();
-  CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
+  ONE_CHECK_STATUS_OK(hcoona::codelab::FromArrowStatus(
       file_reader->ReadTable(column_indices, &table)));
   LOG(INFO) << table->ToString();
 

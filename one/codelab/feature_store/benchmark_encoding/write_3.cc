@@ -10,14 +10,14 @@
 #include "third_party/arrow/src/arrow/api.h"
 #include "third_party/arrow/src/arrow/io/api.h"
 #include "tools/cpp/runfiles/runfiles.h"
-#include "one/base/macros.h"
-#include "one/codelab/feature_store/benchmark_encoding/dump.h"
-#include "one/codelab/feature_store/benchmark_encoding/feature.pb.h"
-#include "one/codelab/feature_store/benchmark_encoding/row.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"
 #include "gtl/no_destructor.h"
 #include "gtl/posix_file_system.h"
+#include "one/base/macros.h"
+#include "one/codelab/feature_store/benchmark_encoding/dump.h"
+#include "one/codelab/feature_store/benchmark_encoding/feature.pb.h"
+#include "one/codelab/feature_store/benchmark_encoding/row.h"
 
 namespace {
 
@@ -126,10 +126,10 @@ int main(int argc, char** argv) {
 absl::Status LoadRows(gtl::FileSystem* file_system,
                       const std::string& input_file,
                       std::vector<hcoona::codelab::feature_store::Row>* rows) {
-  RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
+  ONE_RETURN_STATUS_IF_NOT_OK(file_system->FileExists(input_file));
 
   std::unique_ptr<gtl::ReadOnlyMemoryRegion> memory_region;
-  RETURN_STATUS_IF_NOT_OK(
+  ONE_RETURN_STATUS_IF_NOT_OK(
       file_system->NewReadOnlyMemoryRegionFromFile(input_file, &memory_region));
 
   for (int offset = 0; offset < memory_region->length();) {

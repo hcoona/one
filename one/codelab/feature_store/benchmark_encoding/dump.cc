@@ -245,7 +245,7 @@ absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
   absl::flat_hash_map<absl::string_view /* field_name */, ParquetFieldContext>
       field_index;
   parquet::schema::NodeVector parquet_fields;
-  RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
+  ONE_RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
       fields, &all_field_names, &field_index, &parquet_fields));
 
   auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
@@ -353,7 +353,7 @@ absl::Status DumpWithParquetApiV2(
   absl::flat_hash_map<absl::string_view /* field_name */, ParquetFieldContext>
       field_index;
   parquet::schema::NodeVector parquet_fields;
-  RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
+  ONE_RETURN_STATUS_IF_NOT_OK(BuildParquetSchemaFields(
       fields, &all_field_names, &field_index, &parquet_fields));
 
   auto schema = std::static_pointer_cast<parquet::schema::GroupNode>(
@@ -476,7 +476,7 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
       field_index;
   std::vector<std::shared_ptr<arrow::Field>> arrow_fields;
   std::vector<std::shared_ptr<arrow::ArrayBuilder>> arrow_fields_builders;
-  RETURN_STATUS_IF_NOT_OK(BuildArrowSchemaFields(
+  ONE_RETURN_STATUS_IF_NOT_OK(BuildArrowSchemaFields(
       memory_pool, fields, &all_field_names, &field_index, &arrow_fields,
       &arrow_fields_builders));
 
@@ -495,10 +495,10 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
         auto builder =
             down_cast<arrow::BinaryBuilder*>(field_context.array_builder);
         if (row.features().contains(field_name)) {
-          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
+          ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
               builder->Append(row.features().find(field_name)->second)));
         } else {
-          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
+          ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
         }
       } else if (field_context.field_descriptor->type ==
                  FieldType::kRawFeature) {  // raw_feature
@@ -510,7 +510,7 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
           LOG(FATAL) << "Column index " << field_context.column_index
                      << " has none child!";
         } else if (row.raw_features().contains(field_name)) {
-          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
+          ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
           for (int i = 0; i < static_cast<int>(
                                   field_context.field_descriptor->children_num);
                i++) {
@@ -519,21 +519,21 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
             const std::vector<std::string>& children_serialized_bytes =
                 row.raw_features().find(field_name)->second;
             if (i < static_cast<int>(children_serialized_bytes.size())) {
-              RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
+              ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(
                   child_builder->Append(children_serialized_bytes[i])));
             } else {
-              RETURN_STATUS_IF_NOT_OK(
+              ONE_RETURN_STATUS_IF_NOT_OK(
                   FromArrowStatus(child_builder->AppendNull()));
             }
           }
         } else {
-          RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
+          ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->AppendNull()));
           for (int i = 0; i < static_cast<int>(
                                   field_context.field_descriptor->children_num);
                i++) {
             auto child_builder =
                 down_cast<arrow::BinaryBuilder*>(builder->field_builder(i));
-            RETURN_STATUS_IF_NOT_OK(
+            ONE_RETURN_STATUS_IF_NOT_OK(
                 FromArrowStatus(child_builder->AppendNull()));
           }
         }
@@ -548,7 +548,7 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
   arrow_arrays.reserve(arrow_fields_builders.size());
   for (std::size_t i = 0; i < arrow_fields_builders.size(); i++) {
     std::shared_ptr<arrow::Array> array;
-    RETURN_STATUS_IF_NOT_OK(
+    ONE_RETURN_STATUS_IF_NOT_OK(
         FromArrowStatus(arrow_fields_builders[i]->Finish(&array)));
     arrow_arrays.emplace_back(std::move(array));
   }
@@ -556,16 +556,16 @@ absl::Status DumpWithArrowApi(arrow::MemoryPool* memory_pool,
   std::shared_ptr<arrow::Table> table =
       arrow::Table::Make(schema, arrow_arrays, rows.size());
 #ifdef NDEBUG
-  RETURN_STATUS_IF_NOT_OK(FromArrowStatus(table->Validate()));
+  ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(table->Validate()));
 #else
-  RETURN_STATUS_IF_NOT_OK(FromArrowStatus(table->ValidateFull()));
+  ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(table->ValidateFull()));
 #endif  // NDEBUG
 
   auto properties = parquet::WriterProperties::Builder()
                         .memory_pool(memory_pool)
                         ->compression(ConvertArrow(compression_mode))
                         ->build();
-  RETURN_STATUS_IF_NOT_OK(FromArrowStatus(parquet::arrow::WriteTable(
+  ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(parquet::arrow::WriteTable(
       *table, memory_pool, std::move(sink), std::numeric_limits<int64_t>::max(),
       properties)));
 

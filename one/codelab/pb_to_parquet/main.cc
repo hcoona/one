@@ -15,11 +15,11 @@
 #include "third_party/arrow/src/parquet/api/schema.h"
 #include "third_party/arrow/src/parquet/api/writer.h"
 #include "tools/cpp/runfiles/runfiles.h"
-#include "one/codelab/pb_to_parquet/converter.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"
 #include "gtl/map_util.h"
 #include "gtl/posix_file_system.h"
+#include "one/codelab/pb_to_parquet/converter.h"
 
 namespace {
 

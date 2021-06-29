@@ -9,13 +9,13 @@
 #include "third_party/absl/strings/str_cat.h"
 #include "third_party/absl/strings/str_format.h"
 #include "third_party/absl/strings/str_join.h"
-#include "one/base/casts.h"
-#include "one/base/macros.h"
-#include "one/codelab/pb_to_arrow/status_util.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/location.h"
 #include "gtl/map_util.h"
 #include "gtl/no_destructor.h"
+#include "one/base/casts.h"
+#include "one/base/macros.h"
+#include "one/codelab/pb_to_arrow/status_util.h"
 
 namespace hcoona {
 namespace codelab {
@@ -317,7 +317,7 @@ absl::Status ConvertFieldDescriptor(
       }
     }
   } else {
-    RETURN_STATUS_IF_NOT_OK(ConvertPrimitiveFieldDescriptor(
+    ONE_RETURN_STATUS_IF_NOT_OK(ConvertPrimitiveFieldDescriptor(
         field_descriptor, pool, field, field_builder));
   }
 
@@ -410,7 +410,7 @@ absl::Status ConvertData(
           << absl::StreamFormat("%p=", field_builder)
           << LookupArrowArrayBuilderDebugLocation(field_builder);
 
-      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
+      ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
            j < message.GetReflection()->FieldSize(message, field_descriptor);
            j++) {
@@ -426,23 +426,23 @@ absl::Status ConvertData(
         const google::protobuf::FieldDescriptor* key_field_descriptor =
             inner_descriptor->field(0);
         DCHECK_NOTNULL(key_field_descriptor);
-        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
+        ONE_RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
             *key_field_descriptor, inner_message, -1, key_builder));
 
         const google::protobuf::FieldDescriptor* value_field_descriptor =
             inner_descriptor->field(1);
         DCHECK_NOTNULL(value_field_descriptor);
-        RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
+        ONE_RETURN_STATUS_IF_NOT_OK(ConvertFieldData(
             *value_field_descriptor, inner_message, -1, value_builder));
       }
     } else if (field_descriptor->is_repeated()) {
       auto field_builder = down_cast<arrow::ListBuilder*>(fields_builders[i]);
       arrow::ArrayBuilder* value_builder = field_builder->value_builder();
-      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
+      ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->Append()));
       for (int j = 0;
            j < message.GetReflection()->FieldSize(message, field_descriptor);
            j++) {
-        RETURN_STATUS_IF_NOT_OK(
+        ONE_RETURN_STATUS_IF_NOT_OK(
             ConvertFieldData(*field_descriptor, message, j, value_builder));
       }
     } else {
@@ -457,10 +457,10 @@ absl::Status ConvertData(
                google::protobuf::FieldDescriptor::TYPE_MESSAGE) &&
           field_descriptor->is_optional() &&
           !message.GetReflection()->HasField(message, field_descriptor)) {
-        RETURN_STATUS_IF_NOT_OK(
+        ONE_RETURN_STATUS_IF_NOT_OK(
             ConvertNullFieldData(*field_descriptor, field_builder));
       } else {
-        RETURN_STATUS_IF_NOT_OK(
+        ONE_RETURN_STATUS_IF_NOT_OK(
             ConvertFieldData(*field_descriptor, message, -1, field_builder));
       }
     }
@@ -485,7 +485,7 @@ absl::Status ConvertNullData(
     const google::protobuf::FieldDescriptor* field_descriptor =
         descriptor.field(i);
     arrow::ArrayBuilder* const field_builder = fields_builders[i];
-    RETURN_STATUS_IF_NOT_OK(
+    ONE_RETURN_STATUS_IF_NOT_OK(
         ConvertNullFieldData(*field_descriptor, field_builder));
   }
 
@@ -516,7 +516,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetDouble(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedDouble(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -527,7 +527,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetFloat(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedFloat(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -540,7 +540,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetInt64(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedInt64(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -552,7 +552,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetUInt64(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedUInt64(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -565,7 +565,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetInt32(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedInt32(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -576,7 +576,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetBool(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedBool(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -587,7 +587,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetString(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedString(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -604,8 +604,8 @@ absl::Status ConvertFieldData(
       for (int i = 0; i < builder->num_fields(); i++) {
         field_builders.emplace_back(builder->field_builder(i));
       }
-      RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
+      ONE_RETURN_STATUS_IF_NOT_OK(
           ConvertData(*(value.GetDescriptor()), value, field_builders));
       break;
     }
@@ -616,7 +616,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetString(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedString(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -628,7 +628,7 @@ absl::Status ConvertFieldData(
               ? message.GetReflection()->GetUInt32(message, &field_descriptor)
               : message.GetReflection()->GetRepeatedUInt32(
                     message, &field_descriptor, repeated_field_index);
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -643,7 +643,7 @@ absl::Status ConvertFieldData(
                     ->GetRepeatedEnum(message, &field_descriptor,
                                       repeated_field_index)
                     ->name();
-      RETURN_STATUS_IF_NOT_OK(
+      ONE_RETURN_STATUS_IF_NOT_OK(
           FromArrowStatus(builder->Append(std::move(value))));
       break;
     }
@@ -675,11 +675,11 @@ absl::Status ConvertNullFieldData(
     for (int i = 0; i < builder->num_fields(); i++) {
       field_builders.emplace_back(builder->field_builder(i));
     }
-    RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
-    RETURN_STATUS_IF_NOT_OK(
+    ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(builder->Append()));
+    ONE_RETURN_STATUS_IF_NOT_OK(
         ConvertNullData(*(field_descriptor.message_type()), field_builders));
   } else {
-    RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
+    ONE_RETURN_STATUS_IF_NOT_OK(FromArrowStatus(field_builder->AppendNull()));
   }
 
   return absl::OkStatus();
@@ -694,7 +694,7 @@ absl::Status ConvertTable(
 
   std::vector<std::shared_ptr<arrow::Field>> fields;
   std::vector<std::shared_ptr<arrow::ArrayBuilder>> fields_builders;
-  RETURN_STATUS_IF_NOT_OK(
+  ONE_RETURN_STATUS_IF_NOT_OK(
       ConvertDescriptor(descriptor, pool, &fields, &fields_builders));
   std::shared_ptr<arrow::Schema> schema = arrow::schema(fields);
   VLOG(1) << "Schema=" << schema->ToString();
@@ -706,7 +706,7 @@ absl::Status ConvertTable(
   }
 
   for (const google::protobuf::Message* const message : messages) {
-    RETURN_STATUS_IF_NOT_OK(
+    ONE_RETURN_STATUS_IF_NOT_OK(
         ConvertData(descriptor, *message, fields_builders_raw_pointers));
   }
 
@@ -714,7 +714,7 @@ absl::Status ConvertTable(
   arrays.reserve(fields_builders.size());
   for (std::size_t i = 0; i < fields_builders.size(); i++) {
     std::shared_ptr<arrow::Array> array;
-    RETURN_STATUS_IF_NOT_OK(
+    ONE_RETURN_STATUS_IF_NOT_OK(
         FromArrowStatus(fields_builders[i]->Finish(&array)));
     arrays.emplace_back(std::move(array));
   }
