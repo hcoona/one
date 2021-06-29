@@ -29,8 +29,8 @@
 #include "one/codelab/kafka_broker_demo/api.h"
 #include "one/codelab/kafka_broker_demo/partition.h"
 #include "one/codelab/kafka_broker_demo/partition_key.h"
-#include "service/event_dispatcher.h"
-#include "service/service_impl.h"
+#include "one/service/event_dispatcher.h"
+#include "one/service/service_impl.h"
 
 namespace hcoona {
 namespace codelab {

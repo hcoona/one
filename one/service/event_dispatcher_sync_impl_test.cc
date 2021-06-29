@@ -1,4 +1,4 @@
-#include "service/event_dispatcher_sync_impl.h"
+#include "one/service/event_dispatcher_sync_impl.h"
 
 #include <functional>
 #include <iosfwd>
@@ -8,8 +8,8 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
-#include "service/event.h"
-#include "service/event_handler.h"
+#include "one/service/event.h"
+#include "one/service/event_handler.h"
 
 namespace {
 

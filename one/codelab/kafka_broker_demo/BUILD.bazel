@@ -25,11 +25,11 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//service",
-        "//third_party/glog",
+        "//one/service",
         "//third_party/absl/container:btree",
         "//third_party/absl/hash",
         "//third_party/absl/status",
         "//third_party/absl/status:statusor",
+        "//third_party/glog",
     ],
 )

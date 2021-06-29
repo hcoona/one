@@ -1,4 +1,4 @@
-#include "service/service_impl.h"
+#include "one/service/service_impl.h"
 
 #include <functional>
 #include <thread>
@@ -7,8 +7,8 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "third_party/absl/synchronization/notification.h"
-#include "service/event_dispatcher.h"
-#include "service/event_dispatcher_sync_impl.h"
+#include "one/service/event_dispatcher.h"
+#include "one/service/event_dispatcher_sync_impl.h"
 
 namespace {
 

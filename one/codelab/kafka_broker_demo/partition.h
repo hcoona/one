@@ -5,7 +5,7 @@
 #include "third_party/absl/status/statusor.h"
 #include "one/codelab/kafka_broker_demo/api.h"
 #include "one/codelab/kafka_broker_demo/partition_key.h"
-#include "service/service_impl.h"
+#include "one/service/service_impl.h"
 
 namespace hcoona {
 namespace codelab {

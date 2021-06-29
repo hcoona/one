@@ -7,9 +7,9 @@
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/time/time.h"
 #include "third_party/absl/types/any.h"
-#include "service/event.h"
-#include "service/event_handler.h"
-#include "service/service_state.h"
+#include "one/service/event.h"
+#include "one/service/event_handler.h"
+#include "one/service/service_state.h"
 
 namespace hcoona {
 

@@ -8,8 +8,8 @@
 #include "third_party/absl/meta/type_traits.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/types/variant.h"
-#include "service/event.h"
-#include "service/event_handler.h"
+#include "one/service/event.h"
+#include "one/service/event_handler.h"
 
 namespace hcoona {
 
