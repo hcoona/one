@@ -63,7 +63,7 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":status_util",
-        "//base:casts",
+        "//one/base:casts",
         "//gtl:compiler_specific",
         "//gtl:location",
         "//gtl:macros",
@@ -117,7 +117,7 @@ cc_library(
         "//codelab:__subpackages__",
     ],
     deps = [
-        "//base:macros",
+        "//one/base:macros",
         "//third_party/absl/status:statusor",
         "//third_party/arrow",
     ],

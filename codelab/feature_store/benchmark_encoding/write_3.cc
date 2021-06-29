@@ -10,7 +10,7 @@
 #include "third_party/arrow/src/arrow/api.h"
 #include "third_party/arrow/src/arrow/io/api.h"
 #include "tools/cpp/runfiles/runfiles.h"
-#include "base/macros.h"
+#include "one/base/macros.h"
 #include "codelab/feature_store/benchmark_encoding/dump.h"
 #include "codelab/feature_store/benchmark_encoding/feature.pb.h"
 #include "codelab/feature_store/benchmark_encoding/row.h"

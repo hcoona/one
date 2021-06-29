@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 #include "third_party/arrow/src/arrow/api.h"
-#include "base/casts.h"
+#include "one/base/casts.h"
 #include "codelab/pb_to_arrow/status_util.h"
 #include "gtl/no_destructor.h"
 

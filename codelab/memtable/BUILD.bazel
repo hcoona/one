@@ -7,6 +7,6 @@ cc_test(
         "//third_party/absl/status:statusor",
         "//third_party/arrow",
         "//third_party/googletest:gtest_main",
-        "//base:casts",
+        "//one/base:casts",
     ],
 )

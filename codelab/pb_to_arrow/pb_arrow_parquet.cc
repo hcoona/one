@@ -12,7 +12,7 @@
 #include "third_party/arrow/src/arrow/io/api.h"
 #include "third_party/arrow/src/parquet/arrow/reader.h"
 #include "third_party/arrow/src/parquet/arrow/writer.h"
-#include "base/macros.h"
+#include "one/base/macros.h"
 #include "codelab/pb_to_arrow/converter.h"
 #include "codelab/pb_to_arrow/messages.pb.h"
 #include "codelab/pb_to_arrow/status_util.h"
