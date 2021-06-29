@@ -28,7 +28,6 @@ requires = ["poetry-core>=1.0.0"]
 [tool.isort]
 force_single_line = true
 indent = "    "
-length_sort = true
 line_length = 80
 
 [tool.yapf]
