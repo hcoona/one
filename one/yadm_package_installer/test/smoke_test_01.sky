@@ -1,0 +1,10 @@
+"""
+Description file for installation packages.
+"""
+
+apt_install(
+    name = "install_apt_packages",
+    packages = [
+        "clangd-12",
+    ],
+)

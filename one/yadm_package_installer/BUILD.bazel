@@ -1,0 +1,34 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@one_pip_deps//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "main",
+    srcs = [
+        "main.py",
+    ],
+    deps = [
+        requirement("absl-py"),
+        ":operators",
+    ],
+)
+
+py_library(
+    name = "operators",
+    srcs = [
+        "src/builtin_operators.py",
+        "src/operators_ast.py",
+    ],
+    deps = [
+        requirement("sh"),
+    ],
+)
+
+py_test(
+    name = "loader_test",
+    srcs = ["test/loader_test.py"],
+    data = ["test/smoke_test_01.sky"],
+    deps = [
+        "@rules_python//python/runfiles",
+        requirement("absl-py"),
+    ],
+)

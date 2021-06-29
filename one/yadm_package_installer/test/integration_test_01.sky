@@ -1,0 +1,43 @@
+"""
+Description file for installation packages.
+"""
+
+config_setting(
+    name = "wsl_ubuntu_20_04",
+    values = {
+        "yadm.os": "WSL",
+        "yadm.distro": "Ubuntu",
+        "etc_os_release.version_id": "20.04",
+    },
+)
+
+config_setting(
+    name = "work_debian_9",
+    values = {
+        "yadm.class": "work",
+        "yadm.distro": "Debian",
+        "etc_os_release.version_id": "9",
+    },
+)
+
+bash_exec(
+    name = "fix_apt_source",
+    commands = select({
+        ":work_debian_9": [],
+        "//conditions:default": [
+            "sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list",
+            "sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list",
+        ],
+    }),
+    sudo = True,
+)
+
+apt_install(
+    name = "install_apt_packages",
+    packages = [
+        "clangd-12",
+    ],
+    deps = [
+        ":fix_apt_source",
+    ],
+)
