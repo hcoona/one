@@ -34,4 +34,4 @@ jobs:
           path: "~/.cache/bazel"
           key: bazel
       - run: bazel build //...
-      - run: bazel test --test_env=srcdir=$PWD/third_party/protobuf/src/google/protobuf/testdata -- //... -//third_party/protobuf:protobuf_test -//third_party/arrow:column_io_benchmark -//codelab/parquet_examples/low_level_api:reader_writer2
+      - run: bazel test --test_env=srcdir=$PWD/third_party/protobuf/src/google/protobuf/testdata -- //... -//third_party/protobuf:protobuf_test -//third_party/arrow:column_io_benchmark -//one/codelab/parquet_examples/low_level_api:reader_writer2

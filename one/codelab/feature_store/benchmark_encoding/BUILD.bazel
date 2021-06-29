@@ -1,0 +1,94 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library")
+
+cc_binary(
+    name = "benchmark_encoding",
+    srcs = [
+        "main.cc",
+    ],
+    data = ["rosetta_example_without_map_10.pb"],
+    # malloc = "@com_github_gperftools_gperftools//:tcmalloc",
+    deps = [
+        ":dump",
+        "//one/base:macros",
+        "//one/codelab/pb_to_arrow:status_util",
+        "//gtl:file_system",
+        "//gtl:macros",
+        "//gtl:no_destructor",
+        "//gtl:posix_file_system",
+        "//third_party/absl/base:endian",
+        "//third_party/absl/status",
+        "//third_party/absl/strings",
+        "//third_party/arrow",
+        "//third_party/arrow:parquet",
+        "//third_party/benchmark",
+        "//third_party/gflags",
+        "//third_party/glog",
+        "//third_party/protobuf",
+        "@bazel_tools//tools/cpp/runfiles",
+    ],
+)
+
+cc_binary(
+    name = "write_3",
+    srcs = [
+        "write_3.cc",
+    ],
+    data = ["rosetta_example_without_map_10.pb"],
+    # malloc = "@com_github_gperftools_gperftools//:tcmalloc",
+    deps = [
+        ":dump",
+        "//one/codelab/pb_to_arrow:status_util",
+        "//gtl:file_system",
+        "//gtl:macros",
+        "//gtl:no_destructor",
+        "//gtl:posix_file_system",
+        "//one/base:macros",
+        "//third_party/absl/base:endian",
+        "//third_party/absl/status",
+        "//third_party/absl/strings",
+        "//third_party/arrow",
+        "//third_party/arrow:parquet",
+        "//third_party/gflags",
+        "//third_party/glog",
+        "//third_party/protobuf",
+        "@bazel_tools//tools/cpp/runfiles",
+    ],
+)
+
+cc_library(
+    name = "dump",
+    srcs = [
+        "dump.cc",
+        "row.cc",
+    ],
+    hdrs = [
+        "dump.h",
+        "null_output_stream.h",
+        "row.h",
+    ],
+    deps = [
+        ":feature_cc_proto",
+        "//one/codelab/pb_to_arrow:status_util",
+        "//one/base:casts",
+        "//one/base:macros",
+        "//third_party/absl/container:btree",
+        "//third_party/absl/container:flat_hash_map",
+        "//third_party/absl/container:flat_hash_set",
+        "//third_party/absl/status",
+        "//third_party/absl/strings",
+        "//third_party/arrow",
+        "//third_party/arrow:parquet",
+        "//third_party/glog",
+    ],
+)
+
+proto_library(
+    name = "feature_proto",
+    srcs = ["feature.proto"],
+)
+
+cc_proto_library(
+    name = "feature_cc_proto",
+    deps = ["feature_proto"],
+)

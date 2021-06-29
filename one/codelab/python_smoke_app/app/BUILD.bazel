@@ -1,0 +1,5 @@
+py_binary(
+    name = "app",
+    srcs = ["app.py"],
+    deps = ["//one/codelab/python_smoke_app/lib:library"],
+)

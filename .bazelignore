@@ -2,6 +2,6 @@ third_party_bak
 nail
 
 # Need to recover later
-codelab/grpc_greeter
-codelab/rocksdb_example
+one/codelab/grpc_greeter
+one/codelab/rocksdb_example
 zkclient
