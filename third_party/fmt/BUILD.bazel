@@ -1,0 +1,270 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+GCC_COPTS = [
+    "-pedantic-errors",
+    "-Wall",
+    "-Wextra",
+    "-pedantic",
+    "-Wold-style-cast",
+    "-Wundef",
+    "-Wredundant-decls",
+    "-Wwrite-strings",
+    "-Wpointer-arith",
+    "-Wcast-qual",
+    "-Wformat=2",
+    "-Wmissing-include-dirs",
+    "-Wcast-align",
+    "-Wctor-dtor-privacy",
+    "-Wdisabled-optimization",
+    "-Winvalid-pch",
+    "-Woverloaded-virtual",
+    "-Wconversion",
+    "-Wswitch-enum",
+    "-Wundef",
+    "-Wno-ctor-dtor-privacy",
+    "-Wno-format-nonliteral",
+] + [
+    # 4.6 and above
+    "-Wno-dangling-else",
+    "-Wno-unused-local-typedefs",
+] + [
+    # 5.0 and above
+    "-Wdouble-promotion",
+    "-Wtrampolines",
+    "-Wzero-as-null-pointer-constant",
+    "-Wuseless-cast",
+    "-Wvector-operation-performance",
+    "-Wsized-deallocation",
+    "-Wshadow",
+] + [
+    # 6.0 and above
+    "-Wshift-overflow=2",
+    "-Wnull-dereference",
+    "-Wduplicated-cond",
+]
+
+CLANG_COPTS = [
+    "-Wall",
+    "-Wextra",
+    "-pedantic",
+    "-Wconversion",
+    "-Wundef",
+    "-Wdeprecated",
+    "-Wweak-vtables",
+    "-Wshadow",
+    "-Wno-gnu-zero-variadic-macro-arguments",
+    "-Wzero-as-null-pointer-constant",
+    "-Wzero-as-null-pointer-constant",
+]
+
+TEST_COPTS = [
+    "-fno-delete-null-pointer-checks",
+    "-Wall",
+    "-Wextra",
+    "-Wno-long-long",
+    "-Wno-variadic-macros",
+]
+
+cc_library(
+    name = "fmt",
+    srcs = [
+        "format.cc",
+        "os.cc",
+    ],
+    hdrs = glob([
+        "*.h",
+    ]),
+    copts = select({
+        "//bazel:llvm_compiler": CLANG_COPTS,
+        "//conditions:default": GCC_COPTS,
+    }),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "test_main",
+    testonly = True,
+    srcs = [
+        "test/gtest-extra.cc",
+        "test/test-main.cc",
+        "test/util.cc",
+    ],
+    hdrs = [
+        "test/gtest-extra.h",
+        "test/test-assert.h",
+        "test/util.h",
+    ],
+    copts = TEST_COPTS,
+    deps = [
+        ":fmt",
+        "//third_party/googletest:gtest",
+    ],
+)
+
+cc_test(
+    name = "args_test",
+    srcs = [
+        "test/args-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "assert_test",
+    srcs = [
+        "test/assert-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "chrono_test",
+    srcs = [
+        "test/chrono-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "color_test",
+    srcs = [
+        "test/color-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "core_test",
+    srcs = [
+        "test/core-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "gtest_extra_test",
+    srcs = [
+        "test/gtest-extra-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "format_test",
+    srcs = [
+        "test/format-test.cc",
+        "test/mock-allocator.h",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "ostream_test",
+    srcs = [
+        "test/ostream-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "compile_test",
+    srcs = [
+        "test/compile-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "printf_test",
+    srcs = [
+        "test/printf-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "ranges_test",
+    srcs = [
+        "test/ranges-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "scan_test",
+    srcs = [
+        "test/scan.h",
+        "test/scan-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "unicode_test",
+    srcs = [
+        "test/unicode-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "xchar_test",
+    srcs = [
+        "test/xchar-test.cc",
+    ],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)
+
+cc_test(
+    name = "enforce_checks_test",
+    srcs = [
+        "test/enforce-checks-test.cc",
+    ],
+    local_defines = ["FMT_ENFORCE_COMPILE_STRING"],
+    deps = [
+        ":fmt",
+        ":test_main",
+    ],
+)

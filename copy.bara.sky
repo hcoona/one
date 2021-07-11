@@ -326,6 +326,15 @@ THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
             "**.inc",
         ]),
     ),
+    core.replace(
+        before = "#include ${start}fmt/${header}${end}",
+        after = "#include \"third_party/fmt/${header}\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+.h",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+    ),
 ]
 
 core.workflow(
@@ -620,7 +629,7 @@ core.workflow(
         ),
         patch.apply([
             "third_party/glog/patches/0001-add-have-cxx11-atomic.patch",
-        ])
+        ]),
     ],
 )
 
@@ -1407,6 +1416,79 @@ core.workflow(
             },
         ),
     ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
+    name = "com_github_fmtlib_fmt",  # 2021-07-02T23:23:15Z
+    origin = git.origin(
+        url = "https://github.com/fmtlib/fmt",
+        ref = "8.0.1",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "include/fmt/**",
+            "src/**",
+            "test/**",
+        ],
+        exclude = [
+            "test/add-subdirectory-test/**",
+            "test/find-package-test/**",
+            "test/gtest/**",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/fmt/**",
+        ],
+        exclude = [
+            "third_party/fmt/BUILD.bazel",
+            "third_party/fmt/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("include/fmt", "third_party/fmt"),
+        core.move("src", "third_party/fmt"),
+        core.move("test", "third_party/fmt/test"),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/fmt/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.h",
+            },
+            paths = glob([
+                "third_party/fmt/*.cc",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "${start}third_party/fmt/fmt/${header}${end}",
+            after = "\"third_party/fmt/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.h",
+                "start": "(\"|<)",
+                "end": "(\"|>)",
+            },
+            paths = glob([
+                "third_party/fmt/*.cc",
+            ]),
+        ),
+        core.replace(
+            before = "${start}${header}${end}",
+            after = "\"third_party/fmt/test/${header}\"",
+            regex_groups = {
+                "header": r"(gtest-extra|mock-allocator|posix-mock|scan|test-assert|util).h",
+                "start": "(\"|<)",
+                "end": "(\"|>)",
+            },
+            paths = glob([
+                "third_party/fmt/test/**.h",
+                "third_party/fmt/test/**.cc",
+            ]),
+        ),
     ],
 )
 
