@@ -1,0 +1,163 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "gsl_all",
+    hdrs = [
+        "gsl",
+        "gsl_algorithm",
+        "gsl_assert",
+        "gsl_byte",
+        "gsl_util",
+        "multi_span",
+        "pointers",
+        "span",
+        "span_ext",
+        "string_span",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "algorithm_test",
+    srcs = ["algorithm_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "assertion_test",
+    srcs = ["assertion_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "at_test",
+    srcs = ["at_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "bounds_test",
+    srcs = ["bounds_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "multi_span_test",
+    srcs = ["multi_span_tests.cpp"],
+    copts = [
+        "-Wno-deprecated-declarations",
+        "-Wno-missing-braces",
+    ],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "no_exception_ensure_test",
+    srcs = ["no_exception_ensure_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "notnull_test",
+    srcs = ["notnull_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "owner_test",
+    srcs = ["owner_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "span_compatibility_test",
+    srcs = ["span_compatibility_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "span_ext_test",
+    srcs = ["span_ext_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "span_test",
+    srcs = ["span_tests.cpp"],
+    copts = [
+        "-Wno-missing-braces",
+    ],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "strict_notnull_test",
+    srcs = ["strict_notnull_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "strided_span_test",
+    srcs = ["strided_span_tests.cpp"],
+    copts = [
+        "-Wno-deprecated-declarations",
+    ],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "string_span_test",
+    srcs = ["string_span_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "utils_test",
+    srcs = ["utils_tests.cpp"],
+    deps = [
+        ":gsl_all",
+        "//third_party/googletest:gtest_main",
+    ],
+)

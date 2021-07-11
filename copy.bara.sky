@@ -1568,6 +1568,48 @@ core.workflow(
 )
 
 core.workflow(
+    name = "com_github_microsoft_gsl",  # 2020-06-04T20:39:07Z
+    origin = git.origin(
+        url = "https://github.com/microsoft/GSL",
+        ref = "v3.1.0",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "include/gsl/**",
+            "tests/**",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/gsl/**",
+        ],
+        exclude = [
+            "third_party/gsl/BUILD.bazel",
+            "third_party/gsl/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("include/gsl", "third_party/gsl"),
+        core.move("tests/", "third_party/gsl"),
+        core.replace(
+            before = "#include ${start}gsl/${header}${end}",
+            after = "#include \"third_party/gsl/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+",
+                "start": "(\"|<)",
+                "end": "(\"|>)",
+            },
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
     name = "gtl_tensorflow",
     origin = git.origin(
         url = "https://github.com/tensorflow/tensorflow.git",
