@@ -1,0 +1,26 @@
+diff --git a/third_party/spdlog/common-inl.h b/third_party/spdlog/common-inl.h
+index 51defbc2..3a13fa28 100644
+--- a/third_party/spdlog/common-inl.h
++++ b/third_party/spdlog/common-inl.h
+@@ -60,7 +60,7 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
+ SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
+ {
+     memory_buf_t outbuf;
+-    fmt::format_system_error(outbuf, last_errno, msg);
++    fmt::format_system_error(outbuf, last_errno, msg.c_str());
+     msg_ = fmt::to_string(outbuf);
+ }
+ 
+diff --git a/third_party/spdlog/fmt/bin_to_hex.h b/third_party/spdlog/fmt/bin_to_hex.h
+index 1e2b054b..45bc8f7d 100644
+--- a/third_party/spdlog/fmt/bin_to_hex.h
++++ b/third_party/spdlog/fmt/bin_to_hex.h
+@@ -209,7 +209,7 @@ struct formatter<spdlog::details::dump_info<T>>
+ 
+         if (put_positions)
+         {
+-            fmt::format_to(inserter, "{:<04X}: ", pos);
++            fmt::format_to(inserter, "{:04X}: ", pos);
+         }
+     }
+ };

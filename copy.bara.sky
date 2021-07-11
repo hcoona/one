@@ -335,6 +335,15 @@ THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
             "end": "(\"|>)",
         },
     ),
+    core.replace(
+        before = "#include ${start}spdlog/${header}${end}",
+        after = "#include \"third_party/spdlog/${header}\"",
+        regex_groups = {
+            "header": r"[A-Za-z0-9\-_\/]+.h",
+            "start": "(\"|<)",
+            "end": "(\"|>)",
+        },
+    ),
 ]
 
 core.workflow(
@@ -1489,6 +1498,72 @@ core.workflow(
                 "third_party/fmt/test/**.cc",
             ]),
         ),
+    ],
+)
+
+core.workflow(
+    name = "com_github_gabime_spdlog",  # 2021-03-25T19:06:22Z
+    origin = git.origin(
+        url = "https://github.com/gabime/spdlog",
+        ref = "v1.8.5",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "bench/**",
+            "example/**",
+            "include/spdlog/**",
+            "src/**",
+            "tests/**",
+        ],
+        exclude = [
+            "include/spdlog/fmt/bundled/**",
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/spdlog/**",
+        ],
+        exclude = [
+            "third_party/spdlog/BUILD.bazel",
+            "third_party/spdlog/**/BUILD.bazel",
+            "third_party/spdlog/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/spdlog"),
+        core.move("third_party/spdlog/include/spdlog", "third_party/spdlog"),
+        core.move("third_party/spdlog/src", "third_party/spdlog"),
+        core.replace(
+            before = "#include \"${header}\"",
+            after = "#include \"third_party/spdlog/${header}\"",
+            regex_groups = {
+                "header": r"[A-Za-z0-9\-_\/]+.h",
+            },
+            paths = glob([
+                "third_party/spdlog/*.cpp",
+            ]),
+        ),
+        core.replace(
+            before = "#include \"utils.h\"",
+            after = "#include \"third_party/spdlog/bench/utils.h\"",
+            paths = glob([
+                "third_party/spdlog/bench/*.cpp",
+            ]),
+        ),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+        core.replace(
+            before = "#include \"third_party/spdlog/spdlog/",
+            after = "#include \"third_party/spdlog/",
+            paths = glob([
+                "third_party/spdlog/*.cpp",
+            ]),
+        ),
+        patch.apply(patches = [
+            "third_party/spdlog/patches/0001-adapt-fmt-v8.patch",
+        ]),
     ],
 )
 

@@ -1,0 +1,44 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+cc_test(
+    name = "bench",
+    srcs = [
+        "bench.cpp",
+        "utils.h",
+    ],
+    deps = [
+        "//third_party/spdlog",
+    ],
+)
+
+cc_test(
+    name = "async_bench",
+    srcs = [
+        "async_bench.cpp",
+        "utils.h",
+    ],
+    deps = [
+        "//third_party/spdlog",
+    ],
+)
+
+cc_test(
+    name = "formatter_bench",
+    srcs = ["formatter-bench.cpp"],
+    args = [
+        "all",
+    ],
+    deps = [
+        "//third_party/benchmark",
+        "//third_party/spdlog",
+    ],
+)
+
+cc_test(
+    name = "latency_bench",
+    srcs = ["latency.cpp"],
+    deps = [
+        "//third_party/benchmark",
+        "//third_party/spdlog",
+    ],
+)
