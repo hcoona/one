@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/synchronization/mutex.h"
 #include "gtl/file_system.h"

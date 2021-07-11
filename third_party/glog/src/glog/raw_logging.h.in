@@ -36,12 +36,12 @@
 #ifndef BASE_RAW_LOGGING_H_
 #define BASE_RAW_LOGGING_H_
 
-#include <time.h>
+#include <ctime>
 
 @ac_google_start_namespace@
 
-#include "glog/log_severity.h"
-#include "glog/vlog_is_on.h"
+#include "third_party/glog/log_severity.h"
+#include "third_party/glog/vlog_is_on.h"
 
 // Annoying stuff for windows -- makes sure clients can import these functions
 #ifndef GOOGLE_GLOG_DLL_DECL

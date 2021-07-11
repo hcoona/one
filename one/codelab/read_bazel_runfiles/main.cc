@@ -2,7 +2,7 @@
 #include <string>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/strings/string_view.h"
 #include "tools/cpp/runfiles/runfiles.h"

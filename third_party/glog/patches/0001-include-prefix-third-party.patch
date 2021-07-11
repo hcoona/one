@@ -1,0 +1,12 @@
+diff --git a/third_party/glog/bazel/glog.bzl b/third_party/glog/bazel/glog.bzl
+index 72e5df78..9afde4a3 100644
+--- a/third_party/glog/bazel/glog.bzl
++++ b/third_party/glog/bazel/glog.bzl
+@@ -146,6 +146,7 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
+                 ":vlog_is_on_h",
+             ],
+         strip_include_prefix = "src",
++        include_prefix = "third_party",
+         defines = select({
+             # GOOGLE_GLOG_DLL_DECL is normally set by export.h, but that's not
+             # generated for Bazel.

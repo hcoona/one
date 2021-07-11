@@ -29,7 +29,6 @@
 //
 // Author: Ray Sidney
 
-#include "third_party/glog/glog_internal/config.h"
 #include "utilities.h"
 
 #include <fcntl.h>
@@ -44,16 +43,17 @@
 # include <sys/wait.h>
 #endif
 
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <queue>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "base/commandlineflags.h"
 #include "third_party/glog/logging.h"
@@ -98,7 +98,6 @@ static void TestLogging(bool check_counts);
 static void TestRawLogging();
 static void LogWithLevels(int v, int severity, bool err, bool alsoerr);
 static void TestLoggingLevels();
-static void TestVLogModule();
 static void TestLogString();
 static void TestLogSink();
 static void TestLogToString();
@@ -115,7 +114,6 @@ static void TestWrapper();
 static void TestErrno();
 static void TestTruncate();
 static void TestCustomLoggerDeletionOnShutdown();
-static void TestLogPeriodically();
 
 static int x = -1;
 static void BM_Check1(int n) {
@@ -182,6 +180,30 @@ static void BM_vlog(int n) {
 }
 BENCHMARK(BM_vlog);
 
+// Dynamically generate a prefix using the default format and write it to the stream.
+void PrefixAttacher(std::ostream &s, const LogMessageInfo &l, void* data) {
+  // Assert that `data` contains the expected contents before producing the
+  // prefix (otherwise causing the tests to fail):
+  if (data == NULL || *static_cast<string*>(data) != "good data") {
+    return;
+  }
+
+  s << l.severity[0]
+    << setw(4) << 1900 + l.time.year()
+    << setw(2) << 1 + l.time.month()
+    << setw(2) << l.time.day()
+    << ' '
+    << setw(2) << l.time.hour() << ':'
+    << setw(2) << l.time.min()  << ':'
+    << setw(2) << l.time.sec() << "."
+    << setw(6) << l.time.usec()
+    << ' '
+    << setfill(' ') << setw(5)
+    << l.thread_id << setfill('0')
+    << ' '
+    << l.filename << ':' << l.line_number << "]";
+}
+
 int main(int argc, char **argv) {
   FLAGS_colorlogtostderr = false;
   FLAGS_timestamp_in_logfile_name = true;
@@ -201,7 +223,10 @@ int main(int argc, char **argv) {
 
   EXPECT_FALSE(IsGoogleLoggingInitialized());
 
-  InitGoogleLogging(argv[0]);
+  // Setting a custom prefix generator (it will use the default format so that
+  // the golden outputs can be reused):
+  string prefix_attacher_data = "good data";
+  InitGoogleLogging(argv[0], &PrefixAttacher, static_cast<void*>(&prefix_attacher_data));
 
   EXPECT_TRUE(IsGoogleLoggingInitialized());
 
@@ -225,7 +250,6 @@ int main(int argc, char **argv) {
   TestLogging(true);
   TestRawLogging();
   TestLoggingLevels();
-  TestVLogModule();
   TestLogString();
   TestLogSink();
   TestLogToString();
@@ -236,7 +260,7 @@ int main(int argc, char **argv) {
 
   // TODO: The golden test portion of this test is very flakey.
   EXPECT_TRUE(
-      MungeAndDiffTestStderr(FLAGS_test_srcdir + "/src/logging_unittest.err"));
+      MungeAndDiffTestStderr(FLAGS_test_srcdir + "/src/logging_custom_prefix_unittest.err"));
 
   FLAGS_logtostderr = false;
 
@@ -249,7 +273,6 @@ int main(int argc, char **argv) {
   TestErrno();
   TestTruncate();
   TestCustomLoggerDeletionOnShutdown();
-  TestLogPeriodically();
 
   fprintf(stdout, "PASS\n");
   return 0;
@@ -318,11 +341,11 @@ struct NewHook {
 };
 
 TEST(DeathNoAllocNewHook, logging) {
-  // tests that NewHook used below works
-  NewHook new_hook;
-  ASSERT_DEATH({
-    new int;
-  }, "unexpected new");
+ // tests that NewHook used below works
+ NewHook new_hook;
+ ASSERT_DEATH({
+   new int;
+ }, "unexpected new");
 }
 
 void TestRawLogging() {
@@ -455,24 +478,6 @@ void TestLoggingLevels() {
   LogWithLevels(0, GLOG_FATAL, false, true);
   LogWithLevels(1, GLOG_WARNING, false, false);
   LogWithLevels(1, GLOG_FATAL, false, true);
-}
-
-int TestVlogHelper() {
-  if (VLOG_IS_ON(1)) {
-    return 1;
-  }
-  return 0;
-}
-
-void TestVLogModule() {
-  int c = TestVlogHelper();
-  EXPECT_EQ(0, c);
-
-#if defined(__GNUC__)
-  EXPECT_EQ(0, SetVLOGLevel("logging_unittest", 1));
-  c = TestVlogHelper();
-  EXPECT_EQ(1, c);
-#endif
 }
 
 TEST(DeathRawCHECK, logging) {
@@ -995,96 +1000,6 @@ static void TestCustomLoggerDeletionOnShutdown() {
   ShutdownGoogleLogging();
   EXPECT_TRUE(custom_logger_deleted);
   EXPECT_FALSE(IsGoogleLoggingInitialized());
-}
-
-namespace LogTimes {
-// Log a "message" every 10ms, 10 times. These numbers are nice compromise
-// between total running time of 100ms and the period of 10ms. The period is
-// large enough such that any CPU and OS scheduling variation shouldn't affect
-// the results from the ideal case by more than 5% (500us or 0.5ms)
-GLOG_CONSTEXPR int64_t LOG_PERIOD_NS     = 10000000;  // 10ms
-GLOG_CONSTEXPR int64_t LOG_PERIOD_TOL_NS = 500000;    // 500us
-
-// Set an upper limit for the number of times the stream operator can be
-// called. Make sure not to exceed this number of times the stream operator is
-// called, since it is also the array size and will be indexed by the stream
-// operator.
-GLOG_CONSTEXPR size_t MAX_CALLS = 10;
-}  // namespace LogStreamTimes
-
-#ifdef HAVE_CXX11_CHRONO
-struct LogTimeRecorder {
-  size_t m_streamTimes = 0;
-  std::chrono::steady_clock::time_point m_callTimes[LogTimes::MAX_CALLS];
-};
-// The stream operator is called by LOG_EVERY_T every time a logging event
-// occurs. Make sure to save the times for each call as they will be used later
-// to verify the time delta between each call.
-std::ostream& operator<<(std::ostream& stream, LogTimeRecorder& t) {
-  t.m_callTimes[t.m_streamTimes++] = std::chrono::steady_clock::now();
-  return stream;
-}
-// get elapsed time in nanoseconds
-int64 elapsedTime_ns(const std::chrono::steady_clock::time_point& begin,
-        const std::chrono::steady_clock::time_point& end) {
-  return std::chrono::duration_cast<std::chrono::nanoseconds>((end - begin))
-          .count();
-}
-#elif defined(OS_WINDOWS)
-struct LogTimeRecorder {
-  size_t m_streamTimes = 0;
-  LARGE_INTEGER m_callTimes[LogTimes::MAX_CALLS];
-};
-std::ostream& operator<<(std::ostream& stream, LogTimeRecorder& t) {
-  QueryPerformanceCounter(&t.m_callTimes[t.m_streamTimes++]);
-  return stream;
-}
-// get elapsed time in nanoseconds
-int64 elapsedTime_ns(const LARGE_INTEGER& begin, const LARGE_INTEGER& end) {
-  LARGE_INTEGER freq;
-  QueryPerformanceFrequency(&freq);
-  return (end.QuadPart - begin.QuadPart) * 1000000000 / freq.QuadPart;
-}
-#else
-struct LogTimeRecorder {
-  size_t m_streamTimes = 0;
-  timespec m_callTimes[LogTimes::MAX_CALLS];
-};
-std::ostream& operator<<(std::ostream& stream, LogTimeRecorder& t) {
-  clock_gettime(CLOCK_MONOTONIC, &t.m_callTimes[t.m_streamTimes++]);
-  return stream;
-}
-// get elapsed time in nanoseconds
-int64 elapsedTime_ns(const timespec& begin, const timespec& end) {
-  return (end.tv_sec - begin.tv_sec) * 1000000000 +
-         (end.tv_nsec - begin.tv_nsec);
-}
-#endif
-
-static void TestLogPeriodically() {
-  fprintf(stderr, "==== Test log periodically\n");
-
-  LogTimeRecorder timeLogger;
-
-  GLOG_CONSTEXPR double LOG_PERIOD_SEC = LogTimes::LOG_PERIOD_NS / 1000000000.0;
-
-  while (timeLogger.m_streamTimes < LogTimes::MAX_CALLS) {
-        LOG_EVERY_T(INFO, LOG_PERIOD_SEC)
-            << timeLogger << "Timed Message #" << timeLogger.m_streamTimes;
-  }
-
-  // Calculate time between each call in nanoseconds for higher resolution to
-  // minimize error.
-  int64 nsBetweenCalls[LogTimes::MAX_CALLS - 1];
-  for (size_t i = 1; i < LogTimes::MAX_CALLS; ++i) {
-    nsBetweenCalls[i - 1] = elapsedTime_ns(
-            timeLogger.m_callTimes[i - 1], timeLogger.m_callTimes[i]);
-  }
-
-  for (size_t idx = 0; idx < LogTimes::MAX_CALLS - 1; ++idx) {
-    int64 time_ns = nsBetweenCalls[idx];
-    EXPECT_NEAR(time_ns, LogTimes::LOG_PERIOD_NS, LogTimes::LOG_PERIOD_TOL_NS);
-  }
 }
 
 _START_GOOGLE_NAMESPACE_

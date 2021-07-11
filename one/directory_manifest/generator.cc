@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/strings/escaping.h"
 #include "third_party/absl/strings/str_cat.h"

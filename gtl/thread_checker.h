@@ -5,7 +5,7 @@
 #ifndef GTL_THREAD_CHECKER_H_
 #define GTL_THREAD_CHECKER_H_
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtl/compiler_specific.h"
 #include "third_party/absl/strings/string_view.h"
 #include "gtl/thread_annotations.h"

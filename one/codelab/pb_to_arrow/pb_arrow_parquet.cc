@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/base/casts.h"
 #include "third_party/absl/random/random.h"
 #include "third_party/absl/status/status.h"

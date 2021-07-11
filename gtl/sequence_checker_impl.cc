@@ -4,7 +4,7 @@
 
 #include "gtl/sequence_checker_impl.h"
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtl/sequence_token.h"
 #include "gtl/thread_checker_impl.h"
 

@@ -1,7 +1,7 @@
 #include <memory>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/base/casts.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/types/span.h"

@@ -5,7 +5,7 @@
 #include "gtl/sequence_token.h"
 
 #include "gtl/atomic_sequence_num.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 namespace gtl {
 

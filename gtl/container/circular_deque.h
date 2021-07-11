@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtl/container/vector_buffer.h"
 #include "gtl/macros.h"
 #include "gtl/stl_util.h"

@@ -1,6 +1,6 @@
-#include <gflags/gflags.h>
-#include <glog/logging.h>
-#include <glog/stl_logging.h>
+#include "third_party/gflags/gflags.h"
+#include "third_party/glog/logging.h"
+#include "third_party/glog/stl_logging.h"
 
 int main(int argc, char* argv[]) {
   // Initialize Google's logging library.

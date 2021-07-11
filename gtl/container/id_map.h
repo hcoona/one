@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/container/flat_hash_set.h"
 #include "gtl/sequence_checker.h"
 

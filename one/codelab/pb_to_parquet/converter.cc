@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/container/flat_hash_map.h"
 #include "third_party/absl/strings/str_cat.h"
 #include "gtl/map_util.h"

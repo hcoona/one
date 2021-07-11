@@ -25,7 +25,7 @@
 #pragma clang diagnostic ignored "-Winteger-overflow"
 #endif
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtl/numeric/safe_conversions.h"
 #include "gtl/numeric/safe_math.h"
 #include "gtl/test/gtest_util.h"

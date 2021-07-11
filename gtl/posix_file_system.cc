@@ -29,7 +29,7 @@ limitations under the License.
 
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/strings/str_cat.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "config/config.h"
 #include "gtl/file_system_helper.h"
 

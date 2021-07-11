@@ -126,6 +126,17 @@ THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
         ]),
     ),
     core.replace(
+        before = "\"glog/",
+        after = "\"third_party/glog/",
+        paths = glob([
+            "**.cc",
+            "**.cpp",
+            "**.h",
+            "**.inc",
+            "**.in",
+        ]),
+    ),
+    core.replace(
         before = "@zlib//",
         after = "//third_party/zlib",
         paths = glob([
@@ -577,10 +588,10 @@ core.workflow(
 )
 
 core.workflow(
-    name = "com_github_google_glog",  # 2021-03-02
+    name = "com_github_google_glog",  # 2021-07-05T18:33:12Z
     origin = git.origin(
         url = "https://github.com/google/glog/",
-        ref = "d4e8ebab7e295f20f86cae9557da0d5087a02f73",
+        ref = "42ce901f286c6140329ce12a7cba379637e361db",
     ),
     destination = folder.destination(),
     origin_files = glob(
@@ -615,6 +626,19 @@ core.workflow(
                 "**.bzl",
             ]),
         ),
+        core.replace(
+            before = "#include ${start}${prefix}/${header}${end}",
+            after = "#include \"third_party/${prefix}/${header}\"",
+            regex_groups = {
+                "prefix": r"(gflags|glog)",
+                "header": r"[A-Za-z0-9\-_\/]+.h",
+                "start": "(\"|<)",
+                "end": "(\"|>)",
+            },
+            paths = glob([
+                "third_party/glog/bazel/example/*.cc",
+            ]),
+        ),
     ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
         core.replace(
             before = "\"config.h\"",
@@ -637,7 +661,7 @@ core.workflow(
             ]),
         ),
         patch.apply([
-            "third_party/glog/patches/0001-add-have-cxx11-atomic.patch",
+            "third_party/glog/patches/0001-include-prefix-third-party.patch",
         ]),
     ],
 )

@@ -42,7 +42,7 @@
 
 #include "third_party/googletest/googlemock/include/gmock/gmock.h"
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 _START_GOOGLE_NAMESPACE_
 namespace glog_testing {

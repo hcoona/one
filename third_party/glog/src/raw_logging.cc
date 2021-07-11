@@ -34,16 +34,16 @@
 #include "utilities.h"
 
 #include <stdarg.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>               // for close() and write()
 #endif
 #include <fcntl.h>                 // for open()
-#include <time.h>
+#include <ctime>
 #include "third_party/glog/glog_internal/config.h"
-#include "glog/logging.h"          // To pick up flag settings etc.
-#include "glog/raw_logging.h"
+#include "third_party/glog/logging.h"          // To pick up flag settings etc.
+#include "third_party/glog/raw_logging.h"
 #include "base/commandlineflags.h"
 
 #ifdef HAVE_STACKTRACE

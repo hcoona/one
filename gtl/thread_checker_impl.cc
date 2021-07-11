@@ -4,7 +4,7 @@
 
 #include "gtl/thread_checker_impl.h"
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 namespace gtl {
 

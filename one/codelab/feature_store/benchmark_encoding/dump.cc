@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/container/btree_set.h"
 #include "third_party/absl/container/flat_hash_map.h"
 #include "third_party/absl/container/flat_hash_set.h"

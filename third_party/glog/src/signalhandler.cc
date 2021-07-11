@@ -34,10 +34,10 @@
 #include "utilities.h"
 #include "stacktrace.h"
 #include "symbolize.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
-#include <signal.h>
-#include <time.h>
+#include <csignal>
+#include <ctime>
 #ifdef HAVE_UCONTEXT_H
 # include <ucontext.h>
 #endif

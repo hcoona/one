@@ -38,7 +38,7 @@
 #undef DCHECK_GE
 #undef DCHECK_GT
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 // Restore our versions of DCHECK and friends, as GLog defines its own
 #undef DCHECK

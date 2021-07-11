@@ -23,7 +23,7 @@
 #include <utility>
 #include <vector>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/types/optional.h"
 #include "gtl/template_util.h"
 

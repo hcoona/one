@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/base/internal/endian.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/arrow/src/arrow/api.h"

@@ -33,10 +33,10 @@
 
 #include "utilities.h"
 
-#include <signal.h>
+#include <csignal>
 #include <iostream>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "symbolize.h"
 #include "googletest.h"
 #include "third_party/glog/glog_internal/config.h"

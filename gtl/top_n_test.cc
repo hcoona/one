@@ -23,7 +23,7 @@ limitations under the License.
 #include <vector>
 
 #include "third_party/absl/random/random.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtest/gtest.h"
 
 namespace {

@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/strings/string_view.h"
 #include "openssl/crypto.h"
 #include "openssl/err.h"

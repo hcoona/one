@@ -16,7 +16,7 @@ index fdc8c86..82ea990 100644
 
 +#include "third_party/absl/strings/str_cat.h"
 +#include "third_party/absl/synchronization/mutex.h"
- #include "glog/logging.h"
+ #include "third_party/glog/logging.h"
 -#include "gtl/mutex.h"
  #include "gtl/scanner.h"
 -#include "gtl/strcat.h"

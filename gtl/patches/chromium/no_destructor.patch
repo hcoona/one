@@ -5,19 +5,19 @@ index 8c8c1fe..01d9539 100644
 @@ -7,13 +7,7 @@
  #include <string>
  #include <utility>
- 
+
 -#include "gtl/atomicops.h"
 -#include "gtl/barrier_closure.h"
 -#include "gtl/bind.h"
- #include "glog/logging.h"
+ #include "third_party/glog/logging.h"
 -#include "gtl/system/sys_info.h"
 -#include "gtl/platform_thread.h"
 -#include "gtl/simple_thread.h"
  #include "config/config.h"
  #include "gtest/gtest.h"
- 
+
 @@ -83,114 +77,114 @@ namespace {
- 
+
  // A class whose constructor busy-loops until it is told to complete
  // construction.
 -class BlockingConstructor {
@@ -146,9 +146,9 @@ index 8c8c1fe..01d9539 100644
 +
 +//   DISALLOW_COPY_AND_ASSIGN(BlockingConstructorThread);
 +// };
- 
+
  }  // namespace
- 
+
 -// Tests that if the thread assigned to construct the local-static
 -// initialization of the NoDestructor runs at background priority : the
 -// foreground threads will yield to it enough for it to eventually complete
@@ -235,5 +235,5 @@ index 8c8c1fe..01d9539 100644
 +//   // Z840 without r527445 but is expected to be fast (~30ms) with the fix).
 +//   EXPECT_LT(TimeTicks::Now() - test_begin, TimeDelta::FromSeconds(5));
 +// }
- 
+
  }  // namespace gtl

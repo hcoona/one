@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "third_party/absl/strings/str_format.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/protobuf/src/google/protobuf/io/coded_stream.h"
 #include "third_party/protobuf/src/google/protobuf/io/zero_copy_stream.h"
 #include "third_party/protobuf/src/google/protobuf/io/zero_copy_stream_impl.h"

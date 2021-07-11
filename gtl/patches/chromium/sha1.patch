@@ -4,11 +4,11 @@ index 4f7d1dc..42aec1a 100644
 +++ b/gtl/hash/sha1.h
 @@ -23,7 +23,7 @@ enum { kSHA1Length = 20 };  // Length in bytes of a SHA-1 hash.
  using SHA1Digest = std::array<uint8_t, kSHA1Length>;
- 
+
  // Computes the SHA-1 hash of the input |data| and returns the full hash.
 -SHA1Digest SHA1HashSpan(span<const uint8_t> data);
 +SHA1Digest SHA1HashSpan(absl::Span<const uint8_t> data);
- 
+
  // Computes the SHA-1 hash of the input string |str| and returns the full
  // hash.
 diff --git a/gtl/hash/sha1_boringssl.cc b/gtl/hash/sha1_boringssl.cc
@@ -16,17 +16,17 @@ index 236f6f3..7145175 100644
 --- a/gtl/hash/sha1_boringssl.cc
 +++ b/gtl/hash/sha1_boringssl.cc
 @@ -6,13 +6,23 @@
- 
+
  #include <stdint.h>
- 
+
 -#include "gtl/strings/string_util.h"
-+#include "glog/logging.h"
++#include "third_party/glog/logging.h"
  #include "openssl/crypto.h"
  #include "openssl/sha.h"
- 
+
  namespace gtl {
 +namespace {
- 
+
 -SHA1Digest SHA1HashSpan(span<const uint8_t> data) {
 +char* WriteInto(std::string* str, size_t length_with_null) {
 +  DCHECK_GE(length_with_null, 1u);
@@ -46,9 +46,9 @@ index 3542805..767453a 100644
 --- a/gtl/hash/sha1_unittest.cc
 +++ b/gtl/hash/sha1_unittest.cc
 @@ -10,6 +10,16 @@
- 
+
  #include "gtest/gtest.h"
- 
+
 +namespace {
 +
 +template <class ElementType>
@@ -64,7 +64,7 @@ index 3542805..767453a 100644
    std::string input = "abc";
 @@ -68,7 +78,7 @@ TEST(SHA1Test, Test1BytesAndSpan) {
      EXPECT_EQ(kExpected[i], output[i]);
- 
+
    gtl::SHA1Digest output_array =
 -      gtl::SHA1HashSpan(gtl::as_bytes(gtl::make_span(input)));
 +      gtl::SHA1HashSpan(as_uint8_bytes(absl::MakeSpan(input)));
@@ -73,7 +73,7 @@ index 3542805..767453a 100644
  }
 @@ -89,7 +99,7 @@ TEST(SHA1Test, Test2BytesAndSpan) {
      EXPECT_EQ(kExpected[i], output[i]);
- 
+
    gtl::SHA1Digest output_array =
 -      gtl::SHA1HashSpan(gtl::as_bytes(gtl::make_span(input)));
 +      gtl::SHA1HashSpan(as_uint8_bytes(absl::MakeSpan(input)));
@@ -82,7 +82,7 @@ index 3542805..767453a 100644
  }
 @@ -109,7 +119,7 @@ TEST(SHA1Test, Test3BytesAndSpan) {
      EXPECT_EQ(kExpected[i], output[i]);
- 
+
    gtl::SHA1Digest output_array =
 -      gtl::SHA1HashSpan(gtl::as_bytes(gtl::make_span(input)));
 +      gtl::SHA1HashSpan(as_uint8_bytes(absl::MakeSpan(input)));

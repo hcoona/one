@@ -26,7 +26,7 @@ limitations under the License.
 
 #include "third_party/absl/strings/str_cat.h"
 #include "third_party/absl/strings/str_replace.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "config/config.h"
 #include "gtl/path.h"
 #include "gtl/scanner.h"

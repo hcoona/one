@@ -4,7 +4,7 @@
 #include <thread>
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "gtest/gtest.h"
 #include "third_party/absl/synchronization/notification.h"
 #include "one/service/event_dispatcher.h"

@@ -31,14 +31,14 @@
 
 #include "utilities.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
-#include <signal.h>
+#include <csignal>
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
 #endif
-#include <time.h>
+#include <ctime>
 #if defined(HAVE_SYSCALL_H)
 #include <syscall.h>                 // for syscall()
 #elif defined(HAVE_SYS_SYSCALL_H)
@@ -61,6 +61,10 @@ using std::string;
 _START_GOOGLE_NAMESPACE_
 
 static const char* g_program_invocation_short_name = NULL;
+
+bool IsGoogleLoggingInitialized() {
+  return g_program_invocation_short_name != NULL;
+}
 
 _END_GOOGLE_NAMESPACE_
 
@@ -174,10 +178,6 @@ const char* ProgramInvocationShortName() {
     // TODO(hamaji): Use /proc/self/cmdline and so?
     return "UNKNOWN";
   }
-}
-
-bool IsGoogleLoggingInitialized() {
-  return g_program_invocation_short_name != NULL;
 }
 
 #ifdef OS_WINDOWS

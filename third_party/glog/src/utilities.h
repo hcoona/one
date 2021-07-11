@@ -81,7 +81,7 @@
 #endif
 
 #include "third_party/glog/glog_internal/config.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 // There are three different ways we can try to get the stack trace:
 //
@@ -127,6 +127,7 @@
 # define HAVE_STACKTRACE
 #endif
 
+#ifndef GLOG_NO_SYMBOLIZE_DETECTION
 #ifndef HAVE_SYMBOLIZE
 // defined by gcc
 #if defined(__ELF__) && defined(OS_LINUX)
@@ -139,6 +140,7 @@
 # define HAVE_SYMBOLIZE
 #endif
 #endif // !defined(HAVE_SYMBOLIZE)
+#endif // !defined(GLOG_NO_SYMBOLIZE_DETECTION)
 
 #ifndef ARRAYSIZE
 // There is a better way, but this is good enough for our purpose.
@@ -160,8 +162,6 @@ namespace glog_internal_namespace_ {
 #endif
 
 const char* ProgramInvocationShortName();
-
-bool IsGoogleLoggingInitialized();
 
 int64 CycleClock_Now();
 

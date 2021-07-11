@@ -1,7 +1,7 @@
 #include <cstdio>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/debugging/failure_signal_handler.h"
 #include "third_party/absl/debugging/symbolize.h"
 #include "third_party/googletest/googletest/include/gtest/gtest.h"

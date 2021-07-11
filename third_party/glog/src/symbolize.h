@@ -56,7 +56,7 @@
 
 #include "utilities.h"
 #include "third_party/glog/glog_internal/config.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 
 #ifdef HAVE_SYMBOLIZE
 
@@ -121,6 +121,7 @@ typedef int (*SymbolizeCallback)(int fd,
                                  char* out,
                                  size_t out_size,
                                  uint64_t relocation);
+GOOGLE_GLOG_DLL_DECL
 void InstallSymbolizeCallback(SymbolizeCallback callback);
 
 // Installs a callback function, which will be called instead of

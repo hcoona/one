@@ -3,7 +3,7 @@
 #include <tuple>
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/strings/str_cat.h"
 #include "third_party/absl/time/clock.h"
 

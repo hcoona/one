@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "openssl/mem.h"
 #include "openssl/sha.h"
 #include "gtl/crypto/openssl_util.h"

@@ -5,7 +5,7 @@ index f88cf75..0b40d2d 100644
 @@ -5,8 +5,6 @@
  #include "gtl/thread_checker_impl.h"
 
- #include "glog/logging.h"
+ #include "third_party/glog/logging.h"
 -#include "gtl/thread_local.h"
 -#include "gtl/thread_task_runner_handle.h"
 

@@ -36,7 +36,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "demangle.h"
 #include "googletest.h"
 #include "third_party/glog/glog_internal/config.h"

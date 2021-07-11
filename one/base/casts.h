@@ -3,7 +3,7 @@
 #include <memory>
 #include <utility>
 
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "third_party/absl/debugging/internal/demangle.h"
 #include "third_party/absl/strings/string_view.h"
 

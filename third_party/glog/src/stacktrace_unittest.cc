@@ -29,11 +29,11 @@
 
 #include "utilities.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include "third_party/glog/glog_internal/config.h"
 #include "base/commandlineflags.h"
-#include "glog/logging.h"
+#include "third_party/glog/logging.h"
 #include "stacktrace.h"
 
 #ifdef HAVE_EXECINFO_H
