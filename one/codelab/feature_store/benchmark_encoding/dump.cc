@@ -6,7 +6,6 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/glog/logging.h"
 #include "third_party/absl/container/btree_set.h"
 #include "third_party/absl/container/flat_hash_map.h"
 #include "third_party/absl/container/flat_hash_set.h"
@@ -18,6 +17,7 @@
 #include "third_party/arrow/src/parquet/api/schema.h"
 #include "third_party/arrow/src/parquet/api/writer.h"
 #include "third_party/arrow/src/parquet/arrow/writer.h"
+#include "third_party/glog/logging.h"
 #include "one/base/casts.h"
 #include "one/base/macros.h"
 #include "one/codelab/feature_store/benchmark_encoding/null_output_stream.h"

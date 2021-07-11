@@ -6,8 +6,8 @@
 #include <string>
 #include <utility>
 
-#include "third_party/glog/logging.h"
 #include "gtest/gtest.h"
+#include "third_party/glog/logging.h"
 #include "one/service/event.h"
 #include "one/service/event_handler.h"
 

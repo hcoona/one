@@ -3,12 +3,12 @@
 #include <string>
 #include <utility>
 
-#include "third_party/glog/logging.h"
 #include "google/protobuf/message.h"
 #include "third_party/absl/container/flat_hash_map.h"
 #include "third_party/absl/strings/str_cat.h"
 #include "third_party/absl/strings/str_format.h"
 #include "third_party/absl/strings/str_join.h"
+#include "third_party/glog/logging.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/location.h"
 #include "gtl/map_util.h"

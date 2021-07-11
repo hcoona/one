@@ -1,12 +1,12 @@
 #include <string>
 
 #include "gflags/gflags.h"
-#include "third_party/glog/logging.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/dynamic_message.h"
 #include "third_party/absl/status/status.h"
+#include "third_party/glog/logging.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"

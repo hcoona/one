@@ -1,11 +1,11 @@
 #include <memory>
 
 #include "gflags/gflags.h"
-#include "third_party/glog/logging.h"
 #include "third_party/absl/base/casts.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/types/span.h"
 #include "third_party/arrow/src/arrow/api.h"
+#include "third_party/glog/logging.h"
 #include "one/base/casts.h"
 #include "one/base/macros.h"
 #include "one/codelab/pb_to_arrow/converter.h"
