@@ -2,7 +2,6 @@
 #include <string>
 #include <utility>
 
-#include "gflags/gflags.h"
 #include "third_party/absl/base/casts.h"
 #include "third_party/absl/random/random.h"
 #include "third_party/absl/status/status.h"
@@ -11,6 +10,7 @@
 #include "third_party/arrow/src/arrow/io/api.h"
 #include "third_party/arrow/src/parquet/arrow/reader.h"
 #include "third_party/arrow/src/parquet/arrow/writer.h"
+#include "third_party/gflags/gflags.h"
 #include "third_party/glog/logging.h"
 #include "one/base/macros.h"
 #include "one/codelab/pb_to_arrow/converter.h"

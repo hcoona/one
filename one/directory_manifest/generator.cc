@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "gflags/gflags.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/strings/escaping.h"
 #include "third_party/absl/strings/str_cat.h"
 #include "third_party/absl/time/time.h"
+#include "third_party/gflags/gflags.h"
 #include "third_party/glog/logging.h"
 #include "gtl/container/circular_deque.h"
 #include "gtl/crypto/sha2.h"

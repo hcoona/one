@@ -4,7 +4,6 @@
 #include <utility>
 #include <vector>
 
-#include "gflags/gflags.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/util/delimited_message_util.h"
@@ -13,6 +12,7 @@
 #include "third_party/arrow/src/arrow/api.h"
 #include "third_party/arrow/src/parquet/api/writer.h"
 #include "third_party/benchmark/include/benchmark/benchmark.h"
+#include "third_party/gflags/gflags.h"
 #include "third_party/glog/logging.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "gtl/file_system.h"

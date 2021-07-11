@@ -1,6 +1,5 @@
 #include <string>
 
-#include "gflags/gflags.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/descriptor.pb.h"
@@ -13,6 +12,7 @@
 #include "third_party/arrow/src/parquet/api/io.h"
 #include "third_party/arrow/src/parquet/api/schema.h"
 #include "third_party/arrow/src/parquet/api/writer.h"
+#include "third_party/gflags/gflags.h"
 #include "third_party/glog/logging.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "gtl/file_system.h"

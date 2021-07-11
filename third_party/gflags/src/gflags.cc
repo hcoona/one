@@ -88,7 +88,7 @@
 // are, similarly, mostly hooks into the functionality described above.
 
 #include "third_party/gflags/src/config.h"
-#include "gflags/gflags.h"
+#include "third_party/gflags/gflags.h"
 
 #include <cassert>
 #include <cctype>

@@ -1,7 +1,7 @@
 #include <string>
 
-#include "gflags/gflags.h"
 #include "third_party/absl/status/status.h"
+#include "third_party/gflags/gflags.h"
 #include "third_party/glog/logging.h"
 #include "gtl/file_system.h"
 #include "gtl/posix_file_system.h"
