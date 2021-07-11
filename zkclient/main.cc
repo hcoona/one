@@ -3,7 +3,7 @@
 #include <string>
 #include <thread>
 
-#include "gsl/gsl"
+#include "third_party/gsl/gsl"
 #include "zkclient/zkclient.h"
 
 using namespace hcoona::zookeeper;  // NOLINT

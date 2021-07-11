@@ -21,8 +21,8 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_microsoft_gsl//:gsl",
         "//third_party/absl/strings",
+        "//third_party/gsl:gsl_all",
         "@org_apache_zookeeper//:libzookeeper_mt",
     ],
 )
@@ -34,7 +34,7 @@ cc_binary(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":zkclient",
-        "@com_github_microsoft_gsl//:gsl",
+        "//third_party/gsl:gsl_all",
     ],
 )
 

@@ -138,15 +138,6 @@ http_archive(
     ],
 )
 
-# TODO(zhangshuai.ustc): move gsl into third_party.
-http_archive(
-    name = "com_github_microsoft_gsl",
-    build_file = "//third_party/gsl:gsl.BUILD",
-    sha256 = "8216dbcecb54682c6a79b7faf171ce08631150f4559ab59dd6ec7dd3ea7e14e4",
-    strip_prefix = "GSL-98002ab60135fe70f4acd7e5b8a34f9ad1427807",
-    urls = ["https://github.com/microsoft/GSL/archive/98002ab60135fe70f4acd7e5b8a34f9ad1427807.zip"],  # 2020-06-11
-)
-
 http_archive(
     name = "com_googlesource_code_re2",
     sha256 = "428735aea6e8007c14d2e75c69f66cf5b71a009d9933ba6e51e3cbeb52f12f7d",

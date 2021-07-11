@@ -5,7 +5,7 @@
 #include <string>
 #include <tuple>
 
-#include "gsl/gsl"
+#include "third_party/gsl/gsl"
 #include "zkclient/zkadapter.h"
 
 namespace hcoona {

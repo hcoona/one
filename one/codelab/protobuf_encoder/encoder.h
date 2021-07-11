@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "gsl/gsl"
+#include "third_party/gsl/gsl"
 
 namespace codelab {
 

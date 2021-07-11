@@ -12,7 +12,7 @@ cc_library(
     hdrs = ["encoder.h"],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
-    deps = ["@com_github_microsoft_gsl//:gsl"],
+    deps = ["//third_party/gsl:gsl_all"],
 )
 
 cc_test(

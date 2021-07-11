@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "gsl/gsl"
+#include "third_party/gsl/gsl"
 
 #if __cplusplus > 201703L
 #include <string_view>
