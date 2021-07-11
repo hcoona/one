@@ -4,13 +4,13 @@
 #include <functional>
 #include <string>
 
-#include "google/protobuf/descriptor.h"
-#include "google/protobuf/message.h"
 #include "third_party/absl/status/status.h"
 #include "third_party/absl/types/optional.h"
 #include "third_party/absl/types/span.h"
 #include "third_party/arrow/src/parquet/api/schema.h"
 #include "third_party/arrow/src/parquet/api/writer.h"
+#include "third_party/protobuf/src/google/protobuf/descriptor.h"
+#include "third_party/protobuf/src/google/protobuf/message.h"
 
 namespace hcoona {
 namespace codelab {
