@@ -32,7 +32,6 @@ build --action_env=CXX
 build --action_env=LLVM_CONFIG
 build --action_env=PATH
 
-build --action_env=CC=clang --action_env=CXX=clang++
 build:gcc --action_env=CC=gcc --action_env=CXX=g++
 
 # Default options should come above this line.
