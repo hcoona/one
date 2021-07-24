@@ -425,6 +425,9 @@ $RECYCLE.BIN/
 # Generated compile_commands.json
 /compile_commands.json
 
+# Generated clang.bazelrc
+/clang.bazelrc
+
 # VSCode generated eclipse files for Java
 .project
 .settings
