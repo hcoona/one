@@ -265,6 +265,11 @@ maven_install(
         "org.slf4j:slf4j-log4j12",
     ],
     maven_install_json = "@//:maven_install.json",
+    override_targets = {
+        "com.google.protobuf:protobuf-java": "//third_party/protobuf:protobuf_java",
+        "com.google.protobuf:protobuf-java-util": "//third_party/protobuf:protobuf_java_util",
+        "com.google.protobuf:protobuf-javalite": "//third_party/protobuf:protobuf_java_lite",
+    },
     repositories = MAVEN_REPOSITORIES,
 )
 

@@ -5,6 +5,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test", native_cc_p
 load("@rules_proto//proto:defs.bzl", "proto_lang_toolchain", "proto_library")
 load("@rules_python//python:defs.bzl", "py_library")
 load(":cc_proto_blacklist_test.bzl", "cc_proto_blacklist_test")
+load("@one_pip_deps//:requirements.bzl", "requirement")
 
 licenses(["notice"])
 
@@ -24,13 +25,27 @@ string_flag(
 config_setting(
     name = "use_com_google_googletest",
     flag_values = {
-        "//:incompatible_use_com_google_googletest": "true"
+        "//third_party/protobuf:incompatible_use_com_google_googletest": "true"
     },
 )
 
-GTEST = ["//third_party/googletest:gtest"]
+GTEST = select({
+    "//third_party/protobuf:use_com_google_googletest": [
+        "//third_party/googletest:gtest",
+    ],
+    "//conditions:default": [
+        "//external:gtest",
+    ],
+})
 
-GTEST_MAIN = ["//third_party/googletest:gtest_main"]
+GTEST_MAIN = select({
+    "//third_party/protobuf:use_com_google_googletest": [
+        "//third_party/googletest:gtest_main",
+    ],
+    "//conditions:default": [
+        "//external:gtest_main",
+    ],
+})
 
 ################################################################################
 # ZLIB configuration
@@ -82,7 +97,7 @@ create_compiler_config_setting(
     value = "msvc-cl",
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -93,7 +108,7 @@ config_setting(
     },
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -104,7 +119,7 @@ config_setting(
     },
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -115,7 +130,7 @@ config_setting(
     },
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -542,7 +557,6 @@ cc_proto_library(
     include = "src",
     default_runtime = ":protobuf",
     protoc = ":protoc",
-    deps = [":cc_wkt_protos"],
 )
 
 COMMON_TEST_SRCS = [
@@ -660,7 +674,7 @@ cc_test(
     ] + select({
         "//conditions:default": [
             # AUTOGEN(non_msvc_test_srcs)
-            # "src/google/protobuf/compiler/command_line_interface_unittest.cc",
+            "src/google/protobuf/compiler/command_line_interface_unittest.cc",
         ],
         ":msvc": [],
     }),
@@ -682,6 +696,48 @@ cc_test(
         ":protobuf",
         ":protoc_lib",
     ] + PROTOBUF_DEPS + GTEST_MAIN,
+)
+
+################################################################################
+# Java support
+################################################################################
+
+internal_gen_well_known_protos_java(
+    name = "gen_well_known_protos_java",
+    deps = [proto + "_proto" for proto in WELL_KNOWN_PROTO_MAP.keys()],
+    visibility = [
+        "//third_party/protobuf/java:__subpackages__",
+    ],
+)
+
+alias(
+    name = "protobuf_java",
+    actual = "//third_party/protobuf/java/core",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "protobuf_javalite",
+    actual = "//third_party/protobuf/java/lite",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "protobuf_java_util",
+    actual = "//third_party/protobuf/java/util",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "java_toolchain",
+    actual = "//third_party/protobuf/java/core:toolchain",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "javalite_toolchain",
+    actual = "//third_party/protobuf/java/lite:toolchain",
+    visibility = ["//visibility:public"],
 )
 
 ################################################################################
@@ -765,7 +821,7 @@ config_setting(
     },
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -776,7 +832,7 @@ config_setting(
     },
     visibility = [
         # Public, but Protobuf only visibility.
-        "//:__subpackages__",
+        "//third_party/protobuf:__subpackages__",
     ],
 )
 
@@ -811,7 +867,7 @@ py_proto_library(
     protoc = ":protoc",
     py_libs = [
         ":python_srcs",
-        "@six//:six",
+        requirement("six"),
     ],
     srcs_version = "PY2AND3",
     visibility = ["//visibility:public"],
@@ -932,7 +988,7 @@ genrule(
 proto_library(
     name = "generated_protos_proto",
     srcs = [
-        "//third_party/protobuf:src/google/protobuf/unittest_import_public.proto",
+        "src/google/protobuf/unittest_import_public.proto",
         "unittest_gen.proto",
     ],
 )
@@ -940,7 +996,7 @@ proto_library(
 py_proto_library(
     name = "generated_protos_py",
     srcs = [
-        "//third_party/protobuf:src/google/protobuf/unittest_import_public.proto",
+        "src/google/protobuf/unittest_import_public.proto",
         "unittest_gen.proto",
     ],
     default_runtime = "",
@@ -979,9 +1035,6 @@ cc_proto_library(
 cc_proto_library(
     name = "test_messages_proto3_proto_cc",
     srcs = ["src/google/protobuf/test_messages_proto3.proto"],
-    deps = [
-        ":cc_wkt_protos",
-    ],
 )
 
 proto_library(

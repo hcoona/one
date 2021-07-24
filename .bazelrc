@@ -3,6 +3,8 @@ build --cxxopt="-std=c++17" --cxxopt="-Wno-undef"
 build --conlyopt="-std=c11"
 build --proto_compiler=//third_party/protobuf:protoc
 build --proto_toolchain_for_cc=//third_party/protobuf:cc_toolchain
+build --proto_toolchain_for_java=//third_party/protobuf:java_toolchain
+build --proto_toolchain_for_javalite=//third_party/protobuf:javalite_toolchain
 
 # TODO(zhangshuai.ustc): Enable it for non-third_party targets.
 # Strict dependency check for C++ includes.

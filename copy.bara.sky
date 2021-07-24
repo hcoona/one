@@ -1083,10 +1083,17 @@ core.workflow(
             "**.cmake",
             "**.cmakein",
             "**.cmake.in",
-            "java/**",
+            ".github/**",
+            "benchmarks/**",
+            "cmake/**",
+            "csharp/**",
             "js/**",
+            "kokoro/**",
+            "m4/**",
             "objectivec/**",
+            "php/**",
             "ruby/**",
+            "third_party/**",
         ],
     ),
     destination_files = glob(
@@ -1101,11 +1108,33 @@ core.workflow(
     mode = "SQUASH",
     transformations = [
         core.move("BUILD", "BUILD.bazel"),
+        core.move("java/core/BUILD", "java/core/BUILD.bazel"),
+        core.move("java/lite/BUILD", "java/lite/BUILD.bazel"),
+        core.move("java/util/BUILD", "java/util/BUILD.bazel"),
         core.move("", "third_party/protobuf"),
+        core.replace(
+            before = "\"//:",
+            after = "\"//third_party/protobuf:",
+            paths = glob([
+                "third_party/protobuf/BUILD.bazel",
+                "third_party/protobuf/**/BUILD.bazel",
+            ]),
+        ),
+        core.replace(
+            before = "\"//java",
+            after = "\"//third_party/protobuf/java",
+            paths = glob([
+                "third_party/protobuf/BUILD.bazel",
+                "third_party/protobuf/**/BUILD.bazel",
+            ]),
+        ),
     ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
         patch.apply([
-            "third_party/protobuf/patches/0000-only-build-cxx-python.patch",
+            "third_party/protobuf/patches/0000-only-build-cxx-python-java.patch",
             "third_party/protobuf/patches/0001-fix-test-data-loading.patch",
+            "third_party/protobuf/patches/0002-patch-java-external-deps.patch",
+            "third_party/protobuf/patches/0003-fix-examples.patch",
+            "third_party/protobuf/patches/0004-do-not-use-cc_wkt_protos.patch",
         ]),
     ],
 )

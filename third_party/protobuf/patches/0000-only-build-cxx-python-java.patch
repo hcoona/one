@@ -1,0 +1,75 @@
+diff --git a/third_party/protobuf/BUILD.bazel b/third_party/protobuf/BUILD.bazel
+index 23ade7ca..2ccb4f75 100644
+--- a/third_party/protobuf/BUILD.bazel
++++ b/third_party/protobuf/BUILD.bazel
+@@ -1,10 +1,11 @@
+ # Bazel (https://bazel.build/) BUILD file for Protobuf.
+ 
+ load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test", "objc_library", native_cc_proto_library = "cc_proto_library")
++load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test", native_cc_proto_library = "cc_proto_library")
+ load("@rules_proto//proto:defs.bzl", "proto_lang_toolchain", "proto_library")
+ load("@rules_python//python:defs.bzl", "py_library")
+ load(":cc_proto_blacklist_test.bzl", "cc_proto_blacklist_test")
++load("@one_pip_deps//:requirements.bzl", "requirement")
+ 
+ licenses(["notice"])
+ 
+@@ -867,7 +868,7 @@ py_proto_library(
+     protoc = ":protoc",
+     py_libs = [
+         ":python_srcs",
+-        "@six//:six",
++        requirement("six"),
+     ],
+     srcs_version = "PY2AND3",
+     visibility = ["//visibility:public"],
+@@ -974,18 +975,6 @@ proto_lang_toolchain(
+     visibility = ["//visibility:public"],
+ )
+ 
+-alias(
+-    name = "objectivec",
+-    actual = "//objectivec",
+-    visibility = ["//visibility:public"],
+-)
+-
+-alias(
+-    name = "protobuf_objc",
+-    actual = "//objectivec",
+-    visibility = ["//visibility:public"],
+-)
+-
+ ################################################################################
+ # Test generated proto support
+ ################################################################################
+@@ -994,7 +983,7 @@ genrule(
+     name = "generated_protos",
+     srcs = ["src/google/protobuf/unittest_import.proto"],
+     outs = ["unittest_gen.proto"],
+-    cmd = "cat $(SRCS) | sed 's|google/|src/google/|' >  $(OUTS)",
++    cmd = "cat $(SRCS) | sed 's|google/|third_party/protobuf/src/google/|' >  $(OUTS)",
+ )
+ 
+ proto_library(
+@@ -1119,20 +1108,3 @@ cc_binary(
+         ":text_format_conformance_suite",
+     ],
+ )
+-
+-sh_test(
+-    name = "build_files_updated_unittest",
+-    srcs = [
+-        "build_files_updated_unittest.sh",
+-    ],
+-    data = [
+-        "BUILD",
+-        "cmake/extract_includes.bat.in",
+-        "cmake/libprotobuf.cmake",
+-        "cmake/libprotobuf-lite.cmake",
+-        "cmake/libprotoc.cmake",
+-        "cmake/tests.cmake",
+-        "src/Makefile.am",
+-        "update_file_lists.sh",
+-    ],
+-)
