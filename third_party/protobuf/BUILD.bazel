@@ -336,12 +336,6 @@ adapt_proto_library(
     visibility = ["//visibility:public"],
 )
 
-cc_library(
-    name = "cc_wkt_protos",
-    deprecation = "Only for backward compatibility. Do not use.",
-    visibility = ["//visibility:public"],
-)
-
 ################################################################################
 # Well Known Types Proto Library Rules
 #

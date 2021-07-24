@@ -1,8 +1,21 @@
 diff --git a/third_party/protobuf/BUILD.bazel b/third_party/protobuf/BUILD.bazel
-index 2ccb4f75..c4004563 100644
+index 2ccb4f75..9ffb1124 100644
 --- a/third_party/protobuf/BUILD.bazel
 +++ b/third_party/protobuf/BUILD.bazel
-@@ -557,7 +557,6 @@ cc_proto_library(
+@@ -336,12 +336,6 @@ adapt_proto_library(
+     visibility = ["//visibility:public"],
+ )
+ 
+-cc_library(
+-    name = "cc_wkt_protos",
+-    deprecation = "Only for backward compatibility. Do not use.",
+-    visibility = ["//visibility:public"],
+-)
+-
+ ################################################################################
+ # Well Known Types Proto Library Rules
+ #
+@@ -557,7 +551,6 @@ cc_proto_library(
      include = "src",
      default_runtime = ":protobuf",
      protoc = ":protoc",
@@ -10,7 +23,7 @@ index 2ccb4f75..c4004563 100644
  )
  
  COMMON_TEST_SRCS = [
-@@ -1036,9 +1035,6 @@ cc_proto_library(
+@@ -1036,9 +1029,6 @@ cc_proto_library(
  cc_proto_library(
      name = "test_messages_proto3_proto_cc",
      srcs = ["src/google/protobuf/test_messages_proto3.proto"],
