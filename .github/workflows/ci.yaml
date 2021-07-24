@@ -31,7 +31,11 @@ jobs:
       - name: Mount bazel cache  # Optional
         uses: actions/cache@v2
         with:
-          path: "~/.cache/bazel"
+          path: |
+            "~/.cache/bazel"
+            "~/.cache/bazelisk"
           key: bazel
+      - run: echo "common --disk_cache=$HOME/.cache/bazel/disk_cache" >> .bazelrc
+      - run: echo "common --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
       - run: bazel build //...
       - run: bazel test --test_env=srcdir=$PWD/third_party/protobuf/src/google/protobuf/testdata -- //... -//third_party/protobuf:protobuf_test -//third_party/arrow:column_io_benchmark
