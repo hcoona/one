@@ -1134,7 +1134,6 @@ core.workflow(
             "third_party/protobuf/patches/0001-fix-test-data-loading.patch",
             "third_party/protobuf/patches/0002-patch-java-external-deps.patch",
             "third_party/protobuf/patches/0003-fix-examples.patch",
-            "third_party/protobuf/patches/0004-do-not-use-cc_wkt_protos.patch",
         ]),
     ],
 )

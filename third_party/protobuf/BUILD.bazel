@@ -557,6 +557,7 @@ cc_proto_library(
     include = "src",
     default_runtime = ":protobuf",
     protoc = ":protoc",
+    deps = [":cc_wkt_protos"],
 )
 
 COMMON_TEST_SRCS = [
@@ -1035,6 +1036,9 @@ cc_proto_library(
 cc_proto_library(
     name = "test_messages_proto3_proto_cc",
     srcs = ["src/google/protobuf/test_messages_proto3.proto"],
+    deps = [
+        ":cc_wkt_protos",
+    ],
 )
 
 proto_library(
