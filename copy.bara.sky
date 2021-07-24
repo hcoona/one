@@ -1645,6 +1645,37 @@ core.workflow(
 )
 
 core.workflow(
+    name = "com_github_vim_vim",  # 2021-07-23T18:37:56Z
+    origin = git.origin(
+        url = "https://github.com/vim/vim",
+        ref = "v8.2.3206",
+    ),
+    destination = folder.destination(),
+    origin_files = glob(
+        [
+            "src/xxd/xxd.c",
+        ],
+        exclude = [
+        ],
+    ),
+    destination_files = glob(
+        [
+            "third_party/vim/**",
+        ],
+        exclude = [
+            "third_party/vim/BUILD.bazel",
+            "third_party/vim/patches/**",
+        ],
+    ),
+    authoring = authoring.overwrite("Shuai Zhang <zhangshuai.ustc@gmail.com>"),
+    mode = "SQUASH",
+    transformations = [
+        core.move("", "third_party/vim"),
+    ] + THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS + [
+    ],
+)
+
+core.workflow(
     name = "gtl_tensorflow",
     origin = git.origin(
         url = "https://github.com/tensorflow/tensorflow.git",
