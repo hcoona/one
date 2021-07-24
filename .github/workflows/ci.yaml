@@ -32,8 +32,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            "~/.cache/bazel"
-            "~/.cache/bazelisk"
+            ~/.cache/bazel
+            ~/.cache/bazelisk
           key: bazel
       - run: echo "common --disk_cache=$HOME/.cache/bazel/disk_cache" >> .bazelrc
       - run: echo "common --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
