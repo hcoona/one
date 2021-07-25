@@ -131,14 +131,14 @@
 // ABSL_ATTRIBUTE_WEAK
 //
 // Tags a function as weak for the purposes of compilation and linking.
-// Weak attributes currently do not work properly in LLVM's Windows backend,
-// so disable them there. See https://bugs.llvm.org/show_bug.cgi?id=37598
+// Weak attributes did not work properly in LLVM's Windows backend before
+// 9.0.0, so disable them there. See https://bugs.llvm.org/show_bug.cgi?id=37598
 // for further information.
 // The MinGW compiler doesn't complain about the weak attribute until the link
 // step, presumably because Windows doesn't use ELF binaries.
 #if (ABSL_HAVE_ATTRIBUTE(weak) ||                   \
      (defined(__GNUC__) && !defined(__clang__))) && \
-    !(defined(__llvm__) && defined(_WIN32)) && !defined(__MINGW32__)
+    (!defined(_WIN32) || __clang_major__ < 9) && !defined(__MINGW32__)
 #undef ABSL_ATTRIBUTE_WEAK
 #define ABSL_ATTRIBUTE_WEAK __attribute__((weak))
 #define ABSL_HAVE_ATTRIBUTE_WEAK 1
@@ -281,10 +281,7 @@
 // ABSL_ATTRIBUTE_RETURNS_NONNULL
 //
 // Tells the compiler that a particular function never returns a null pointer.
-#if ABSL_HAVE_ATTRIBUTE(returns_nonnull) || \
-    (defined(__GNUC__) && \
-     (__GNUC__ > 5 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9)) && \
-     !defined(__clang__))
+#if ABSL_HAVE_ATTRIBUTE(returns_nonnull)
 #define ABSL_ATTRIBUTE_RETURNS_NONNULL __attribute__((returns_nonnull))
 #else
 #define ABSL_ATTRIBUTE_RETURNS_NONNULL
@@ -524,6 +521,13 @@
 // ABSL_ATTRIBUTE_UNUSED
 //
 // Prevents the compiler from complaining about variables that appear unused.
+//
+// For code or headers that are assured to only build with C++17 and up, prefer
+// just using the standard '[[maybe_unused]]' directly over this macro.
+//
+// Due to differences in positioning requirements between the old, compiler
+// specific __attribute__ syntax and the now standard [[maybe_unused]], this
+// macro does not attempt to take advantage of '[[maybe_unused]]'.
 #if ABSL_HAVE_ATTRIBUTE(unused) || (defined(__GNUC__) && !defined(__clang__))
 #undef ABSL_ATTRIBUTE_UNUSED
 #define ABSL_ATTRIBUTE_UNUSED __attribute__((__unused__))
@@ -595,31 +599,24 @@
 //    case 42:
 //      ...
 //
-// Notes: when compiled with clang in C++11 mode, the ABSL_FALLTHROUGH_INTENDED
-// macro is expanded to the [[clang::fallthrough]] attribute, which is analysed
-// when  performing switch labels fall-through diagnostic
-// (`-Wimplicit-fallthrough`). See clang documentation on language extensions
-// for details:
+// Notes: When supported, GCC and Clang can issue a warning on switch labels
+// with unannotated fallthrough using the warning `-Wimplicit-fallthrough`. See
+// clang documentation on language extensions for details:
 // https://clang.llvm.org/docs/AttributeReference.html#fallthrough-clang-fallthrough
 //
-// When used with unsupported compilers, the ABSL_FALLTHROUGH_INTENDED macro
-// has no effect on diagnostics. In any case this macro has no effect on runtime
+// When used with unsupported compilers, the ABSL_FALLTHROUGH_INTENDED macro has
+// no effect on diagnostics. In any case this macro has no effect on runtime
 // behavior and performance of code.
 
 #ifdef ABSL_FALLTHROUGH_INTENDED
 #error "ABSL_FALLTHROUGH_INTENDED should not be defined."
-#endif
-
-// TODO(zhangxy): Use c++17 standard [[fallthrough]] macro, when supported.
-#if defined(__clang__) && defined(__has_warning)
-#if __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
+#elif ABSL_HAVE_CPP_ATTRIBUTE(fallthrough)
+#define ABSL_FALLTHROUGH_INTENDED [[fallthrough]]
+#elif ABSL_HAVE_CPP_ATTRIBUTE(clang::fallthrough)
 #define ABSL_FALLTHROUGH_INTENDED [[clang::fallthrough]]
-#endif
-#elif defined(__GNUC__) && __GNUC__ >= 7
+#elif ABSL_HAVE_CPP_ATTRIBUTE(gnu::fallthrough)
 #define ABSL_FALLTHROUGH_INTENDED [[gnu::fallthrough]]
-#endif
-
-#ifndef ABSL_FALLTHROUGH_INTENDED
+#else
 #define ABSL_FALLTHROUGH_INTENDED \
   do {                            \
   } while (0)
@@ -697,6 +694,28 @@
 #define ABSL_ATTRIBUTE_PURE_FUNCTION __attribute__((pure))
 #else
 #define ABSL_ATTRIBUTE_PURE_FUNCTION
+#endif
+
+// ABSL_ATTRIBUTE_LIFETIME_BOUND indicates that a resource owned by a function
+// parameter or implicit object parameter is retained by the return value of the
+// annotated function (or, for a parameter of a constructor, in the value of the
+// constructed object). This attribute causes warnings to be produced if a
+// temporary object does not live long enough.
+//
+// When applied to a reference parameter, the referenced object is assumed to be
+// retained by the return value of the function. When applied to a non-reference
+// parameter (for example, a pointer or a class type), all temporaries
+// referenced by the parameter are assumed to be retained by the return value of
+// the function.
+//
+// See also the upstream documentation:
+// https://clang.llvm.org/docs/AttributeReference.html#lifetimebound
+#if ABSL_HAVE_CPP_ATTRIBUTE(clang::lifetimebound)
+#define ABSL_ATTRIBUTE_LIFETIME_BOUND [[clang::lifetimebound]]
+#elif ABSL_HAVE_ATTRIBUTE(lifetimebound)
+#define ABSL_ATTRIBUTE_LIFETIME_BOUND __attribute__((lifetimebound))
+#else
+#define ABSL_ATTRIBUTE_LIFETIME_BOUND
 #endif
 
 #endif  // ABSL_BASE_ATTRIBUTES_H_
