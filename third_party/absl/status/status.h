@@ -291,6 +291,10 @@ enum class StatusToStringMode : int {
   kWithNoExtraData = 0,
   // ToString will contain the payloads.
   kWithPayload = 1 << 0,
+  // ToString will include all the extra data this Status has.
+  kWithEverything = ~kWithNoExtraData,
+  // Default mode used by ToString. Its exact value might change in the future.
+  kDefault = kWithPayload,
 };
 
 // absl::StatusToStringMode is specified as a bitmask type, which means the
@@ -410,7 +414,12 @@ inline StatusToStringMode& operator^=(StatusToStringMode& lhs,
 //     return result;
 //   }
 //
-class ABSL_MUST_USE_RESULT Status final {
+// For documentation see https://abseil.io/docs/cpp/guides/status.
+//
+// Returned Status objects may not be ignored. status_internal.h has a forward
+// declaration of the form
+// class ABSL_MUST_USE_RESULT Status;
+class Status final {
  public:
   // Constructors
 
@@ -502,7 +511,7 @@ class ABSL_MUST_USE_RESULT Status final {
   // result, and the payloads to be printed use the status payload printer
   // mechanism (which is internal).
   std::string ToString(
-      StatusToStringMode mode = StatusToStringMode::kWithPayload) const;
+      StatusToStringMode mode = StatusToStringMode::kDefault) const;
 
   // Status::IgnoreError()
   //

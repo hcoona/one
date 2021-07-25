@@ -26,6 +26,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "third_party/benchmark/include/benchmark/benchmark.h"
 #include "third_party/absl/base/internal/raw_logging.h"
 #include "third_party/absl/container/btree_map.h"
 #include "third_party/absl/container/btree_set.h"
@@ -39,7 +40,6 @@
 #include "third_party/absl/strings/cord.h"
 #include "third_party/absl/strings/str_format.h"
 #include "third_party/absl/time/time.h"
-#include "third_party/benchmark/include/benchmark/benchmark.h"
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN

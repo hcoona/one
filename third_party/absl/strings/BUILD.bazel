@@ -269,10 +269,14 @@ cc_library(
     name = "cord_internal",
     srcs = [
         "internal/cord_internal.cc",
+        "internal/cord_rep_btree.cc",
+        "internal/cord_rep_consume.cc",
         "internal/cord_rep_ring.cc",
     ],
     hdrs = [
         "internal/cord_internal.h",
+        "internal/cord_rep_btree.h",
+        "internal/cord_rep_consume.h",
         "internal/cord_rep_flat.h",
         "internal/cord_rep_ring.h",
         "internal/cord_rep_ring_reader.h",
@@ -292,7 +296,47 @@ cc_library(
         "//third_party/absl/container:compressed_tuple",
         "//third_party/absl/container:inlined_vector",
         "//third_party/absl/container:layout",
+        "//third_party/absl/functional:function_ref",
         "//third_party/absl/meta:type_traits",
+        "//third_party/absl/types:span",
+    ],
+)
+
+cc_test(
+    name = "cord_rep_btree_test",
+    size = "medium",
+    srcs = ["internal/cord_rep_btree_test.cc"],
+    copts = ABSL_TEST_COPTS,
+    visibility = ["//visibility:private"],
+    deps = [
+        ":cord_internal",
+        ":cord_rep_test_util",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:raw_logging_internal",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "cordz_update_tracker",
+    hdrs = ["internal/cordz_update_tracker.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = ["//third_party/absl/base:config"],
+)
+
+cc_test(
+    name = "cordz_update_tracker_test",
+    srcs = ["internal/cordz_update_tracker_test.cc"],
+    deps = [
+        ":cordz_update_tracker",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/absl/synchronization",
+        "//third_party/googletest:gtest_main",
     ],
 )
 
@@ -307,10 +351,16 @@ cc_library(
     copts = ABSL_DEFAULT_COPTS,
     deps = [
         ":cord_internal",
+        ":cordz_functions",
+        ":cordz_info",
+        ":cordz_statistics",
+        ":cordz_update_scope",
+        ":cordz_update_tracker",
         ":internal",
         ":str_format",
         ":strings",
         "//third_party/absl/base",
+        "//third_party/absl/base:config",
         "//third_party/absl/base:core_headers",
         "//third_party/absl/base:endian",
         "//third_party/absl/base:raw_logging_internal",
@@ -323,6 +373,215 @@ cc_library(
 )
 
 cc_library(
+    name = "cordz_handle",
+    srcs = ["internal/cordz_handle.cc"],
+    hdrs = ["internal/cordz_handle.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        "//third_party/absl/base",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:raw_logging_internal",
+        "//third_party/absl/synchronization",
+    ],
+)
+
+cc_library(
+    name = "cordz_info",
+    srcs = ["internal/cordz_info.cc"],
+    hdrs = ["internal/cordz_info.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        ":cord_internal",
+        ":cordz_functions",
+        ":cordz_handle",
+        ":cordz_statistics",
+        ":cordz_update_tracker",
+        "//third_party/absl/base",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/absl/base:raw_logging_internal",
+        "//third_party/absl/container:inlined_vector",
+        "//third_party/absl/debugging:stacktrace",
+        "//third_party/absl/synchronization",
+        "//third_party/absl/types:span",
+    ],
+)
+
+cc_library(
+    name = "cordz_update_scope",
+    hdrs = ["internal/cordz_update_scope.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        ":cord_internal",
+        ":cordz_info",
+        ":cordz_update_tracker",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+    ],
+)
+
+cc_test(
+    name = "cordz_update_scope_test",
+    srcs = ["internal/cordz_update_scope_test.cc"],
+    copts = ABSL_DEFAULT_COPTS,
+    deps = [
+        ":cord_internal",
+        ":cordz_info",
+        ":cordz_test_helpers",
+        ":cordz_update_scope",
+        ":cordz_update_tracker",
+        "//third_party/absl/base:config",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "cordz_sample_token",
+    srcs = ["internal/cordz_sample_token.cc"],
+    hdrs = ["internal/cordz_sample_token.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        ":cordz_handle",
+        ":cordz_info",
+        "//third_party/absl/base:config",
+    ],
+)
+
+cc_library(
+    name = "cordz_functions",
+    srcs = ["internal/cordz_functions.cc"],
+    hdrs = ["internal/cordz_functions.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/absl/base:exponential_biased",
+        "//third_party/absl/base:raw_logging_internal",
+    ],
+)
+
+cc_library(
+    name = "cordz_statistics",
+    hdrs = ["internal/cordz_statistics.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    visibility = [
+        "//third_party/absl:__subpackages__",
+    ],
+    deps = [
+        ":cordz_update_tracker",
+        "//third_party/absl/base:config",
+    ],
+)
+
+cc_test(
+    name = "cordz_functions_test",
+    srcs = [
+        "internal/cordz_functions_test.cc",
+    ],
+    deps = [
+        ":cordz_functions",
+        ":cordz_test_helpers",
+        "//third_party/absl/base:config",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cordz_handle_test",
+    srcs = [
+        "internal/cordz_handle_test.cc",
+    ],
+    deps = [
+        ":cordz_handle",
+        "//third_party/absl/base:config",
+        "//third_party/absl/memory",
+        "//third_party/absl/random",
+        "//third_party/absl/random:distributions",
+        "//third_party/absl/synchronization",
+        "//third_party/absl/synchronization:thread_pool",
+        "//third_party/absl/time",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cordz_info_test",
+    srcs = [
+        "internal/cordz_info_test.cc",
+    ],
+    deps = [
+        ":cord_internal",
+        ":cordz_handle",
+        ":cordz_info",
+        ":cordz_statistics",
+        ":cordz_test_helpers",
+        ":cordz_update_tracker",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/debugging:stacktrace",
+        "//third_party/absl/debugging:symbolize",
+        "//third_party/absl/types:span",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cordz_info_statistics_test",
+    srcs = [
+        "internal/cordz_info_statistics_test.cc",
+    ],
+    deps = [
+        ":cord",
+        ":cord_internal",
+        ":cordz_info",
+        ":cordz_sample_token",
+        ":cordz_statistics",
+        ":cordz_update_scope",
+        ":cordz_update_tracker",
+        "//third_party/absl/base:config",
+        "//third_party/absl/synchronization",
+        "//third_party/absl/synchronization:thread_pool",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cordz_sample_token_test",
+    srcs = [
+        "internal/cordz_sample_token_test.cc",
+    ],
+    deps = [
+        ":cord_internal",
+        ":cordz_handle",
+        ":cordz_info",
+        ":cordz_sample_token",
+        ":cordz_test_helpers",
+        "//third_party/absl/base:config",
+        "//third_party/absl/memory",
+        "//third_party/absl/random",
+        "//third_party/absl/synchronization",
+        "//third_party/absl/synchronization:thread_pool",
+        "//third_party/absl/time",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_library(
     name = "cord_test_helpers",
     testonly = 1,
     hdrs = [
@@ -331,6 +590,41 @@ cc_library(
     copts = ABSL_DEFAULT_COPTS,
     deps = [
         ":cord",
+        ":cord_internal",
+        ":strings",
+        "//third_party/absl/base:config",
+    ],
+)
+
+cc_library(
+    name = "cord_rep_test_util",
+    testonly = 1,
+    hdrs = ["internal/cord_rep_test_util.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    deps = [
+        ":cord_internal",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:raw_logging_internal",
+    ],
+)
+
+cc_library(
+    name = "cordz_test_helpers",
+    testonly = 1,
+    hdrs = ["cordz_test_helpers.h"],
+    copts = ABSL_DEFAULT_COPTS,
+    deps = [
+        ":cord",
+        ":cord_internal",
+        ":cordz_info",
+        ":cordz_sample_token",
+        ":cordz_statistics",
+        ":cordz_update_tracker",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/googletest:gtest",
     ],
 )
 
@@ -343,6 +637,8 @@ cc_test(
     deps = [
         ":cord",
         ":cord_test_helpers",
+        ":cordz_functions",
+        ":cordz_test_helpers",
         ":str_format",
         ":strings",
         "//third_party/absl/base",
@@ -351,6 +647,55 @@ cc_test(
         "//third_party/absl/base:endian",
         "//third_party/absl/base:raw_logging_internal",
         "//third_party/absl/container:fixed_array",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cordz_test",
+    size = "medium",
+    srcs = ["cordz_test.cc"],
+    copts = ABSL_TEST_COPTS,
+    tags = [
+        "benchmark",
+        "no_test_android_arm",
+        "no_test_android_arm64",
+        "no_test_android_x86",
+        "no_test_darwin_x86_64",
+        "no_test_ios_x86_64",
+        "no_test_loonix",
+        "no_test_msvc_x64",
+    ],
+    visibility = ["//visibility:private"],
+    deps = [
+        ":cord",
+        ":cord_test_helpers",
+        ":cordz_functions",
+        ":cordz_info",
+        ":cordz_sample_token",
+        ":cordz_statistics",
+        ":cordz_test_helpers",
+        ":cordz_update_tracker",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/absl/base:raw_logging_internal",
+        "//third_party/googletest:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "cord_rep_consume_test",
+    size = "medium",
+    srcs = ["internal/cord_rep_consume_test.cc"],
+    copts = ABSL_TEST_COPTS,
+    visibility = ["//visibility:private"],
+    deps = [
+        ":cord_internal",
+        ":strings",
+        "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
+        "//third_party/absl/debugging:leak_check",
         "//third_party/googletest:gtest_main",
     ],
 )
@@ -434,6 +779,7 @@ cc_test(
         ":strings",
         "//third_party/absl/base:core_headers",
         "//third_party/absl/base:dynamic_annotations",
+        "//third_party/absl/container:btree",
         "//third_party/absl/container:flat_hash_map",
         "//third_party/absl/container:node_hash_map",
         "//third_party/googletest:gtest_main",

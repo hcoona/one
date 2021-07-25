@@ -1,5 +1,5 @@
 diff --git a/third_party/absl/copts/GENERATED_copts.bzl b/third_party/absl/copts/GENERATED_copts.bzl
-index 6707488..951a091 100644
+index 0c7a91bd..1d5dc813 100644
 --- a/third_party/absl/copts/GENERATED_copts.bzl
 +++ b/third_party/absl/copts/GENERATED_copts.bzl
 @@ -42,7 +42,7 @@ ABSL_GCC_FLAGS = [
@@ -11,3 +11,12 @@ index 6707488..951a091 100644
      "-Wunused-local-typedefs",
      "-Wunused-result",
      "-Wvarargs",
+@@ -81,7 +81,7 @@ ABSL_LLVM_FLAGS = [
+     "-Wshadow-all",
+     "-Wstring-conversion",
+     "-Wtautological-overlap-compare",
+-    "-Wundef",
++    "-Wno-undef",
+     "-Wuninitialized",
+     "-Wunreachable-code",
+     "-Wunused-comparison",

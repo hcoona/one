@@ -369,10 +369,10 @@ THIRD_PARTY_REPLACEMENT_TRANSFORMATIONS = [
 ]
 
 core.workflow(
-    name = "com_google_absl",  # 2021-03-05
+    name = "com_google_absl",  # 2021-07-20T16:58:46Z
     origin = git.origin(
         url = "https://github.com/abseil/abseil-cpp/",
-        ref = "ab21820d47e4f83875dda008b600514d3520fd35",
+        ref = "2e94e5b6e152df9fa9c2fe8c1b96e1393973d32c",
     ),
     destination = folder.destination(),
     origin_files = glob(

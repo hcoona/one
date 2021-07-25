@@ -260,6 +260,7 @@ cc_library(
     visibility = ["//visibility:private"],
     deps = [
         "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
     ],
 )
 
@@ -273,6 +274,7 @@ cc_library(
     visibility = ["//visibility:private"],
     deps = [
         "//third_party/absl/base:config",
+        "//third_party/absl/base:core_headers",
     ],
 )
 
@@ -342,6 +344,7 @@ cc_test(
     srcs = ["internal/stack_consumption_test.cc"],
     copts = ABSL_TEST_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    tags = ["notsan"],
     deps = [
         ":stack_consumption",
         "//third_party/absl/base:core_headers",
