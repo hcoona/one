@@ -13,7 +13,10 @@ ARROW_FLAGS = [
     "-Wno-sign-conversion",
     "-Wno-unused-variable",
     # Add by me to suppress warnings
+    "-Wno-documentation-unknown-command",
+    "-Wno-shadow-field",
     "-Wno-sign-compare",
+    "-Wno-unused-parameter",
 ] + [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L429
     "-DARROW_HAVE_AVX2",

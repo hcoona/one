@@ -47,6 +47,9 @@ cc_test(
 cc_test(
     name = "bounds_test",
     srcs = ["bounds_tests.cpp"],
+    copts = [
+        "-Wno-deprecated-declarations",
+    ],
     deps = [
         ":gsl_all",
         "//third_party/googletest:gtest_main",
@@ -105,6 +108,10 @@ cc_test(
 cc_test(
     name = "span_ext_test",
     srcs = ["span_ext_tests.cpp"],
+    copts = [
+        "-Wno-deprecated-declarations",
+        "-Wno-missing-braces",
+    ],
     deps = [
         ":gsl_all",
         "//third_party/googletest:gtest_main",

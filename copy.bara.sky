@@ -687,6 +687,7 @@ core.workflow(
         ),
         patch.apply([
             "third_party/glog/patches/0001-include-prefix-third-party.patch",
+            "third_party/glog/patches/0002-fix-compiler-complains.patch",
         ]),
     ],
 )
