@@ -95,8 +95,6 @@
 // being defined as many user-defined container types don't have
 // value_type.
 
-// GOOGLETEST_CM0001 DO NOT DELETE
-
 #ifndef GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
 #define GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
 
@@ -112,11 +110,6 @@
 
 #include "third_party/googletest/googletest/include/gtest/internal/gtest-internal.h"
 #include "third_party/googletest/googletest/include/gtest/internal/gtest-port.h"
-
-#if GTEST_HAS_RTTI
-#include <typeindex>
-#include <typeinfo>
-#endif  // GTEST_HAS_RTTI
 
 namespace testing {
 
@@ -365,7 +358,7 @@ GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(char);
 GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(const char);
 GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(wchar_t);
 GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(const wchar_t);
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
 GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(char8_t);
 GTEST_IMPL_FORMAT_C_STRING_AS_POINTER_(const char8_t);
 #endif
@@ -505,24 +498,21 @@ inline void PrintTo(unsigned char* s, ::std::ostream* os) {
   PrintTo(ImplicitCast_<const void*>(s), os);
 }
 #ifdef __cpp_char8_t
-inline void PrintTo(const char8_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
-}
+// Overloads for u8 strings.
+GTEST_API_ void PrintTo(const char8_t* s, ::std::ostream* os);
 inline void PrintTo(char8_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
+  PrintTo(ImplicitCast_<const char8_t*>(s), os);
 }
 #endif
-inline void PrintTo(const char16_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
-}
+// Overloads for u16 strings.
+GTEST_API_ void PrintTo(const char16_t* s, ::std::ostream* os);
 inline void PrintTo(char16_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
+  PrintTo(ImplicitCast_<const char16_t*>(s), os);
 }
-inline void PrintTo(const char32_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
-}
+// Overloads for u32 strings.
+GTEST_API_ void PrintTo(const char32_t* s, ::std::ostream* os);
 inline void PrintTo(char32_t* s, ::std::ostream* os) {
-  PrintTo(ImplicitCast_<const void*>(s), os);
+  PrintTo(ImplicitCast_<const char32_t*>(s), os);
 }
 
 // MSVC can be configured to define wchar_t as a typedef of unsigned
@@ -556,6 +546,26 @@ void PrintRawArrayTo(const T a[], size_t count, ::std::ostream* os) {
 GTEST_API_ void PrintStringTo(const ::std::string&s, ::std::ostream* os);
 inline void PrintTo(const ::std::string& s, ::std::ostream* os) {
   PrintStringTo(s, os);
+}
+
+// Overloads for ::std::u8string
+#ifdef __cpp_char8_t
+GTEST_API_ void PrintU8StringTo(const ::std::u8string& s, ::std::ostream* os);
+inline void PrintTo(const ::std::u8string& s, ::std::ostream* os) {
+  PrintU8StringTo(s, os);
+}
+#endif
+
+// Overloads for ::std::u16string
+GTEST_API_ void PrintU16StringTo(const ::std::u16string& s, ::std::ostream* os);
+inline void PrintTo(const ::std::u16string& s, ::std::ostream* os) {
+  PrintU16StringTo(s, os);
+}
+
+// Overloads for ::std::u32string
+GTEST_API_ void PrintU32StringTo(const ::std::u32string& s, ::std::ostream* os);
+inline void PrintTo(const ::std::u32string& s, ::std::ostream* os) {
+  PrintU32StringTo(s, os);
 }
 
 // Overloads for ::std::wstring.
@@ -654,18 +664,6 @@ void PrintTo(const ::std::pair<T1, T2>& value, ::std::ostream* os) {
   UniversalPrinter<T2>::Print(value.second, os);
   *os << ')';
 }
-
-#if GTEST_HAS_RTTI
-inline void PrintTo(const ::std::type_info& value, ::std::ostream* os) {
-  internal::PrintTo<::std::type_info>(value, os);
-  *os << " (\"" << value.name() << "\")";
-}
-
-inline void PrintTo(const ::std::type_index& value, ::std::ostream* os) {
-  internal::PrintTo<::std::type_index>(value, os);
-  *os << " (\"" << value.name() << "\")";
-}
-#endif  // GTEST_HAS_RTTI
 
 // Implements printing a non-reference type T by letting the compiler
 // pick the right overload of PrintTo() for T.
@@ -805,6 +803,20 @@ void UniversalPrintArray(const T* begin, size_t len, ::std::ostream* os) {
 GTEST_API_ void UniversalPrintArray(
     const char* begin, size_t len, ::std::ostream* os);
 
+#ifdef __cpp_char8_t
+// This overload prints a (const) char8_t array compactly.
+GTEST_API_ void UniversalPrintArray(const char8_t* begin, size_t len,
+                                    ::std::ostream* os);
+#endif
+
+// This overload prints a (const) char16_t array compactly.
+GTEST_API_ void UniversalPrintArray(const char16_t* begin, size_t len,
+                                    ::std::ostream* os);
+
+// This overload prints a (const) char32_t array compactly.
+GTEST_API_ void UniversalPrintArray(const char32_t* begin, size_t len,
+                                    ::std::ostream* os);
+
 // This overload prints a (const) wchar_t array compactly.
 GTEST_API_ void UniversalPrintArray(
     const wchar_t* begin, size_t len, ::std::ostream* os);
@@ -877,12 +889,55 @@ class UniversalTersePrinter<const char*> {
   }
 };
 template <>
-class UniversalTersePrinter<char*> {
+class UniversalTersePrinter<char*> : public UniversalTersePrinter<const char*> {
+};
+
+#ifdef __cpp_char8_t
+template <>
+class UniversalTersePrinter<const char8_t*> {
  public:
-  static void Print(char* str, ::std::ostream* os) {
-    UniversalTersePrinter<const char*>::Print(str, os);
+  static void Print(const char8_t* str, ::std::ostream* os) {
+    if (str == nullptr) {
+      *os << "NULL";
+    } else {
+      UniversalPrint(::std::u8string(str), os);
+    }
   }
 };
+template <>
+class UniversalTersePrinter<char8_t*>
+    : public UniversalTersePrinter<const char8_t*> {};
+#endif
+
+template <>
+class UniversalTersePrinter<const char16_t*> {
+ public:
+  static void Print(const char16_t* str, ::std::ostream* os) {
+    if (str == nullptr) {
+      *os << "NULL";
+    } else {
+      UniversalPrint(::std::u16string(str), os);
+    }
+  }
+};
+template <>
+class UniversalTersePrinter<char16_t*>
+    : public UniversalTersePrinter<const char16_t*> {};
+
+template <>
+class UniversalTersePrinter<const char32_t*> {
+ public:
+  static void Print(const char32_t* str, ::std::ostream* os) {
+    if (str == nullptr) {
+      *os << "NULL";
+    } else {
+      UniversalPrint(::std::u32string(str), os);
+    }
+  }
+};
+template <>
+class UniversalTersePrinter<char32_t*>
+    : public UniversalTersePrinter<const char32_t*> {};
 
 #if GTEST_HAS_STD_WSTRING
 template <>

@@ -32,10 +32,8 @@
 //
 // This file implements some commonly used variadic actions.
 
-// GOOGLETEST_CM0002 DO NOT DELETE
-
-#ifndef GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_
-#define GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_
+#ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_
+#define GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_
 
 #include <memory>
 #include <utility>
@@ -570,4 +568,4 @@ InvokeArgument(Params&&... params) {
 
 }  // namespace testing
 
-#endif  // GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_
+#endif  // GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_ACTIONS_H_

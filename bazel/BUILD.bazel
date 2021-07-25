@@ -8,6 +8,14 @@ create_llvm_config(
 )
 
 config_setting(
+    name = "msvc_compiler",
+    flag_values = {
+        "@bazel_tools//tools/cpp:compiler": "msvc-cl",
+    },
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
     name = "macos",
     constraint_values = [
         "@platforms//os:macos",
