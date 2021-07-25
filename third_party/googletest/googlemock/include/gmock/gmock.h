@@ -32,10 +32,8 @@
 //
 // This is the main header file a user should include.
 
-// GOOGLETEST_CM0002 DO NOT DELETE
-
-#ifndef GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
-#define GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
+#ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
+#define GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
 
 // This file implements the following syntax:
 //
@@ -95,4 +93,4 @@ GTEST_API_ void InitGoogleMock();
 
 }  // namespace testing
 
-#endif  // GOOGLETEST_GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
+#endif  // GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_

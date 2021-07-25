@@ -416,10 +416,10 @@ core.workflow(
 )
 
 core.workflow(
-    name = "com_google_googletest",  # 2021-03-10
+    name = "com_google_googletest",  # 2021-07-22T18:54:03Z
     origin = git.origin(
         url = "https://github.com/google/googletest/",
-        ref = "763eaa430540926fa16060654427149802c97fba",
+        ref = "96f4ce02a3a78d63981c67acbd368945d11d7d70",
     ),
     destination = folder.destination(),
     origin_files = glob(
@@ -453,6 +453,20 @@ core.workflow(
                 "**/BUILD",
                 "**/BUILD.bazel",
                 "**.bzl",
+            ]),
+        ),
+        core.replace(
+            before = "        \"//:qnx\": [],",
+            after = "",
+            paths = glob([
+                "**/BUILD.bazel",
+            ]),
+        ),
+        core.replace(
+            before = "//:msvc_compiler",
+            after = "//bazel:msvc_compiler",
+            paths = glob([
+                "**/BUILD.bazel",
             ]),
         ),
         patch.apply([
