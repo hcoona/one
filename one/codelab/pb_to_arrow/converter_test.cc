@@ -387,11 +387,16 @@ TEST(TestComplexData, TestMessageACase2) {
   message_a.add_id(11);
   message_a.add_id(13);
   message_a.add_id(17);
-  message_a.mutable_my_map()->insert(google::protobuf::MapPair(1, 2));
-  message_a.mutable_my_map()->insert(google::protobuf::MapPair(2, 3));
-  message_a.mutable_my_map()->insert(google::protobuf::MapPair(3, 5));
-  message_a.mutable_my_map()->insert(google::protobuf::MapPair(4, 8));
-  message_a.mutable_my_map()->insert(google::protobuf::MapPair(5, 13));
+  message_a.mutable_my_map()->insert(
+      google::protobuf::MapPair<int32_t, int32_t>(1, 2));
+  message_a.mutable_my_map()->insert(
+      google::protobuf::MapPair<int32_t, int32_t>(2, 3));
+  message_a.mutable_my_map()->insert(
+      google::protobuf::MapPair<int32_t, int32_t>(3, 5));
+  message_a.mutable_my_map()->insert(
+      google::protobuf::MapPair<int32_t, int32_t>(4, 8));
+  message_a.mutable_my_map()->insert(
+      google::protobuf::MapPair<int32_t, int32_t>(5, 13));
   message_a.set_my_oneof_string_value(HELLO_WORLD);
 
   google::protobuf::Message* message = &message_a;
