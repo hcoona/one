@@ -94,8 +94,8 @@ index c45ab89..c963b02 100644
 --- a/gtl/crypto/sha2.h
 +++ b/gtl/crypto/sha2.h
 @@ -13,7 +13,7 @@
- #include "third_party/absl/types/span.h"
- #include "third_party/absl/strings/string_view.h"
+ #include "absl/types/span.h"
+ #include "absl/strings/string_view.h"
 
 -
 +namespace gtl {

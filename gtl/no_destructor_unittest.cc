@@ -7,7 +7,7 @@
 #include <string>
 #include <utility>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 #include "config/config.h"
 #include "gtest/gtest.h"
 

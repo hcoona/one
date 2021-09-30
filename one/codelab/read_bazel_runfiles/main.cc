@@ -1,10 +1,10 @@
 #include <memory>
 #include <string>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/gflags/gflags.h"
-#include "third_party/glog/logging.h"
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"

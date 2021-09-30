@@ -18,10 +18,10 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/time",
-        "//third_party/absl/types:variant",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:variant",
     ],
 )
 
@@ -32,7 +32,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":event_dispatcher",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -49,11 +49,11 @@ cc_library(
     deps = [
         ":event_dispatcher",
         ":service_state",
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/status:statusor",
-        "//third_party/absl/synchronization",
-        "//third_party/absl/time",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/time",
     ],
 )
 
@@ -64,8 +64,8 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":service",
-        "//third_party/absl/synchronization",
-        "//third_party/googletest:gtest_main",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -76,9 +76,9 @@ cc_library(
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/time",
-        "//third_party/absl/types:any",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:any",
     ],
 )

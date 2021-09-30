@@ -5,12 +5,12 @@
 #include <string>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/types/span.h"
-#include "third_party/arrow/src/arrow/api.h"
-#include "third_party/arrow/src/parquet/arrow/writer.h"
-#include "third_party/protobuf/src/google/protobuf/descriptor.h"
-#include "third_party/protobuf/src/google/protobuf/message.h"
+#include "absl/status/status.h"
+#include "absl/types/span.h"
+#include "arrow/api.h"
+#include "parquet/arrow/writer.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/message.h"
 
 namespace hcoona {
 namespace codelab {

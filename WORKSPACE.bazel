@@ -138,6 +138,8 @@ http_archive(
     ],
 )
 
+# TODO(zhangshuai.ustc): http_archive deps https://github.com/bazelbuild/rules_fuzzing/blob/master/fuzzing/repositories.bzl
+# TODO(zhangshuai.ustc): call init: https://github.com/bazelbuild/rules_fuzzing/blob/master/fuzzing/init.bzl
 http_archive(
     name = "rules_fuzzing",
     sha256 = RULES_FUZZING_SHA256,
@@ -145,46 +147,356 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_fuzzing/archive/v{version}.zip".format(version = RULES_FUZZING_TAG)],
 )
 
-######
-# Remove later
-######
+#
+# Binding rules
+#
 
+# We should use less binding rules whenever possible.
+
+# Placeholder for Python binding python_headers (Python.h in python3-dev).
+#
+# This is a placeholder for python headers. Projects needing to use
+# fast cpp protos in protobuf's python interface should build with
+# --define=use_fast_cpp_protos=true, and in addition, provide
+# //external:python_headers dependency that in turn provides Python.h.
+#
+# Projects that include protobuf using a Bazel external repository will need to
+# add a workspace rule to their WORKSPACE files to add an external workspace
+# that includes the Python headers. For example, the protobuf WORKSPACE file
+# includes the following local_repository rule that points to this directory:
+#
+# new_local_repository(
+#   name = "python_headers",
+#   path = __workspace_dir__ + "/util/python",
+# )
+#
+# TODO(zhangshuai.ds): Bind to system_python?
 bind(
     name = "python_headers",
-    actual = "//third_party/protobuf/util/python:python_headers",
+    actual = "@com_google_protobuf//util/python:python_headers",
 )
 
-http_archive(
-    name = "com_github_nelhage_rules_boost",  # 2021-03-01
-    patch_args = ["-p1"],
-    patches = [
-        "//third_party/boost:patches/0000-rules-boost-use-third-party.patch",
-    ],
-    sha256 = "07ba4580f4ff3197c4952d3a3164c7c1d4106f9e42fa405496d5843e2e659040",
-    strip_prefix = "rules_boost-c13a880269cc044c4b5e90046625339836771d77",
-    urls = [
-        "https://github.com/nelhage/rules_boost/archive/c13a880269cc044c4b5e90046625339836771d77.tar.gz",
-    ],
+# java_lite_proto_library rules implicitly depend on @com_google_protobuf_javalite//:javalite_toolchain,
+# which is the JavaLite proto runtime (base classes and common utilities).
+bind(
+    name = "com_google_protobuf_javalite",
+    actual = "@com_google_protobuf",
 )
 
-# TODO(zhangshuai.ustc): move boost into third_party.
+#
+# C++ deps
+#
+
+# Ordered lexicographical.
+
+# TODO(zhangshuai.ustc): Patch to fix deps different names.
+# TODO(zhangshuai.ustc): Patch to prefix third_party for include path?
+# TODO(zhangshuai.ustc): Unify config.h
+
 http_archive(
-    name = "boost",  # 2020-12-11
+    name = "boost",  # 2021-08-05T01:30:05Z
     build_file = "@com_github_nelhage_rules_boost//:BUILD.boost",
     patch_cmds = ["rm -f doc/pdf/BUILD"],
     patch_cmds_win = ["Remove-Item -Force doc/pdf/BUILD"],
-    sha256 = "aeb26f80e80945e82ee93e5939baebdca47b9dee80a07d3144be1e1a6a66dd6a",
-    strip_prefix = "boost_1_75_0",
+    sha256 = "5347464af5b14ac54bb945dc68f1dd7c56f0dad7262816b956138fc53bcc0131",
+    strip_prefix = "boost_1_77_0",
     urls = [
-        "https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz",
+        "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz",
     ],
 )
 
 http_archive(
-    name = "com_googlesource_code_re2",
+    name = "boringssl",  # 2021-01-25T19:19:49Z
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/boringssl:0001-enable-c11-atomic.patch",
+    ],
+    sha256 = "c02a893c15730593ef3e55402f2797631d89d1c3585e3cddc2a5bf2ac524dec6",
+    strip_prefix = "boringssl-489fe4706f67c58fcadd29d6099d4e129323bfa9",
+    urls = ["https://github.com/google/boringssl/archive/489fe4706f67c58fcadd29d6099d4e129323bfa9.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_apache_arrow",  # 2021-05-19T03:51:46Z
+    build_file = "//third_party/arrow:arrow.BUILD",
+    sha256 = "79d3e807df4a179cfab1e7a1ab5f79d95f7b72ac2c33aba030febd125d77eb3b",
+    strip_prefix = "arrow-apache-arrow-4.0.1",
+    urls = [
+        "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-4.0.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_cares_cares",
+    build_file = "@com_github_grpc_grpc//third_party:cares/cares.BUILD",
+    sha256 = "e8c2751ddc70fed9dc6f999acd92e232d5846f009ee1674f8aee81f19b2b915a",
+    strip_prefix = "c-ares-e982924acee7f7313b4baa4ee5ec000c5e373c30",
+    urls = [
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
+        "https://github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ds): Use common xxhash?
+http_archive(
+    name = "com_github_facebook_zstd",  # 2021-05-14T16:01:54Z
+    build_file = "//third_party/zstd:zstd.BUILD",
+    sha256 = "5194fbfa781fcf45b98c5e849651aa7b3b0a008c6b72d4a0db760f3002291e94",
+    strip_prefix = "zstd-1.5.0",
+    urls = [
+        "https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-1.5.0.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ds): Try remove gflags.
+http_archive(
+    name = "com_github_gflags_gflags",  # 2018-11-11T21:30:10Z
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_google_benchmark",  # 2021-07-01T09:02:54Z
+    sha256 = "1cb4b97a90aa1fd9c8e412a6bc29fc13fc140162a4a0db3811af40befd8c9ea5",
+    strip_prefix = "benchmark-e451e50e9b8af453f076dec10bd6890847f1624e",
+    urls = ["https://github.com/google/benchmark/archive/e451e50e9b8af453f076dec10bd6890847f1624e.zip"],
+)
+
+http_archive(
+    name = "com_github_google_flatbuffers",  # 2021-05-10T19:33:05Z
+    sha256 = "9ddb9031798f4f8754d00fca2f1a68ecf9d0f83dfac7239af1311e4fd9a565c4",
+    strip_prefix = "flatbuffers-2.0.0",
+    urls = ["https://github.com/google/flatbuffers/archive/refs/tags/v2.0.0.tar.gz"],
+)
+
+# TODO(zhangshuai.ds): Implement glog interface with spdlog.
+http_archive(
+    name = "com_github_google_glog",  # 2021-05-07T23:06:39Z
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/glog:0001-improvement-copts.patch",
+        "//third_party/glog:0002-mark-override.patch",
+    ],
+    sha256 = "21bc744fb7f2fa701ee8db339ded7dce4f975d0d55837a97be7d46e8382dea5a",
+    strip_prefix = "glog-0.5.0",
+    urls = ["https://github.com/google/glog/archive/v0.5.0.zip"],
+)
+
+http_archive(
+    name = "com_github_google_snappy",  # 2017-08-25
+    build_file = "//third_party/snappy:snappy.BUILD",
+    sha256 = "3dfa02e873ff51a11ee02b9ca391807f0c8ea0529a4924afa645fbf97163f9d4",
+    strip_prefix = "snappy-1.1.7",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/1.1.7.tar.gz",
+        "https://github.com/google/snappy/archive/1.1.7.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ds): Patch to use external xxhash
+# TODO(zhangshuai.ds): Fix for Python
+http_archive(
+    name = "com_github_grpc_grpc",  # 2021-09-27T18:21:34Z
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/grpc:0001-strip-non-cxx-python-java-deps.patch",
+        "//third_party/grpc:0002-fix-external-deps.patch",
+        "//third_party/grpc:0003-fix-protoc-label.patch",
+    ],
+    sha256 = "e5fb30aae1fa1cffa4ce00aa0bbfab908c0b899fcf0bbc30e268367d660d8656",
+    strip_prefix = "grpc-1.41.0",
+    urls = ["https://github.com/grpc/grpc/archive/refs/tags/v1.41.0.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_juliastrings_utf8proc",  # 2020-12-15T23:13:51Z
+    build_file = "//third_party/utf8proc:utf8proc.BUILD",
+    sha256 = "4c06a9dc4017e8a2438ef80ee371d45868bda2237a98b26554de7a95406b283b",
+    strip_prefix = "utf8proc-2.6.1",
+    urls = ["https://github.com/JuliaStrings/utf8proc/archive/refs/tags/v2.6.1.tar.gz"],
+)
+
+# TODO(zhangshuai.ustc): Upgrade it to v2.1.12.
+http_archive(
+    name = "com_github_libevent_libevent",  # 2019-08-01T21:50:01Z
+    build_file = "//third_party/libevent:libevent.BUILD",
+    sha256 = "a65bac6202ea8c5609fd5c7e480e6d25de467ea1917c08290c521752f147283d",
+    strip_prefix = "libevent-2.1.11-stable",
+    urls = ["https://github.com/libevent/libevent/releases/download/release-2.1.11-stable/libevent-2.1.11-stable.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_lz4_lz4",  # 2019-08-20
+    build_file = "//third_party/lz4:lz4.BUILD",
+    sha256 = "658ba6191fa44c92280d4aa2c271b0f4fbc0e34d249578dd05e50e76d0e5efcc",
+    strip_prefix = "lz4-1.9.2",
+    urls = ["https://github.com/lz4/lz4/archive/v1.9.2.tar.gz"],
+)
+
+# TODO(zhangshuai.ustc): SIMD optimization.
+http_archive(
+    name = "com_github_madler_zlib",  # 2017-01-15T17:57:23Z
+    build_file = "//third_party/zlib:zlib.BUILD",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
+    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_microsoft_gsl",  # 2020-06-04T20:39:07Z
+    build_file = "//third_party/gsl:gsl.BUILD",
+    sha256 = "d3234d7f94cea4389e3ca70619b82e8fb4c2f33bb3a070799f1e18eef500a083",
+    strip_prefix = "GSL-3.1.0",
+    urls = ["https://github.com/microsoft/GSL/archive/refs/tags/v3.1.0.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_vim_vim",  # 2021-09-30T18:00:00Z
+    build_file = "//third_party/vim:vim.BUILD",
+    sha256 = "ec05d2d438c3487c4c8aaa626195f9e3ca0903659b91824f44ee299a3af850fe",
+    strip_prefix = "vim-8.2.3459",
+    urls = ["https://github.com/vim/vim/archive/refs/tags/v8.2.3459.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_nelhage_rules_boost",  # 2021-08-27T15:46:06Z
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/boost:0001-fix-deps-repo-name.patch",
+        "//third_party/boost:0002-rename-lzma-repo-name-in-build-file.patch",
+    ],
+    sha256 = "2d0b2eef7137730dbbb180397fe9c3d601f8f25950c43222cb3ee85256a21869",
+    strip_prefix = "rules_boost-fce83babe3f6287bccb45d2df013a309fa3194b8",
+    urls = [
+        "https://github.com/nelhage/rules_boost/archive/fce83babe3f6287bccb45d2df013a309fa3194b8.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_tencent_rapidjson",  # 2021-09-24T10:05:03Z
+    build_file = "//third_party/rapidjson:rapidjson.BUILD",
+    sha256 = "535ae18d9c6770ad549e2d203e3c4aec6352aff00e4ea6f3b00f400043b44f32",
+    strip_prefix = "rapidjson-2e8f5d897d9d461a7273b4b812b0127f321b1dcf",
+    urls = ["https://github.com/Tencent/rapidjson/archive/2e8f5d897d9d461a7273b4b812b0127f321b1dcf.zip"],
+)
+
+http_archive(
+    name = "com_github_westes_flex",  # 2017-05-06T20:44:33Z
+    build_file = "//third_party/flex:flex.BUILD",
+    sha256 = "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995",
+    strip_prefix = "flex-2.6.4",
+    urls = ["https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_xtensor_stack_xsimd",  # 2021-07-30T15:04:24Z
+    build_file = "//third_party/xsimd:xsimd.BUILD",
+    sha256 = "eaf47f1a316ef6c3287b266161eeafc5aa61226ce5ac6c13502546435b790252",
+    strip_prefix = "xsimd-7.6.0",
+    urls = ["https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.6.0.tar.gz"],
+)
+
+http_archive(
+    name = "com_google_absl",  # 2021-09-27T18:06:52Z
+    sha256 = "2f0d9c7bc770f32bda06a9548f537b63602987d5a173791485151aba28a90099",
+    strip_prefix = "abseil-cpp-7143e49e74857a009e16c51f6076eb197b6ccb49",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/7143e49e74857a009e16c51f6076eb197b6ccb49.zip"],
+)
+
+http_archive(
+    name = "com_google_googletest",  # 2021-07-09T13:28:13Z
+    sha256 = "12ef65654dc01ab40f6f33f9d02c04f2097d2cd9fbe48dc6001b29543583b0ad",
+    strip_prefix = "googletest-8d51ffdfab10b3fba636ae69bc03da4b54f8c235",
+    urls = ["https://github.com/google/googletest/archive/8d51ffdfab10b3fba636ae69bc03da4b54f8c235.zip"],
+)
+
+http_archive(
+    name = "com_google_protobuf",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/protobuf:0001-fix-deps-repo-name.patch",
+    ],
+    sha256 = "14e8042b5da37652c92ef6a2759e7d2979d295f60afd7767825e3de68c856c54",
+    strip_prefix = "protobuf-3.18.0",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.18.0.tar.gz"],
+)
+
+http_archive(
+    name = "com_googlesource_code_re2",  # 2020-07-01
     sha256 = "428735aea6e8007c14d2e75c69f66cf5b71a009d9933ba6e51e3cbeb52f12f7d",
     strip_prefix = "re2-b83705e2d297f21b0805202bac86c935670634f8",
-    url = "https://github.com/google/re2/archive/b83705e2d297f21b0805202bac86c935670634f8.tar.gz",  # 2020-07-01
+    url = "https://github.com/google/re2/archive/b83705e2d297f21b0805202bac86c935670634f8.tar.gz",
+)
+
+http_archive(
+    name = "io_opencensus_cpp",
+    sha256 = "90d6fafa8b1a2ea613bf662731d3086e1c2ed286f458a95c81744df2dbae41b1",
+    strip_prefix = "opencensus-cpp-c9a4da319bc669a772928ffc55af4a61be1a1176",
+    urls = [
+        "https://storage.googleapis.com/grpc-bazel-mirror/github.com/census-instrumentation/opencensus-cpp/archive/c9a4da319bc669a772928ffc55af4a61be1a1176.tar.gz",
+        "https://github.com/census-instrumentation/opencensus-cpp/archive/c9a4da319bc669a772928ffc55af4a61be1a1176.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ds): Upgrade it.
+# TODO(zhangshuai.ds): Use common hdfs.
+# TODO(zhangshuai.ds): Generate generated files with flatbuffers & thrift.
+# TODO(zhangshuai.ds): Build Java targets.
+http_archive(
+    name = "org_apache_arrow",  # 2021-05-19T03:51:46Z
+    build_file = "//third_party/arrow:arrow.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/arrow:0001-fix-redefine-logging-macros.patch",
+        "//third_party/arrow:0002-backport-ARROW-13676.patch",
+    ],
+    sha256 = "75ccbfa276b925c6b1c978a920ff2f30c4b0d3fdf8b51777915b6f69a211896e",
+    strip_prefix = "apache-arrow-4.0.1",
+    urls = [
+        "https://mirrors.tuna.tsinghua.edu.cn/apache/arrow/arrow-4.0.1/apache-arrow-4.0.1.tar.gz",
+        "https://archive.apache.org/dist/arrow/arrow-4.0.1/apache-arrow-4.0.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "org_apache_thrift",  # 2020-05-27T07:08:57Z
+    build_file = "//third_party/thrift:thrift.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/thrift:0001-build-with-boringssl.patch",
+        "//third_party/thrift:0002-fix-include.patch",
+    ],
+    sha256 = "7ad348b88033af46ce49148097afe354d513c1fca7c607b59c33ebb6064b5179",
+    strip_prefix = "thrift-0.13.0",
+    urls = ["https://archive.apache.org/dist/thrift/0.13.0/thrift-0.13.0.tar.gz"],
+)
+
+http_archive(
+    name = "org_sourceware_bzip2",  # 2019-06-13
+    build_file = "//third_party/bzip2:bzip2.BUILD",
+    sha256 = "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
+    strip_prefix = "bzip2-1.0.8",
+    urls = ["https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"],
+)
+
+http_archive(
+    name = "org_tukaani_xz",
+    build_file = "@com_github_nelhage_rules_boost//:BUILD.lzma",
+    sha256 = "71928b357d0a09a12a4b4c5fafca8c31c19b0e7d3b8ebb19622e96f26dbf28cb",
+    strip_prefix = "xz-5.2.3",
+    urls = [
+        "https://tukaani.org/xz/xz-5.2.3.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "upb",  # 2021-09-30T05:45:06Z
+    sha256 = "d98978a6eae6cba07f2a0ba7012fd3010c35a97e322237d25c98419d21954110",
+    strip_prefix = "upb-3f7c69ab7bfe0fae3d1b29448b7e42b7edad4e71",
+    urls = [
+        "https://github.com/protocolbuffers/upb/archive/3f7c69ab7bfe0fae3d1b29448b7e42b7edad4e71.tar.gz",
+    ],
 )
 
 ##############################
@@ -194,6 +506,12 @@ http_archive(
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
+
+load("@upb//bazel:workspace_defs.bzl", "system_python")
+
+system_python(
+    name = "system_python",
+)
 
 ##############################
 # Load Python Dependencies   #
@@ -334,12 +652,19 @@ go_register_toolchains(version = "1.16.5")
 ##############################
 
 http_archive(
-    name = "bazel_gazelle",
-    sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
+    name = "bazel_gazelle",  # 2021-03-08T20:39:12Z
+    sha256 = "62ca106be173579c0a167deb23358fdfe71ffa1e4cfdddf5582af26520f1c66f",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.23.0/bazel-gazelle-v0.23.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.23.0/bazel-gazelle-v0.23.0.tar.gz",
     ],
+)
+
+http_archive(
+    name = "com_github_bazelbuild_buildtools",  # 2021-09-06T11:33:46Z
+    sha256 = "d49976b0b1e81146d79072f10cabe6634afcd318b1bd86b0102d5967121c43c1",
+    strip_prefix = "buildtools-4.2.0",
+    url = "https://github.com/bazelbuild/buildtools/archive/refs/tags/4.2.0.tar.gz",
 )
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")

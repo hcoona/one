@@ -3,9 +3,9 @@
 #include <tuple>
 #include <utility>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/absl/time/clock.h"
-#include "third_party/glog/logging.h"
+#include "absl/strings/str_cat.h"
+#include "absl/time/clock.h"
+#include "glog/logging.h"
 
 namespace hcoona {
 

@@ -6,8 +6,8 @@ index a0fb845..80e5f7e 100644
  #ifndef GTL_THREAD_ANNOTATIONS_H_
  #define GTL_THREAD_ANNOTATIONS_H_
 
-+#include "third_party/absl/base/thread_annotations.h"
- #include "third_party/glog/logging.h"
++#include "absl/base/thread_annotations.h"
+ #include "glog/logging.h"
 -#include "config/config.h"
 -
 -#if defined(__clang__)

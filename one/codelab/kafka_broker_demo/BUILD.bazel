@@ -26,10 +26,10 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//one/service",
-        "//third_party/absl/container:btree",
-        "//third_party/absl/hash",
-        "//third_party/absl/status",
-        "//third_party/absl/status:statusor",
-        "//third_party/glog",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/container:btree",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
     ],
 )

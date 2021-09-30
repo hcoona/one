@@ -7,8 +7,8 @@
 
 #include <thread>
 
-#include "third_party/absl/synchronization/mutex.h"
-#include "third_party/absl/types/optional.h"
+#include "absl/synchronization/mutex.h"
+#include "absl/types/optional.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/sequence_token.h"
 #include "gtl/thread_annotations.h"

@@ -6,9 +6,9 @@ index 39ddb61..c8e7510 100644
 
  #include "gtl/location.h"
 
-+#include "third_party/absl/strings/str_cat.h"
-+#include "third_party/absl/strings/str_format.h"
-+#include "third_party/glog/logging.h"
++#include "absl/strings/str_cat.h"
++#include "absl/strings/str_format.h"
++#include "glog/logging.h"
 +#include "config/config.h"
 +#include "gtl/compiler_specific.h"
 +
@@ -48,8 +48,8 @@ index 6ea4c27..63dd751 100644
 -
 -#include "gtl/debug/debugging_buildflags.h"
 -#include "gtl/hash/hash.h"
-+#include "third_party/absl/hash/hash.h"
-+#include "third_party/absl/types/span.h"
++#include "absl/hash/hash.h"
++#include "absl/types/span.h"
  #include "config/config.h"
 
  namespace gtl {

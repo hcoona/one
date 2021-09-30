@@ -1,7 +1,7 @@
 #ifndef CODELAB_GOOGLE_BENCHMARK_LAB_BENCHMARK_UTILS_H_
 #define CODELAB_GOOGLE_BENCHMARK_LAB_BENCHMARK_UTILS_H_
 
-#include "third_party/benchmark/include/benchmark/benchmark.h"
+#include "benchmark/benchmark.h"
 
 namespace codelab {
 

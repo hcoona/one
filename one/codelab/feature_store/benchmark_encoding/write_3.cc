@@ -3,12 +3,12 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/absl/base/internal/endian.h"
-#include "third_party/absl/status/status.h"
-#include "third_party/arrow/src/arrow/api.h"
-#include "third_party/arrow/src/arrow/io/api.h"
-#include "third_party/gflags/gflags.h"
-#include "third_party/glog/logging.h"
+#include "absl/base/internal/endian.h"
+#include "absl/status/status.h"
+#include "arrow/api.h"
+#include "arrow/io/api.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "gtl/file_system.h"
 #include "gtl/macros.h"

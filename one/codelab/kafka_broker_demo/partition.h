@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "third_party/absl/status/statusor.h"
+#include "absl/status/statusor.h"
 #include "one/codelab/kafka_broker_demo/api.h"
 #include "one/codelab/kafka_broker_demo/partition_key.h"
 #include "one/service/service_impl.h"

@@ -4,9 +4,9 @@
 
 #include "gtl/location.h"
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/absl/strings/str_format.h"
-#include "third_party/glog/logging.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_format.h"
+#include "glog/logging.h"
 #include "config/config.h"
 #include "gtl/compiler_specific.h"
 

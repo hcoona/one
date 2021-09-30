@@ -9,7 +9,7 @@ index 8c8c1fe..01d9539 100644
 -#include "gtl/atomicops.h"
 -#include "gtl/barrier_closure.h"
 -#include "gtl/bind.h"
- #include "third_party/glog/logging.h"
+ #include "glog/logging.h"
 -#include "gtl/system/sys_info.h"
 -#include "gtl/platform_thread.h"
 -#include "gtl/simple_thread.h"

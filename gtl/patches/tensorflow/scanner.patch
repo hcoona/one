@@ -30,8 +30,8 @@ index e96bbf9..3039a2c 100644
 -#include "gtl/macros.h"
 -#include "gtl/str_util.h"
 -#include "gtl/stringpiece.h"
-+#include "third_party/absl/strings/string_view.h"
-+#include "third_party/absl/strings/strip.h"
++#include "absl/strings/string_view.h"
++#include "absl/strings/strip.h"
 
 -
 -namespace strings {

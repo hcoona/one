@@ -3,7 +3,7 @@ index 63040fa..4ad2861 100644
 --- a/gtl/container/vector_buffer.h
 +++ b/gtl/container/vector_buffer.h
 @@ -14,6 +14,7 @@
- #include "third_party/glog/logging.h"
+ #include "glog/logging.h"
  #include "gtl/container/util.h"
  #include "gtl/numeric/checked_math.h"
 +#include "gtl/template_util.h"

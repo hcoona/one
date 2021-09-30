@@ -32,7 +32,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":auto_reset",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -45,7 +45,7 @@ cc_library(
     deps = [
         ":compiler_specific",
         "//config",
-        "//third_party/glog",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -56,7 +56,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":bits",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -91,9 +91,9 @@ cc_library(
         ":path",
         ":scanner",
         "//config",
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/strings",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
         "@com_googlesource_code_re2//:re2",
     ],
 )
@@ -108,9 +108,9 @@ cc_library(
     deps = [
         ":file_system",
         "//config",
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/strings",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
     ],
 )
 
@@ -121,10 +121,10 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":file_system",
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/absl/strings",
-        "//third_party/googletest:gtest_main",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -136,9 +136,9 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/absl/random",
-        "//third_party/absl/strings",
-        "//third_party/absl/strings:str_format",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
     ],
 )
 
@@ -151,7 +151,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":guid",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -172,7 +172,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":iterator_range",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -190,11 +190,11 @@ cc_library(
     deps = [
         ":compiler_specific",
         "//config",
-        "//third_party/glog",
-        "//third_party/absl/hash",
-        "//third_party/absl/strings",
-        "//third_party/absl/strings:str_format",
-        "//third_party/absl/types:span",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -208,7 +208,7 @@ cc_test(
     deps = [
         ":compiler_specific",
         ":location",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -240,7 +240,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":map_util",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -260,8 +260,8 @@ cc_test(
     deps = [
         ":no_destructor",
         "//config",
-        "//third_party/glog",
-        "//third_party/googletest:gtest_main",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -274,9 +274,9 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":scanner",
-        "//third_party/glog",
-        "//third_party/absl/strings",
-        "//third_party/absl/synchronization",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/synchronization",
     ],
 )
 
@@ -287,7 +287,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":path",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -305,7 +305,7 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/absl/strings",
+        "@com_google_absl//absl/strings",
     ],
 )
 
@@ -316,7 +316,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":scanner",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -337,8 +337,8 @@ cc_library(
         ":sequence_token",
         ":thread_annotations",
         ":thread_checker",
-        "//third_party/glog",
-        "//third_party/absl/synchronization",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/synchronization",
     ],
 )
 
@@ -353,7 +353,7 @@ cc_test(
     deps = [
         ":sequence_checker",
         "//gtl/test:gtest_util",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -366,7 +366,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":atomic_sequence_num",
-        "//third_party/glog",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -377,7 +377,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":sequence_token",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -389,8 +389,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//config",
-        "//third_party/glog",
-        "//third_party/absl/meta:type_traits",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/meta:type_traits",
     ],
 )
 
@@ -402,7 +402,7 @@ cc_test(
     deps = [
         ":template_util",
         "//gtl/test:move_only_int",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -415,8 +415,8 @@ cc_library(
     deps = [
         ":template_util",
         "//config",
-        "//third_party/glog",
-        "//third_party/absl/types:optional",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/types:optional",
     ],
 )
 
@@ -427,10 +427,10 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":stl_util",
-        "//gtl/test:move_only_int",
         "//gtl/container:circular_deque",
-        "//third_party/absl/container:flat_hash_set",
-        "//third_party/googletest:gtest_main",
+        "//gtl/test:move_only_int",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -441,8 +441,8 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/glog",
-        "//third_party/absl/base:core_headers",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/base:core_headers",
     ],
 )
 
@@ -458,8 +458,8 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":thread_annotations",
-        "//third_party/glog",
-        "//third_party/googletest:gtest_main",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -477,9 +477,9 @@ cc_library(
         ":compiler_specific",
         ":sequence_token",
         ":thread_annotations",
-        "//third_party/glog",
-        "//third_party/absl/synchronization",
-        "//third_party/absl/types:optional",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/types:optional",
     ],
 )
 
@@ -496,7 +496,7 @@ cc_test(
     deps = [
         ":thread_checker",
         "//gtl/test:gtest_util",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -507,7 +507,7 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/glog",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -520,8 +520,8 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":top_n",
-        "//third_party/glog",
-        "//third_party/absl/random",
-        "//third_party/googletest:gtest_main",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/random",
+        "@com_google_googletest//:gtest_main",
     ],
 )

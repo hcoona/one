@@ -5,10 +5,10 @@
 #ifndef GTL_SEQUENCE_CHECKER_H_
 #define GTL_SEQUENCE_CHECKER_H_
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 #include "gtl/compiler_specific.h"
 #include "gtl/sequence_checker_impl.h"
-#include "third_party/absl/strings/string_view.h"
+#include "absl/strings/string_view.h"
 #include "config/config.h"
 
 // SequenceChecker is a helper class used to help verify that some methods of a

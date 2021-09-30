@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/arrow/src/arrow/api.h"
+#include "absl/status/status.h"
+#include "arrow/api.h"
 #include "one/codelab/feature_store/benchmark_encoding/row.h"
 
 namespace hcoona {

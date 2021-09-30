@@ -1,88 +1,17 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+package(default_visibility = ["//visibility:public"])
 
-THRIFT_CPP_SOURCES = [
-    "src/thrift/TApplicationException.cpp",
-    "src/thrift/TOutput.cpp",
-    "src/thrift/async/TAsyncChannel.cpp",
-    "src/thrift/async/TAsyncProtocolProcessor.cpp",
-    "src/thrift/async/TConcurrentClientSyncInfo.h",
-    "src/thrift/async/TConcurrentClientSyncInfo.cpp",
-    "src/thrift/concurrency/ThreadManager.cpp",
-    "src/thrift/concurrency/TimerManager.cpp",
-    "src/thrift/processor/PeekProcessor.cpp",
-    "src/thrift/protocol/TBase64Utils.cpp",
-    "src/thrift/protocol/TDebugProtocol.cpp",
-    "src/thrift/protocol/TJSONProtocol.cpp",
-    "src/thrift/protocol/TMultiplexedProtocol.cpp",
-    "src/thrift/protocol/TProtocol.cpp",
-    "src/thrift/transport/TTransportException.cpp",
-    "src/thrift/transport/TFDTransport.cpp",
-    "src/thrift/transport/TSimpleFileTransport.cpp",
-    "src/thrift/transport/THttpTransport.cpp",
-    "src/thrift/transport/THttpClient.cpp",
-    "src/thrift/transport/THttpServer.cpp",
-    "src/thrift/transport/TSocket.cpp",
-    "src/thrift/transport/TSocketPool.cpp",
-    "src/thrift/transport/TServerSocket.cpp",
-    "src/thrift/transport/TTransportUtils.cpp",
-    "src/thrift/transport/TBufferTransports.cpp",
-    "src/thrift/server/TConnectedClient.cpp",
-    "src/thrift/server/TServerFramework.cpp",
-    "src/thrift/server/TSimpleServer.cpp",
-    "src/thrift/server/TThreadPoolServer.cpp",
-    "src/thrift/server/TThreadedServer.cpp",
-] + [
-    "src/thrift/transport/TPipe.cpp",
-    "src/thrift/transport/TPipeServer.cpp",
-    "src/thrift/transport/TFileTransport.cpp",
-] + [
-    "src/thrift/VirtualProfiling.cpp",
-    "src/thrift/server/TServer.cpp",
-] + [
-    # Need openssl.
-    "src/thrift/transport/TSSLSocket.cpp",
-    "src/thrift/transport/TSSLServerSocket.cpp",
-] + [
-    "src/thrift/concurrency/ThreadFactory.cpp",
-    "src/thrift/concurrency/Thread.cpp",
-    "src/thrift/concurrency/Monitor.cpp",
-    "src/thrift/concurrency/Mutex.cpp",
-] + [
-    # Need libevent.
-    # "src/thrift/server/TNonblockingServer.cpp",
-    # "src/thrift/transport/TNonblockingServerSocket.cpp",
-    # "src/thrift/transport/TNonblockingSSLServerSocket.cpp",
-    # "src/thrift/async/TEvhttpServer.cpp",
-    # "src/thrift/async/TEvhttpClientChannel.cpp",
-] + [
-    # Need zlib.
-    "src/thrift/transport/TZlibTransport.cpp",
-    "src/thrift/protocol/THeaderProtocol.cpp",
-    "src/thrift/transport/THeaderTransport.cpp",
-]
-
-cc_library(
-    name = "thrift",
-    srcs = THRIFT_CPP_SOURCES,
-    hdrs = glob([
-        "src/thrift/*.h",
-        "src/thrift/**/*.h",
-    ]),
-    textual_hdrs = glob([
-        "src/thrift/*.tcc",
-        "src/thrift/**/*.tcc",
-    ]),
-    visibility = ["//visibility:public"],
-    deps = [
-        "//third_party/boringssl:ssl",
-        "//third_party/zlib",
-        "@boost//:algorithm",
-        "@boost//:locale",
-        "@boost//:noncopyable",
-        "@boost//:numeric_conversion",
-        "@boost//:scope_exit",
-        "@boost//:scoped_array",
-        "@boost//:shared_array",
-        "@boost//:tokenizer",
-    ],
-)
+# env BOOST_ROOT=/tmp/boost_1_68_0 ./configure --disable-shared \
+#   --disable-tests --disable-tutorial --disable-coverage \
+#   --with-boost --with-libevent=/tmp/libevent-2.1.11-stable --with-zlib \
+#   --with-openssl=/tmp/boringssl-master/build \
+#   --without-as3 --with-cpp --without-qt5 --without-c_glib \
+#   --without-csharp --without-java --without-erlang --without-nodejs \
+#   --without-nodets --without-lua --without-python --without-py3 \
+#   --without-perl --without-php --without-php_extension --without-dart \
+#   --without-ruby --without-haskell --without-go --without-swift \
+#   --without-rs --without-cl --without-haxe --without-dotnetcore \
+#   --without-d
+exports_files([
+    "config.h",
+    "version.h",
+])

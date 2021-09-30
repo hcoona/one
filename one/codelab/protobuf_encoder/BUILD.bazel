@@ -12,7 +12,7 @@ cc_library(
     hdrs = ["encoder.h"],
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
-    deps = ["//third_party/gsl:gsl_all"],
+    deps = ["@com_github_microsoft_gsl//:gsl"],
 )
 
 cc_test(
@@ -22,7 +22,7 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":encoder",
-        "//third_party/googletest:gtest",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )

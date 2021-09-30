@@ -45,7 +45,7 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 
 
 namespace gtl {

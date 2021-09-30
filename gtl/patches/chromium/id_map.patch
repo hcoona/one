@@ -4,8 +4,8 @@ index 06b1f31..fc381b7 100644
 +++ b/gtl/container/id_map.h
 @@ -16,7 +16,6 @@
 
- #include "third_party/glog/logging.h"
- #include "third_party/absl/container/flat_hash_set.h"
+ #include "glog/logging.h"
+ #include "absl/container/flat_hash_set.h"
 -#include "gtl/notreached.h"
  #include "gtl/sequence_checker.h"
 

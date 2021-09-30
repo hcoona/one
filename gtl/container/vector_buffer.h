@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 #include "gtl/container/util.h"
 #include "gtl/numeric/checked_math.h"
 #include "gtl/template_util.h"

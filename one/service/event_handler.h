@@ -3,7 +3,7 @@
 
 #include <type_traits>
 
-#include "third_party/absl/status/status.h"
+#include "absl/status/status.h"
 #include "one/service/event.h"
 
 namespace hcoona {

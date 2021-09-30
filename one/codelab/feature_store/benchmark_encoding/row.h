@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "third_party/absl/container/btree_map.h"
+#include "absl/container/btree_map.h"
 #include "one/codelab/feature_store/benchmark_encoding/feature.pb.h"
 
 namespace hcoona {

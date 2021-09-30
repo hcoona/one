@@ -5,11 +5,11 @@ cc_library(
     srcs = ["gtest_main.cc"],
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/absl/debugging:failure_signal_handler",
-        "//third_party/absl/debugging:symbolize",
-        "//third_party/gflags",
-        "//third_party/glog",
-        "//third_party/googletest:gtest",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/debugging:failure_signal_handler",
+        "@com_google_absl//absl/debugging:symbolize",
+        "@com_google_googletest//:gtest",
     ],
 )
 

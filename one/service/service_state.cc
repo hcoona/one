@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 
 namespace hcoona {
 

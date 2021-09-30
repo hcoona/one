@@ -1,10 +1,11 @@
 # Default build options. These are applied first and unconditionally.
-build --cxxopt="-std=c++17" --cxxopt="-Wno-undef"
+build --cxxopt="-std=c++14" --cxxopt="-Wno-c++17-extensions" --cxxopt="-Wno-undef"
 build --conlyopt="-std=c11"
-build --proto_compiler=//third_party/protobuf:protoc
-build --proto_toolchain_for_cc=//third_party/protobuf:cc_toolchain
-build --proto_toolchain_for_java=//third_party/protobuf:java_toolchain
-build --proto_toolchain_for_javalite=//third_party/protobuf:javalite_toolchain
+
+# build --proto_compiler=//third_party/protobuf:protoc
+# build --proto_toolchain_for_cc=//third_party/protobuf:cc_toolchain
+# build --proto_toolchain_for_java=//third_party/protobuf:java_toolchain
+# build --proto_toolchain_for_javalite=//third_party/protobuf:javalite_toolchain
 
 # TODO(zhangshuai.ustc): Enable it for non-third_party targets.
 # Strict dependency check for C++ includes.
@@ -12,7 +13,7 @@ build --proto_toolchain_for_javalite=//third_party/protobuf:javalite_toolchain
 
 # Enable position independent code (this is the default on macOS and Windows)
 # (Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421)
-build --copt=-fPIC
+build --copt=-fPIC --copt=-msse4.2 --copt=-mavx2 --copt=-mbmi2
 build --fission=dbg,opt
 build --features=per_object_debug_info
 build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a

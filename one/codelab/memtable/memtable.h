@@ -6,10 +6,10 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/arrow/src/arrow/io/file.h"
-#include "third_party/arrow/src/parquet/api/writer.h"
+#include "absl/status/status.h"
+#include "absl/strings/string_view.h"
+#include "arrow/io/file.h"
+#include "parquet/api/writer.h"
 
 namespace hcoona {
 namespace codelab {
