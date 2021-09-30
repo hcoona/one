@@ -2,11 +2,35 @@ workspace(name = "com_github_hcoona_one")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-##############################
-# Constants                  #
-##############################
+#
+# Constants
+#
 
-RULES_JVM_EXTERNAL_TAG = "4.1"
+BAZEL_SKYLIB_VERSION = "1.1.1"  # 2021-09-27T17:33:49Z
+
+BAZEL_SKYLIB_SHA256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d"
+
+BAZEL_PLATFORMS_VERSION = "0.0.4"  # 2021-02-26
+
+BAZEL_PLATFORMS_SHA256 = "079945598e4b6cc075846f7fd6a9d0857c33a7afc0de868c2ccb96405225135d"
+
+RULES_PROTO_TAG = "4.0.0"  # 2021-09-15T14:13:21Z
+
+RULES_PROTO_SHA256 = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1"
+
+RULES_CC_COMMIT_ID = "0913abc3be0edff60af681c0473518f51fb9eeef"  # 2021-08-12T14:14:28Z
+
+RULES_CC_SHA256 = "04d22a8c6f0caab1466ff9ae8577dbd12a0c7d0bc468425b75de094ec68ab4f9"
+
+RULES_PYTHON_TAG = "0.4.0"  # 2021-09-12T22:58:33Z
+
+RULES_PYTHON_SHA256 = "954aa89b491be4a083304a2cb838019c8b8c3720a7abb9c4cb81ac7a24230cea"
+
+RULES_JAVA_TAG = "4.0.0"  # 2021-01-21T12:10:05Z
+
+RULES_JAVA_SHA256 = "34b41ec683e67253043ab1a3d1e8b7c61e4e8edefbcad485381328c934d072fe"
+
+RULES_JVM_EXTERNAL_TAG = "4.1"  # 2021-05-18T15:00:52Z
 
 RULES_JVM_EXTERNAL_SHA = "f36441aa876c4f6427bfb2d1f2d723b48e9d930b62662bf723ddfb8fc80f0140"
 
@@ -15,69 +39,87 @@ MAVEN_REPOSITORIES = [
     "https://repo1.maven.org/maven2",
 ]
 
-##############################
-# Starlark libraries         #
-##############################
+RULES_GO_TAG = "v0.28.0"  # 2021-07-07T22:49:25Z
+
+RULES_GO_SHA256 = "8e968b5fcea1d2d64071872b12737bbb5514524ee5f0a4f54f5920266c261acb"
+
+RULES_FUZZING_TAG = "0.2.0"  # 2021-07-12T17:55:46Z
+
+RULES_FUZZING_SHA256 = "127d7c45e9b7520b3c42145b3cb1b8c26477cdaed0521b02a0298907339fefa1"
+
+#
+# Starlark libraries
+#
 
 http_archive(
-    name = "bazel_skylib",  # 2020-08-27
-    sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
+    name = "bazel_skylib",
+    sha256 = BAZEL_SKYLIB_SHA256,
     urls = [
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
     ],
 )
 
 http_archive(
-    name = "platforms",  # 2021-02-26
-    sha256 = "079945598e4b6cc075846f7fd6a9d0857c33a7afc0de868c2ccb96405225135d",
+    name = "platforms",
+    sha256 = BAZEL_PLATFORMS_SHA256,
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.4/platforms-0.0.4.tar.gz",
-        "https://github.com/bazelbuild/platforms/releases/download/0.0.4/platforms-0.0.4.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
+        "https://github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
     ],
 )
 
 http_archive(
     name = "rules_proto",
-    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
-    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz"],
+    sha256 = RULES_PROTO_SHA256,
+    strip_prefix = "rules_proto-{version}".format(version = RULES_PROTO_TAG),
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/{version}.tar.gz".format(version = RULES_PROTO_TAG)],
 )
 
 http_archive(
-    name = "rules_cc",  # 2020-10-05T06:01:24Z
-    sha256 = "35ea62c63cd71d4000efe85f9f4f17e8afb23896c37ee9510952db2e9d8fbb70",
-    strip_prefix = "rules_cc-f055da4ff0cb2b3c73de1fe2f094ebdfb8b3acb9",
+    name = "rules_cc",
+    sha256 = RULES_CC_SHA256,
+    strip_prefix = "rules_cc-{commit_id}".format(commit_id = RULES_CC_COMMIT_ID),
     urls = [
-        "https://github.com/bazelbuild/rules_cc/archive/f055da4ff0cb2b3c73de1fe2f094ebdfb8b3acb9.zip",
+        "https://github.com/bazelbuild/rules_cc/archive/{commit_id}.tar.gz".format(commit_id = RULES_CC_COMMIT_ID),
     ],
 )
 
 http_archive(
-    name = "rules_python",  # 2021-04-07T13:45:21Z
-    sha256 = "8c1e24d8ff6a495aa06396617afc80f3f0a6554c5f74ae63f5b5d6b683be9eb9",
-    strip_prefix = "rules_python-bc256eff477eb08045f13bea58213672efb25d4e",
+    name = "rules_python",
+    sha256 = RULES_PYTHON_SHA256,
     urls = [
-        "https://github.com/bazelbuild/rules_python/archive/bc256eff477eb08045f13bea58213672efb25d4e.zip",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_python/releases/download/{version}/rules_python-{version}.tar.gz".format(version = RULES_PYTHON_TAG),
+        "https://github.com/bazelbuild/rules_python/releases/download/{version}/rules_python-{version}.tar.gz".format(version = RULES_PYTHON_TAG),
     ],
 )
 
 http_archive(
     name = "rules_java",
-    sha256 = "f5a3e477e579231fca27bf202bb0e8fbe4fc6339d63b38ccb87c2760b533d1c3",
-    strip_prefix = "rules_java-981f06c3d2bd10225e85209904090eb7b5fb26bd",
-    urls = ["https://github.com/bazelbuild/rules_java/archive/981f06c3d2bd10225e85209904090eb7b5fb26bd.tar.gz"],
+    sha256 = RULES_JAVA_SHA256,
+    urls = [
+        "https://github.com/bazelbuild/rules_java/releases/download/{version}/rules_java-{version}.tar.gz".format(version = RULES_JAVA_TAG),
+    ],
 )
 
 http_archive(
-    name = "rules_fuzzing",
-    patch_args = ["-p1"],
-    patches = [
-        "//third_party/rules_fuzzing/patches:0000-use-provided.patch",
+    name = "remote_jdk11_linux",
+    build_file = "@bazel_tools//tools/jdk:jdk.BUILD",
+    sha256 = "6c79bfe8bb06c82b72ef2f293a14becef56b3078d298dc75fda4225cbb2d3d0c",
+    strip_prefix = "zulu11.43.55-ca-jdk11.0.9.1-linux_x64",
+    urls = [
+        "https://mirror.bazel.build/openjdk/azul-zulu11.43.55-ca-jdk11.0.9.1/zulu11.43.55-ca-jdk11.0.9.1-linux_x64.tar.gz",
+        "https://cdn.azul.com/zulu/bin/zulu11.43.55-ca-jdk11.0.9.1-linux_x64.tar.gz",
     ],
-    sha256 = "94f25c7a18db0502ace26a3ef7d0a25fd7c195c4e9770ddd1b1ec718e8936091",
-    strip_prefix = "rules_fuzzing-0.1.3",
-    urls = ["https://github.com/bazelbuild/rules_fuzzing/archive/v0.1.3.zip"],
+)
+
+http_archive(
+    name = "remote_java_tools_linux",
+    sha256 = "355c27c603e8fc64bb0e2d7f809741f42576d5f4540f9ce28fd55922085af639",
+    urls = [
+        "https://mirror.bazel.build/bazel_java_tools/releases/javac11/v10.5/java_tools_javac11_linux-v10.5.zip",
+        "https://github.com/bazelbuild/java_tools/releases/download/javac11_v10.5/java_tools_javac11_linux-v10.5.zip",
+    ],
 )
 
 http_archive(
@@ -89,11 +131,18 @@ http_archive(
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "d1ffd055969c8f8d431e2d439813e42326961d0942bdf734d2c95dc30c369566",
+    sha256 = RULES_GO_SHA256,
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.5/rules_go-v0.24.5.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/{version}/rules_go-{version}.zip".format(version = RULES_GO_TAG),
+        "https://github.com/bazelbuild/rules_go/releases/download/{version}/rules_go-{version}.zip".format(version = RULES_GO_TAG),
     ],
+)
+
+http_archive(
+    name = "rules_fuzzing",
+    sha256 = RULES_FUZZING_SHA256,
+    strip_prefix = "rules_fuzzing-{version}".format(version = RULES_FUZZING_TAG),
+    urls = ["https://github.com/bazelbuild/rules_fuzzing/archive/v{version}.zip".format(version = RULES_FUZZING_TAG)],
 )
 
 ######
@@ -278,7 +327,7 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 
 go_rules_dependencies()
 
-go_register_toolchains()
+go_register_toolchains(version = "1.16.5")
 
 ##############################
 # Tools Dependencies         #
