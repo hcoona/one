@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "third_party/absl/hash/hash.h"
+#include "absl/hash/hash.h"
 
 namespace hcoona {
 namespace codelab {

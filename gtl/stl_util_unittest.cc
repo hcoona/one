@@ -21,7 +21,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "third_party/absl/container/flat_hash_set.h"
+#include "absl/container/flat_hash_set.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "gtl/container/circular_deque.h"

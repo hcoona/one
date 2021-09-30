@@ -1,0 +1,5 @@
+exports_files([
+    "config.h",
+    "evconfig-private.h",
+    "event-config.h",
+])

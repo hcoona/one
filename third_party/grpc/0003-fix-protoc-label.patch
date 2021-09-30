@@ -1,0 +1,61 @@
+diff --git a/bazel/generate_cc.bzl b/bazel/generate_cc.bzl
+index b419e13..8ef950f 100644
+--- a/bazel/generate_cc.bzl
++++ b/bazel/generate_cc.bzl
+@@ -181,7 +181,7 @@ _generate_cc = rule(
+             mandatory = False,
+         ),
+         "_protoc": attr.label(
+-            default = Label("//external:protocol_compiler"),
++            default = Label("@com_google_protobuf//:protoc"),
+             executable = True,
+             cfg = "host",
+         ),
+diff --git a/bazel/generate_objc.bzl b/bazel/generate_objc.bzl
+index f6424b3..76d2c6e 100644
+--- a/bazel/generate_objc.bzl
++++ b/bazel/generate_objc.bzl
+@@ -174,7 +174,7 @@ generate_objc = rule(
+             default = "@com_google_protobuf//:well_known_protos",
+         ),
+         "_protoc": attr.label(
+-            default = Label("//external:protocol_compiler"),
++            default = Label("@com_google_protobuf//:protoc"),
+             executable = True,
+             cfg = "host",
+         ),
+diff --git a/bazel/python_rules.bzl b/bazel/python_rules.bzl
+index df067d3..8e63f01 100644
+--- a/bazel/python_rules.bzl
++++ b/bazel/python_rules.bzl
+@@ -90,7 +90,7 @@ _generate_pb2_src = rule(
+             cfg = "host",
+         ),
+         "_protoc": attr.label(
+-            default = Label("//external:protocol_compiler"),
++            default = Label("@com_google_protobuf//:protoc"),
+             providers = ["files_to_run"],
+             executable = True,
+             cfg = "host",
+@@ -210,7 +210,7 @@ _generate_pb2_grpc_src = rule(
+             executable = True,
+             providers = ["files_to_run"],
+             cfg = "host",
+-            default = Label("//external:protocol_compiler"),
++            default = Label("@com_google_protobuf//:protoc"),
+         ),
+     },
+     implementation = _generate_pb2_grpc_src_impl,
+diff --git a/src/compiler/BUILD b/src/compiler/BUILD
+index c11616d..4ca15dd 100644
+--- a/src/compiler/BUILD
++++ b/src/compiler/BUILD
+@@ -69,7 +69,7 @@ grpc_cc_library(
+         "schema_interface.h",
+     ],
+     external_deps = [
+-        "protobuf_clib",
++        "@com_google_protobuf//:protoc_lib",
+     ],
+     language = "c++",
+     deps = [

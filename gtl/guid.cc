@@ -7,9 +7,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "third_party/absl/strings/ascii.h"
-#include "third_party/absl/strings/str_format.h"
-#include "third_party/absl/random/random.h"
+#include "absl/strings/ascii.h"
+#include "absl/strings/str_format.h"
+#include "absl/random/random.h"
 
 namespace gtl {
 

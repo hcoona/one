@@ -5,7 +5,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "third_party/absl/status/status.h"
+#include "absl/status/status.h"
 #include "one/service/event_dispatcher.h"
 
 namespace hcoona {

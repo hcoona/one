@@ -19,7 +19,7 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
+#include "absl/status/status.h"
 
 namespace gtl {
 

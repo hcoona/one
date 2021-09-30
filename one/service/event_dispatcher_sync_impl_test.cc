@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "gtest/gtest.h"
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 #include "one/service/event.h"
 #include "one/service/event_handler.h"
 

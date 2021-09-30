@@ -24,7 +24,7 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
+#include "absl/status/status.h"
 #include "gtl/file_statistics.h"
 #include "gtl/macros.h"
 

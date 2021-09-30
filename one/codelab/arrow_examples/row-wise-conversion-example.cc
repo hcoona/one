@@ -19,7 +19,7 @@
 #include <iostream>
 #include <vector>
 
-#include "third_party/arrow/src/arrow/api.h"
+#include "arrow/api.h"
 
 using arrow::DoubleBuilder;
 using arrow::Int64Builder;

@@ -3,16 +3,16 @@
 #include <memory>
 #include <string>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/arrow/src/arrow/api.h"
-#include "third_party/arrow/src/arrow/io/api.h"
-#include "third_party/arrow/src/arrow/io/file.h"
-#include "third_party/arrow/src/parquet/api/io.h"
-#include "third_party/arrow/src/parquet/api/schema.h"
-#include "third_party/arrow/src/parquet/api/writer.h"
-#include "third_party/arrow/src/parquet/arrow/writer.h"
-#include "third_party/gflags/gflags.h"
-#include "third_party/glog/logging.h"
+#include "absl/status/status.h"
+#include "arrow/api.h"
+#include "arrow/io/api.h"
+#include "arrow/io/file.h"
+#include "parquet/api/io.h"
+#include "parquet/api/schema.h"
+#include "parquet/api/writer.h"
+#include "parquet/arrow/writer.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "gtl/macros.h"
 
 #define ARROW_CHECK_OK(status)                                        \

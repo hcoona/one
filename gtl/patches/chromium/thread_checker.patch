@@ -5,7 +5,7 @@ index f88cf75..0b40d2d 100644
 @@ -5,8 +5,6 @@
  #include "gtl/thread_checker_impl.h"
 
- #include "third_party/glog/logging.h"
+ #include "glog/logging.h"
 -#include "gtl/thread_local.h"
 -#include "gtl/thread_task_runner_handle.h"
 
@@ -86,11 +86,11 @@ index 6c2a1a3..cf710fb 100644
 
 +#include <thread>
 
-+#include "third_party/absl/synchronization/mutex.h"
-+#include "third_party/absl/types/optional.h"
++#include "absl/synchronization/mutex.h"
++#include "absl/types/optional.h"
  #include "gtl/compiler_specific.h"
  #include "gtl/sequence_token.h"
--#include "third_party/absl/synchronization/mutex.h"
+-#include "absl/synchronization/mutex.h"
  #include "gtl/thread_annotations.h"
 -#include "gtl/platform_thread.h"
 

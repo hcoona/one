@@ -1,0 +1,13 @@
+diff --git a/BUILD b/BUILD
+index 5e62b44..8eafca3 100644
+--- a/BUILD
++++ b/BUILD
+@@ -79,7 +79,7 @@ posix_copts = [
+     # Modern build environments should be able to set this to use atomic
+     # operations for reference counting rather than locks. However, it's
+     # known not to work on some Android builds.
+-    # "-DOPENSSL_C11_ATOMIC",
++    "-DOPENSSL_C11_ATOMIC",
+ ]
+ 
+ boringssl_copts = select({

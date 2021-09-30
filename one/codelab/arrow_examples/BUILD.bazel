@@ -11,6 +11,6 @@ cc_test(
     copts = ONE_DEFAULT_COPTS,
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
-        "//third_party/arrow",
+        "@org_apache_arrow//:arrow",
     ],
 )

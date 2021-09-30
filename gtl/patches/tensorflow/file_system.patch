@@ -54,9 +54,9 @@ index a7d4ce9..052a3a2 100644
 -#include "gtl/env.h"
 -#include "gtl/errors.h"
 -#include "gtl/platform.h"
-+#include "third_party/absl/strings/str_cat.h"
-+#include "third_party/absl/strings/str_replace.h"
-+#include "third_party/glog/logging.h"
++#include "absl/strings/str_cat.h"
++#include "absl/strings/str_replace.h"
++#include "glog/logging.h"
 +#include "config/config.h"
 +#include "gtl/path.h"
  #include "gtl/scanner.h"
@@ -476,7 +476,7 @@ index 0ccc705..155a5b1 100644
 
 -#include "gtl/cord.h"
 -#include "gtl/errors.h"
-+#include "third_party/absl/status/status.h"
++#include "absl/status/status.h"
  #include "gtl/file_statistics.h"
 -#include "gtl/macros.h"
 -#include "gtl/platform.h"
@@ -891,8 +891,8 @@ index b68cd5d..09b4c28 100644
  #include <vector>
 
 -#include "gtl/env.h"
-+#include "third_party/absl/status/status.h"
-+#include "third_party/absl/strings/match.h"
++#include "absl/status/status.h"
++#include "absl/strings/match.h"
  #include "gtl/file_system.h"
  #include "gtl/path.h"
 -#include "gtl/platform.h"
@@ -1011,7 +1011,7 @@ index 247df1b..5a66587 100644
 
 -#include "gtl/status.h"
 -
-+#include "third_party/absl/status/status.h"
++#include "absl/status/status.h"
 
 +namespace gtl {
 
@@ -1043,11 +1043,11 @@ index 64f1da1..efa88ab 100644
  #include <sys/stat.h>
 
 -#include "tensorflow/core/lib/core/status_test_util.h"
-+#include "third_party/absl/status/status.h"
-+#include "third_party/absl/strings/match.h"
-+#include "third_party/absl/strings/str_join.h"
-+#include "third_party/absl/strings/str_split.h"
-+#include "third_party/glog/logging.h"
++#include "absl/status/status.h"
++#include "absl/strings/match.h"
++#include "absl/strings/str_join.h"
++#include "absl/strings/str_split.h"
++#include "glog/logging.h"
 +#include "gtest/gtest.h"
  #include "gtl/null_file_system.h"
  #include "gtl/path.h"
@@ -1319,7 +1319,7 @@ index f1f00f9..6d1f930 100644
  #include <vector>
 
 -#include "gtl/env.h"
-+#include "third_party/absl/status/status.h"
++#include "absl/status/status.h"
 +#include "gtl/file_statistics.h"
  #include "gtl/file_system.h"
  #include "gtl/file_system_helper.h"
@@ -1463,9 +1463,9 @@ index 834dc65..e248fae 100644
 -#include "gtl/env.h"
 -#include "gtl/error.h"
 -#include "gtl/file_system_helper.h"
-+#include "third_party/absl/status/status.h"
-+#include "third_party/absl/strings/str_cat.h"
- #include "third_party/glog/logging.h"
++#include "absl/status/status.h"
++#include "absl/strings/str_cat.h"
+ #include "glog/logging.h"
 -#include "gtl/status.h"
 -#include "gtl/strcat.h"
 -#include "tensorflow/core/protobuf/error_codes.pb.h"
@@ -2004,7 +2004,7 @@ index 8378ddd..7553f16 100644
 +#include <string>
 +#include <vector>
 
-+#include "third_party/absl/status/status.h"
++#include "absl/status/status.h"
 +#include "gtl/file_system.h"
 +#include "gtl/path.h"
 

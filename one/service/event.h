@@ -5,8 +5,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "third_party/absl/time/clock.h"
-#include "third_party/absl/time/time.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 
 namespace hcoona {
 

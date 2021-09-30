@@ -1,9 +1,2 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
-
-cc_library(
-    name = "xsimd",
-    hdrs = glob([
-        "**/*.hpp",
-    ]),
-    visibility = ["//visibility:public"],
-)
+# Thie empty BUILD.bazel file is required to make Bazel treat
+# this directory as a package.

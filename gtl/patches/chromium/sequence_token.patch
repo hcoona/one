@@ -5,7 +5,7 @@ index 211da1c..1eda26c 100644
 @@ -6,8 +6,6 @@
 
  #include "gtl/atomic_sequence_num.h"
- #include "third_party/glog/logging.h"
+ #include "glog/logging.h"
 -#include "gtl/no_destructor.h"
 -#include "gtl/thread_local.h"
 

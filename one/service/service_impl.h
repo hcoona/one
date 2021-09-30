@@ -4,11 +4,11 @@
 #include <memory>
 #include <string>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/status/statusor.h"
-#include "third_party/absl/synchronization/mutex.h"
-#include "third_party/absl/synchronization/notification.h"
-#include "third_party/absl/time/time.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/synchronization/mutex.h"
+#include "absl/synchronization/notification.h"
+#include "absl/time/time.h"
 #include "one/service/event_dispatcher.h"
 #include "one/service/service.h"
 #include "one/service/service_state.h"

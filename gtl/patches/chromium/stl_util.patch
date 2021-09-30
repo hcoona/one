@@ -19,7 +19,7 @@ index 3a5a3b0..9e75647 100644
 @@ -22,11 +22,9 @@
  #include <vector>
 
- #include "third_party/absl/container/flat_hash_set.h"
+ #include "absl/container/flat_hash_set.h"
 -#include "gtl/container/queue.h"
 -#include "gtl/strings/string16.h"
 -#include "gtl/strings/utf_string_conversions.h"

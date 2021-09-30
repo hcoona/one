@@ -1,10 +1,10 @@
 #ifndef CODELAB_PB_TO_ARROW_STATUS_UTIL_H_
 #define CODELAB_PB_TO_ARROW_STATUS_UTIL_H_
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/status/statusor.h"
-#include "third_party/arrow/src/arrow/result.h"
-#include "third_party/arrow/src/arrow/status.h"
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "arrow/result.h"
+#include "arrow/status.h"
 
 namespace hcoona {
 namespace codelab {

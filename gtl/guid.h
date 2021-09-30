@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "third_party/absl/strings/string_view.h"
+#include "absl/strings/string_view.h"
 
 namespace gtl {
 

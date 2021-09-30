@@ -3,9 +3,9 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/absl/debugging/internal/demangle.h"
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/glog/logging.h"
+#include "absl/debugging/internal/demangle.h"
+#include "absl/strings/string_view.h"
+#include "glog/logging.h"
 
 // Copied from
 // https://github.com/protocolbuffers/protobuf/blob/v3.12.3/src/google/protobuf/stubs/casts.h

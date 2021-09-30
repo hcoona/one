@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "third_party/absl/strings/str_cat.h"
+#include "absl/strings/str_cat.h"
 
 namespace hcoona {
 namespace codelab {

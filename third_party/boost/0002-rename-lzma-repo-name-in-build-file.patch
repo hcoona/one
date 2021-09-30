@@ -1,0 +1,31 @@
+diff --git a/BUILD.lzma b/BUILD.lzma
+index 55a1d0e..2df7ebe 100644
+--- a/BUILD.lzma
++++ b/BUILD.lzma
+@@ -146,16 +146,16 @@ cc_library(
+         ":windows": [],
+         "//conditions:default": ["-std=c99"],
+     }) + [
+-        "-I external/org_lzma_lzma/src/common",
+-        "-I external/org_lzma_lzma/src/liblzma",
+-        "-I external/org_lzma_lzma/src/liblzma/api",
+-        "-I external/org_lzma_lzma/src/liblzma/common",
+-        "-I external/org_lzma_lzma/src/liblzma/check",
+-        "-I external/org_lzma_lzma/src/liblzma/delta",
+-        "-I external/org_lzma_lzma/src/liblzma/lz",
+-        "-I external/org_lzma_lzma/src/liblzma/lzma",
+-        "-I external/org_lzma_lzma/src/liblzma/rangecoder",
+-        "-I external/org_lzma_lzma/src/liblzma/simple",
++        "-I external/org_tukaani_xz/src/common",
++        "-I external/org_tukaani_xz/src/liblzma",
++        "-I external/org_tukaani_xz/src/liblzma/api",
++        "-I external/org_tukaani_xz/src/liblzma/common",
++        "-I external/org_tukaani_xz/src/liblzma/check",
++        "-I external/org_tukaani_xz/src/liblzma/delta",
++        "-I external/org_tukaani_xz/src/liblzma/lz",
++        "-I external/org_tukaani_xz/src/liblzma/lzma",
++        "-I external/org_tukaani_xz/src/liblzma/rangecoder",
++        "-I external/org_tukaani_xz/src/liblzma/simple",
+     ],
+     defines = select({
+         ":windows": ["LZMA_API_STATIC"],

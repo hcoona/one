@@ -14,9 +14,9 @@ index fdc8c86..82ea990 100644
 
  #include <vector>
 
-+#include "third_party/absl/strings/str_cat.h"
-+#include "third_party/absl/synchronization/mutex.h"
- #include "third_party/glog/logging.h"
++#include "absl/strings/str_cat.h"
++#include "absl/synchronization/mutex.h"
+ #include "glog/logging.h"
 -#include "gtl/mutex.h"
  #include "gtl/scanner.h"
 -#include "gtl/strcat.h"
@@ -227,7 +227,7 @@ index e64db62..dcf1655 100644
 +#include <initializer_list>
 +#include <string>
 
-+#include "third_party/absl/strings/string_view.h"
++#include "absl/strings/string_view.h"
 
 -namespace io {
 +namespace gtl {

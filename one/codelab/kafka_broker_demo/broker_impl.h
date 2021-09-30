@@ -24,8 +24,8 @@
 #include <memory>
 #include <string>
 
-#include "third_party/absl/container/btree_map.h"
-#include "third_party/absl/status/statusor.h"
+#include "absl/container/btree_map.h"
+#include "absl/status/statusor.h"
 #include "one/codelab/kafka_broker_demo/api.h"
 #include "one/codelab/kafka_broker_demo/partition.h"
 #include "one/codelab/kafka_broker_demo/partition_key.h"

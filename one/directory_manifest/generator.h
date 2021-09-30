@@ -5,10 +5,10 @@
 #include <string>
 #include <utility>
 
-#include "third_party/absl/status/status.h"
-#include "third_party/absl/synchronization/mutex.h"
-#include "third_party/gflags/gflags.h"
-#include "third_party/glog/logging.h"
+#include "absl/status/status.h"
+#include "absl/synchronization/mutex.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "gtl/file_system.h"
 #include "one/directory_manifest/macros.h"
 

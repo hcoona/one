@@ -20,7 +20,7 @@ index 236f6f3..7145175 100644
  #include <stdint.h>
 
 -#include "gtl/strings/string_util.h"
-+#include "third_party/glog/logging.h"
++#include "glog/logging.h"
  #include "openssl/crypto.h"
  #include "openssl/sha.h"
 

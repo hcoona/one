@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "third_party/arrow/src/arrow/api.h"
+#include "arrow/api.h"
 #include "gtl/no_destructor.h"
 #include "one/base/casts.h"
 #include "one/codelab/pb_to_arrow/status_util.h"

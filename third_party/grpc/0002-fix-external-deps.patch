@@ -1,0 +1,631 @@
+diff --git a/BUILD b/BUILD
+index 39ee9f9..fd8c6ad 100644
+--- a/BUILD
++++ b/BUILD
+@@ -406,7 +406,7 @@ grpc_cc_library(
+     hdrs = GRPCXX_PUBLIC_HDRS,
+     external_deps = [
+         "absl/synchronization",
+-        "protobuf_headers",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     visibility = ["@grpc:public"],
+ )
+@@ -462,7 +462,7 @@ grpc_cc_library(
+         "absl/synchronization",
+         "absl/container:inlined_vector",
+         "absl/strings",
+-        "protobuf_headers",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = GRPCXX_PUBLIC_HDRS,
+@@ -564,7 +564,7 @@ grpc_cc_library(
+         "include/grpcpp/security/alts_util.h",
+     ],
+     external_deps = [
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     standalone = True,
+@@ -709,7 +709,7 @@ grpc_cc_library(
+         "absl/synchronization",
+         "absl/time:time",
+         "absl/types:optional",
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     public_hdrs = GPR_PUBLIC_HDRS,
+@@ -1575,7 +1575,7 @@ grpc_cc_library(
+         "absl/strings:str_format",
+         "absl/strings",
+         "absl/types:optional",
+-        "madler_zlib",
++        "@com_github_madler_zlib//:zlib",
+     ],
+     language = "c++",
+     public_hdrs = GRPC_PUBLIC_HDRS + GRPC_PUBLIC_EVENT_ENGINE_HDRS,
+@@ -1712,7 +1712,7 @@ grpc_cc_library(
+         "absl/strings:str_format",
+         "absl/types:optional",
+         "absl/status:statusor",
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     visibility = ["@grpc:client_channel"],
+@@ -1930,7 +1930,7 @@ grpc_cc_library(
+         "absl/container:inlined_vector",
+         "absl/strings",
+         "absl/strings:str_format",
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     deps = [
+@@ -1968,7 +1968,7 @@ grpc_cc_library(
+         "absl/container:inlined_vector",
+         "absl/strings",
+         "absl/strings:str_format",
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     deps = [
+@@ -2022,11 +2022,11 @@ grpc_cc_library(
+         "absl/strings",
+         "absl/strings:str_format",
+         "absl/container:inlined_vector",
+-        "upb_lib",
+-        "upb_textformat_lib",
+-        "upb_json_lib",
+-        "re2",
+-        "upb_reflection",
++        "@upb//:upb",
++        "@upb//:textformat",
++        "@upb//:json",
++        "@com_googlesource_code_re2//:re2",
++        "@upb//:reflection",
+     ],
+     language = "c++",
+     deps = [
+@@ -2334,7 +2334,7 @@ grpc_cc_library(
+     external_deps = [
+         "absl/strings",
+         "absl/strings:str_format",
+-        "opencensus-stats",
++        "@io_opencensus_cpp//opencensus/stats:stats",
+     ],
+     language = "c++",
+     deps = [
+@@ -2442,8 +2442,8 @@ grpc_cc_library(
+         "src/cpp/server/load_reporter/load_reporter.h",
+     ],
+     external_deps = [
+-        "opencensus-stats",
+-        "opencensus-tags",
++        "@io_opencensus_cpp//opencensus/stats:stats",
++        "@io_opencensus_cpp//opencensus/tags:tags",
+     ],
+     language = "c++",
+     deps = [
+@@ -2508,7 +2508,7 @@ grpc_cc_library(
+         "absl/strings:str_format",
+         "absl/container:inlined_vector",
+         "address_sorting",
+-        "cares",
++        "@com_github_cares_cares//:ares",
+     ],
+     language = "c++",
+     deps = [
+@@ -2567,7 +2567,7 @@ grpc_cc_library(
+     ],
+     external_deps = [
+         "xxhash",
+-        "re2",
++        "@com_googlesource_code_re2//:re2",
+         "absl/strings",
+     ],
+     language = "c++",
+@@ -2701,8 +2701,8 @@ grpc_cc_library(
+         "absl/strings",
+         "absl/strings:str_format",
+         "absl/time",
+-        "libcrypto",
+-        "libssl",
++        "@boringssl//:crypto",
++        "@boringssl//:ssl",
+     ],
+     language = "c++",
+     public_hdrs = GRPC_SECURE_PUBLIC_HDRS,
+@@ -2752,7 +2752,7 @@ grpc_cc_library(
+         "src/core/lib/matchers/matchers.h",
+     ],
+     external_deps = [
+-        "re2",
++        "@com_googlesource_code_re2//:re2",
+         "absl/memory",
+         "absl/strings",
+         "absl/strings:str_format",
+@@ -2822,7 +2822,7 @@ grpc_cc_library(
+     ],
+     external_deps = [
+         "absl/synchronization",
+-        "protobuf_headers",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = GRPCXX_PUBLIC_HDRS + GRPC_SECURE_PUBLIC_HDRS,
+@@ -3184,8 +3184,8 @@ grpc_cc_library(
+         "src/core/tsi/transport_security_grpc.h",
+     ],
+     external_deps = [
+-        "libssl",
+-        "libcrypto",
++        "@boringssl//:ssl",
++        "@boringssl//:crypto",
+     ],
+     language = "c++",
+     visibility = ["@grpc:alts_frame_protector"],
+@@ -3214,7 +3214,7 @@ grpc_cc_library(
+         "src/core/tsi/alts/handshaker/transport_security_common_api.h",
+     ],
+     external_deps = [
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     public_hdrs = GRPC_SECURE_PUBLIC_HDRS,
+@@ -3256,10 +3256,10 @@ grpc_cc_library(
+         "src/core/tsi/transport_security_grpc.h",
+     ],
+     external_deps = [
+-        "libssl",
+-        "libcrypto",
++        "@boringssl//:ssl",
++        "@boringssl//:crypto",
+         "absl/strings",
+-        "upb_lib",
++        "@upb//:upb",
+     ],
+     language = "c++",
+     visibility = ["@grpc:tsi"],
+@@ -3280,8 +3280,8 @@ grpc_cc_library(
+     external_deps = [
+         "absl/synchronization",
+         "absl/memory",
+-        "upb_lib",
+-        "protobuf_headers",
++        "@upb//:upb",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = GRPCXX_PUBLIC_HDRS,
+@@ -3309,8 +3309,8 @@ grpc_cc_library(
+     external_deps = [
+         "absl/synchronization",
+         "absl/memory",
+-        "upb_lib",
+-        "protobuf_headers",
++        "@upb//:upb",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = GRPCXX_PUBLIC_HDRS,
+@@ -3433,7 +3433,7 @@ grpc_cc_library(
+ grpc_cc_library(
+     name = "grpc++_codegen_proto",
+     external_deps = [
+-        "protobuf_headers",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = [
+@@ -3452,7 +3452,7 @@ grpc_cc_library(
+ grpc_cc_library(
+     name = "grpc++_config_proto",
+     external_deps = [
+-        "protobuf_headers",
++        "@com_google_protobuf//:protobuf_headers",
+     ],
+     language = "c++",
+     public_hdrs = [
+@@ -3563,7 +3563,7 @@ grpc_cc_library(
+         "src/cpp/client/channel_test_peer.cc",
+     ],
+     external_deps = [
+-        "gtest",
++        "@com_google_googletest//:gtest",
+     ],
+     public_hdrs = [
+         "include/grpc++/test/mock_stream.h",
+@@ -3637,16 +3637,16 @@ grpc_cc_library(
+         "src/cpp/ext/filters/census/server_filter.h",
+     ],
+     external_deps = [
+-        "absl-base",
+-        "absl-time",
++        "@com_google_absl//absl/base",
++        "@com_google_absl//absl/time:time",
+         "absl/strings",
+-        "opencensus-trace",
+-        "opencensus-trace-context_util",
+-        "opencensus-trace-propagation",
+-        "opencensus-tags",
+-        "opencensus-tags-context_util",
+-        "opencensus-stats",
+-        "opencensus-context",
++        "@io_opencensus_cpp//opencensus/trace:trace",
++        "@io_opencensus_cpp//opencensus/trace:trace-context_util",
++        "@io_opencensus_cpp//opencensus/trace:trace-propagation",
++        "@io_opencensus_cpp//opencensus/tags:tags",
++        "@io_opencensus_cpp//opencensus/tags:tags-context_util",
++        "@io_opencensus_cpp//opencensus/stats:stats",
++        "@io_opencensus_cpp//opencensus/context:context",
+     ],
+     language = "c++",
+     visibility = ["@grpc:grpc_opencensus_plugin"],
+@@ -3679,7 +3679,7 @@ grpc_cc_library(
+ # grpc_cc_library(
+ #    name = "envoy_lrs_upb",
+ #    external_deps = [
+-#        "upb_lib",
++#        "@upb//:upb",
+ #    ],
+ #    language = "c++",
+ #    tags = ["no_windows"],
+@@ -3692,7 +3692,7 @@ grpc_cc_library(
+ # grpc_cc_library(
+ #    name = "envoy_ads_upb",
+ #    external_deps = [
+-#        "upb_lib",
++#        "@upb//:upb",
+ #    ],
+ #    language = "c++",
+ #    tags = ["no_windows"],
+@@ -3794,9 +3794,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/envoy/type/http/v3/path_transformation.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -3901,11 +3901,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/envoy/type/http/v3/path_transformation.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -3931,9 +3931,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/envoy/annotations/resource.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -3952,11 +3952,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/envoy/annotations/resource.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_reflection",
+-        "upb_textformat_lib",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:reflection",
++        "@upb//:textformat",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -3998,9 +3998,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/envoy/config/core/v3/substitution_format_string.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4046,11 +4046,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/envoy/config/core/v3/substitution_format_string.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4098,9 +4098,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/envoy/type/v3/semantic_version.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4146,11 +4146,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/envoy/type/v3/semantic_version.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_reflection",
+-        "upb_textformat_lib",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:reflection",
++        "@upb//:textformat",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4169,9 +4169,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/validate/validate.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4188,11 +4188,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/validate/validate.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4216,9 +4216,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/udpa/data/orca/v1/orca_load_report.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4243,9 +4243,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/udpa/annotations/versioning.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4271,11 +4271,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/udpa/annotations/versioning.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4303,9 +4303,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/xds/core/v3/resource_name.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4334,11 +4334,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/xds/core/v3/resource_name.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4358,9 +4358,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/udpa/type/v1/typed_struct.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4378,11 +4378,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/udpa/type/v1/typed_struct.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4406,9 +4406,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/src/proto/grpc/health/v1/health.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+ )
+@@ -4443,9 +4443,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/google/rpc/status.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+ )
+@@ -4475,11 +4475,11 @@ grpc_cc_library(
+         "src/core/ext/upbdefs-generated/google/rpc/status.upbdefs.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor_reflection",
+-        "upb_textformat_lib",
+-        "upb_reflection",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto_reflection",
++        "@upb//:textformat",
++        "@upb//:reflection",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4502,9 +4502,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/src/proto/grpc/lb/v1/load_balancer.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4527,7 +4527,7 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/third_party/istio/security/proto/providers/google/meshca.upb.h",
+     ],
+     external_deps = [
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+     deps = [
+@@ -4554,9 +4554,9 @@ grpc_cc_library(
+         "src/core/ext/upb-generated/src/proto/grpc/gcp/transport_security_common.upb.h",
+     ],
+     external_deps = [
+-        "upb_lib",
+-        "upb_lib_descriptor",
+-        "upb_generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
++        "@upb//:upb",
++        "@upb//:descriptor_upb_proto",
++        "@upb//:generated_code_support__only_for_generated_code_do_not_use__i_give_permission_to_break_me",
+     ],
+     language = "c++",
+ )
+diff --git a/bazel/grpc_build_system.bzl b/bazel/grpc_build_system.bzl
+index c6e4e66..9f1dd61 100644
+--- a/bazel/grpc_build_system.bzl
++++ b/bazel/grpc_build_system.bzl
+@@ -59,6 +59,8 @@ def _get_external_deps(external_deps):
+             ret += ["//third_party/objective_c/Cronet:cronet_c_for_grpc"]
+         elif dep.startswith("absl/"):
+             ret += ["@com_google_absl//" + dep]
++        elif dep.startswith("@"):
++            ret += [dep]
+         else:
+             ret += ["//external:" + dep]
+     return ret

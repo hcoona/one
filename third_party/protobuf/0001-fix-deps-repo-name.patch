@@ -1,0 +1,13 @@
+diff --git a/BUILD b/BUILD
+index 7de87f8..2556a43 100644
+--- a/BUILD
++++ b/BUILD
+@@ -19,7 +19,7 @@ exports_files(["LICENSE"])
+ # ZLIB configuration
+ ################################################################################
+ 
+-ZLIB_DEPS = ["@zlib//:zlib"]
++ZLIB_DEPS = ["@com_github_madler_zlib//:zlib"]
+ 
+ ################################################################################
+ # Protobuf Runtime Library

@@ -26,8 +26,8 @@ cc_library(
     deps = [
         "//config",
         "//gtl:compiler_specific",
-        "//third_party/glog",
-        "//third_party/googletest:gtest",
+        "@com_github_google_glog//:glog",
+        "@com_google_googletest//:gtest",
     ],
 )
 

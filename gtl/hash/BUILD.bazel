@@ -14,9 +14,9 @@ cc_library(
     linkopts = ONE_DEFAULT_LINKOPTS,
     visibility = ["//visibility:public"],
     deps = [
-        "//third_party/boringssl:crypto",
-        "//third_party/glog",
-        "//third_party/absl/types:span",
+        "@boringssl//:crypto",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -27,6 +27,6 @@ cc_test(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         ":sha1",
-        "//third_party/googletest:gtest_main",
+        "@com_google_googletest//:gtest_main",
     ],
 )

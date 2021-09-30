@@ -23,9 +23,9 @@ limitations under the License.
 
 #include <vector>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/absl/synchronization/mutex.h"
-#include "third_party/glog/logging.h"
+#include "absl/strings/str_cat.h"
+#include "absl/synchronization/mutex.h"
+#include "glog/logging.h"
 #include "gtl/scanner.h"
 
 #if defined(OS_WIN)

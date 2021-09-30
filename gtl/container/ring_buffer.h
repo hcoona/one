@@ -7,7 +7,7 @@
 
 #include <stddef.h>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 
 namespace gtl {
 

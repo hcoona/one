@@ -1,9 +1,0 @@
-package(default_visibility = ["//visibility:public"])
-
-exports_files([
-    "apr_ldap.h",
-    "apu.h",
-    "apu_want.h",
-    "apu_config.h",
-    "apu_select_dbm.h",
-])

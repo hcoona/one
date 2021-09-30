@@ -18,12 +18,12 @@ cc_binary(
         "//gtl:macros",
         "//gtl:map_util",
         "//gtl:posix_file_system",
-        "//third_party/arrow:parquet",
         "@bazel_tools//tools/cpp/runfiles",
-        "//third_party/gflags",
-        "//third_party/glog",
-        "//third_party/absl/status",
-        "//third_party/protobuf",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_protobuf//:protobuf",
+        "@org_apache_arrow//:parquet",
     ],
 )
 
@@ -39,12 +39,12 @@ cc_library(
         "//gtl:macros",
         "//gtl:map_util",
         "//gtl:no_destructor",
-        "//third_party/arrow:parquet",
-        "//third_party/glog",
-        "//third_party/absl/container:flat_hash_map",
-        "//third_party/absl/status",
-        "//third_party/absl/strings",
-        "//third_party/protobuf",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_protobuf//:protobuf",
+        "@org_apache_arrow//:parquet",
     ],
 )
 
@@ -57,10 +57,10 @@ cc_binary(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         "//gtl:macros",
-        "//third_party/arrow:parquet",
-        "//third_party/gflags",
-        "//third_party/glog",
-        "//third_party/absl/status",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@org_apache_arrow//:parquet",
     ],
 )
 
@@ -73,10 +73,10 @@ cc_binary(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         "//gtl:macros",
-        "//third_party/arrow:parquet",
-        "//third_party/gflags",
-        "//third_party/glog",
-        "//third_party/absl/status",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@org_apache_arrow//:parquet",
     ],
 )
 
@@ -89,9 +89,9 @@ cc_binary(
     linkopts = ONE_DEFAULT_LINKOPTS,
     deps = [
         "//gtl:macros",
-        "//third_party/arrow:parquet",
-        "//third_party/gflags",
-        "//third_party/glog",
-        "//third_party/absl/status",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@org_apache_arrow//:parquet",
     ],
 )

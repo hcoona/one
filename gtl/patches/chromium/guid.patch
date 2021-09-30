@@ -9,9 +9,9 @@ index 4fb3987..67e2fec 100644
 -#include "gtl/rand_util.h"
 -#include "gtl/strings/string_util.h"
 -#include "gtl/strings/stringprintf.h"
-+#include "third_party/absl/strings/ascii.h"
-+#include "third_party/absl/strings/str_format.h"
-+#include "third_party/absl/random/random.h"
++#include "absl/strings/ascii.h"
++#include "absl/strings/str_format.h"
++#include "absl/random/random.h"
 
  namespace gtl {
 
@@ -66,7 +66,7 @@ index 2c114c5..5f68303 100644
  #include <string>
 
 -
- #include "third_party/absl/strings/string_view.h"
+ #include "absl/strings/string_view.h"
 -#include "config/config.h"
 
  namespace gtl {
@@ -91,7 +91,7 @@ index c0933fd..bbec398 100644
 
 -#include "gtl/strings/string_util.h"
 -#include "config/config.h"
-+#include "third_party/absl/strings/ascii.h"
++#include "absl/strings/ascii.h"
  #include "gtest/gtest.h"
 
  namespace gtl {

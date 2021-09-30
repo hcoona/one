@@ -13,7 +13,7 @@
 
 #include <type_traits>
 
-#include "third_party/glog/logging.h"
+#include "glog/logging.h"
 #include "gtl/compiler_specific.h"
 #include "config/config.h"
 

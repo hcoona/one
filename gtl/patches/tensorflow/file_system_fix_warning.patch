@@ -16,7 +16,7 @@ index 155a5b1..169adfa 100644
 +++ b/gtl/file_system.h
 @@ -26,6 +26,7 @@ limitations under the License.
 
- #include "third_party/absl/status/status.h"
+ #include "absl/status/status.h"
  #include "gtl/file_statistics.h"
 +#include "gtl/macros.h"
 

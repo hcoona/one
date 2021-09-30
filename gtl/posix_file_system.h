@@ -20,7 +20,7 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include "third_party/absl/status/status.h"
+#include "absl/status/status.h"
 #include "gtl/file_system.h"
 #include "gtl/path.h"
 
