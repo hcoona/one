@@ -13,7 +13,7 @@ build --conlyopt="-std=c11"
 
 # Enable position independent code (this is the default on macOS and Windows)
 # (Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421)
-build --copt=-fPIC --copt=-msse4.2 --copt=-mavx2 --copt=-mbmi2
+build --copt=-fPIC
 build --fission=dbg,opt
 build --features=per_object_debug_info
 build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a

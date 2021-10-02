@@ -2,11 +2,6 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 ARROW_FLAGS = [
-    # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L49
-    "-msse4.2",
-    "-mavx2",
-    "-mbmi2",
-] + [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L264
     "-Wall",
     "-Wno-conversion",
@@ -22,13 +17,23 @@ ARROW_FLAGS = [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L429
     "-DARROW_HAVE_AVX2",
     "-DARROW_HAVE_BMI2",
-    "-DARROW_HAVE_SSE4_2",
-] + [
+] + select({
+    "@//config:enable_sse42": ["-DARROW_HAVE_SSE4_2"],
+    "//conditions:default": [],
+}) + select({
+    "@//config:enable_avx2": ["-DARROW_HAVE_AVX2"],
+    "//conditions:default": [],
+}) + select({
+    "@//config:enable_bmi2": ["-DARROW_HAVE_BMI2"],
+    "//conditions:default": [],
+}) + [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/src/arrow/CMakeLists.txt#L265
     "-DURI_STATIC_BUILD",
 ] + [
     # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/src/arrow/CMakeLists.txt#L272
+    "-DARROW_WITH_BROTLI",
     "-DARROW_WITH_BZ2",
+    "-DARROW_WITH_LZ4",
     "-DARROW_WITH_SNAPPY",
     "-DARROW_WITH_ZLIB",
     "-DARROW_WITH_ZSTD",
@@ -150,13 +155,12 @@ ARROW_SRCS = [
     "util/bpacking_avx2.cc",
 ] + [
     # Need compression libraries
+    "util/compression_brotli.cc",
     "util/compression_bz2.cc",
+    "util/compression_lz4.cc",
     "util/compression_snappy.cc",
     "util/compression_zlib.cc",
     "util/compression_zstd.cc",
-    # TODO(zhangshuai.ustc): Support other compressors.
-    # "util/compression_brotil.cc",
-    # "util/compression_lz4.cc",
 ]
 
 ARROW_C_SRCS = [
@@ -325,9 +329,12 @@ cc_library(
         "@com_github_google_flatbuffers//:flatbuffers",
         "@com_github_google_glog//:glog",
         "@com_github_google_snappy//:snappy",
+        "@com_github_lz4_lz4//:lz4",
         "@com_github_madler_zlib//:zlib",
         "@com_github_tencent_rapidjson//:rapidjson",
         "@com_github_xtensor_stack_xsimd//:xsimd",
+        "@org_brotli//:brotlidec",
+        "@org_brotli//:brotlienc",
         "@org_sourceware_bzip2//:bz2",
     ],
 )

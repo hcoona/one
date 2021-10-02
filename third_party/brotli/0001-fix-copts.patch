@@ -1,25 +1,16 @@
 diff --git a/BUILD b/BUILD
-index 4c9b57a..c682c8d 100644
+index 4c9b57a..8ca0c5e 100644
 --- a/BUILD
 +++ b/BUILD
-@@ -55,8 +55,10 @@ STRICT_C_OPTIONS = select({
+@@ -55,8 +55,11 @@ STRICT_C_OPTIONS = select({
          "-Wmissing-declarations",
          "-Wmissing-prototypes",
          "-Wno-strict-aliasing",
 +        "-fno-strict-aliasing",
          "-Wshadow",
          "-Wsign-compare",
-+        "-Wno-implicit-int-float-conversion"
++        "-Wno-implicit-int-float-conversion",
++        "-D_POSIX_C_SOURCE",
      ],
  })
  
-@@ -132,6 +134,9 @@ cc_binary(
-     srcs = ["c/tools/brotli.c"],
-     copts = STRICT_C_OPTIONS,
-     linkstatic = 1,
-+    local_defines = [
-+        "_POSIX_C_SOURCE",
-+    ],
-     deps = [
-         ":brotlidec",
-         ":brotlienc",

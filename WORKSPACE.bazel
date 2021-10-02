@@ -473,6 +473,17 @@ http_archive(
 )
 
 http_archive(
+    name = "org_brotli",  # 2020-08-27T14:14:11Z
+    patch_args = ["-p1"],
+    patches = [
+        "//third_party/brotli:0001-fix-copts.patch",
+    ],
+    sha256 = "f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46",
+    strip_prefix = "brotli-1.0.9",
+    urls = ["https://github.com/google/brotli/archive/refs/tags/v1.0.9.tar.gz"],
+)
+
+http_archive(
     name = "org_sourceware_bzip2",  # 2019-06-13
     build_file = "//third_party/bzip2:bzip2.BUILD",
     sha256 = "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
