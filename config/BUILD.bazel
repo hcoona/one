@@ -7,3 +7,31 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
+
+config_setting(
+    name = "enable_sse2",
+    values = {
+        "copt": "-msse2",
+    },
+)
+
+config_setting(
+    name = "enable_sse42",
+    values = {
+        "copt": "-msse4.2",
+    },
+)
+
+config_setting(
+    name = "enable_avx2",
+    values = {
+        "copt": "-mavx2",
+    },
+)
+
+config_setting(
+    name = "enable_bmi2",
+    values = {
+        "copt": "-mbmi2",
+    },
+)
