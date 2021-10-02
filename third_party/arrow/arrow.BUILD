@@ -13,11 +13,8 @@ ARROW_FLAGS = [
     "-Wno-shadow-field",
     "-Wno-sign-compare",
     "-Wno-unused-parameter",
-] + [
-    # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L429
-    "-DARROW_HAVE_AVX2",
-    "-DARROW_HAVE_BMI2",
 ] + select({
+    # https://github.com/apache/arrow/blob/f959141ece4d660bce5f7fa545befc0116a7db79/cpp/cmake_modules/SetupCxxFlags.cmake#L429
     "@//config:enable_sse42": ["-DARROW_HAVE_SSE4_2"],
     "//conditions:default": [],
 }) + select({
@@ -150,10 +147,10 @@ ARROW_SRCS = [
     "vendored/double-conversion/fixed-dtoa.cc",
     "vendored/double-conversion/diy-fp.cc",
     "vendored/double-conversion/strtod.cc",
-] + [
-    # Need avx2
-    "util/bpacking_avx2.cc",
-] + [
+] + select({
+    "@//config:enable_avx2": ["util/bpacking_avx2.cc"],
+    "//conditions:default": [],
+}) + [
     # Need compression libraries
     "util/compression_brotli.cc",
     "util/compression_bz2.cc",
@@ -227,9 +224,10 @@ ARROW_COMPUTE_SRCS = [
     "compute/kernels/vector_nested.cc",
     "compute/kernels/vector_selection.cc",
     "compute/kernels/vector_sort.cc",
-] + [
-    "compute/kernels/aggregate_basic_avx2.cc",
-]
+] + select({
+    "@//config:enable_avx2": ["compute/kernels/aggregate_basic_avx2.cc"],
+    "//conditions:default": [],
+})
 
 ARROW_DATASET_SRCS = [
     # Extract SRCS variables from
@@ -614,11 +612,15 @@ PARQUET_SRCS = [
     "stream_reader.cc",
     "stream_writer.cc",
     "types.cc",
-] + [
+] + select({
     # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
-    "level_comparison_avx2.cc",
-    "level_conversion_bmi2.cc",
-] + [
+    "@//config:enable_avx2": ["level_comparison_avx2.cc"],
+    "//conditions:default": [],
+}) + select({
+    # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
+    "@//config:enable_bmi2": ["level_conversion_bmi2.cc"],
+    "//conditions:default": [],
+}) + [
     # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L228
     "encryption/encryption_internal.cc",
 ]
