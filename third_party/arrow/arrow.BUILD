@@ -147,10 +147,7 @@ ARROW_SRCS = [
     "vendored/double-conversion/fixed-dtoa.cc",
     "vendored/double-conversion/diy-fp.cc",
     "vendored/double-conversion/strtod.cc",
-] + select({
-    "@//config:enable_avx2": ["util/bpacking_avx2.cc"],
-    "//conditions:default": [],
-}) + [
+] + [
     # Need compression libraries
     "util/compression_brotli.cc",
     "util/compression_bz2.cc",
@@ -224,10 +221,7 @@ ARROW_COMPUTE_SRCS = [
     "compute/kernels/vector_nested.cc",
     "compute/kernels/vector_selection.cc",
     "compute/kernels/vector_sort.cc",
-] + select({
-    "@//config:enable_avx2": ["compute/kernels/aggregate_basic_avx2.cc"],
-    "//conditions:default": [],
-})
+]
 
 ARROW_DATASET_SRCS = [
     # Extract SRCS variables from
@@ -291,7 +285,13 @@ cc_library(
         "cpp/src/arrow/" + f
         for f in ARROW_SRCS + ARROW_C_SRCS + ARROW_CSV_SRCS + ARROW_COMPUTE_SRCS +
                  ARROW_DATASET_SRCS + ARROW_FILESYSTEM_SRCS + ARROW_IPC_SRCS + ARROW_JSON_SRCS
-    ] + glob([
+    ] + select({
+        "@//config:enable_avx2": [
+            "cpp/src/arrow/util/bpacking_avx2.cc",
+            "cpp/src/arrow/compute/kernels/aggregate_basic_avx2.cc",
+        ],
+        "//conditions:default": [],
+    }) + glob([
         "cpp/thirdparty/**/*.h",
     ]),
     hdrs = glob([
@@ -612,15 +612,7 @@ PARQUET_SRCS = [
     "stream_reader.cc",
     "stream_writer.cc",
     "types.cc",
-] + select({
-    # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
-    "@//config:enable_avx2": ["level_comparison_avx2.cc"],
-    "//conditions:default": [],
-}) + select({
-    # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
-    "@//config:enable_bmi2": ["level_conversion_bmi2.cc"],
-    "//conditions:default": [],
-}) + [
+] + [
     # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L228
     "encryption/encryption_internal.cc",
 ]
@@ -634,7 +626,15 @@ copy_file(
 
 cc_library(
     name = "parquet",
-    srcs = ["cpp/src/parquet/" + f for f in PARQUET_SRCS] + [
+    srcs = ["cpp/src/parquet/" + f for f in PARQUET_SRCS] + select({
+        # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
+        "@//config:enable_avx2": ["cpp/src/parquet/level_comparison_avx2.cc"],
+        "//conditions:default": [],
+    }) + select({
+        # https://github.com/apache/arrow/blob/d613aa68789288d3503dfbd8376a41f2d28b6c9d/cpp/src/parquet/CMakeLists.txt#L207
+        "@//config:enable_bmi2": ["cpp/src/parquet/level_conversion_bmi2.cc"],
+        "//conditions:default": [],
+    }) + [
         "cpp/src/generated/parquet_types.cpp",
         "cpp/src/generated/parquet_types.h",
         "cpp/src/generated/parquet_constants.cpp",
