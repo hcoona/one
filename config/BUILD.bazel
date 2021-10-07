@@ -1,4 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@bazel_skylib//lib:selects.bzl", "selects")
 
 cc_library(
     name = "config",
@@ -13,6 +14,11 @@ config_setting(
     values = {
         "copt": "-msse2",
     },
+)
+
+selects.config_setting_group(
+    name = "enable_sse2_or_sse42",
+    match_any = [":enable_sse2", ":enable_sse42"],
 )
 
 config_setting(
