@@ -1,3 +1,4 @@
+#include <array>
 #include <limits>
 
 #include "absl/random/random.h"
