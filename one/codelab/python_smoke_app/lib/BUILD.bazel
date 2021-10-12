@@ -4,6 +4,7 @@ py_library(
     name = "library",
     srcs = ["library.py"],
     visibility = ["//one/codelab/python_smoke_app:__subpackages__"],
+    srcs_version = "PY2AND3",
     deps = [
         requirement("yapf"),
     ],
@@ -13,5 +14,6 @@ py_test(
     name = "library_test",
     size = "small",
     srcs = ["library_test.py"],
+    python_version = "PY3",
     deps = [":library"],
 )
