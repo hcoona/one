@@ -79,7 +79,7 @@
 #else  // DCHECK_IS_ON()
 // A no-op expansion that can be followed by a semicolon at class level.
 #define SEQUENCE_CHECKER(name) static_assert(true, "")
-#define DCHECK_CALLED_ON_VALID_SEQUENCE(name, ...) EAT_CHECK_STREAM_PARAMS()
+#define DCHECK_CALLED_ON_VALID_SEQUENCE(name, ...) (void)0
 #define DETACH_FROM_SEQUENCE(name)
 #endif  // DCHECK_IS_ON()
 

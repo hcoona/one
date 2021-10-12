@@ -84,7 +84,7 @@
 #define DETACH_FROM_THREAD(name) (name).DetachFromThread()
 #else  // DCHECK_IS_ON()
 #define THREAD_CHECKER(name) static_assert(true, "")
-#define DCHECK_CALLED_ON_VALID_THREAD(name, ...) EAT_CHECK_STREAM_PARAMS()
+#define DCHECK_CALLED_ON_VALID_THREAD(name, ...) (void)0
 #define DETACH_FROM_THREAD(name)
 #endif  // DCHECK_IS_ON()
 
