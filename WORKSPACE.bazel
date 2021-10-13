@@ -335,6 +335,7 @@ http_archive(
 )
 
 # TODO(zhangshuai.ustc): SIMD optimization.
+# https://github.com/cloudflare/zlib
 http_archive(
     name = "com_github_madler_zlib",  # 2017-01-15T17:57:23Z
     build_file = "//third_party/zlib:zlib.BUILD",
