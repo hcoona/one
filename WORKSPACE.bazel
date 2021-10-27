@@ -431,6 +431,20 @@ http_archive(
 )
 
 http_archive(
+    name = "io_kythe",  # 2021-10-26T17:41:04Z
+    build_file = "//third_party/kythe:kythe.BUILD",
+    patch_cmds = [
+        "find . -name BUILD -delete",
+    ],
+    patch_cmds_win = [
+        "Get-ChildItem . -Recurse -Include BUILD | Remove-Item -Force",
+    ],
+    sha256 = "2c490e3e833364396fe8060dcb0b32991481600ee53efbb3d2f2488551e433c7",
+    strip_prefix = "kythe-342f7e07aac7b914310ab7d25fe2dd6ab12a6455",
+    urls = ["https://github.com/kythe/kythe/archive/342f7e07aac7b914310ab7d25fe2dd6ab12a6455.tar.gz"],
+)
+
+http_archive(
     name = "io_opencensus_cpp",
     sha256 = "90d6fafa8b1a2ea613bf662731d3086e1c2ed286f458a95c81744df2dbae41b1",
     strip_prefix = "opencensus-cpp-c9a4da319bc669a772928ffc55af4a61be1a1176",
