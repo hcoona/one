@@ -6,7 +6,7 @@ cc_library(
     defines = [
         "RAPIDJSON_HAS_STDSTRING",
     ] + select({
-        "@//config:enable_sse2_or_sse42": ["RAPIDJSON_SSE2"],
+        "@//config:enable_sse2_or_later": ["RAPIDJSON_SSE2"],
         "//conditions:default": [],
     }) + select({
         "@//config:enable_sse42": ["RAPIDJSON_SSE42"],

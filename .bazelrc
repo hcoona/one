@@ -2,7 +2,7 @@
 build --cxxopt="-std=c++14" --cxxopt="-Wno-c++17-extensions" --cxxopt="-Wno-undef"
 build --conlyopt="-std=c11"
 
-build --copt=-march=ivybridge --copt=-msse2 --copt=-msse4.2 --copt=-mavx
+build --copt=-march=x86-64-v3 --copt=-msse2 --copt=-msse4.2 --copt=-mavx --copt=-mbmi2
 build --copt=-gdwarf-5
 
 # build --proto_compiler=//third_party/protobuf:protoc

@@ -16,16 +16,16 @@ config_setting(
     },
 )
 
-selects.config_setting_group(
-    name = "enable_sse2_or_sse42",
-    match_any = [":enable_sse2", ":enable_sse42"],
-)
-
 config_setting(
     name = "enable_sse42",
     values = {
         "copt": "-msse4.2",
     },
+)
+
+selects.config_setting_group(
+    name = "enable_sse2_or_later",
+    match_any = [":enable_sse2", ":enable_sse42"],
 )
 
 config_setting(
