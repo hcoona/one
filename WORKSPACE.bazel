@@ -712,3 +712,28 @@ pip_parse(
 load("@fuzzing_py_deps//:requirements.bzl", fuzzing_py_install_deps = "install_deps")
 
 fuzzing_py_install_deps()
+
+http_archive(
+    name = "com_grail_bazel_toolchain",
+    sha256 = "f23a2161b0f42e8bc6af9b55640e79ce733af4936bc2a00bf5f9a9a7ee4680ef",
+    strip_prefix = "bazel-toolchain-b96ec0905986c361010593816b8f695f341888ad",
+    url = "https://github.com/hcoona/bazel-toolchain/archive/b96ec0905986c361010593816b8f695f341888ad.tar.gz",
+)
+
+load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
+
+bazel_toolchain_dependencies()
+
+load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
+
+llvm_toolchain(
+    name = "llvm_toolchain",
+    llvm_mirror_patterns = [
+        "https://mirrors.tuna.tsinghua.edu.cn/github-release/llvm/llvm-project/LLVM%20{llvm_version}/{basename}",
+    ],
+    llvm_version = "13.0.0",
+)
+
+load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
+
+llvm_register_toolchains()
