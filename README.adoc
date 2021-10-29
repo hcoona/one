@@ -26,3 +26,7 @@ grep "name = " copy.bara.sky \
   | awk '{print substr($3,2,length($3) - 3)}' \
   | xargs -I@ copybara migrate copy.bara.sky @ --ignore-noop --folder-dir=.
 ----
+
+== TODO
+
+Tag tests to distinguish bechmarking & unit testing. Run benchmarking with opt profile.
