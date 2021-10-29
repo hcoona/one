@@ -16,11 +16,11 @@ jobs:
     steps:
       - name: Install GCC 10
         run: sudo apt install gcc-10
-      - name: Install LLVM 12
+      - name: Install LLVM 13
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 12
+          sudo ./llvm.sh 13
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
@@ -37,5 +37,6 @@ jobs:
           key: bazel
       - run: echo "common --disk_cache=$HOME/.cache/bazel/disk_cache" >> .bazelrc
       - run: echo "common --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
-      - run: bazel build //...
-      - run: bazel test //...
+      - run: tools/setup_clang.sh /usr/lib/llvm-13
+      - run: bazel build --config=libc++ //...
+      - run: bazel test -c opt --config=libc++ //...
