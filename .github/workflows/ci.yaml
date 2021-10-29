@@ -21,6 +21,7 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 13
+          sudo apt install lld-13 libfuzzer-13-dev libc++-13-dev libc++abi-13-dev libunwind-13-dev
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
