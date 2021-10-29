@@ -22,9 +22,9 @@ RULES_CC_COMMIT_ID = "0913abc3be0edff60af681c0473518f51fb9eeef"  # 2021-08-12T14
 
 RULES_CC_SHA256 = "04d22a8c6f0caab1466ff9ae8577dbd12a0c7d0bc468425b75de094ec68ab4f9"
 
-RULES_PYTHON_TAG = "0.4.0"  # 2021-09-12T22:58:33Z
+RULES_PYTHON_TAG = "0.5.0"  # 2021-10-26T02:28:10Z
 
-RULES_PYTHON_SHA256 = "954aa89b491be4a083304a2cb838019c8b8c3720a7abb9c4cb81ac7a24230cea"
+RULES_PYTHON_SHA256 = "cd6730ed53a002c56ce4e2f396ba3b3be262fd7cb68339f0377a45e8227fe332"
 
 RULES_JAVA_TAG = "4.0.0"  # 2021-01-21T12:10:05Z
 
@@ -715,9 +715,9 @@ fuzzing_py_install_deps()
 
 http_archive(
     name = "com_grail_bazel_toolchain",
-    sha256 = "f23a2161b0f42e8bc6af9b55640e79ce733af4936bc2a00bf5f9a9a7ee4680ef",
-    strip_prefix = "bazel-toolchain-b96ec0905986c361010593816b8f695f341888ad",
-    url = "https://github.com/hcoona/bazel-toolchain/archive/b96ec0905986c361010593816b8f695f341888ad.tar.gz",
+    sha256 = "8263c027458c0cb5af5da3075017d20940c5608452f5017c3921e6f6b5d7f011",
+    strip_prefix = "bazel-toolchain-10fa1bed96729d0aeeff98f457b750158445c5c3",
+    url = "https://github.com/hcoona/bazel-toolchain/archive/10fa1bed96729d0aeeff98f457b750158445c5c3.tar.gz",
 )
 
 load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
@@ -728,7 +728,7 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 
 llvm_toolchain(
     name = "llvm_toolchain",
-    llvm_mirror_patterns = [
+    alternative_llvm_sources = [
         "https://mirrors.tuna.tsinghua.edu.cn/github-release/llvm/llvm-project/LLVM%20{llvm_version}/{basename}",
     ],
     llvm_version = "13.0.0",
