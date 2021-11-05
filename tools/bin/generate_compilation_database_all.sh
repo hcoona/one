@@ -3,14 +3,16 @@
 # Generates a compile_commands.json file at $(bazel info execution_root) for
 # the given file path.
 
-set -e
+set -ex
 
-bazel build --config=clang \
+bazel build "$@" \
   --experimental_action_listener=@io_kythe//:extract_json \
   --noshow_progress \
   --noshow_loading_progress \
   --output_groups=compilation_outputs \
   //... >/dev/null
+
+set +x
 
 BAZEL_ROOT="$(bazel info execution_root)"
 pushd "$BAZEL_ROOT" >/dev/null
