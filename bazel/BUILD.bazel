@@ -42,3 +42,18 @@ config_setting(
         "@platforms//cpu:ppc",
     ],
 )
+
+# TODO(zhangshuai.ustc): Build very basic libraries with -Og or -O3
+config_setting(
+    name = "dbg",
+    values = {
+        "compilation_mode": "dbg",
+    },
+)
+
+config_setting(
+    name = "opt",
+    values = {
+        "compilation_mode": "opt",
+    },
+)
