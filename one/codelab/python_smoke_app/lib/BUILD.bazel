@@ -3,8 +3,8 @@ load("@one_pip_deps//:requirements.bzl", "requirement")
 py_library(
     name = "library",
     srcs = ["library.py"],
-    visibility = ["//one/codelab/python_smoke_app:__subpackages__"],
     srcs_version = "PY2AND3",
+    visibility = ["//one/codelab/python_smoke_app:__subpackages__"],
     deps = [
         requirement("yapf"),
     ],
