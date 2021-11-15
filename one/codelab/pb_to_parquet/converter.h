@@ -7,10 +7,10 @@
 #include "absl/status/status.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
-#include "parquet/api/schema.h"
-#include "parquet/api/writer.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
+#include "parquet/api/schema.h"
+#include "parquet/api/writer.h"
 
 namespace hcoona {
 namespace codelab {

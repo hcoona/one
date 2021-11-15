@@ -7,12 +7,12 @@
 #include "arrow/api.h"
 #include "arrow/io/api.h"
 #include "arrow/io/file.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "parquet/api/io.h"
 #include "parquet/api/schema.h"
 #include "parquet/api/writer.h"
 #include "parquet/arrow/writer.h"
-#include "gflags/gflags.h"
-#include "glog/logging.h"
 #include "gtl/macros.h"
 
 #define ARROW_CHECK_OK(status)                                        \

@@ -8,9 +8,9 @@
 #include "absl/status/status.h"
 #include "absl/types/span.h"
 #include "arrow/api.h"
-#include "parquet/arrow/writer.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
+#include "parquet/arrow/writer.h"
 
 namespace hcoona {
 namespace codelab {

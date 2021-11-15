@@ -4,9 +4,9 @@
 #include <thread>
 #include <utility>
 
-#include "gtest/gtest.h"
 #include "absl/synchronization/notification.h"
 #include "glog/logging.h"
+#include "gtest/gtest.h"
 #include "one/service/event_dispatcher.h"
 #include "one/service/event_dispatcher_sync_impl.h"
 
