@@ -1,7 +1,7 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_proto_library", "cc_test")
 
-cc_binary(
+cc_test(
     name = "benchmark_encoding",
     srcs = [
         "main.cc",
@@ -9,6 +9,7 @@ cc_binary(
     data = ["rosetta_example_without_map_10.pb"],
     tags = [
         "benchmark",
+        "runtime_broken",
     ],
     # malloc = "@com_github_gperftools_gperftools//:tcmalloc",
     deps = [

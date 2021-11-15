@@ -15,7 +15,7 @@
 namespace {
 
 constexpr const char kInputFile[] =
-    "com_github_hcoona_one/codelab/parse_pb_on_the_fly/messages.proto";
+    "com_github_hcoona_one/one/codelab/parse_pb_on_the_fly/messages.proto";
 
 bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
   ignore_result(flag_name);

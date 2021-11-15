@@ -13,7 +13,7 @@
 namespace {
 
 constexpr const char kInputFile[] =
-    "com_github_hcoona_one/codelab/read_bazel_runfiles/lipsum.txt";
+    "com_github_hcoona_one/one/codelab/read_bazel_runfiles/lipsum.txt";
 
 }  // namespace
 

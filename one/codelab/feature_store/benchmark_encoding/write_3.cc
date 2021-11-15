@@ -22,7 +22,7 @@
 namespace {
 
 constexpr const char kDefaultInputFile[] =
-    "com_github_hcoona_one/codelab/feature_store/benchmark_encoding/"
+    "com_github_hcoona_one/one/codelab/feature_store/benchmark_encoding/"
     "rosetta_example_without_map_10.pb";
 constexpr const size_t kDefaultDumpRowCount = 1000;
 

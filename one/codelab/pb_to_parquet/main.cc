@@ -24,7 +24,7 @@
 namespace {
 
 constexpr const char kInputFile[] =
-    "com_github_hcoona_one/codelab/pb_to_parquet/messages.proto";
+    "com_github_hcoona_one/one/codelab/pb_to_parquet/messages.proto";
 
 bool FlagStringNotEmpty(const char* flag_name, const std::string& value) {
   ignore_result(flag_name);
