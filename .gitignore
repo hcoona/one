@@ -424,6 +424,7 @@ $RECYCLE.BIN/
 
 # Generated compile_commands.json
 /compile_commands.json
+/.bazel-one
 
 # Generated clang.bazelrc
 /clang.bazelrc

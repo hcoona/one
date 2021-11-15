@@ -38,4 +38,7 @@ BAZEL_WORKSPACE="$(bazel info workspace)"
 # sed -i 's/ external/ bazel-one\/external/g' "$BAZEL_WORKSPACE/compile_commands.json"
 # sed -i 's/\"external/\"bazel-one\/external/g' "$BAZEL_WORKSPACE/compile_commands.json"
 
-sed -i -e "s|\"--compile-commands-dir=.*\"|\"--compile-commands-dir=$BAZEL_ROOT\"|g" "$BAZEL_WORKSPACE/.vscode/settings.json"
+rm -rf "$BAZEL_WORKSPACE/.bazel-one"
+mkdir -p "$BAZEL_WORKSPACE/.bazel-one"
+cp -r "$BAZEL_WORKSPACE/bazel-one/"* "$BAZEL_WORKSPACE/.bazel-one/."
+sed -i -e "s|\"--compile-commands-dir=.*\"|\"--compile-commands-dir=$$BAZEL_WORKSPACE/.bazel-one\"|g" "$BAZEL_WORKSPACE/.vscode/settings.json"

@@ -1,2 +1,5 @@
 # Need to recover later
 one/codelab/rocksdb_example
+
+# Just for clangd
+.bazel-one
