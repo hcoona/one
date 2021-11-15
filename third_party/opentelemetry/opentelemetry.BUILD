@@ -7,9 +7,10 @@ OT_DEFINES = [
 ]
 
 OT_TEST_FLAGS = [
-    "-Wno-defaulted-function-deleted",
     "-Wno-dangling-else",
+    "-Wno-defaulted-function-deleted",
     "-Wno-dynamic-class-memaccess",
+    "-Wno-pessimizing-move",
 ]
 
 cc_library(
@@ -194,7 +195,6 @@ cc_library(
 cc_test(
     name = "sdk_aggregated_tests",
     size = "small",
-    size = "large",
     srcs = glob(
         [
             "sdk/test/**/*.cc",
@@ -215,6 +215,72 @@ cc_test(
         ":sdk",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "circular_buffer_benchmark",
+    size = "medium",
+    srcs = [
+        "sdk/test/common/baseline_circular_buffer.h",
+        "sdk/test/common/circular_buffer_benchmark.cc",
+    ],
+    copts = [
+        "-iquote external/io_opentelemetry_cpp/sdk",
+    ] + OT_TEST_FLAGS,
+    linkopts = [
+        "-ldl",
+    ],
+    tags = [
+        "benchmark",
+    ],
+    deps = [
+        ":sdk",
+        "@com_github_google_benchmark//:benchmark",
+        "@com_google_googletest//:gtest",
+    ],
+)
+
+cc_test(
+    name = "random_benchmark",
+    size = "small",
+    srcs = [
+        "sdk/test/common/random_benchmark.cc",
+    ],
+    copts = [
+        "-iquote external/io_opentelemetry_cpp/sdk",
+    ] + OT_TEST_FLAGS,
+    linkopts = [
+        "-ldl",
+    ],
+    tags = [
+        "benchmark",
+    ],
+    deps = [
+        ":sdk",
+        "@com_github_google_benchmark//:benchmark",
+        "@com_google_googletest//:gtest",
+    ],
+)
+
+cc_test(
+    name = "sampler_benchmark",
+    size = "small",
+    srcs = [
+        "sdk/test/trace/sampler_benchmark.cc",
+    ],
+    copts = OT_TEST_FLAGS,
+    linkopts = [
+        "-ldl",
+    ],
+    tags = [
+        "benchmark",
+    ],
+    deps = [
+        ":memory_exporter",
+        ":sdk",
+        "@com_github_google_benchmark//:benchmark",
+        "@com_google_googletest//:gtest",
     ],
 )
 
