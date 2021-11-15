@@ -454,6 +454,26 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "io_opentelemetry_cpp",  # 2021-10-22T04:44:46Z
+    build_file = "//third_party/opentelemetry:opentelemetry.BUILD",
+    patch_cmds = [
+        "find . -name BUILD -delete",
+        "rm -rf api/include/opentelemetry/nostd/absl",
+        "sed -i 's/include <absl\\/types\\/variant.h>/include \"absl\\/types\\/variant.h\"/g' api/include/opentelemetry/nostd/variant.h",
+    ],
+    patch_cmds_win = [
+        "Get-ChildItem . -Recurse -Include BUILD | Remove-Item -Force",
+        "Remove-Item -Force -Recursive api/include/opentelemetry/nostd/absl",
+        "sed -i 's/include <absl\\/types\\/variant.h>/include \"absl\\/types\\/variant.h\"/g' api/include/opentelemetry/nostd/variant.h",
+    ],
+    sha256 = "32f12ff15ec257e3462883f84bc291c2d5dc30055604c12ec4b46a36dfa3f189",
+    strip_prefix = "opentelemetry-cpp-1.0.1",
+    urls = [
+        "https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/v1.0.1.tar.gz",
+    ],
+)
+
 # TODO(zhangshuai.ds): Upgrade it.
 # TODO(zhangshuai.ds): Use common hdfs.
 # TODO(zhangshuai.ds): Generate generated files with flatbuffers & thrift.
@@ -525,9 +545,9 @@ http_archive(
     ],
 )
 
-##############################
-# Load repositories methods  #
-##############################
+#
+# Load repositories methods
+#
 
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
@@ -539,9 +559,9 @@ system_python(
     name = "system_python",
 )
 
-##############################
-# Load Python Dependencies   #
-##############################
+#
+# Load Python Dependencies
+#
 
 load("@rules_python//python:pip.bzl", "pip_parse")
 
@@ -559,9 +579,9 @@ load("@one_pip_deps//:requirements.bzl", "install_deps")
 # Call it to define repos for your requirements.
 install_deps()
 
-##############################
-# Load Java Dependencies     #
-##############################
+#
+# Load Java Dependencies
+#
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 load("@rules_jvm_external//:specs.bzl", "maven")
@@ -663,9 +683,9 @@ load("@maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
 
-##############################
-# Load Java Dependencies     #
-##############################
+#
+# Load Go Dependencies
+#
 
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
@@ -673,9 +693,9 @@ go_rules_dependencies()
 
 go_register_toolchains(version = "1.16.5")
 
-##############################
-# Tools Dependencies         #
-##############################
+#
+# Tools Dependencies
+#
 
 http_archive(
     name = "bazel_gazelle",  # 2021-03-08T20:39:12Z
