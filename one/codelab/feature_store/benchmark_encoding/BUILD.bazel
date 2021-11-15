@@ -7,6 +7,9 @@ cc_binary(
         "main.cc",
     ],
     data = ["rosetta_example_without_map_10.pb"],
+    tags = [
+        "benchmark",
+    ],
     # malloc = "@com_github_gperftools_gperftools//:tcmalloc",
     deps = [
         ":dump",

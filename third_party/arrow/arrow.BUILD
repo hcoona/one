@@ -531,6 +531,9 @@ cc_test(
     srcs = [
         "cpp/src/arrow/builder_benchmark.cc",
     ],
+    tags = [
+        "benchmark",
+    ],
     deps = [
         ":arrow",
         ":arrow_test_common",
@@ -543,6 +546,9 @@ cc_test(
     size = "large",
     srcs = [
         "cpp/src/arrow/compare_benchmark.cc",
+    ],
+    tags = [
+        "benchmark",
     ],
     deps = [
         ":arrow",
@@ -557,6 +563,9 @@ cc_test(
     srcs = [
         "cpp/src/arrow/memory_pool_benchmark.cc",
     ],
+    tags = [
+        "benchmark",
+    ],
     deps = [
         ":arrow",
         ":arrow_test_common",
@@ -569,6 +578,9 @@ cc_test(
     size = "large",
     srcs = [
         "cpp/src/arrow/type_benchmark.cc",
+    ],
+    tags = [
+        "benchmark",
     ],
     deps = [
         ":arrow",
@@ -792,6 +804,9 @@ cc_test(
         "cpp/src/parquet/column_io_benchmark.cc",
         "cpp/src/parquet/test_util.cc",
     ],
+    tags = [
+        "benchmark",
+    ],
     deps = [
         ":arrow_test_common",
         ":parquet",
@@ -820,6 +835,9 @@ cc_test(
         "cpp/src/parquet/level_conversion_benchmark.cc",
         "cpp/src/parquet/test_util.cc",
     ],
+    tags = [
+        "benchmark",
+    ],
     deps = [
         ":arrow_test_common",
         ":parquet",
@@ -833,6 +851,9 @@ cc_test(
     srcs = [
         "cpp/src/parquet/arrow/reader_writer_benchmark.cc",
         "cpp/src/parquet/test_util.cc",
+    ],
+    tags = [
+        "benchmark",
     ],
     deps = [
         ":arrow_test_common",
