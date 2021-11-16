@@ -457,6 +457,7 @@ http_archive(
 http_archive(
     name = "io_opentelemetry_cpp",  # 2021-10-22T04:44:46Z
     build_file = "//third_party/opentelemetry:opentelemetry.BUILD",
+    patch_args = ["-p1"],
     patch_cmds = [
         "find . -name BUILD -delete",
         "rm -rf api/include/opentelemetry/nostd/absl",
@@ -466,6 +467,11 @@ http_archive(
         "Get-ChildItem . -Recurse -Include BUILD | Remove-Item -Force",
         "Remove-Item -Force -Recursive api/include/opentelemetry/nostd/absl",
         "sed -i 's/include <absl\\/types\\/variant.h>/include \"absl\\/types\\/variant.h\"/g' api/include/opentelemetry/nostd/variant.h",
+    ],
+    patches = [
+        "//third_party/opentelemetry:0001-fix-gcc49x.patch",
+        "//third_party/opentelemetry:0002-fix-strict-aliasing.patch",
+        "//third_party/opentelemetry:0003-use-std-smart-ptrs.patch",
     ],
     sha256 = "32f12ff15ec257e3462883f84bc291c2d5dc30055604c12ec4b46a36dfa3f189",
     strip_prefix = "opentelemetry-cpp-1.0.1",

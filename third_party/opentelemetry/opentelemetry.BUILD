@@ -22,6 +22,7 @@ cc_library(
     ),
     defines = OT_DEFINES,
     strip_include_prefix = "api/include",
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_absl//absl/base",
         "@com_google_absl//absl/types:any",
@@ -152,6 +153,7 @@ cc_library(
     ],
     defines = OT_DEFINES,
     strip_include_prefix = "sdk/include",
+    visibility = ["//visibility:public"],
     deps = [
         ":api",
         "@com_google_absl//absl/types:variant",
@@ -167,6 +169,7 @@ cc_library(
     ),
     defines = OT_DEFINES,
     strip_include_prefix = "exporters/memory/include",
+    visibility = ["//visibility:public"],
     deps = [
         ":sdk",
     ],
@@ -187,6 +190,7 @@ cc_library(
     ),
     defines = OT_DEFINES,
     strip_include_prefix = "exporters/ostream/include",
+    visibility = ["//visibility:public"],
     deps = [
         ":sdk",
     ],

@@ -1,0 +1,19 @@
+commit eb6ac6e257e383c9dee6f23314746b239e867ac3
+Author: Shuai Zhang <zhangshuai.ustc@gmail.com>
+Date:   Tue Nov 16 14:06:16 2021 +0800
+
+    Bugfix: regex is neither working on GCC 4.9.x
+
+diff --git a/api/include/opentelemetry/trace/trace_state.h b/api/include/opentelemetry/trace/trace_state.h
+index 4ffd32d..1dc0457 100644
+--- a/api/include/opentelemetry/trace/trace_state.h
++++ b/api/include/opentelemetry/trace/trace_state.h
+@@ -8,7 +8,7 @@
+ #include <string>
+ 
+ #include <regex>
+-#if (__GNUC__ == 4 && (__GNUC_MINOR__ == 8))
++#if (__GNUC__ == 4 && (__GNUC_MINOR__ == 8 || __GNUC_MINOR__ == 9))
+ #  define HAVE_WORKING_REGEX 0
+ #else
+ #  define HAVE_WORKING_REGEX 1

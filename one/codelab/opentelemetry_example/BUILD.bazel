@@ -1,0 +1,12 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "opentelemetry_example",
+    srcs = ["main.cc"],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@io_opentelemetry_cpp//:api",
+        "@io_opentelemetry_cpp//:ostream_exporter",
+        "@io_opentelemetry_cpp//:sdk",
+    ],
+)

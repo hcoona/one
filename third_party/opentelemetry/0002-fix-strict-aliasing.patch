@@ -1,0 +1,21 @@
+commit 0b9daa8b8f6dbff75fbc5bc9d1e8b89bbd33d6e2
+Author: Shuai Zhang <zhangshuai.ustc@gmail.com>
+Date:   Tue Nov 16 12:11:21 2021 +0800
+
+    Improvement: span_id should not break strict aliasing.
+
+diff --git a/api/include/opentelemetry/trace/span_id.h b/api/include/opentelemetry/trace/span_id.h
+index e282a20..63d2f36 100644
+--- a/api/include/opentelemetry/trace/span_id.h
++++ b/api/include/opentelemetry/trace/span_id.h
+@@ -60,8 +60,8 @@ class SpanId final
+   // Returns false if the SpanId is all zeros.
+   bool IsValid() const noexcept
+   {
+-    static_assert(kSize == 8, "update is needed if kSize is not 8");
+-    return *reinterpret_cast<const uint64_t *>(&rep_) != 0ull;
++    static constexpr uint8_t kEmptyRep[kSize] = {0};
++    return memcmp(rep_, kEmptyRep, kSize) != 0;
+   }
+ 
+   // Copies the opaque SpanId data to dest.
