@@ -472,6 +472,7 @@ http_archive(
         "//third_party/opentelemetry:0001-fix-gcc49x.patch",
         "//third_party/opentelemetry:0002-fix-strict-aliasing.patch",
         "//third_party/opentelemetry:0003-use-std-smart-ptrs.patch",
+        "//third_party/opentelemetry:0004-use-absl-string-view.patch",
     ],
     sha256 = "32f12ff15ec257e3462883f84bc291c2d5dc30055604c12ec4b46a36dfa3f189",
     strip_prefix = "opentelemetry-cpp-1.0.1",
