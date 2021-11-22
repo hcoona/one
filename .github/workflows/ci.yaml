@@ -40,5 +40,5 @@ jobs:
       - run: echo "common --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
       - run: tools/setup_clang.sh /usr/lib/llvm-13
       - run: bazel build --config=libc++ //...
-      - run: bazel test --config=libc++ //... --test_tag_filters=-benchmark
+      - run: bazel test --config=libc++ //... --test_tag_filters=-benchmark,-runtime_broken
       - run: bazel test -c opt --config=libc++ //... --test_tag_filters=benchmark,-runtime_broken
