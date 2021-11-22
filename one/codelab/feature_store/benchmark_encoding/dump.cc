@@ -211,7 +211,7 @@ absl::Status GenerateSchema(const std::vector<Row>& rows,
                             std::vector<FieldDescriptor>* fields) {
   absl::flat_hash_set<absl::string_view> visited_fields_names;
   for (const Row& row : rows) {
-    for (const std::pair<std::string /* name */,
+    for (const std::pair<const std::string /* name */,
                          std::string /* serialized bytes */>& p :
          row.features()) {
       if (!visited_fields_names.contains(p.first)) {
@@ -220,7 +220,7 @@ absl::Status GenerateSchema(const std::vector<Row>& rows,
       }
     }
 
-    for (const std::pair<std::string /* name */,
+    for (const std::pair<const std::string /* name */,
                          std::vector<std::string> /* serialized features */>&
              p : row.raw_features()) {
       // Skip empty raw feature, Parquet disallow struct with no field!
@@ -263,7 +263,7 @@ absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
     absl::btree_set<absl::string_view> unvisited_field_names(
         std::begin(all_field_names), std::end(all_field_names));
 
-    for (const std::pair<std::string /* name */,
+    for (const std::pair<const std::string /* name */,
                          std::string /* serialized bytes */>& p :
          row.features()) {
       DCHECK(field_index.contains(p.first));
@@ -276,7 +276,7 @@ absl::Status DumpWithParquetApi(arrow::MemoryPool* memory_pool,
       byte_array_writer->WriteBatch(1, &definition_level, nullptr, &byte_array);
     }
 
-    for (const std::pair<std::string /* name */,
+    for (const std::pair<const std::string /* name */,
                          std::vector<std::string> /* serialized features */>&
              p : row.raw_features()) {
       if (!field_index.contains(p.first)) {

@@ -55,6 +55,7 @@ uint64_t* GetPreparedRowsBytes() {
   static gtl::NoDestructor<uint64_t> rows_bytes;
   return rows_bytes.get();
 }
+
 void BM_DumpWithParquetApi(benchmark::State& state) {  // NOLINT
   arrow::MemoryPool* memory_pool = arrow::default_memory_pool();
 
