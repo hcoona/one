@@ -9,7 +9,6 @@ cc_test(
     data = ["rosetta_example_without_map_10.pb"],
     tags = [
         "benchmark",
-        "runtime_broken",
     ],
     # malloc = "@com_github_gperftools_gperftools//:tcmalloc",
     deps = [
