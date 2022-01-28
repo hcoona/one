@@ -1,9 +1,15 @@
 # Default build options. These are applied first and unconditionally.
 build --cxxopt="-std=c++14" --cxxopt="-Wno-c++17-extensions" --cxxopt="-Wno-undef"
-build --conlyopt="-std=c11"
+# Use gnu11 for asm keyword.
+build --conlyopt="-std=gnu11"
 
 build --copt=-march=x86-64-v3 --copt=-msse2 --copt=-msse4.2 --copt=-mavx --copt=-mbmi2
-build --copt=-gdwarf-5
+
+build --java_language_version=11
+build --java_runtime_version=remotejdk_11
+build --tool_java_language_version=11
+build --tool_java_runtime_version=remotejdk_11
+build --incompatible_use_toolchain_resolution_for_java_rules
 
 # build --proto_compiler=//third_party/protobuf:protoc
 # build --proto_toolchain_for_cc=//third_party/protobuf:cc_toolchain

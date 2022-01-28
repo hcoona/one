@@ -26,9 +26,9 @@ RULES_PYTHON_TAG = "0.4.0"  # 2021-09-12T22:58:33Z
 
 RULES_PYTHON_SHA256 = "954aa89b491be4a083304a2cb838019c8b8c3720a7abb9c4cb81ac7a24230cea"
 
-RULES_JAVA_TAG = "4.0.0"  # 2021-01-21T12:10:05Z
+RULES_JAVA_TAG = "5.0.0"  # 2021-11-23T10:46:14Z
 
-RULES_JAVA_SHA256 = "34b41ec683e67253043ab1a3d1e8b7c61e4e8edefbcad485381328c934d072fe"
+RULES_JAVA_SHA256 = "ddc9e11f4836265fea905d2845ac1d04ebad12a255f791ef7fd648d1d2215a5b"
 
 RULES_JVM_EXTERNAL_TAG = "4.1"  # 2021-05-18T15:00:52Z
 
@@ -94,33 +94,37 @@ http_archive(
     ],
 )
 
+# TODO(zhangshuai.ds): Patch rule_java/toolchains/jdk.BUILD for only link necessary libraries.
+#
+#   libjava.so
+#   libjvm.so
+#   libverify.so
 http_archive(
     name = "rules_java",
     sha256 = RULES_JAVA_SHA256,
+    strip_prefix = "rules_java-{version}".format(version = RULES_JAVA_TAG),
     urls = [
-        "https://github.com/bazelbuild/rules_java/releases/download/{version}/rules_java-{version}.tar.gz".format(version = RULES_JAVA_TAG),
+        "https://github.com/bazelbuild/rules_java/archive/refs/tags/{version}.tar.gz".format(version = RULES_JAVA_TAG),
     ],
 )
 
-http_archive(
-    name = "remote_jdk11_linux",
-    build_file = "@bazel_tools//tools/jdk:jdk.BUILD",
-    sha256 = "6c79bfe8bb06c82b72ef2f293a14becef56b3078d298dc75fda4225cbb2d3d0c",
-    strip_prefix = "zulu11.43.55-ca-jdk11.0.9.1-linux_x64",
-    urls = [
-        "https://mirror.bazel.build/openjdk/azul-zulu11.43.55-ca-jdk11.0.9.1/zulu11.43.55-ca-jdk11.0.9.1-linux_x64.tar.gz",
-        "https://cdn.azul.com/zulu/bin/zulu11.43.55-ca-jdk11.0.9.1-linux_x64.tar.gz",
+load("@rules_java//toolchains:remote_java_repository.bzl", "remote_java_repository")
+
+remote_java_repository(
+    name = "remotejdk11_linux",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
     ],
+    sha256 = "b8e8a63b79bc312aa90f3558edbea59e71495ef1a9c340e38900dd28a1c579f3",
+    strip_prefix = "zulu11.50.19-ca-jdk11.0.12-linux_x64",
+    urls = [
+        "https://mirror.bazel.build/openjdk/azul-zulu11.50.19-ca-jdk11.0.12/zulu11.50.19-ca-jdk11.0.12-linux_x64.tar.gz",
+    ],
+    version = "11",
 )
 
-http_archive(
-    name = "remote_java_tools_linux",
-    sha256 = "355c27c603e8fc64bb0e2d7f809741f42576d5f4540f9ce28fd55922085af639",
-    urls = [
-        "https://mirror.bazel.build/bazel_java_tools/releases/javac11/v10.5/java_tools_javac11_linux-v10.5.zip",
-        "https://github.com/bazelbuild/java_tools/releases/download/javac11_v10.5/java_tools_javac11_linux-v10.5.zip",
-    ],
-)
+register_toolchains("@remotejdk11_linux_toolchain_config_repo//:toolchain")
 
 http_archive(
     name = "rules_jvm_external",
