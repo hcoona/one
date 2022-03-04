@@ -1,0 +1,114 @@
+# Copyright (c) 2022 Zhang Shuai<zhangshuai.ustc@gmail.com>.
+# All rights reserved.
+#
+# This file is part of ONE.
+#
+# ONE is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# ONE is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# ONE. If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Default build options. These are applied first and unconditionally.
+#
+
+build --cxxopt="-std=c++17"
+# Use gnu11 for asm keyword.
+build --conlyopt="-std=gnu11"
+
+build --java_language_version=11
+build --java_runtime_version=remotejdk_11
+build --tool_java_language_version=11
+build --tool_java_runtime_version=remotejdk_11
+build --incompatible_use_toolchain_resolution_for_java_rules
+
+# Enable position independent code (this is the default on macOS and Windows)
+# (Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421)
+build --copt=-fPIC
+build --fission=dbg,opt
+build --features=per_object_debug_info
+build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a
+build --action_env=BAZEL_LINKOPTS=-lm
+
+# We already have absl in the build, define absl=1 to tell googletest to use absl for backtrace.
+build --define absl=1
+
+# For grpc.
+build --copt=-DGRPC_BAZEL_BUILD
+
+# For brpc.
+build --define=with_glog=true
+build --copt -DHAVE_ZLIB=1
+
+# Pass PATH, CC, CXX and LLVM_CONFIG variables from the environment.
+build --action_env=CC
+build --action_env=CXX
+build --action_env=LLVM_CONFIG
+build --action_env=PATH
+
+# By-default use clang with libc++
+build --config=libc++
+
+#
+# Default options should come above this line.
+#
+
+# Common flags for Clang
+build:clang --action_env=BAZEL_COMPILER=clang
+build:clang --linkopt=-fuse-ld=lld
+
+# Clang with libc++
+build:libc++ --config=clang
+build:libc++ --action_env=CXXFLAGS=-stdlib=libc++
+build:libc++ --action_env=LDFLAGS=-stdlib=libc++
+build:libc++ --action_env=BAZEL_CXXOPTS=-stdlib=libc++
+build:libc++ --action_env=BAZEL_LINKLIBS=-lc++:-lc++abi
+build:libc++ --action_env=BAZEL_LINKOPTS=-lm:-pthread
+build:libc++ --define force_libcpp=enabled
+
+try-import %workspace%/clang.bazelrc
+
+# Common flags for sanitizers
+build:sanitizer --linkopt -ldl
+build:sanitizer --build_tag_filters=-no_san
+build:sanitizer --test_tag_filters=-no_san
+build:sanitizer --strip=never
+build:sanitizer --copt -g
+build:sanitizer --copt -O3
+build:sanitizer --copt -fno-omit-frame-pointer
+
+# Address sanitizer
+build:asan --config=sanitizer
+build:asan --copt -fsanitize=address
+build:asan --copt -DADDRESS_SANITIZER
+build:asan --linkopt -fsanitize=address
+
+# Memory sanitizer
+build:msan --config=sanitizer
+build:msan --copt -fsanitize=memory
+build:msan --copt -DMEMORY_SANITIZER
+build:msan --linkopt -fsanitize=memory
+
+# Undefined Behavior Sanitizer
+build:ubsan --config=sanitizer
+build:ubsan --copt -fsanitize=undefined
+build:ubsan --copt -DUNDEFINED_BEHAVIOR_SANITIZER
+build:ubsan --linkopt -fsanitize=undefined
+build:ubsan --linkopt -lubsan
+
+# LibFuzzer + ASAN
+build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
+build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
+build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
+
+# LibFuzzer + MSAN
+build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
+build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
+build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=msan
