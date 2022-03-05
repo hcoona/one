@@ -434,3 +434,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,c++,java,bazel,linux,macos,maven,windows,intellij+all,visualstudiocode,python
+
+# Ignore generated clang.bazelrc file
+/clang.bazelrc
