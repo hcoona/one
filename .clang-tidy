@@ -19,6 +19,7 @@
 Checks: >
   abseil-*,
   bugprone-*,
+  -bugprone-easily-swappable-parameters,
   clang-analyzer-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-c-arrays,
