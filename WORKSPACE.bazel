@@ -16,3 +16,232 @@
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
 workspace(name = "com_github_hcoona_one")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+#
+# Constants
+#
+
+BAZEL_SKYLIB_VERSION = "1.1.1"  # 2021-09-27T17:33:49Z
+
+BAZEL_SKYLIB_SHA256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d"
+
+BAZEL_PLATFORMS_VERSION = "0.0.4"  # 2021-02-26
+
+BAZEL_PLATFORMS_SHA256 = "079945598e4b6cc075846f7fd6a9d0857c33a7afc0de868c2ccb96405225135d"
+
+RULES_PROTO_TAG = "4.0.0"  # 2021-09-15T14:13:21Z
+
+RULES_PROTO_SHA256 = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1"
+
+RULES_CC_COMMIT_ID = "0913abc3be0edff60af681c0473518f51fb9eeef"  # 2021-08-12T14:14:28Z
+
+RULES_CC_SHA256 = "04d22a8c6f0caab1466ff9ae8577dbd12a0c7d0bc468425b75de094ec68ab4f9"
+
+RULES_PYTHON_TAG = "0.4.0"  # 2021-09-12T22:58:33Z
+
+RULES_PYTHON_SHA256 = "954aa89b491be4a083304a2cb838019c8b8c3720a7abb9c4cb81ac7a24230cea"
+
+RULES_JAVA_TAG = "5.0.0"  # 2021-11-23T10:46:14Z
+
+RULES_JAVA_SHA256 = "ddc9e11f4836265fea905d2845ac1d04ebad12a255f791ef7fd648d1d2215a5b"
+
+RULES_JVM_EXTERNAL_TAG = "4.1"  # 2021-05-18T15:00:52Z
+
+RULES_JVM_EXTERNAL_SHA = "f36441aa876c4f6427bfb2d1f2d723b48e9d930b62662bf723ddfb8fc80f0140"
+
+MAVEN_REPOSITORIES = [
+    "https://maven.aliyun.com/nexus/content/groups/public/",
+    "https://repo1.maven.org/maven2",
+]
+
+RULES_GO_TAG = "v0.28.0"  # 2021-07-07T22:49:25Z
+
+RULES_GO_SHA256 = "8e968b5fcea1d2d64071872b12737bbb5514524ee5f0a4f54f5920266c261acb"
+
+RULES_FUZZING_TAG = "0.2.0"  # 2021-07-12T17:55:46Z
+
+RULES_FUZZING_SHA256 = "127d7c45e9b7520b3c42145b3cb1b8c26477cdaed0521b02a0298907339fefa1"
+
+#
+# Starlark libraries
+#
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = BAZEL_SKYLIB_SHA256,
+    urls = [
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
+    ],
+)
+
+http_archive(
+    name = "platforms",
+    sha256 = BAZEL_PLATFORMS_SHA256,
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
+        "https://github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
+    ],
+)
+
+http_archive(
+    name = "rules_proto",
+    sha256 = RULES_PROTO_SHA256,
+    strip_prefix = "rules_proto-{version}".format(version = RULES_PROTO_TAG),
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/{version}.tar.gz".format(version = RULES_PROTO_TAG)],
+)
+
+http_archive(
+    name = "rules_cc",
+    sha256 = RULES_CC_SHA256,
+    strip_prefix = "rules_cc-{commit_id}".format(commit_id = RULES_CC_COMMIT_ID),
+    urls = [
+        "https://github.com/bazelbuild/rules_cc/archive/{commit_id}.tar.gz".format(commit_id = RULES_CC_COMMIT_ID),
+    ],
+)
+
+# Use rules_foreign_cc as less as possible.
+#
+# 1. Build very basic libraries without any further dependencies.
+# 2. Build too complex to bazelize library.
+http_archive(
+    name = "rules_foreign_cc",  # 2021-12-03T17:15:40Z
+    sha256 = "1df78c7d7eed2dc21b8b325a2853c31933a81e7b780f9a59a5d078be9008b13a",
+    strip_prefix = "rules_foreign_cc-0.7.0",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.7.0.tar.gz",
+)
+
+load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
+
+rules_foreign_cc_dependencies(register_preinstalled_tools = False)
+
+http_archive(
+    name = "rules_python",
+    sha256 = RULES_PYTHON_SHA256,
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_python/releases/download/{version}/rules_python-{version}.tar.gz".format(version = RULES_PYTHON_TAG),
+        "https://github.com/bazelbuild/rules_python/releases/download/{version}/rules_python-{version}.tar.gz".format(version = RULES_PYTHON_TAG),
+    ],
+)
+
+http_archive(
+    name = "rules_java",
+    sha256 = RULES_JAVA_SHA256,
+    strip_prefix = "rules_java-{version}".format(version = RULES_JAVA_TAG),
+    urls = [
+        "https://github.com/bazelbuild/rules_java/archive/refs/tags/{version}.tar.gz".format(version = RULES_JAVA_TAG),
+    ],
+)
+
+load("@rules_java//toolchains:remote_java_repository.bzl", "remote_java_repository")
+
+remote_java_repository(
+    name = "remotejdk11_linux",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    sha256 = "b8e8a63b79bc312aa90f3558edbea59e71495ef1a9c340e38900dd28a1c579f3",
+    strip_prefix = "zulu11.50.19-ca-jdk11.0.12-linux_x64",
+    urls = [
+        "https://mirror.bazel.build/openjdk/azul-zulu11.50.19-ca-jdk11.0.12/zulu11.50.19-ca-jdk11.0.12-linux_x64.tar.gz",
+    ],
+    version = "11",
+)
+
+register_toolchains("@remotejdk11_linux_toolchain_config_repo//:toolchain")
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
+)
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = RULES_GO_SHA256,
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/{version}/rules_go-{version}.zip".format(version = RULES_GO_TAG),
+        "https://github.com/bazelbuild/rules_go/releases/download/{version}/rules_go-{version}.zip".format(version = RULES_GO_TAG),
+    ],
+)
+
+# TODO(zhangshuai.ustc): http_archive deps https://github.com/bazelbuild/rules_fuzzing/blob/master/fuzzing/repositories.bzl
+# TODO(zhangshuai.ustc): call init: https://github.com/bazelbuild/rules_fuzzing/blob/master/fuzzing/init.bzl
+http_archive(
+    name = "rules_fuzzing",
+    sha256 = RULES_FUZZING_SHA256,
+    strip_prefix = "rules_fuzzing-{version}".format(version = RULES_FUZZING_TAG),
+    urls = ["https://github.com/bazelbuild/rules_fuzzing/archive/v{version}.zip".format(version = RULES_FUZZING_TAG)],
+)
+
+#
+# C++ deps
+#
+# Ordered lexicographical.
+#
+
+http_archive(
+    name = "boost",  # 2021-08-05T01:30:05Z
+    build_file = "@com_github_nelhage_rules_boost//:BUILD.boost",
+    patch_cmds = ["rm -f doc/pdf/BUILD"],
+    patch_cmds_win = ["Remove-Item -Force doc/pdf/BUILD"],
+    sha256 = "5347464af5b14ac54bb945dc68f1dd7c56f0dad7262816b956138fc53bcc0131",
+    strip_prefix = "boost_1_77_0",
+    urls = [
+        "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz",
+    ],
+)
+
+# TODO(zhangshuai.ds): consider about libressl.
+http_archive(
+    name = "openssl",
+    build_file = "//third_party/openssl:openssl.BUILD",
+    sha256 = "892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5",
+    strip_prefix = "openssl-1.1.1k",
+    urls = [
+        "https://mirror.bazel.build/www.openssl.org/source/openssl-1.1.1k.tar.gz",
+        "https://www.openssl.org/source/openssl-1.1.1k.tar.gz",
+        "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_gflags_gflags",  # 2018-11-11T21:30:10Z
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_google_benchmark",  # 2021-07-01T09:02:54Z
+    sha256 = "1cb4b97a90aa1fd9c8e412a6bc29fc13fc140162a4a0db3811af40befd8c9ea5",
+    strip_prefix = "benchmark-e451e50e9b8af453f076dec10bd6890847f1624e",
+    urls = ["https://github.com/google/benchmark/archive/e451e50e9b8af453f076dec10bd6890847f1624e.zip"],
+)
+
+http_archive(
+    name = "com_github_google_glog",  # 2021-05-07T23:06:39Z
+    patch_args = ["-p1"],
+    patches = [
+        "//bazel/third_party/glog:0001-improvement-copts.patch",
+        "//bazel/third_party/glog:0002-mark-override.patch",
+    ],
+    sha256 = "21bc744fb7f2fa701ee8db339ded7dce4f975d0d55837a97be7d46e8382dea5a",
+    strip_prefix = "glog-0.5.0",
+    urls = ["https://github.com/google/glog/archive/v0.5.0.zip"],
+)
+
+# TODO(zhangshuai.ds): SIMD optimization.
+# https://github.com/cloudflare/zlib
+# zlib-ng
+http_archive(
+    name = "com_github_madler_zlib",  # 2017-01-15T17:57:23Z
+    build_file = "//bazel/third_party/zlib:zlib.BUILD",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
+    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+)

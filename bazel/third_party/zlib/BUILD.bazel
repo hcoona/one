@@ -15,27 +15,5 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-root = true
-
-[**]
-indent_style = space
-indent_size = 2
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-[WORKSPACE.bazel]
-indent_size = 4
-
-[**/BUILD.bazel]
-indent_size = 4
-
-[bazel/third_party/**/*.{BUILD,WORKSPACE}]
-indent_size = 4
-
-[**/*.py]
-indent_size = 4
-
-[**/*.{bzl,sky}]
-indent_size = 4
+# Thie empty BUILD.bazel file is required to make Bazel treat
+# this directory as a package.
