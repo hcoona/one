@@ -54,7 +54,7 @@ cmake(
     }),
     visibility = ["//visibility:public"],
     deps = [
-        # Zlib is only used for testing.
+        # zlib is only used for testing.
         "@openssl//:crypto",
         "@openssl//:ssl",
     ],
