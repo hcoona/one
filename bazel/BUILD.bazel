@@ -28,5 +28,6 @@ compilation_database(
     output_base = OUTPUT_BASE,
     targets = [
         "//one/codelab/libevent_http",
+        "//one/codelab/muduo_http",
     ],
 )

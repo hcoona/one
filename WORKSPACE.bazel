@@ -221,6 +221,15 @@ http_archive(
 )
 
 http_archive(
+    # Fork from 90920bbad80e544da9a8a94b16ad8ab4bb66e652
+    # Origin commit timestamp 2021-07-19T21:30:04Z
+    name = "com_github_chenshuo_muduo",
+    sha256 = "4bcf95559e9ee20685dd9be421c838ac4f83945b29cb201c5d60f8192c6621cc",
+    strip_prefix = "muduo-cee4682bdae209336f74470fc8ea60fdc5cddf6e",
+    urls = ["https://github.com/hcoona/muduo/archive/cee4682bdae209336f74470fc8ea60fdc5cddf6e.tar.gz"],
+)
+
+http_archive(
     name = "com_github_gflags_gflags",  # 2018-11-11T21:30:10Z
     sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
     strip_prefix = "gflags-2.2.2",

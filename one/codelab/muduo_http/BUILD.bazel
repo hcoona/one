@@ -18,7 +18,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
 
 cc_binary(
-    name = "libevent_http",
+    name = "muduo_http",
     srcs = [
         "main.cc",
     ],
@@ -29,9 +29,8 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_github_libevent_libevent//:event",
-        "@com_google_absl//absl/strings:cord",
+        "@com_github_chenshuo_muduo//muduo/base",
+        "@com_github_chenshuo_muduo//muduo/net",
+        "@com_github_chenshuo_muduo//muduo/net/http",
     ],
 )
