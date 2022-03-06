@@ -14,10 +14,32 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
+#
+# Copyright 2020 Envoyproxy Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modified from https://github.com/envoyproxy/envoy/blob/55e9b316d2e7d17a05b68924d0dffc2635ab8e52/.bazelrc
+#
+# There are many modifications, would not list each of them.
 
 #
 # Default build options. These are applied first and unconditionally.
 #
+
+run --color=yes
+build --color=yes
+build --host_force_python=PY3
 
 build --cxxopt="-std=c++17"
 # Use gnu11 for asm keyword.
@@ -32,6 +54,7 @@ build --incompatible_use_toolchain_resolution_for_java_rules
 # Enable position independent code (this is the default on macOS and Windows)
 # (Workaround for https://github.com/bazelbuild/rules_foreign_cc/issues/421)
 build --copt=-fPIC
+
 build --fission=dbg,opt
 build --features=per_object_debug_info
 build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a
@@ -53,7 +76,7 @@ build --action_env=CXX
 build --action_env=LLVM_CONFIG
 build --action_env=PATH
 
-# By-default use clang with libc++
+# Always use clang with libc++
 build --config=libc++
 
 #
@@ -62,6 +85,7 @@ build --config=libc++
 
 # Common flags for Clang
 build:clang --action_env=BAZEL_COMPILER=clang
+build:clang --action_env=CC=clang --action_env=CXX=clang++
 build:clang --linkopt=-fuse-ld=lld
 
 # Clang with libc++
@@ -69,39 +93,86 @@ build:libc++ --config=clang
 build:libc++ --action_env=CXXFLAGS=-stdlib=libc++
 build:libc++ --action_env=LDFLAGS=-stdlib=libc++
 build:libc++ --action_env=BAZEL_CXXOPTS=-stdlib=libc++
-build:libc++ --action_env=BAZEL_LINKLIBS=-lc++:-lc++abi
+build:libc++ --action_env=BAZEL_LINKLIBS=-l%:libc++.a:-l%:libc++abi.a
 build:libc++ --action_env=BAZEL_LINKOPTS=-lm:-pthread
 build:libc++ --define force_libcpp=enabled
 
-try-import %workspace%/clang.bazelrc
+#
+# Sanitizers
+#
 
 # Common flags for sanitizers
+build:sanitizer --define tcmalloc=disabled
 build:sanitizer --linkopt -ldl
 build:sanitizer --build_tag_filters=-no_san
 build:sanitizer --test_tag_filters=-no_san
-build:sanitizer --strip=never
-build:sanitizer --copt -g
-build:sanitizer --copt -O3
-build:sanitizer --copt -fno-omit-frame-pointer
 
-# Address sanitizer
+# Basic ASAN/UBSAN that works for gcc
+build:asan --action_env=ENVOY_ASAN=1
 build:asan --config=sanitizer
-build:asan --copt -fsanitize=address
-build:asan --copt -DADDRESS_SANITIZER
-build:asan --linkopt -fsanitize=address
+# ASAN install its signal handler, disable ours so the stacktrace will be printed by ASAN
+build:asan --define signal_trace=disabled
+build:asan --define ENVOY_CONFIG_ASAN=1
+build:asan --copt -fsanitize=address,undefined
+build:asan --linkopt -fsanitize=address,undefined
+# vptr and function sanitizer are enabled in clang-asan if it is set up via bazel/setup_clang.sh.
+build:asan --copt -fno-sanitize=vptr,function
+build:asan --linkopt -fno-sanitize=vptr,function
+build:asan --copt -DADDRESS_SANITIZER=1
+build:asan --copt -DUNDEFINED_SANITIZER=1
+build:asan --copt -D__SANITIZE_ADDRESS__
+build:asan --test_env=ASAN_OPTIONS=handle_abort=1:allow_addr2line=true:check_initialization_order=true:strict_init_order=true:detect_odr_violation=1
+build:asan --test_env=UBSAN_OPTIONS=halt_on_error=true:print_stacktrace=1
+build:asan --test_env=ASAN_SYMBOLIZER_PATH
+# ASAN needs -O1 to get reasonable performance.
+build:asan --copt -O1
+build:asan --copt -fno-optimize-sibling-calls
 
-# Memory sanitizer
-build:msan --config=sanitizer
-build:msan --copt -fsanitize=memory
-build:msan --copt -DMEMORY_SANITIZER
-build:msan --linkopt -fsanitize=memory
+# Clang ASAN/UBSAN
+build:clang-asan --config=clang
+build:clang-asan --config=asan
+build:clang-asan --linkopt -fuse-ld=lld
+build:clang-asan --linkopt --rtlib=compiler-rt
+build:clang-asan --linkopt --unwindlib=libgcc
 
-# Undefined Behavior Sanitizer
-build:ubsan --config=sanitizer
-build:ubsan --copt -fsanitize=undefined
-build:ubsan --copt -DUNDEFINED_BEHAVIOR_SANITIZER
-build:ubsan --linkopt -fsanitize=undefined
-build:ubsan --linkopt -lubsan
+# Clang TSAN
+build:clang-tsan --action_env=ENVOY_TSAN=1
+build:clang-tsan --config=sanitizer
+build:clang-tsan --define ENVOY_CONFIG_TSAN=1
+build:clang-tsan --copt -fsanitize=thread
+build:clang-tsan --linkopt -fsanitize=thread
+build:clang-tsan --linkopt -fuse-ld=lld
+build:clang-tsan --copt -DTHREAD_SANITIZER=1
+build:clang-tsan --build_tag_filters=-no_san,-no_tsan
+build:clang-tsan --test_tag_filters=-no_san,-no_tsan
+# Needed due to https://github.com/libevent/libevent/issues/777
+build:clang-tsan --copt -DEVENT__DISABLE_DEBUG_MODE
+# https://github.com/abseil/abseil-cpp/issues/760
+# https://github.com/google/sanitizers/issues/953
+build:clang-tsan --test_env="TSAN_OPTIONS=report_atomic_races=0"
+
+# Clang MSAN - this is the base config for remote-msan and docker-msan. To run this config without
+# our build image, follow https://github.com/google/sanitizers/wiki/MemorySanitizerLibcxxHowTo
+# with libc++ instruction and provide corresponding `--copt` and `--linkopt` as well.
+build:clang-msan --action_env=ENVOY_MSAN=1
+build:clang-msan --config=sanitizer
+build:clang-msan --define ENVOY_CONFIG_MSAN=1
+build:clang-msan --copt -fsanitize=memory
+build:clang-msan --linkopt -fsanitize=memory
+build:clang-msan --linkopt -fuse-ld=lld
+build:clang-msan --copt -fsanitize-memory-track-origins=2
+build:clang-msan --copt -DMEMORY_SANITIZER=1
+build:clang-msan --test_env=MSAN_SYMBOLIZER_PATH
+# MSAN needs -O1 to get reasonable performance.
+build:clang-msan --copt -O1
+build:clang-msan --copt -fno-optimize-sibling-calls
+
+#
+# Fuzzer
+#
+
+# Shared fuzzing configuration.
+build:fuzzing --config=libc++
 
 # LibFuzzer + ASAN
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
@@ -112,3 +183,5 @@ build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
 build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
 build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=msan
+
+try-import %workspace%/clang.bazelrc
