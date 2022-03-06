@@ -224,9 +224,9 @@ http_archive(
     # Fork from 90920bbad80e544da9a8a94b16ad8ab4bb66e652
     # Origin commit timestamp 2021-07-19T21:30:04Z
     name = "com_github_chenshuo_muduo",
-    sha256 = "4bcf95559e9ee20685dd9be421c838ac4f83945b29cb201c5d60f8192c6621cc",
-    strip_prefix = "muduo-cee4682bdae209336f74470fc8ea60fdc5cddf6e",
-    urls = ["https://github.com/hcoona/muduo/archive/cee4682bdae209336f74470fc8ea60fdc5cddf6e.tar.gz"],
+    sha256 = "2dff311e6092bbc8d0be97e09c4c1f10487265ed639de00dd8b6ab4d4529911c",
+    strip_prefix = "muduo-d981f2be83587afdd00175f908f73420a579769b",
+    urls = ["https://github.com/hcoona/muduo/archive/d981f2be83587afdd00175f908f73420a579769b.tar.gz"],
 )
 
 http_archive(
