@@ -13,16 +13,22 @@ The project only compiles on Linux with LLVM 13 toolchain. There was too few tim
 
 ## Development
 
+### Generate `clang.bazelrc`
+
+```bash
+tools/setup_clang.sh <your LLVM prefix directory>
+```
+
 ### Compile
 
 ```bash
-bazel build //...
+bazel build --config=libc++ //...
 ```
 
 ### Unit Test
 
 ```bash
-bazel test //... --test_tag_filters=-benchmark
+bazel test --config=clang-asan //... --test_tag_filters=-benchmark
 ```
 
 ### Benchmark
