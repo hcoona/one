@@ -76,9 +76,6 @@ build --action_env=CXX
 build --action_env=LLVM_CONFIG
 build --action_env=PATH
 
-# Always use clang with libc++
-build --config=libc++
-
 #
 # Default options should come above this line.
 #
