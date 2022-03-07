@@ -1,0 +1,41 @@
+name: CI_Linux
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  BAZEL_APT_Linux:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install LLVM 13
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 13
+          sudo apt install lld-13 libfuzzer-13-dev libc++-13-dev libc++abi-13-dev libunwind-13-dev
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          clean: true
+          fetch-depth: 1
+      - name: Install Bazelisk
+        uses: bazelbuild/setup-bazelisk@v1
+      - name: Mount bazel cache  # Optional
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/bazel
+            ~/.cache/bazelisk
+          key: bazel
+      - run: echo "build --disk_cache=$HOME/.cache/bazel/disk_cache" >> .bazelrc
+      - run: echo "build --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
+      - run: tools/setup_clang.sh /usr/lib/llvm-13
+      - run: bazel build -c opt //...
+      - run: bazel test -c opt --config clang-asan //...
