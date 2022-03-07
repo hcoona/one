@@ -1,0 +1,42 @@
+[tool.poetry]
+authors = ["Shuai Zhang <zhangshuai.ustc@gmail.com>"]
+description = "Python project manager for ONE repo"
+name = "one"
+version = "0.0.1-alpha.1"
+
+[tool.poetry.dependencies]
+python = ">=3.6.1 <4.0"
+jinja2 = "^3.0.3"
+pyyaml = "^6.0"
+absl-py = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+cpplint = ">=1.5.5 <2.0"
+isort = ">=5.8.0 <6.0"
+pylint = ">=2.7.4 <3.0"
+yapf = ">=0.31.0 <1.0"
+
+[[tool.poetry.source]]
+default = true
+name = "tsinghua-mirror"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool.isort]
+force_single_line = true
+indent = "    "
+line_length = 80
+
+[tool.yapf]
+based_on_style = "google"
+column_limit = 80
+split_before_named_assigns = true
+
+[tool.pyright]
+exclude = [
+  "bazel-*/**",
+  "third_party/**",
+]

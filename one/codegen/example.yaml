@@ -1,0 +1,9 @@
+includes:
+- name: cstddef
+  style: angle
+- name: absl/strings/string_view.h
+namespaces:
+- a
+- b
+name: Test
+base_type: uint8_t

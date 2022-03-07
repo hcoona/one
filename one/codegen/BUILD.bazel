@@ -1,0 +1,34 @@
+# Copyright (c) 2022 Zhang Shuai<zhangshuai.ustc@gmail.com>.
+# All rights reserved.
+#
+# This file is part of ONE.
+#
+# ONE is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# ONE is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# ONE. If not, see <https://www.gnu.org/licenses/>.
+
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@mono_pip_deps//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "enum_cpp_codegen",
+    srcs = ["enum_cpp_codegen.py"],
+    data = [
+        "enum_cpp_template.cc.jinja",
+        "enum_cpp_template.h.jinja",
+    ],
+    deps = [
+        "@rules_python//python/runfiles",
+        requirement("absl-py"),
+        requirement("jinja2"),
+        requirement("pyyaml"),
+    ],
+)
