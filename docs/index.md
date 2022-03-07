@@ -1,17 +1,11 @@
-# Welcome to MkDocs
+# HCOONa's ONE repo
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+ONE: the mono repo for me.
 
-## Commands
+See https://monorepo.tools for "What is a monorepo" & "Why a monorepo". And [Why Google Stores Billions of Lines of Code in a Single Repository](https://cacm.acm.org/magazines/2016/7/204032-why-google-stores-billions-of-lines-of-code-in-a-single-repository/fulltext) is also a good reading material.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Projects
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+* [base](base/index.md): fundamental utilities. (conceptually like Google abseil-cpp & Facebook folly)
+* [codelab](codelab/index.md): experimental codes.
+* [jinduo（金铎）](jinduo/index.md): port of muduo（木铎） library (not started yet).
