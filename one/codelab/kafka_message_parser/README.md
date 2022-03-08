@@ -2,7 +2,7 @@
 
 The Apache Kafka message format is described in JSON format under https://github.com/apache/kafka/tree/3.1.0/clients/src/main/resources/common/message.
 
-See https://github.com/apache/kafka/blob/3.1.0/clients/src/main/resources/common/message/README.md for how to read the JSON description files.
+See https://github.com/apache/kafka/blob/3.1.0/clients/src/main/resources/common/message/README.md & https://cwiki.apache.org/confluence/display/KAFKA/KIP-482%3A+The+Kafka+Protocol+should+Support+Optional+Tagged+Fields#KIP482:TheKafkaProtocolshouldSupportOptionalTaggedFields-TaggedFields for how to read the JSON description files.
 
 See https://kafka.apache.org/protocol.html for the Apache Kafka Protocol.
 
