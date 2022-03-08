@@ -27,6 +27,7 @@ compilation_database(
     # below shell commands for usage).
     output_base = OUTPUT_BASE,
     targets = [
+        "//one/codelab/kafka_message_parser:request_header_data",
         "//one/codelab/libevent_http",
         "//one/codelab/muduo_http",
     ],

@@ -15,5 +15,28 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-# Thie empty BUILD.bazel file is required to make Bazel treat
-# this directory as a package.
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "request_header_data",
+    srcs = [
+        "kafka_binary_reader.cc",
+        "request_header_data.cc",
+    ],
+    hdrs = [
+        "kafka_binary_reader.h",
+        "request_header_data.h",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        # "-Werror",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/types:span",
+    ],
+)
