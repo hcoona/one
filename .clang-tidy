@@ -135,11 +135,11 @@ CheckOptions:
   - key:             google-readability-function-size.BranchThreshold
     value:           '4294967295'
   - key:             google-readability-function-size.LineThreshold
-    value:           '4294967295'
+    value:           '300'
   - key:             google-readability-function-size.NestingThreshold
-    value:           '4294967295'
+    value:           '8'
   - key:             google-readability-function-size.ParameterThreshold
-    value:           '4294967295'
+    value:           '8'
   - key:             google-readability-function-size.StatementThreshold
     value:           '800'
   - key:             google-readability-function-size.VariableThreshold
@@ -244,16 +244,18 @@ CheckOptions:
     value:           google
   - key:             readability-braces-around-statements.ShortStatementLines
     value:           '0'
+  - key:             readability-function-cognitive-complexity.IgnoreMacros
+    value:           true
   - key:             readability-function-size.BranchThreshold
-    value:           '12'
+    value:           '4294967295'
   - key:             readability-function-size.LineThreshold
     value:           '300'
   - key:             readability-function-size.NestingThreshold
     value:           '8'
   - key:             readability-function-size.ParameterThreshold
-    value:           '12'
+    value:           '8'
   - key:             readability-function-size.StatementThreshold
-    value:           '800'
+    value:           '4294967295'
   - key:             readability-function-size.VariableThreshold
     value:           '4294967295'
   - key:             readability-identifier-naming.IgnoreFailedSplit
