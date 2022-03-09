@@ -17,6 +17,7 @@
 
 #include "one/codelab/kafka_message_parser/request_header_data.h"
 
+#include "one/base/macros.h"
 #include "one/codelab/kafka_message_parser/kafka_binary_reader.h"
 
 namespace hcoona {
@@ -26,7 +27,27 @@ absl::Status RequestHeaderData::ParseFrom(
     absl::Span<const uint8_t> message_bytes, int16_t version) {
   KafkaBinaryReader reader(message_bytes);
 
-  return absl::UnimplementedError("Not implemented yet.");
+  ONE_RETURN_IF_NOT_OK(reader.Read(&request_api_key_));
+  ONE_RETURN_IF_NOT_OK(reader.Read(&request_api_version_));
+  ONE_RETURN_IF_NOT_OK(reader.Read(&correlation_id_));
+  if (version >= 1) {
+    int16_t client_id_length{};
+    ONE_RETURN_IF_NOT_OK(reader.Read(&client_id_length));
+    if (client_id_length < 0) {
+      client_id_.clear();
+    } else {
+      ONE_RETURN_IF_NOT_OK(reader.ReadString(&client_id_, client_id_length));
+    }
+  } else {
+    client_id_.clear();
+  }
+
+  if (version >= 2) {
+    return absl::UnimplementedError(
+        "Unknown tagged fields are not supported yet.");
+  }
+
+  return absl::OkStatus();
 }
 
 }  // namespace minikafka

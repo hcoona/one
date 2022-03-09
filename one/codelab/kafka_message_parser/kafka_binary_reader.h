@@ -18,6 +18,7 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 #include <type_traits>
 
 #include "absl/base/casts.h"
@@ -40,6 +41,18 @@ class KafkaBinaryReader {
 
   absl::Status Read(std::int32_t* value) {
     return Read<std::int32_t, &LoadInt32>(value);
+  }
+
+  absl::Status ReadString(std::string* value, int32_t length) {
+    if (current_ + length <= end_) {
+      *value = std::string(current_, current_ + length);
+      current_ += length;
+      return absl::OkStatus();
+    }
+
+    return absl::FailedPreconditionError(absl::StrFormat(
+        "There is no enough data for reading. current=%p, end=%p", current_,
+        end_));
   }
 
  private:
