@@ -18,13 +18,29 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
+    name = "kafka_binary_reader",
+    hdrs = [
+        "kafka_binary_reader.h",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    deps = [
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_library(
     name = "request_header_data",
     srcs = [
-        "kafka_binary_reader.cc",
         "request_header_data.cc",
     ],
     hdrs = [
-        "kafka_binary_reader.h",
         "request_header_data.h",
     ],
     copts = [
@@ -34,10 +50,9 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        ":kafka_binary_reader",
         "//one/base:macros",
-        "@com_google_absl//absl/base",
         "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/types:span",
     ],
 )
