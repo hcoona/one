@@ -23,7 +23,7 @@
 //
 // Author: Shuo Chen (chenshuo at chenshuo dot com)
 
-#include "one/jinduo/net/internal/Timer.h"
+#include "one/jinduo/net/internal/timer.h"
 
 namespace jinduo {
 namespace net {
