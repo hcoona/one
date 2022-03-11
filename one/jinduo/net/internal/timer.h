@@ -46,6 +46,15 @@ class Timer {
         interval_(interval),
         repeat_(interval > absl::ZeroDuration()),
         sequence_(s_numCreated_.fetch_add(1, std::memory_order_acq_rel) + 1) {}
+  ~Timer() = default;
+
+  // Disallow copy.
+  Timer(const Timer&) noexcept = delete;
+  Timer& operator=(const Timer&) noexcept = delete;
+
+  // Allow move but not implemented yet.
+  Timer(Timer&&) noexcept = delete;
+  Timer& operator=(Timer&&) noexcept = delete;
 
   void run() const { callback_(); }
 
