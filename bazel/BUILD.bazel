@@ -31,7 +31,6 @@ compilation_database(
         "//one/codelab/kafka_message_parser:request_header_data",
         "//one/codelab/libevent_http",
         "//one/codelab/muduo_http",
-        "//one/jinduo/net:callbacks",
-        "//one/jinduo/net:timer",
+        "//one/jinduo/net",
     ],
 )
