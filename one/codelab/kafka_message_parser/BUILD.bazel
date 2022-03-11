@@ -15,7 +15,28 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+cc_binary(
+    name = "minikafka_server",
+    srcs = [
+        "main.cc",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        # "-Werror",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_chenshuo_muduo//muduo/base",
+        "@com_github_chenshuo_muduo//muduo/net",
+        "@com_github_chenshuo_muduo//muduo/net/http",
+        "@com_github_chenshuo_muduo//muduo/net/inspect",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+    ],
+)
 
 cc_library(
     name = "kafka_binary_reader",

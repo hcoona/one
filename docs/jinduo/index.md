@@ -31,6 +31,7 @@ I'd like to make following changes to muduo library:
     * Support only C++17 and higher.
 * Feature
     * Support IPv6.
+    * Support signal event.
 * Chore
     * Regular CI pipeline.
     * Testing against sanitizers.
