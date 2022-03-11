@@ -15,26 +15,5 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
----
-BasedOnStyle: Google
----
-Language: Cpp
-
-# Force pointers to the type for C++.
-DerivePointerAlignment: false
-PointerAlignment: Left
-
-# Sort includes
-# Use dev-support/bin/clang-format for LLVM 11 SortPriority feature.
-IncludeBlocks: Regroup
-IncludeCategories:
-  - Regex: '<[^\.]+\.h>' # C Standard Headers
-    Priority: 10
-  - Regex: "<.+>" # C++ Standard Headers
-    Priority: 20
-  - Regex: '"(one)\/.*' # Project Headers
-    Priority: 50
-    SortPriority: 500
-  - Regex: ".*" # Others
-    Priority: 50
-    SortPriority: 50
+# Thie empty BUILD.bazel file is required to make Bazel treat
+# this directory as a package.

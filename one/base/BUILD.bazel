@@ -18,6 +18,24 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
+    name = "base",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":down_cast",
+        ":macros",
+    ],
+)
+
+cc_library(
+    name = "down_cast",
+    hdrs = ["down_cast.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_absl//absl/base",
+    ],
+)
+
+cc_library(
     name = "macros",
     hdrs = [
         "macros.h",

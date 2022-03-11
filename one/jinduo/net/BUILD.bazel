@@ -15,26 +15,35 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
----
-BasedOnStyle: Google
----
-Language: Cpp
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-# Force pointers to the type for C++.
-DerivePointerAlignment: false
-PointerAlignment: Left
+cc_library(
+    name = "callbacks",
+    hdrs = ["Callbacks.h"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        "//one/base",
+        "@com_google_absl//absl/time",
+    ],
+)
 
-# Sort includes
-# Use dev-support/bin/clang-format for LLVM 11 SortPriority feature.
-IncludeBlocks: Regroup
-IncludeCategories:
-  - Regex: '<[^\.]+\.h>' # C Standard Headers
-    Priority: 10
-  - Regex: "<.+>" # C++ Standard Headers
-    Priority: 20
-  - Regex: '"(one)\/.*' # Project Headers
-    Priority: 50
-    SortPriority: 500
-  - Regex: ".*" # Others
-    Priority: 50
-    SortPriority: 50
+cc_library(
+    name = "timer",
+    srcs = ["internal/Timer.cc"],
+    hdrs = ["internal/Timer.h"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":callbacks",
+        "@com_google_absl//absl/time",
+    ],
+)
