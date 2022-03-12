@@ -18,15 +18,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
-    name = "net",
+    name = "base",
     srcs = [
-        "internal/timer.cc",
-        "internal/timer.h",
+        "this_thread.cc",
     ],
     hdrs = [
-        "callbacks.h",
-        "event_loop.h",
-        "timer_id.h",
+        "this_thread.h",
     ],
     copts = [
         "-Wall",
@@ -35,7 +32,6 @@ cc_library(
     ],
     visibility = ["//bazel:__pkg__"],
     deps = [
-        "//one/base",
-        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/base",
     ],
 )
