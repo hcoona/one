@@ -21,9 +21,16 @@ cc_library(
     name = "base",
     visibility = ["//visibility:public"],
     deps = [
+        ":c_string_arg",
         ":down_cast",
         ":macros",
     ],
+)
+
+cc_library(
+    name = "c_string_arg",
+    hdrs = ["c_string_arg.h"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
