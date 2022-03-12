@@ -28,6 +28,8 @@ cc_library(
         "internal/sockets_ops.h",
         "internal/timer.cc",
         "internal/timer.h",
+        "internal/timer_queue.cc",
+        "internal/timer_queue.h",
     ],
     hdrs = [
         "callbacks.h",
@@ -44,6 +46,7 @@ cc_library(
         "//one/base",
         "//one/jinduo/base",
         "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/time",
     ],
