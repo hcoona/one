@@ -30,7 +30,10 @@ cc_library(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
+    visibility = [
+        "//bazel:__pkg__",
+        "//one/jinduo:__subpackages__",
+    ],
     deps = [
         "@com_google_absl//absl/base",
     ],

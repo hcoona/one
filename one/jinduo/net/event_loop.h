@@ -98,7 +98,7 @@ class EventLoop {
 
   // Runs callback at 'time'.
   // Safe to call from other threads.
-  TimerId runAt(Timestamp time, TimerCallback cb);
+  TimerId runAt(absl::Time time, TimerCallback cb);
   // Runs callback after @c delay seconds.
   // Safe to call from other threads.
   TimerId runAfter(double delay, TimerCallback cb);

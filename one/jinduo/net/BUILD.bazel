@@ -20,6 +20,8 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "net",
     srcs = [
+        "internal/channel.cc",
+        "internal/channel.h",
         "internal/timer.cc",
         "internal/timer.h",
     ],
@@ -36,6 +38,9 @@ cc_library(
     visibility = ["//bazel:__pkg__"],
     deps = [
         "//one/base",
+        "//one/jinduo/base",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/time",
     ],
 )
