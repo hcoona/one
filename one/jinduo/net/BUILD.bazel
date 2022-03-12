@@ -69,5 +69,22 @@ cc_binary(
     visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+cc_binary(
+    name = "event_loop_test",
+    srcs = ["event_loop_test.cc"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":net",
+        "@com_google_absl//absl/time",
     ],
 )
