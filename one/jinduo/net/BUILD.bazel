@@ -21,6 +21,7 @@ cc_library(
     name = "net",
     srcs = [
         "event_loop.cc",
+        "inet_address.cc",
         "internal/channel.cc",
         "internal/channel.h",
         "internal/poller.cc",
@@ -40,6 +41,7 @@ cc_library(
     hdrs = [
         "callbacks.h",
         "event_loop.h",
+        "inet_address.h",
         "timer_id.h",
     ],
     copts = [
