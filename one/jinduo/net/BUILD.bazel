@@ -20,6 +20,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "net",
     srcs = [
+        "event_loop.cc",
         "internal/channel.cc",
         "internal/channel.h",
         "internal/poller.cc",
@@ -49,5 +50,19 @@ cc_library(
         "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/synchronization",
         "@com_google_absl//absl/time",
+    ],
+)
+
+cc_binary(
+    name = "channel_test",
+    srcs = ["internal/channel_test.cc"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":net",
     ],
 )

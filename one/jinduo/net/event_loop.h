@@ -101,10 +101,10 @@ class EventLoop {
   TimerId runAt(absl::Time time, TimerCallback cb);
   // Runs callback after @c delay seconds.
   // Safe to call from other threads.
-  TimerId runAfter(double delay, TimerCallback cb);
+  TimerId runAfter(absl::Duration delay, TimerCallback cb);
   // Runs callback every @c interval seconds.
   // Safe to call from other threads.
-  TimerId runEvery(double interval, TimerCallback cb);
+  TimerId runEvery(absl::Duration interval, TimerCallback cb);
   // Cancels the timer.
   // Safe to call from other threads.
   void cancel(TimerId timerId);

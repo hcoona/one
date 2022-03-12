@@ -33,5 +33,6 @@ compilation_database(
         "//one/codelab/muduo_http",
         "//one/jinduo/base",
         "//one/jinduo/net",
+        "//one/jinduo/net:channel_test",
     ],
 )
