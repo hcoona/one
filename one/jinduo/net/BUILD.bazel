@@ -74,6 +74,7 @@ cc_binary(
     ],
 )
 
+# The test desired to abort when creating event loop in callback function.
 cc_binary(
     name = "event_loop_test",
     srcs = ["event_loop_test.cc"],
