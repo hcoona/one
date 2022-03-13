@@ -32,11 +32,11 @@ class RequestHeaderData {
   static constexpr int16_t kHighestSupportedVersion = 1;
 
  public:
-  [[nodiscard]] int16_t lowest_supported_version() const {
+  [[nodiscard]] static int16_t lowest_supported_version() {
     return kLowestSupportedVersion;
   }
 
-  [[nodiscard]] int16_t highest_supported_version() const {
+  [[nodiscard]] static int16_t highest_supported_version() {
     return kHighestSupportedVersion;
   }
 
@@ -69,7 +69,7 @@ class RequestHeaderData {
   std::int16_t request_api_key_{0};
   std::int16_t request_api_version_{0};
   std::int32_t correlation_id_{0};
-  std::string client_id_{""};
+  std::string client_id_;
 
   // TODO(zhangshuai.ustc): Support unknown tagged fields in the future.
 };
