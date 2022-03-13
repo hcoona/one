@@ -20,9 +20,11 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 cc_library(
     name = "base",
     srcs = [
+        "strerror.cc",
         "this_thread.cc",
     ],
     hdrs = [
+        "strerror.h",
         "this_thread.h",
     ],
     copts = [

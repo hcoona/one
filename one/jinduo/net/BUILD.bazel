@@ -40,12 +40,14 @@ cc_library(
         "internal/timer.h",
         "internal/timer_queue.cc",
         "internal/timer_queue.h",
+        "tcp_connection.cc",
     ],
     hdrs = [
         "buffer.h",
         "callbacks.h",
         "event_loop.h",
         "inet_address.h",
+        "tcp_connection.h",
         "timer_id.h",
     ],
     copts = [
