@@ -35,10 +35,10 @@
 namespace jinduo {
 namespace net {
 
-const int Channel::kNoneEvent = 0;
-const int Channel::kReadEvent =
+const uint32_t Channel::kNoneEvent = 0;
+const uint32_t Channel::kReadEvent =
     POLLIN | POLLPRI;  // NOLINT(hicpp-signed-bitwise)
-const int Channel::kWriteEvent = POLLOUT;
+const uint32_t Channel::kWriteEvent = POLLOUT;
 
 Channel::Channel(EventLoop* loop, int fd)
     : loop_(loop),
@@ -131,7 +131,7 @@ std::string Channel::eventsToString() const {
   return eventsToString(fd_, events_);
 }
 
-std::string Channel::eventsToString(int fd, int ev) {
+std::string Channel::eventsToString(int fd, uint32_t ev) {
   std::ostringstream oss;
   oss << fd << ": ";
   if ((ev & POLLIN) != 0) {  // NOLINT(hicpp-signed-bitwise)

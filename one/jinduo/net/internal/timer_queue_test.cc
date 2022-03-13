@@ -56,7 +56,11 @@ void cancel(TimerId timer) {
   LOG(INFO) << "cancelled.";
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+  google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
+  gflags::ParseCommandLineFlags(&argc, &argv, /*remove_flags=*/true);
+
   printTid();
   sleep(1);
   {

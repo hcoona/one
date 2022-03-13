@@ -71,37 +71,33 @@ class Channel {
   void tie(const std::shared_ptr<void>&);
 
   [[nodiscard]] int fd() const { return fd_; }
-  [[nodiscard]] int events() const { return events_; }
+  [[nodiscard]] uint32_t events() const { return events_; }
   void set_revents(int revt) { revents_ = revt; }  // used by pollers
   // int revents() const { return revents_; }
   [[nodiscard]] bool isNoneEvent() const { return events_ == kNoneEvent; }
 
   void enableReading() {
-    events_ |= kReadEvent;  // NOLINT(hicpp-signed-bitwise)
+    events_ |= kReadEvent;
     update();
   }
   void disableReading() {
-    events_ &= ~kReadEvent;  // NOLINT(hicpp-signed-bitwise)
+    events_ &= ~kReadEvent;
     update();
   }
   void enableWriting() {
-    events_ |= kWriteEvent;  // NOLINT(hicpp-signed-bitwise)
+    events_ |= kWriteEvent;
     update();
   }
   void disableWriting() {
-    events_ &= ~kWriteEvent;  // NOLINT(hicpp-signed-bitwise)
+    events_ &= ~kWriteEvent;
     update();
   }
   void disableAll() {
     events_ = kNoneEvent;
     update();
   }
-  [[nodiscard]] bool isWriting() const {
-    return events_ & kWriteEvent;  // NOLINT(hicpp-signed-bitwise)
-  }
-  [[nodiscard]] bool isReading() const {
-    return events_ & kReadEvent;  // NOLINT(hicpp-signed-bitwise)
-  }
+  [[nodiscard]] bool isWriting() const { return (events_ & kWriteEvent) != 0U; }
+  [[nodiscard]] bool isReading() const { return (events_ & kReadEvent) != 0U; }
 
   // for Poller
   [[nodiscard]] int index() const { return index_; }
@@ -117,20 +113,20 @@ class Channel {
   void remove();
 
  private:
-  static std::string eventsToString(int fd, int ev);
+  static std::string eventsToString(int fd, uint32_t ev);
 
   void update();
   void handleEventWithGuard(absl::Time receiveTime);
 
-  static const int kNoneEvent;
-  static const int kReadEvent;
-  static const int kWriteEvent;
+  static const uint32_t kReadEvent;
+  static const uint32_t kNoneEvent;
+  static const uint32_t kWriteEvent;
 
   EventLoop* loop_;
   const int fd_;
-  int events_;
-  int revents_;  // it's the received event types of epoll or poll
-  int index_;    // used by Poller.
+  uint32_t events_;
+  uint32_t revents_;  // it's the received event types of epoll or poll
+  int index_;         // used by Poller.
   bool logHup_;
 
   std::weak_ptr<void> tie_;

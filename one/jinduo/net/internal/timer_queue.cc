@@ -204,7 +204,7 @@ void TimerQueue::reset(const std::vector<Entry>& expired, absl::Time now) {
     nextExpire = timers_.begin()->second->expiration();
   }
 
-  if (nextExpire == absl::InfinitePast()) {
+  if (nextExpire != absl::InfinitePast()) {
     details::resetTimerfd(timerfd_, nextExpire);
   }
 }
