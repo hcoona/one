@@ -31,6 +31,8 @@ cc_library(
         "internal/poller/epoll_poller.h",
         "internal/poller/poll_poller.cc",
         "internal/poller/poll_poller.h",
+        "internal/socket.cc",
+        "internal/socket.h",
         "internal/sockets_ops.cc",
         "internal/sockets_ops.h",
         "internal/timer.cc",
