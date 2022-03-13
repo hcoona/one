@@ -15,23 +15,5 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-load("@com_grail_bazel_compdb//:defs.bzl", "compilation_database")
-load("@com_grail_bazel_output_base_util//:defs.bzl", "OUTPUT_BASE")
-
-compilation_database(
-    name = "one_compdb",
-    # OUTPUT_BASE is a dynamic value that will vary for each user workspace.
-    # If you would like your build outputs to be the same across users, then
-    # skip supplying this value, and substitute the default constant value
-    # "__OUTPUT_BASE__" through an external tool like `sed` or `jq` (see
-    # below shell commands for usage).
-    output_base = OUTPUT_BASE,
-    targets = [
-        "//one/codelab/kafka_message_parser:minikafka_server",
-        "//one/codelab/kafka_message_parser:request_header_data",
-        "//one/codelab/libevent_http",
-        "//one/codelab/jinduo_http",
-        "//one/jinduo/base",
-        "//one/jinduo/net",
-    ],
-)
+# Thie empty BUILD.bazel file is required to make Bazel treat
+# this directory as a package.
