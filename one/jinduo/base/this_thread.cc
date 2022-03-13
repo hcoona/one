@@ -33,9 +33,14 @@ namespace this_thread {
 
 namespace details {
 
+namespace {
+
 pid_t gettid() { return static_cast<pid_t>(::syscall(SYS_gettid)); }
 
+}  // namespace
+
 __thread int t_cachedTid = 0;
+__thread const char* t_threadName = "unknown";
 static_assert(std::is_same<int, pid_t>::value, "pid_t should be int");
 
 void cacheTid() {

@@ -22,6 +22,7 @@ cc_library(
     srcs = [
         "buffer.cc",
         "event_loop.cc",
+        "event_loop_thread.cc",
         "inet_address.cc",
         "internal/channel.cc",
         "internal/channel.h",
@@ -46,6 +47,7 @@ cc_library(
         "buffer.h",
         "callbacks.h",
         "event_loop.h",
+        "event_loop_thread.h",
         "inet_address.h",
         "tcp_connection.h",
         "timer_id.h",
@@ -96,6 +98,23 @@ cc_binary(
     visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+cc_binary(
+    name = "event_loop_thread_test",
+    srcs = ["event_loop_thread_test.cc"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":net",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/time",
     ],
 )

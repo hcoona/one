@@ -30,6 +30,7 @@ namespace this_thread {
 namespace details {
 
 extern __thread int t_cachedTid;
+extern __thread const char* t_threadName;
 void cacheTid();
 
 }  // namespace details
@@ -40,6 +41,8 @@ inline int tid() {
   }
   return details::t_cachedTid;
 }
+
+inline const char* name() { return details::t_threadName; }
 
 bool isMainThread();
 
