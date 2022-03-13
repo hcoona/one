@@ -2,10 +2,10 @@ name: CI_Linux
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
 jobs:
   BAZEL_APT_Linux:
@@ -38,4 +38,4 @@ jobs:
       - run: echo "build --repository_cache=$HOME/.cache/bazel/repository_cache" >> .bazelrc
       - run: tools/setup_clang.sh /usr/lib/llvm-13
       - run: bazel build -c opt --config libc++ //...
-      - run: bazel test -c opt --config clang-asan //...
+      - run: bazel test -c opt --config asan //...
