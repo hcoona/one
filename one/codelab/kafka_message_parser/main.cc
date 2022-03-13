@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
+#include <cstddef>
 #include <limits>
 
+#include "absl/base/casts.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-#include "muduo/base/Types.h"
-#include "muduo/net/EventLoop.h"
-#include "muduo/net/EventLoopThread.h"
-#include "muduo/net/inspect/Inspector.h"
+#include "one/jinduo/net/event_loop.h"
+#include "one/jinduo/net/event_loop_thread.h"
 
 DEFINE_uint32(port, 0, "Kafka plain protocol binding port.");
 DEFINE_uint32(inspector_port, 0, "Inspector HTTP server binding port.");
@@ -31,7 +31,7 @@ namespace {
 
 bool ValidateTcpPort(const char* /*flag_name*/, uint32_t value) {
   return value <=
-         muduo::implicit_cast<uint32_t>(std::numeric_limits<uint16_t>::max());
+         absl::implicit_cast<uint32_t>(std::numeric_limits<uint16_t>::max());
 }
 
 }  // namespace
@@ -47,11 +47,10 @@ int main(int argc, char* argv[]) {
   // TODO(zhangshuai.ds): Turn signal into an event to help stop the event loop
   // gracefully.
 
-  muduo::net::EventLoop loop;
-  muduo::net::EventLoopThread inspectThread;
-  muduo::net::Inspector inspector(inspectThread.startLoop(),
-                                  muduo::net::InetAddress(FLAGS_inspector_port),
-                                  "minikafka-inspector");
+  jinduo::net::EventLoop loop;
+
+  // TODO(zhangshuai.ds): Bind a HTTP server to inspect the state of the
+  // service.
 
   // MemcacheServer server(&loop, options);
   // server.setThreadNum(options.threads);
