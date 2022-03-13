@@ -50,31 +50,33 @@
 // Modifications:
 // 1. clang-format with Google code style.
 // 2. Fix clang-tidy & compiler warnings.
+// 3. Use our Jinduo port.
 
 #include <sys/socket.h>  // SO_REUSEPORT
 
 #include <map>
 
-#include "muduo/base/Logging.h"
-#include "muduo/net/EventLoop.h"
-#include "muduo/net/EventLoopThreadPool.h"
-#include "muduo/net/http/HttpRequest.h"
-#include "muduo/net/http/HttpResponse.h"
-#include "muduo/net/http/HttpServer.h"
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
+#include "glog/logging.h"
+#include "one/jinduo/net/event_loop.h"
+#include "one/jinduo/net/http/http_request.h"
+#include "one/jinduo/net/http/http_response.h"
+#include "one/jinduo/net/http/http_server.h"
+#include "one/jinduo/net/event_loop_thread_pool.h"
 
 constexpr size_t kFaviconByteSize = 555;
 extern char favicon[kFaviconByteSize];
 bool benchmark = false;
 
-std::map<muduo::string, muduo::string> redirections;
+std::map<std::string, std::string> redirections;
 
-void onRequest(const muduo::net::HttpRequest& req,
-               muduo::net::HttpResponse* resp) {
-  LOG_INFO << "Headers " << req.methodString() << " " << req.path();
+void onRequest(const jinduo::net::HttpRequest& req,
+               jinduo::net::HttpResponse* resp) {
+  LOG(INFO) << "Headers " << req.methodString() << " " << req.path();
   if (!benchmark) {
-    const std::map<muduo::string, muduo::string>& headers = req.headers();
-    for (const auto& header : headers) {
-      LOG_DEBUG << header.first << ": " << header.second;
+    for (const auto& header : req.headers()) {
+      VLOG(1) << header.first << ": " << header.second;
     }
   }
 
@@ -83,17 +85,17 @@ void onRequest(const muduo::net::HttpRequest& req,
 
   auto it = redirections.find(req.path());
   if (it != redirections.end()) {
-    resp->setStatusCode(muduo::net::HttpResponse::k301MovedPermanently);
+    resp->setStatusCode(jinduo::net::HttpResponse::k301MovedPermanently);
     resp->setStatusMessage("Moved Permanently");
     resp->addHeader("Location", it->second);
     // resp->setCloseConnection(true);
   } else if (req.path() == "/") {
-    resp->setStatusCode(muduo::net::HttpResponse::k200Ok);
+    resp->setStatusCode(jinduo::net::HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("text/html");
-    muduo::string now = muduo::Timestamp::now().toFormattedString();
+    std::string now = absl::FormatTime(absl::Now());
     auto i = redirections.begin();
-    muduo::string text;
+    std::string text;
     for (; i != redirections.end(); ++i) {
       text.append("<ul>" + i->first + " =&gt; " + i->second + "</ul>");
     }
@@ -103,12 +105,12 @@ void onRequest(const muduo::net::HttpRequest& req,
         "<body><h1>Known redirections</h1>" +
         text + "Now is " + now + "</body></html>");
   } else if (req.path() == "/favicon.ico") {
-    resp->setStatusCode(muduo::net::HttpResponse::k200Ok);
+    resp->setStatusCode(jinduo::net::HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("image/png");
-    resp->setBody(muduo::string(favicon, sizeof favicon));
+    resp->setBody(std::string(favicon, sizeof favicon));
   } else {
-    resp->setStatusCode(muduo::net::HttpResponse::k404NotFound);
+    resp->setStatusCode(jinduo::net::HttpResponse::k404NotFound);
     resp->setStatusMessage("Not Found");
     resp->setCloseConnection(true);
   }
@@ -121,16 +123,15 @@ int main(int argc, char* argv[]) {
   int numThreads = 0;
   if (argc > 1) {
     benchmark = true;
-    muduo::Logger::setLogLevel(muduo::Logger::WARN);
     numThreads = atoi(argv[1]);
   }
 
   static constexpr uint16_t kBindingPort = 8000;
 
 #ifdef SO_REUSEPORT
-  LOG_WARN << "SO_REUSEPORT";
-  muduo::net::EventLoop loop;
-  muduo::net::EventLoopThreadPool threadPool(&loop, "shorturl");
+  LOG(WARNING) << "SO_REUSEPORT";
+  jinduo::net::EventLoop loop;
+  jinduo::net::EventLoopThreadPool threadPool(&loop, "shorturl");
   if (numThreads > 1) {
     threadPool.setThreadNum(numThreads);
   } else {
@@ -138,11 +139,11 @@ int main(int argc, char* argv[]) {
   }
   threadPool.start();
 
-  std::vector<std::unique_ptr<muduo::net::HttpServer>> servers;
+  std::vector<std::unique_ptr<jinduo::net::HttpServer>> servers;
   for (int i = 0; i < numThreads; ++i) {
-    servers.emplace_back(new muduo::net::HttpServer(
-        threadPool.getNextLoop(), muduo::net::InetAddress(kBindingPort),
-        "shorturl", muduo::net::TcpServer::kReusePort));
+    servers.emplace_back(new jinduo::net::HttpServer(
+        threadPool.getNextLoop(), jinduo::net::InetAddress(kBindingPort),
+        "shorturl", jinduo::net::TcpServer::kReusePort));
     servers.back()->setHttpCallback(onRequest);
     servers.back()->getLoop()->runInLoop(
         [server = servers.back().get()] { server->start(); });
@@ -150,9 +151,9 @@ int main(int argc, char* argv[]) {
   loop.loop();
 #else
   LOG_WARN << "Normal";
-  muduo::net::EventLoop loop;
-  muduo::net::HttpServer server(&loop, muduo::net::InetAddress(kBindingPort),
-                                "shorturl");
+  jinduo::net::EventLoop loop;
+  jinduo::net::HttpServer server(&loop, jinduo::net::InetAddress(kBindingPort),
+                                 "shorturl");
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);
   server.start();

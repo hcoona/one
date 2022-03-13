@@ -18,7 +18,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
 
 cc_binary(
-    name = "muduo_http",
+    name = "jinduo_http",
     srcs = [
         "main.cc",
     ],
@@ -29,8 +29,7 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_chenshuo_muduo//muduo/base",
-        "@com_github_chenshuo_muduo//muduo/net",
-        "@com_github_chenshuo_muduo//muduo/net/http",
+        "//one/jinduo/net",
+        "//one/jinduo/net/http",
     ],
 )
