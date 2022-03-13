@@ -89,7 +89,6 @@ cc_binary(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_github_google_glog//:glog",
@@ -106,7 +105,6 @@ cc_binary(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_google_absl//absl/time",
@@ -121,7 +119,6 @@ cc_binary(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_github_google_glog//:glog",
@@ -141,7 +138,6 @@ cc_test(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_github_gflags_gflags//:gflags",
@@ -158,7 +154,6 @@ cc_test(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_google_googletest//:gtest",
@@ -174,7 +169,6 @@ cc_test(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_google_googletest//:gtest",
@@ -191,7 +185,6 @@ cc_test(
         "-Werror",
     ],
     tags = ["broken"],
-    visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
         "@com_github_gflags_gflags//:gflags",

@@ -54,10 +54,6 @@ cc_library(
         "-Wextra",
         "-Werror",
     ],
-    visibility = [
-        "//bazel:__pkg__",
-        "//one/jinduo:__subpackages__",
-    ],
     deps = [
         ":base",
         "@com_github_google_glog//:glog",
