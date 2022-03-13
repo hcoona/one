@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
 cc_library(
     name = "net",
@@ -60,6 +60,7 @@ cc_library(
     ],
 )
 
+# The test desired to run infinite times.
 cc_binary(
     name = "channel_test",
     srcs = ["internal/channel_test.cc"],
@@ -89,5 +90,21 @@ cc_binary(
     deps = [
         ":net",
         "@com_google_absl//absl/time",
+    ],
+)
+
+cc_test(
+    name = "inet_address_test",
+    srcs = ["inet_address_test.cc"],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":net",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )
