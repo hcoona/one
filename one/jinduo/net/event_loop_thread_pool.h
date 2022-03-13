@@ -23,7 +23,7 @@
 //
 // Author: Shuo Chen (chenshuo at chenshuo dot com)
 //
-// This is an internal header file, you should not include this.
+// This is an public header file.
 
 #pragma once
 

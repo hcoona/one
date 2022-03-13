@@ -23,7 +23,7 @@
 //
 // Author: Shuo Chen (chenshuo at chenshuo dot com)
 
-#include "one/jinduo/net/internal/event_loop_thread_pool.h"
+#include "one/jinduo/net/event_loop_thread_pool.h"
 
 #include <stdio.h>
 #include <unistd.h>

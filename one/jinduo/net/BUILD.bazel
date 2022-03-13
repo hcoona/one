@@ -23,6 +23,7 @@ cc_library(
         "buffer.cc",
         "event_loop.cc",
         "event_loop_thread.cc",
+        "event_loop_thread_pool.cc",
         "inet_address.cc",
         "internal/acceptor.cc",
         "internal/acceptor.h",
@@ -30,8 +31,6 @@ cc_library(
         "internal/channel.h",
         "internal/connector.cc",
         "internal/connector.h",
-        "internal/event_loop_thread_pool.cc",
-        "internal/event_loop_thread_pool.h",
         "internal/poller.cc",
         "internal/poller.h",
         "internal/poller/default_poller.cc",
@@ -56,6 +55,7 @@ cc_library(
         "callbacks.h",
         "event_loop.h",
         "event_loop_thread.h",
+        "event_loop_thread_pool.h",
         "inet_address.h",
         "tcp_client.h",
         "tcp_connection.h",
@@ -130,8 +130,7 @@ cc_binary(
 cc_test(
     name = "event_loop_thread_pool_test",
     srcs = [
-        "internal/event_loop_thread_pool.h",
-        "internal/event_loop_thread_pool_test.cc",
+        "event_loop_thread_pool_test.cc",
     ],
     copts = [
         "-Wall",
