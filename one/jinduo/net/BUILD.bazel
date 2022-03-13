@@ -24,6 +24,8 @@ cc_library(
         "event_loop.cc",
         "event_loop_thread.cc",
         "inet_address.cc",
+        "internal/acceptor.cc",
+        "internal/acceptor.h",
         "internal/channel.cc",
         "internal/channel.h",
         "internal/poller.cc",
