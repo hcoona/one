@@ -43,7 +43,7 @@ class EventLoopThreadPool {
   using ThreadInitCallback = std::function<void(EventLoop*)>;
 
   EventLoopThreadPool(EventLoop* baseLoop, std::string nameArg);
-  ~EventLoopThreadPool() = default;
+  ~EventLoopThreadPool();
 
   // Disallow copy.
   EventLoopThreadPool(const EventLoopThreadPool&) noexcept = delete;

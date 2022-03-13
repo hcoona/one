@@ -125,6 +125,26 @@ cc_binary(
 )
 
 cc_test(
+    name = "event_loop_thread_pool_test",
+    srcs = [
+        "internal/event_loop_thread_pool.h",
+        "internal/event_loop_thread_pool_test.cc",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//bazel:__pkg__"],
+    deps = [
+        ":net",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/functional:bind_front",
+    ],
+)
+
+cc_test(
     name = "buffer_test",
     srcs = ["buffer_test.cc"],
     copts = [
@@ -168,6 +188,7 @@ cc_test(
     visibility = ["//bazel:__pkg__"],
     deps = [
         ":net",
+        "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/time",

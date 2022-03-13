@@ -43,6 +43,8 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop,
                                          std::string nameArg)
     : baseLoop_(baseLoop), name_(std::move(nameArg)) {}
 
+EventLoopThreadPool::~EventLoopThreadPool() = default;
+
 void EventLoopThreadPool::start(const ThreadInitCallback& cb) {
   assert(!started_);
   baseLoop_->assertInLoopThread();
