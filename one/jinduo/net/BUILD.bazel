@@ -28,6 +28,8 @@ cc_library(
         "internal/acceptor.h",
         "internal/channel.cc",
         "internal/channel.h",
+        "internal/connector.cc",
+        "internal/connector.h",
         "internal/event_loop_thread_pool.cc",
         "internal/event_loop_thread_pool.h",
         "internal/poller.cc",
