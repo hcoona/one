@@ -46,6 +46,7 @@ cc_library(
         "internal/timer_queue.cc",
         "internal/timer_queue.h",
         "tcp_connection.cc",
+        "tcp_server.cc",
     ],
     hdrs = [
         "buffer.h",
@@ -54,6 +55,7 @@ cc_library(
         "event_loop_thread.h",
         "inet_address.h",
         "tcp_connection.h",
+        "tcp_server.h",
         "timer_id.h",
     ],
     copts = [
@@ -61,7 +63,7 @@ cc_library(
         "-Wextra",
         "-Werror",
     ],
-    visibility = ["//bazel:__pkg__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//one/base",
         "//one/jinduo/base",
