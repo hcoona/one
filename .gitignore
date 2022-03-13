@@ -437,3 +437,6 @@ $RECYCLE.BIN/
 
 # Ignore generated clang.bazelrc file
 /clang.bazelrc
+
+# Ignore generated compile_commands.json file
+/compile_commands.json
