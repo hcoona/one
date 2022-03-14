@@ -32,6 +32,7 @@ I'd like to make following changes to muduo library:
 * Feature
     * Support IPv6.
     * Support signal event.
+    * Redesign the `Buffer` class. The current design has a great chance never shrink.
 * Chore
     * Regular CI pipeline.
     * Testing against sanitizers.
