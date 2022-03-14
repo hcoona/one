@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/kafka_message_parser/request_header_data.h"
+#include "one/codelab/minikafka/request_header_data.h"
 
 #include "one/base/macros.h"
-#include "one/codelab/kafka_message_parser/kafka_binary_reader.h"
+#include "one/codelab/minikafka/kafka_binary_reader.h"
 
 namespace hcoona {
 namespace minikafka {
