@@ -20,6 +20,8 @@
 #include <memory>
 #include <utility>
 
+#include "absl/synchronization/mutex.h"
+#include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "one/jinduo/net/buffer.h"
 #include "one/jinduo/net/tcp_connection.h"
@@ -32,11 +34,19 @@ class KafkaTcpSession {
   explicit KafkaTcpSession(
       std::shared_ptr<jinduo::net::TcpConnection> connection);
 
+  [[nodiscard]] absl::Time last_active_time() const {
+    absl::MutexLock lock(&mutex_);
+    return last_active_time_;
+  }
+
  private:
   void OnMessage(const std::shared_ptr<jinduo::net::TcpConnection>& connection,
                  jinduo::net::Buffer* buffer, absl::Time receiveTime);
 
   std::shared_ptr<jinduo::net::TcpConnection> connection_;
+
+  mutable absl::Mutex mutex_;
+  absl::Time last_active_time_ ABSL_GUARDED_BY(mutex_){absl::Now()};
 };
 
 }  // namespace minikafka
