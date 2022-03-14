@@ -21,7 +21,7 @@
 #include "absl/base/casts.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-#include "kafka_tcp_server.h"
+#include "one/codelab/minikafka/kafka_tcp_server.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/event_loop_thread.h"
 
