@@ -21,6 +21,7 @@
 #include "absl/base/casts.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "kafka_tcp_server.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/event_loop_thread.h"
 
@@ -47,13 +48,15 @@ int main(int argc, char* argv[]) {
   // TODO(zhangshuai.ds): Turn signal into an event to help stop the event loop
   // gracefully.
 
-  jinduo::net::EventLoop loop;
-
   // TODO(zhangshuai.ds): Bind a HTTP server to inspect the state of the
   // service.
 
-  // MemcacheServer server(&loop, options);
-  // server.setThreadNum(options.threads);
-  // server.start();
+  // TODO(zhangshuai.ds): Launch multiple TCP servers binding on the same port
+  // to process accept in parallel.
+
+  jinduo::net::EventLoop loop;
+  hcoona::minikafka::KafkaTcpServer kafka_tcp_server(
+      &loop, jinduo::net::InetAddress(FLAGS_port));
+  kafka_tcp_server.Start();
   loop.loop();
 }

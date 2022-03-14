@@ -29,6 +29,7 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        ":kafka_tcp_server",
         "//one/jinduo/net",
         "//one/jinduo/net/http",
         "@com_github_gflags_gflags//:gflags",
@@ -52,6 +53,32 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/types:span",
+    ],
+)
+
+cc_library(
+    name = "kafka_tcp_server",
+    srcs = [
+        "kafka_tcp_server.cc",
+        "kafka_tcp_session.cc",
+    ],
+    hdrs = [
+        "kafka_tcp_server.h",
+        "kafka_tcp_session.h",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    deps = [
+        "//one/jinduo/net",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/functional:bind_front",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/synchronization",
     ],
 )
 
