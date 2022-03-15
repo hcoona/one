@@ -19,7 +19,6 @@
 
 #include "absl/functional/bind_front.h"
 #include "glog/logging.h"
-#include "kafka_tcp_session.h"
 
 namespace hcoona {
 namespace minikafka {

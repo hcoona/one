@@ -48,6 +48,8 @@ class KafkaTcpServer {
   void Start() { tcp_server_.start(); }
   void Stop();
 
+  const std::string& GetIpPort() const { return tcp_server_.ipPort(); }
+
  private:
   void OnConnect(const std::shared_ptr<jinduo::net::TcpConnection>& connection);
 

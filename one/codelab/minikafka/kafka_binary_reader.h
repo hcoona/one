@@ -33,14 +33,24 @@ namespace minikafka {
 class KafkaBinaryReader {
  public:
   explicit KafkaBinaryReader(absl::Span<const uint8_t> span)
-      : begin_(&span[0]), current_(&span[0]), end_(&span[span.size()]) {}
+      : begin_(&span[0]),
+        current_(&span[0]),
+        end_(&span[span.size() - 1] + 1) {}
 
-  absl::Status Read(std::int16_t* value) {
-    return Read<std::int16_t, &LoadInt16>(value);
+  absl::Status ReadLe(std::int16_t* value) {
+    return Read<std::int16_t, &LoadInt16Le>(value);
   }
 
-  absl::Status Read(std::int32_t* value) {
-    return Read<std::int32_t, &LoadInt32>(value);
+  absl::Status ReadLe(std::int32_t* value) {
+    return Read<std::int32_t, &LoadInt32Le>(value);
+  }
+
+  absl::Status ReadBe(std::int16_t* value) {
+    return Read<std::int16_t, &LoadInt16Be>(value);
+  }
+
+  absl::Status ReadBe(std::int32_t* value) {
+    return Read<std::int32_t, &LoadInt32Be>(value);
   }
 
   absl::Status ReadString(std::string* value, int32_t length) {
@@ -71,12 +81,20 @@ class KafkaBinaryReader {
         end_));
   }
 
-  static std::int16_t LoadInt16(const void* p) {
+  static std::int16_t LoadInt16Le(const void* p) {
     return absl::bit_cast<std::int16_t>(absl::little_endian::Load16(p));
   }
 
-  static std::int32_t LoadInt32(const void* p) {
+  static std::int32_t LoadInt32Le(const void* p) {
     return absl::bit_cast<std::int32_t>(absl::little_endian::Load32(p));
+  }
+
+  static std::int16_t LoadInt16Be(const void* p) {
+    return absl::bit_cast<std::int16_t>(absl::big_endian::Load16(p));
+  }
+
+  static std::int32_t LoadInt32Be(const void* p) {
+    return absl::bit_cast<std::int32_t>(absl::big_endian::Load32(p));
   }
 
   const std::uint8_t* begin_{nullptr};

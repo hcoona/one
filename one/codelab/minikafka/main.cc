@@ -58,5 +58,8 @@ int main(int argc, char* argv[]) {
   hcoona::minikafka::KafkaTcpServer kafka_tcp_server(
       &loop, jinduo::net::InetAddress(FLAGS_port));
   kafka_tcp_server.Start();
+
+  LOG(INFO) << "Binding at " << kafka_tcp_server.GetIpPort();
+
   loop.loop();
 }

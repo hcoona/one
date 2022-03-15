@@ -39,6 +39,16 @@ cc_binary(
 )
 
 cc_library(
+    name = "api_key",
+    srcs = ["api_key.cc"],
+    hdrs = ["api_key.h"],
+    deps = [
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_library(
     name = "kafka_binary_reader",
     hdrs = [
         "kafka_binary_reader.h",
@@ -72,6 +82,7 @@ cc_library(
         "-Werror",
     ],
     deps = [
+        ":request_header",
         "//one/jinduo/net",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/base",
@@ -80,15 +91,18 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
 cc_library(
-    name = "request_header_data",
+    name = "request_header",
     srcs = [
+        "request_header.cc",
         "request_header_data.cc",
     ],
     hdrs = [
+        "request_header.h",
         "request_header_data.h",
     ],
     copts = [
@@ -98,6 +112,7 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        ":api_key",
         ":kafka_binary_reader",
         "//one/base:macros",
         "@com_google_absl//absl/status",

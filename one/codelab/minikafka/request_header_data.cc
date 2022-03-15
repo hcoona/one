@@ -24,15 +24,15 @@ namespace hcoona {
 namespace minikafka {
 
 absl::Status RequestHeaderData::ParseFrom(
-    absl::Span<const uint8_t> message_bytes, int16_t version) {
+    absl::Span<const uint8_t> message_bytes, int16_t header_version) {
   KafkaBinaryReader reader(message_bytes);
 
-  ONE_RETURN_IF_NOT_OK(reader.Read(&request_api_key_));
-  ONE_RETURN_IF_NOT_OK(reader.Read(&request_api_version_));
-  ONE_RETURN_IF_NOT_OK(reader.Read(&correlation_id_));
-  if (version >= 1) {
+  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&request_api_key_));
+  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&request_api_version_));
+  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&correlation_id_));
+  if (header_version >= 1) {
     int16_t client_id_length{};
-    ONE_RETURN_IF_NOT_OK(reader.Read(&client_id_length));
+    ONE_RETURN_IF_NOT_OK(reader.ReadBe(&client_id_length));
     if (client_id_length < 0) {
       client_id_.clear();
     } else {
@@ -42,7 +42,7 @@ absl::Status RequestHeaderData::ParseFrom(
     client_id_.clear();
   }
 
-  if (version >= 2) {
+  if (header_version >= 2) {
     return absl::UnimplementedError(
         "Unknown tagged fields are not supported yet.");
   }

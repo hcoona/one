@@ -63,7 +63,7 @@ class RequestHeaderData {
   }
 
   absl::Status ParseFrom(absl::Span<const uint8_t> message_bytes,
-                         int16_t version);
+                         int16_t header_version);
 
  private:
   std::int16_t request_api_key_{0};

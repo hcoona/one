@@ -23,11 +23,16 @@
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
+#include "one/codelab/minikafka/request_header.h"
 #include "one/jinduo/net/buffer.h"
 #include "one/jinduo/net/tcp_connection.h"
 
 namespace hcoona {
 namespace minikafka {
+
+struct RequestHeaderAndBody {
+  RequestHeader header;
+};
 
 class KafkaTcpSession {
  public:

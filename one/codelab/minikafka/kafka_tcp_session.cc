@@ -23,7 +23,9 @@
 #include "absl/functional/bind_front.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
+#include "absl/types/span.h"
 #include "glog/logging.h"
+#include "one/base/macros.h"
 
 namespace hcoona {
 namespace minikafka {
@@ -41,11 +43,14 @@ class KafkaTcpSessionContext {
  public:
   absl::Status Parse(jinduo::net::Buffer* buffer, absl::Time receiveTime);
 
-  [[nodiscard]] const std::vector<int>& kafka_requests() const {
+  [[nodiscard]] const std::vector<RequestHeaderAndBody>& kafka_requests()
+      const {
     return kafka_requests_;
   }
 
-  std::vector<int>* mutable_kafka_requests() { return &kafka_requests_; }
+  std::vector<RequestHeaderAndBody>* mutable_kafka_requests() {
+    return &kafka_requests_;
+  }
 
   void ClearKafkaRequests() { kafka_requests_.clear(); }
 
@@ -56,10 +61,10 @@ class KafkaTcpSessionContext {
       KafkaTcpSessionContextState::kWaitingRequestLeadingSize};
   int32_t known_request_leading_size_{
       std::numeric_limits<decltype(known_request_leading_size_)>::min()};
-  std::vector<int> kafka_requests_{};
+  std::vector<RequestHeaderAndBody> kafka_requests_{};
 };
 
-// Return UNAVAILABLE for waiting more data from buffer.
+// Return OK for waiting more data from buffer.
 //
 // https://kafka.apache.org/protocol#protocol_common
 //
@@ -75,7 +80,7 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
   while (true) {
     if (state_ == KafkaTcpSessionContextState::kWaitingRequestLeadingSize) {
       if (buffer->readableBytes() < kLeadingRequestSizeBytes) {
-        return absl::UnavailableError("No enough bytes for the request.");
+        return absl::OkStatus();
       }
 
       known_request_leading_size_ = buffer->readInt32();
@@ -91,12 +96,24 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
       CHECK_GE(known_request_leading_size_, 0);
       if (buffer->readableBytes() <
           static_cast<size_t>(known_request_leading_size_)) {
-        return absl::UnavailableError("No enough bytes for the request.");
+        return absl::OkStatus();
       }
 
-      // TODO(zhangshuai.ds): Parse the request.
-      (void)buffer->toStringView().substr(0, known_request_leading_size_);
+      // TODO(zhangshuai.ds): Parse the request body.
+      RequestHeaderAndBody request_header_and_body;
+      {
+        std::string_view request_content_string_view =
+            buffer->toStringView().substr(0, known_request_leading_size_);
+        absl::Span<const uint8_t> request_content_bytes = {
+            reinterpret_cast<const uint8_t*>(
+                request_content_string_view.data()),
+            request_content_string_view.size()};
+        ONE_RETURN_IF_NOT_OK(
+            request_header_and_body.header.ParseFrom(request_content_bytes));
+      }
       (void)receiveTime;
+
+      kafka_requests_.emplace_back(std::move(request_header_and_body));
 
       known_request_leading_size_ =
           std::numeric_limits<decltype(known_request_leading_size_)>::min();
@@ -129,7 +146,7 @@ void KafkaTcpSession::OnMessage(
       std::any_cast<KafkaTcpSessionContext>(connection->getMutableContext());
 
   absl::Status s = context->Parse(buffer, receiveTime);
-  if (!s.ok() && !absl::IsUnavailable(s)) {
+  if (!s.ok()) {
     LOG(WARNING) << "Failed to parse request. remote="
                  << connection->peerAddress().toIpPort() << ", reason=" << s;
     connection->shutdown();
@@ -138,6 +155,7 @@ void KafkaTcpSession::OnMessage(
   if (!context->kafka_requests().empty()) {
     for (auto&& request : *context->mutable_kafka_requests()) {
       (void)request;
+      LOG(INFO) << request.header;
       // OnRequest(conn, std::move(request));
     }
 
