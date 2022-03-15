@@ -18,8 +18,11 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "absl/base/casts.h"
 #include "absl/base/internal/endian.h"
@@ -33,9 +36,18 @@ namespace minikafka {
 class KafkaBinaryReader {
  public:
   explicit KafkaBinaryReader(absl::Span<const uint8_t> span)
-      : begin_(&span[0]),
-        current_(&span[0]),
-        end_(&span[span.size() - 1] + 1) {}
+      : begin_(span.data()),
+        current_(span.data()),
+        end_(span.data() + span.size()) {}
+
+  void RecordCurrentPosition() { recorded_positions_.emplace_back(current_); }
+
+  void RewindRecordedPosition() {
+    current_ = recorded_positions_.back();
+    recorded_positions_.pop_back();
+  }
+
+  void ClearRecordedPosition() { recorded_positions_.clear(); }
 
   absl::Status ReadLe(std::int16_t* value) {
     return Read<std::int16_t, &LoadInt16Le>(value);
@@ -52,6 +64,9 @@ class KafkaBinaryReader {
   absl::Status ReadBe(std::int32_t* value) {
     return Read<std::int32_t, &LoadInt32Be>(value);
   }
+
+  bool ReadVarint32(std::uint32_t* value);
+  bool ReadVarint64(std::uint64_t* value);
 
   absl::Status ReadString(std::string* value, int32_t length) {
     if (current_ + length <= end_) {
@@ -97,9 +112,16 @@ class KafkaBinaryReader {
     return absl::bit_cast<std::int32_t>(absl::big_endian::Load32(p));
   }
 
+  bool ReadVarint32Slow(uint32_t* value);
+  int64_t ReadVarint32Fallback(uint32_t first_byte_or_zero);
+  bool ReadVarint64Slow(uint64_t* value);
+  std::pair<uint64_t, bool> ReadVarint64Fallback();
+
   const std::uint8_t* begin_{nullptr};
   const std::uint8_t* current_{nullptr};
   const std::uint8_t* end_{nullptr};
+
+  std::vector<const std::uint8_t*> recorded_positions_{};
 };
 
 }  // namespace minikafka

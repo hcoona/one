@@ -34,6 +34,7 @@ Checks: >
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-pro-type-vararg,
   google-*,
+  -google-readability-avoid-underscore-in-googletest-name,
   hicpp-*,
   -hicpp-avoid-c-arrays,
   -hicpp-no-array-decay,
