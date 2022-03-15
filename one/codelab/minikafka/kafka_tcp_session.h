@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <utility>
+#include <variant>
 
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
@@ -32,6 +33,8 @@ namespace minikafka {
 
 struct RequestHeaderAndBody {
   RequestHeader header;
+  std::variant<std::monostate> body;
+  absl::Time receive_time;
 };
 
 class KafkaTcpSession {
@@ -46,7 +49,7 @@ class KafkaTcpSession {
 
  private:
   void OnMessage(const std::shared_ptr<jinduo::net::TcpConnection>& connection,
-                 jinduo::net::Buffer* buffer, absl::Time receiveTime);
+                 jinduo::net::Buffer* buffer, absl::Time receive_time);
 
   std::shared_ptr<jinduo::net::TcpConnection> connection_;
 

@@ -25,8 +25,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
 #include "glog/logging.h"
-#include "kafka_binary_reader.h"
 #include "one/base/macros.h"
+#include "one/codelab/minikafka/kafka_binary_reader.h"
 
 namespace hcoona {
 namespace minikafka {
@@ -42,7 +42,7 @@ enum class KafkaTcpSessionContextState {
 
 class KafkaTcpSessionContext {
  public:
-  absl::Status Parse(jinduo::net::Buffer* buffer, absl::Time receiveTime);
+  absl::Status Parse(jinduo::net::Buffer* buffer, absl::Time receive_time);
 
   [[nodiscard]] const std::vector<RequestHeaderAndBody>& kafka_requests()
       const {
@@ -77,7 +77,7 @@ class KafkaTcpSessionContext {
 // size as an integer N, and then reading and parsing the subsequent N bytes of
 // the request.
 absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
-                                           absl::Time receiveTime) {
+                                           absl::Time receive_time) {
   while (true) {
     if (state_ == KafkaTcpSessionContextState::kWaitingRequestLeadingSize) {
       if (buffer->readableBytes() < kLeadingRequestSizeBytes) {
@@ -101,6 +101,7 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
       }
 
       RequestHeaderAndBody request_header_and_body;
+      request_header_and_body.receive_time = receive_time;
       {
         std::string_view request_content_string_view =
             buffer->toStringView().substr(0, known_request_leading_size_);
@@ -112,7 +113,6 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
         ONE_RETURN_IF_NOT_OK(request_header_and_body.header.ParseFrom(reader));
 
         // TODO(zhangshuai.ds): Parse the request body.
-        (void)receiveTime;
       }
 
       kafka_requests_.emplace_back(std::move(request_header_and_body));
@@ -131,23 +131,23 @@ KafkaTcpSession::KafkaTcpSession(
     std::shared_ptr<jinduo::net::TcpConnection> connection)
     : connection_(std::move(connection)) {
   connection_->setTcpNoDelay(/*on=*/true);
-  connection_->setContext(KafkaTcpSessionContext());
+  connection_->setContext(KafkaTcpSessionContext{});
   connection_->setMessageCallback(
       absl::bind_front(&KafkaTcpSession::OnMessage, this));
 }
 
 void KafkaTcpSession::OnMessage(
     const std::shared_ptr<jinduo::net::TcpConnection>& connection,
-    jinduo::net::Buffer* buffer, absl::Time receiveTime) {
+    jinduo::net::Buffer* buffer, absl::Time receive_time) {
   {
     absl::MutexLock lock(&mutex_);
-    last_active_time_ = receiveTime;
+    last_active_time_ = receive_time;
   }
 
   KafkaTcpSessionContext* context =
       std::any_cast<KafkaTcpSessionContext>(connection->getMutableContext());
 
-  absl::Status s = context->Parse(buffer, receiveTime);
+  absl::Status s = context->Parse(buffer, receive_time);
   if (!s.ok()) {
     LOG(WARNING) << "Failed to parse request. remote="
                  << connection->peerAddress().toIpPort() << ", reason=" << s;
@@ -156,10 +156,10 @@ void KafkaTcpSession::OnMessage(
 
   if (!context->kafka_requests().empty()) {
     for (auto&& request : *context->mutable_kafka_requests()) {
-      (void)request;
       LOG(INFO) << request.header;
-      // OnRequest(conn, std::move(request));
     }
+
+    // OnRequests(std::move(*context->mutable_kafka_requests()));
 
     context->ClearKafkaRequests();
   }

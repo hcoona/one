@@ -31,6 +31,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include "absl/time/time.h"
 #include "one/jinduo/net/buffer.h"
@@ -97,6 +98,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     return reading_;
   }
 
+  void setContext(std::any&& context) { context_ = std::move(context); }
   void setContext(const std::any& context) { context_ = context; }
 
   const std::any& getContext() const { return context_; }
