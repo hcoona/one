@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include <utility>
+
 // ONE_PREDICT_TRUE, ONE_PREDICT_FALSE
 //
 // Enables the compiler to prioritize compilation using static analysis for
@@ -68,3 +70,21 @@
       return __s;                       \
     }                                   \
   } while (false)
+
+#define ONE_STRINGIFY(x) #x
+#define ONE_CONCAT(x, y) x##y
+
+#define ONE_ASSIGN_OR_RETURN_IMPL(result_name, lhs, rexpr) \
+  auto&& result_name = (rexpr);                            \
+  do {                                                     \
+    if (ONE_PREDICT_FALSE(!result_name.ok())) {            \
+      return result_name.status();                         \
+    }                                                      \
+  } while (false);                                         \
+  lhs = std::move(result_name).value();
+
+#define ONE_ASSIGN_OR_RETURN_NAME(x, y) ONE_CONCAT(x, y)
+
+#define ONE_ASSIGN_OR_RETURN(lhs, rexpr)                                       \
+  ONE_ASSIGN_OR_RETURN_IMPL(ONE_ASSIGN_OR_RETURN_NAME(status_or, __COUNTER__), \
+                            lhs, rexpr);
