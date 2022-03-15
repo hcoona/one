@@ -261,7 +261,7 @@ std::pair<uint64_t, bool> KafkaBinaryReader::ReadVarint64Fallback() {
   if (end_ - current_ >= kMaxVarintBytes ||
       // Optimization:  We're also safe if the buffer is non-empty and it ends
       // with a byte that would terminate a varint.
-      (end_ > current_ && !(end_[-1] & 0x80U))) {
+      (end_ > current_ && ((end_[-1] & 0x80U) == 0U))) {
     uint64_t temp;
     ::std::pair<bool, const uint8_t*> p =
         ReadVarint64FromArray(current_, &temp);
