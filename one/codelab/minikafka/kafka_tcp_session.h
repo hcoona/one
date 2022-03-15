@@ -24,6 +24,7 @@
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
+#include "one/codelab/minikafka/api_versions_request.h"
 #include "one/codelab/minikafka/request_header.h"
 #include "one/jinduo/net/buffer.h"
 #include "one/jinduo/net/tcp_connection.h"
@@ -33,7 +34,7 @@ namespace minikafka {
 
 struct RequestHeaderAndBody {
   RequestHeader header;
-  std::variant<std::monostate> body;
+  std::variant<std::monostate, ApiVersionsRequest> body;
   absl::Time receive_time;
 };
 

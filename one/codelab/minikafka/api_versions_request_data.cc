@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/request_header_data.h"
+#include "one/codelab/minikafka/api_versions_request_data.h"
 
 #include <limits>
 
@@ -25,24 +25,58 @@
 namespace hcoona {
 namespace minikafka {
 
-absl::Status RequestHeaderData::ParseFrom(KafkaBinaryReader* reader,
-                                          int16_t header_version) {
-  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&request_api_key_));
-  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&request_api_version_));
-  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&correlation_id_));
-  if (header_version >= 1) {
-    int16_t client_id_length{};
-    ONE_RETURN_IF_NOT_OK(reader->ReadBe(&client_id_length));
-    if (client_id_length < 0) {
-      client_id_.clear();
-    } else {
-      ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_id_, client_id_length));
+absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
+                                               int16_t api_version) {
+  if (api_version >= 3) {
+    uint32_t length;
+    if (!reader->ReadVarint32(&length)) {
+      // TODO(zhangshuai.ustc): attach related bytes in HEX.
+      return absl::UnknownError("Failed to parse length.");
+    }
+
+    if (length != 0) {
+      //   return absl::UnknownError(
+      //       "non-nullable field clientSoftwareName was serialized as null");
+      // } else {
+      length--;
+
+      if (length > static_cast<uint32_t>(std::numeric_limits<int16_t>::max())) {
+        return absl::UnknownError(absl::StrCat(
+            "string field clientSoftwareName had invalid length ", length));
+      }
+
+      ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_software_name_,
+                                              static_cast<int32_t>(length)));
     }
   } else {
-    client_id_.clear();
+    client_software_name_.clear();
   }
 
-  if (header_version >= 2) {
+  if (api_version >= 3) {
+    uint32_t length;
+    if (!reader->ReadVarint32(&length)) {
+      // TODO(zhangshuai.ustc): attach related bytes in HEX.
+      return absl::UnknownError("Failed to parse length.");
+    }
+
+    if (length == 0) {
+      return absl::UnknownError(
+          "non-nullable field clientSoftwareVersion was serialized as null");
+    }
+    length--;
+
+    if (length > static_cast<uint32_t>(std::numeric_limits<int16_t>::max())) {
+      return absl::UnknownError(absl::StrCat(
+          "string field clientSoftwareVersion had invalid length ", length));
+    }
+
+    ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_software_version_,
+                                            static_cast<int32_t>(length)));
+  } else {
+    client_software_version_.clear();
+  }
+
+  if (api_version >= 3) {
     // TODO(zhangshuai.ustc): Store unknown tagged fields.
 
     uint32_t tagged_fields_count;

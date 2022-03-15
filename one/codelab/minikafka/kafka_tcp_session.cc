@@ -26,7 +26,10 @@
 #include "absl/types/span.h"
 #include "glog/logging.h"
 #include "one/base/macros.h"
+#include "one/codelab/minikafka/api_key.h"
+#include "one/codelab/minikafka/api_versions_request.h"
 #include "one/codelab/minikafka/kafka_binary_reader.h"
+#include "one/codelab/minikafka/request_header.h"
 
 namespace hcoona {
 namespace minikafka {
@@ -58,6 +61,10 @@ class KafkaTcpSessionContext {
   void reset();
 
  private:
+  static absl::Status Parse(KafkaBinaryReader* reader,
+                            const RequestHeader& request_header,
+                            decltype(RequestHeaderAndBody::body)* body);
+
   KafkaTcpSessionContextState state_{
       KafkaTcpSessionContextState::kWaitingRequestLeadingSize};
   int32_t known_request_leading_size_{
@@ -110,9 +117,13 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
                                     request_content_string_view.data()),
                                 request_content_string_view.size())};
 
-        ONE_RETURN_IF_NOT_OK(request_header_and_body.header.ParseFrom(reader));
+        ONE_RETURN_IF_NOT_OK(request_header_and_body.header.ParseFrom(&reader));
 
-        // TODO(zhangshuai.ds): Parse the request body.
+        ApiVersionsRequest body;
+        ONE_RETURN_IF_NOT_OK(Parse(&reader, request_header_and_body.header,
+                                   &request_header_and_body.body));
+
+        request_header_and_body.body = std::move(body);
       }
 
       kafka_requests_.emplace_back(std::move(request_header_and_body));
@@ -123,6 +134,26 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
       state_ = KafkaTcpSessionContextState::kWaitingRequestLeadingSize;
     }
   }
+}
+
+// static
+absl::Status KafkaTcpSessionContext::Parse(
+    KafkaBinaryReader* reader, const RequestHeader& request_header,
+    decltype(RequestHeaderAndBody::body)* body) {
+  switch (request_header.request_api_key()) {
+    case ApiKey::kApiVersions: {
+      ApiVersionsRequest api_versions_request;
+      ONE_RETURN_IF_NOT_OK(api_versions_request.ParseFrom(
+          reader, request_header.request_api_version()));
+      *body = std::move(api_versions_request);
+      break;
+    }
+    default:
+      return absl::UnimplementedError(
+          "Not implemented yet. api_key=" +
+          to_string(request_header.request_api_key()));
+  }
+  return absl::OkStatus();
 }
 
 }  // namespace
@@ -157,6 +188,10 @@ void KafkaTcpSession::OnMessage(
   if (!context->kafka_requests().empty()) {
     for (auto&& request : *context->mutable_kafka_requests()) {
       LOG(INFO) << request.header;
+      if (request.header.request_api_key() == ApiKey::kApiVersions) {
+        auto* body = std::get_if<ApiVersionsRequest>(&request.body);
+        LOG(INFO) << *body;
+      }
     }
 
     // OnRequests(std::move(*context->mutable_kafka_requests()));

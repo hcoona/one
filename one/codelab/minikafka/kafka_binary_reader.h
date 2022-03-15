@@ -76,8 +76,8 @@ class KafkaBinaryReader {
     }
 
     return absl::FailedPreconditionError(absl::StrFormat(
-        "There is no enough data for reading. current=%p, end=%p", current_,
-        end_));
+        "There is no enough data for reading. current=%p, end=%p, length=%d",
+        current_, end_, length));
   }
 
  private:

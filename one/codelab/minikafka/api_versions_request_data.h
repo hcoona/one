@@ -28,9 +28,9 @@
 namespace hcoona {
 namespace minikafka {
 
-class RequestHeaderData {
+class ApiVersionsRequestData {
   static constexpr int16_t kLowestSupportedVersion = 0;
-  static constexpr int16_t kHighestSupportedVersion = 1;
+  static constexpr int16_t kHighestSupportedVersion = 3;
 
  public:
   [[nodiscard]] static int16_t lowest_supported_version() {
@@ -41,35 +41,25 @@ class RequestHeaderData {
     return kHighestSupportedVersion;
   }
 
-  [[nodiscard]] int16_t request_api_key() const { return request_api_key_; }
-  void set_request_api_key(std::int16_t request_api_key) {
-    request_api_key_ = request_api_key;
+  [[nodiscard]] const std::string& client_software_name() const {
+    return client_software_name_;
+  }
+  void set_client_software_name(std::string client_software_name) {
+    client_software_name_ = std::move(client_software_name);
   }
 
-  [[nodiscard]] int16_t request_api_version() const {
-    return request_api_version_;
+  [[nodiscard]] const std::string& client_software_version() const {
+    return client_software_version_;
   }
-  void set_request_api_version(int16_t request_api_version) {
-    request_api_version_ = request_api_version;
-  }
-
-  [[nodiscard]] int32_t correlation_id() const { return correlation_id_; }
-  void correlation_id(int32_t correlation_id) {
-    correlation_id_ = correlation_id;
+  void set_client_software_version(std::string client_software_version) {
+    client_software_version_ = std::move(client_software_version);
   }
 
-  [[nodiscard]] const std::string& client_id() const { return client_id_; }
-  void set_client_id(std::string client_id) {
-    client_id_ = std::move(client_id);
-  }
-
-  absl::Status ParseFrom(KafkaBinaryReader* reader, int16_t header_version);
+  absl::Status ParseFrom(KafkaBinaryReader* reader, int16_t api_version);
 
  private:
-  std::int16_t request_api_key_{0};
-  std::int16_t request_api_version_{0};
-  std::int32_t correlation_id_{0};
-  std::string client_id_;
+  std::string client_software_name_;
+  std::string client_software_version_;
 
   // TODO(zhangshuai.ustc): Support unknown tagged fields in the future.
 };

@@ -31,7 +31,7 @@ namespace minikafka {
 
 class RequestHeader {
  public:
-  absl::Status ParseFrom(KafkaBinaryReader reader);
+  absl::Status ParseFrom(KafkaBinaryReader* reader);
 
   [[nodiscard]] ApiKey request_api_key() const {
     return static_cast<ApiKey>(data_.request_api_key());

@@ -28,22 +28,19 @@
 namespace hcoona {
 namespace minikafka {
 
-absl::Status RequestHeader::ParseFrom(KafkaBinaryReader reader) {
-  static constexpr size_t kRequestApiKeySize = sizeof(int16_t);
-  static constexpr size_t kRequestApiVersionSize = sizeof(int16_t);
-
-  reader.RecordCurrentPosition();
+absl::Status RequestHeader::ParseFrom(KafkaBinaryReader* reader) {
+  reader->RecordCurrentPosition();
 
   int16_t api_key_number;
-  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&api_key_number));
+  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&api_key_number));
   int16_t api_version;
-  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&api_version));
+  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&api_version));
 
   auto api_key = static_cast<ApiKey>(api_key_number);
   ONE_ASSIGN_OR_RETURN(header_version_,
                        GetRequestHeaderVersion(api_key, api_version));
 
-  reader.RewindRecordedPosition();
+  reader->RewindRecordedPosition();
 
   ONE_RETURN_IF_NOT_OK(data_.ParseFrom(reader, header_version_));
 
