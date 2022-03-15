@@ -34,6 +34,8 @@ namespace hcoona {
 namespace minikafka {
 
 class KafkaBinaryReader {
+  // TODO(zhangshuai.ustc): any reading must be verified not exceeding the
+  // `end_` position.
  public:
   explicit KafkaBinaryReader(absl::Span<const uint8_t> span)
       : begin_(span.data()),

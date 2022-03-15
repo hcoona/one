@@ -44,6 +44,8 @@ absl::Status RequestHeaderData::ParseFrom(KafkaBinaryReader* reader,
 
   if (header_version >= 2) {
     // TODO(zhangshuai.ustc): Store unknown tagged fields.
+    // TODO(zhangshuai.ustc): Extract parsing unknown tagged fields.
+    // TODO(zhangshuai.ustc): Extract parsing varint.
 
     uint32_t tagged_fields_count;
     if (!reader->ReadVarint32(&tagged_fields_count)) {
