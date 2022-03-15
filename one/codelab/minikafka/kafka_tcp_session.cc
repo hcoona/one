@@ -25,6 +25,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
 #include "glog/logging.h"
+#include "kafka_binary_reader.h"
 #include "one/base/macros.h"
 
 namespace hcoona {
@@ -99,19 +100,20 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
         return absl::OkStatus();
       }
 
-      // TODO(zhangshuai.ds): Parse the request body.
       RequestHeaderAndBody request_header_and_body;
       {
         std::string_view request_content_string_view =
             buffer->toStringView().substr(0, known_request_leading_size_);
-        absl::Span<const uint8_t> request_content_bytes = {
-            reinterpret_cast<const uint8_t*>(
-                request_content_string_view.data()),
-            request_content_string_view.size()};
-        ONE_RETURN_IF_NOT_OK(
-            request_header_and_body.header.ParseFrom(request_content_bytes));
+        KafkaBinaryReader reader{
+            absl::MakeConstSpan(reinterpret_cast<const uint8_t*>(
+                                    request_content_string_view.data()),
+                                request_content_string_view.size())};
+
+        ONE_RETURN_IF_NOT_OK(request_header_and_body.header.ParseFrom(reader));
+
+        // TODO(zhangshuai.ds): Parse the request body.
+        (void)receiveTime;
       }
-      (void)receiveTime;
 
       kafka_requests_.emplace_back(std::move(request_header_and_body));
 

@@ -23,6 +23,7 @@
 #include "absl/status/status.h"
 #include "absl/types/span.h"
 #include "one/codelab/minikafka/api_key.h"
+#include "one/codelab/minikafka/kafka_binary_reader.h"
 #include "one/codelab/minikafka/request_header_data.h"
 
 namespace hcoona {
@@ -30,7 +31,7 @@ namespace minikafka {
 
 class RequestHeader {
  public:
-  absl::Status ParseFrom(absl::Span<const uint8_t> request_header_bytes);
+  absl::Status ParseFrom(KafkaBinaryReader reader);
 
   [[nodiscard]] ApiKey request_api_key() const {
     return static_cast<ApiKey>(data_.request_api_key());

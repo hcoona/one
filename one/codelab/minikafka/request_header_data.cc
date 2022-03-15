@@ -17,16 +17,16 @@
 
 #include "one/codelab/minikafka/request_header_data.h"
 
+#include <limits>
+
 #include "one/base/macros.h"
 #include "one/codelab/minikafka/kafka_binary_reader.h"
 
 namespace hcoona {
 namespace minikafka {
 
-absl::Status RequestHeaderData::ParseFrom(
-    absl::Span<const uint8_t> message_bytes, int16_t header_version) {
-  KafkaBinaryReader reader(message_bytes);
-
+absl::Status RequestHeaderData::ParseFrom(KafkaBinaryReader reader,
+                                          int16_t header_version) {
   ONE_RETURN_IF_NOT_OK(reader.ReadBe(&request_api_key_));
   ONE_RETURN_IF_NOT_OK(reader.ReadBe(&request_api_version_));
   ONE_RETURN_IF_NOT_OK(reader.ReadBe(&correlation_id_));
@@ -43,8 +43,34 @@ absl::Status RequestHeaderData::ParseFrom(
   }
 
   if (header_version >= 2) {
-    return absl::UnimplementedError(
-        "Unknown tagged fields are not supported yet.");
+    // TODO(zhangshuai.ustc): Store unknown tagged fields.
+
+    uint32_t tagged_fields_count;
+    if (!reader.ReadVarint32(&tagged_fields_count)) {
+      // TODO(zhangshuai.ustc): attach related bytes in HEX.
+      return absl::UnknownError("Failed to parse tagged_fields count.");
+    }
+
+    for (uint32_t i = 0; i < tagged_fields_count; i++) {
+      uint32_t tag;
+      if (!reader.ReadVarint32(&tag)) {
+        // TODO(zhangshuai.ustc): attach related bytes in HEX.
+        return absl::UnknownError("Failed to parse tagged_fields tag.");
+      }
+      uint32_t length;
+      if (!reader.ReadVarint32(&length)) {
+        // TODO(zhangshuai.ustc): attach related bytes in HEX.
+        return absl::UnknownError("Failed to parse tagged_fields length.");
+      }
+
+      if (length > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) {
+        return absl::UnknownError(
+            absl::StrCat("tagged_field length too large. length=", length));
+      }
+
+      std::string data;
+      ONE_RETURN_IF_NOT_OK(reader.ReadString(&data, length));
+    }
   }
 
   return absl::OkStatus();

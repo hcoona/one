@@ -43,8 +43,14 @@ void KafkaTcpServer::OnConnect(
     auto result = sessions_.try_emplace(
         connection->name(), std::make_shared<KafkaTcpSession>(connection));
     CHECK(result.second);
+
+    VLOG(1) << "Connection established. remote="
+            << connection->peerAddress().toIpPort();
   } else {
     CHECK_NE(sessions_.erase(connection->name()), static_cast<size_t>(0));
+
+    VLOG(1) << "Connection destoried. remote="
+            << connection->peerAddress().toIpPort();
   }
 }
 

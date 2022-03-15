@@ -28,29 +28,24 @@
 namespace hcoona {
 namespace minikafka {
 
-absl::Status RequestHeader::ParseFrom(
-    absl::Span<const uint8_t> request_header_bytes) {
+absl::Status RequestHeader::ParseFrom(KafkaBinaryReader reader) {
   static constexpr size_t kRequestApiKeySize = sizeof(int16_t);
   static constexpr size_t kRequestApiVersionSize = sizeof(int16_t);
 
-  if (request_header_bytes.size() <
-      kRequestApiKeySize + kRequestApiVersionSize) {
-    return absl::InvalidArgumentError(
-        "request_header_bytes too few to parse ApiKey & ApiVersion");
-  }
-
-  KafkaBinaryReader kafka_binary_reader(request_header_bytes);
+  reader.RecordCurrentPosition();
 
   int16_t api_key_number;
-  ONE_RETURN_IF_NOT_OK(kafka_binary_reader.ReadBe(&api_key_number));
+  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&api_key_number));
   int16_t api_version;
-  ONE_RETURN_IF_NOT_OK(kafka_binary_reader.ReadBe(&api_version));
+  ONE_RETURN_IF_NOT_OK(reader.ReadBe(&api_version));
 
   auto api_key = static_cast<ApiKey>(api_key_number);
   ONE_ASSIGN_OR_RETURN(header_version_,
                        GetRequestHeaderVersion(api_key, api_version));
 
-  ONE_RETURN_IF_NOT_OK(data_.ParseFrom(request_header_bytes, header_version_));
+  reader.RewindRecordedPosition();
+
+  ONE_RETURN_IF_NOT_OK(data_.ParseFrom(reader, header_version_));
 
   return absl::OkStatus();
 }
