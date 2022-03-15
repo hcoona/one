@@ -63,19 +63,19 @@ EPollPoller::EPollPoller(EventLoop* loop)
 EPollPoller::~EPollPoller() { ::close(epollfd_); }
 
 absl::Time EPollPoller::poll(int timeoutMs, ChannelList* activeChannels) {
-  VLOG(1) << "fd total count " << channels_.size();
+  VLOG(2) << "fd total count " << channels_.size();
   int numEvents = ::epoll_wait(epollfd_, &*events_.begin(),
                                static_cast<int>(events_.size()), timeoutMs);
   int savedErrno = errno;
   absl::Time now(absl::Now());
   if (numEvents > 0) {
-    VLOG(1) << numEvents << " events happened";
+    VLOG(2) << numEvents << " events happened";
     fillActiveChannels(numEvents, activeChannels);
     if (absl::implicit_cast<size_t>(numEvents) == events_.size()) {
       events_.resize(events_.size() * 2);
     }
   } else if (numEvents == 0) {
-    VLOG(1) << "nothing happened";
+    VLOG(3) << "nothing happened";
   } else {
     // error happens, log uncommon ones
     if (savedErrno != EINTR) {

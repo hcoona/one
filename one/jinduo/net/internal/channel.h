@@ -72,7 +72,7 @@ class Channel {
 
   [[nodiscard]] int fd() const { return fd_; }
   [[nodiscard]] uint32_t events() const { return events_; }
-  void set_revents(int revt) { revents_ = revt; }  // used by pollers
+  void set_revents(uint32_t revt) { revents_ = revt; }  // used by pollers
   // int revents() const { return revents_; }
   [[nodiscard]] bool isNoneEvent() const { return events_ == kNoneEvent; }
 
