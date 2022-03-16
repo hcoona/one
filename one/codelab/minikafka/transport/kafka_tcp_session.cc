@@ -157,8 +157,9 @@ absl::Status KafkaTcpSessionContext::Parse(
 }  // namespace
 
 KafkaTcpSession::KafkaTcpSession(
+    KafkaService* kafka_service,
     std::shared_ptr<jinduo::net::TcpConnection> connection)
-    : connection_(std::move(connection)) {
+    : kafka_service_(kafka_service), connection_(std::move(connection)) {
   connection_->setTcpNoDelay(/*on=*/true);
   connection_->setContext(KafkaTcpSessionContext{});
   connection_->setMessageCallback(
@@ -184,18 +185,23 @@ void KafkaTcpSession::OnMessage(
   }
 
   if (!context->kafka_requests().empty()) {
-    for (auto&& request : *context->mutable_kafka_requests()) {
-      LOG(INFO) << request.header;
-      if (request.header.request_api_key() == ApiKey::kApiVersions) {
-        auto* body = std::get_if<ApiVersionsRequest>(&request.body);
-        LOG(INFO) << *body;
-      }
-    }
-
-    // OnRequests(std::move(*context->mutable_kafka_requests()));
-
+    ProcessRequests(std::move(*context->mutable_kafka_requests()));
     context->ClearKafkaRequests();
   }
+}
+
+void KafkaTcpSession::ProcessRequests(
+    std::vector<RequestHeaderAndBody>&& requests) {
+  // TODO(zhangshuai.ds): prepare response & context, then deliver to
+  // kafka_service queue.
+  for (auto&& request : requests) {
+    LOG(INFO) << request.header;
+    if (request.header.request_api_key() == ApiKey::kApiVersions) {
+      auto* body = std::get_if<ApiVersionsRequest>(&request.body);
+      LOG(INFO) << *body;
+    }
+  }
+  (void)kafka_service_;
 }
 
 }  // namespace minikafka

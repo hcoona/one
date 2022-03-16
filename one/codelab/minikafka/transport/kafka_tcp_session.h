@@ -20,10 +20,12 @@
 #include <memory>
 #include <utility>
 #include <variant>
+#include <vector>
 
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
+#include "one/codelab/minikafka/core/kafka_service.h"
 #include "one/codelab/minikafka/protocol/api_versions_request.h"
 #include "one/codelab/minikafka/protocol/request_header.h"
 #include "one/jinduo/net/buffer.h"
@@ -40,8 +42,8 @@ struct RequestHeaderAndBody {
 
 class KafkaTcpSession {
  public:
-  explicit KafkaTcpSession(
-      std::shared_ptr<jinduo::net::TcpConnection> connection);
+  KafkaTcpSession(KafkaService* kafka_service_,
+                  std::shared_ptr<jinduo::net::TcpConnection> connection);
 
   [[nodiscard]] absl::Time last_active_time() const {
     absl::MutexLock lock(&mutex_);
@@ -51,7 +53,9 @@ class KafkaTcpSession {
  private:
   void OnMessage(const std::shared_ptr<jinduo::net::TcpConnection>& connection,
                  jinduo::net::Buffer* buffer, absl::Time receive_time);
+  void ProcessRequests(std::vector<RequestHeaderAndBody>&& requests);
 
+  KafkaService* kafka_service_;
   std::shared_ptr<jinduo::net::TcpConnection> connection_;
 
   mutable absl::Mutex mutex_;

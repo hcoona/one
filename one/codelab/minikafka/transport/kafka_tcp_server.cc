@@ -23,9 +23,11 @@
 namespace hcoona {
 namespace minikafka {
 
-KafkaTcpServer::KafkaTcpServer(jinduo::net::EventLoop* loop,
+KafkaTcpServer::KafkaTcpServer(KafkaService* kafka_service,
+                               jinduo::net::EventLoop* loop,
                                const jinduo::net::InetAddress& listen_address)
-    : loop_(loop),
+    : kafka_service_(kafka_service),
+      loop_(loop),
       tcp_server_(loop, listen_address, "minikafka-server",
                   jinduo::net::TcpServer::kReusePort) {
   tcp_server_.setConnectionCallback(
@@ -41,7 +43,8 @@ void KafkaTcpServer::OnConnect(
   absl::MutexLock lock(&mutex_);
   if (connection->connected()) {
     auto result = sessions_.try_emplace(
-        connection->name(), std::make_shared<KafkaTcpSession>(connection));
+        connection->name(),
+        std::make_shared<KafkaTcpSession>(kafka_service_, connection));
     CHECK(result.second);
 
     VLOG(1) << "Connection established. remote="

@@ -22,6 +22,7 @@
 
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
+#include "one/codelab/minikafka/core/kafka_service.h"
 #include "one/codelab/minikafka/transport/kafka_tcp_session.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/inet_address.h"
@@ -33,7 +34,7 @@ namespace minikafka {
 
 class KafkaTcpServer {
  public:
-  KafkaTcpServer(jinduo::net::EventLoop* loop,
+  KafkaTcpServer(KafkaService* kafka_service, jinduo::net::EventLoop* loop,
                  const jinduo::net::InetAddress& listen_address);
   virtual ~KafkaTcpServer() = default;
 
@@ -52,6 +53,8 @@ class KafkaTcpServer {
 
  private:
   void OnConnect(const std::shared_ptr<jinduo::net::TcpConnection>& connection);
+
+  KafkaService* kafka_service_;
 
   jinduo::net::EventLoop* loop_;
   jinduo::net::TcpServer tcp_server_;

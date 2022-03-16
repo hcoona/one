@@ -21,6 +21,7 @@
 #include "absl/base/casts.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "one/codelab/minikafka/core/kafka_service.h"
 #include "one/codelab/minikafka/transport/kafka_tcp_server.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/event_loop_thread.h"
@@ -55,8 +56,9 @@ int main(int argc, char* argv[]) {
   // to process accept in parallel.
 
   jinduo::net::EventLoop loop;
+  hcoona::minikafka::KafkaService kafka_service;
   hcoona::minikafka::KafkaTcpServer kafka_tcp_server(
-      &loop, jinduo::net::InetAddress(FLAGS_port));
+      &kafka_service, &loop, jinduo::net::InetAddress(FLAGS_port));
   kafka_tcp_server.Start();
 
   LOG(INFO) << "Binding at " << kafka_tcp_server.GetIpPort();

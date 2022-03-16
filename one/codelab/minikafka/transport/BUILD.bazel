@@ -36,6 +36,7 @@ cc_library(
     deps = [
         "//one/base:macros",
         "//one/codelab/minikafka/base:kafka_binary_reader",
+        "//one/codelab/minikafka/core:kafka_service",
         "//one/codelab/minikafka/protocol:api_versions_request",
         "//one/codelab/minikafka/protocol:request_header",
         "//one/jinduo/net",
