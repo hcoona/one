@@ -20,6 +20,7 @@ load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 cc_library(
     name = "lru",
     hdrs = ["lru.h"],
+    visibility = ["//visibility:public"],
 )
 
 cc_test(
@@ -36,5 +37,14 @@ cc_test(
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "fixed_ring_buffer",
+    hdrs = ["fixed_ring_buffer.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        # "@com_google_absl//absl/container:fixed_array",
     ],
 )
