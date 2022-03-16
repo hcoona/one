@@ -24,9 +24,9 @@
 
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "one/codelab/minikafka/api_key.h"
-#include "one/codelab/minikafka/api_versions_request_data.h"
-#include "one/codelab/minikafka/kafka_binary_reader.h"
+#include "one/codelab/minikafka/base/kafka_binary_reader.h"
+#include "one/codelab/minikafka/protocol/api_key.h"
+#include "one/codelab/minikafka/protocol/api_versions_request_data.h"
 
 namespace hcoona {
 namespace minikafka {

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/kafka_binary_reader.h"
+#include "one/codelab/minikafka/base/kafka_binary_reader.h"
 
 #include <utility>
 

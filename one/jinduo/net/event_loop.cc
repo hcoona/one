@@ -61,9 +61,7 @@ int createEventfd() {
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 class IgnoreSigPipe {
  public:
-  IgnoreSigPipe() {
-    ::signal(SIGPIPE, SIG_IGN);
-  }
+  IgnoreSigPipe() { ::signal(SIGPIPE, SIG_IGN); }
 };
 #pragma GCC diagnostic error "-Wold-style-cast"
 

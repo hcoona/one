@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/kafka_tcp_server.h"
+#include "one/codelab/minikafka/transport/kafka_tcp_server.h"
 
 #include "absl/functional/bind_front.h"
 #include "glog/logging.h"

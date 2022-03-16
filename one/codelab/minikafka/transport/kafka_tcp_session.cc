@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/kafka_tcp_session.h"
+#include "one/codelab/minikafka/transport/kafka_tcp_session.h"
 
 #include <limits>
 #include <vector>
@@ -26,10 +26,10 @@
 #include "absl/types/span.h"
 #include "glog/logging.h"
 #include "one/base/macros.h"
-#include "one/codelab/minikafka/api_key.h"
-#include "one/codelab/minikafka/api_versions_request.h"
-#include "one/codelab/minikafka/kafka_binary_reader.h"
-#include "one/codelab/minikafka/request_header.h"
+#include "one/codelab/minikafka/base/kafka_binary_reader.h"
+#include "one/codelab/minikafka/protocol/api_key.h"
+#include "one/codelab/minikafka/protocol/api_versions_request.h"
+#include "one/codelab/minikafka/protocol/request_header.h"
 
 namespace hcoona {
 namespace minikafka {

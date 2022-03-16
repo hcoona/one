@@ -22,7 +22,7 @@
 
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
-#include "one/codelab/minikafka/kafka_tcp_session.h"
+#include "one/codelab/minikafka/transport/kafka_tcp_session.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/inet_address.h"
 #include "one/jinduo/net/tcp_connection.h"

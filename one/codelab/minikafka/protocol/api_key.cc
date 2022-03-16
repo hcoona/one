@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/api_key.h"
+#include "one/codelab/minikafka/protocol/api_key.h"
 
 #include <type_traits>
 

@@ -15,24 +15,37 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-cc_binary(
-    name = "minikafka_server",
+cc_library(
+    name = "kafka_tcp_server",
     srcs = [
-        "main.cc",
+        "kafka_tcp_server.cc",
+        "kafka_tcp_session.cc",
+    ],
+    hdrs = [
+        "kafka_tcp_server.h",
+        "kafka_tcp_session.h",
     ],
     copts = [
         "-Wall",
         "-Wextra",
         "-Werror",
     ],
+    visibility = ["//one/codelab/minikafka:__subpackages__"],
     deps = [
-        "//one/codelab/minikafka/transport:kafka_tcp_server",
+        "//one/base:macros",
+        "//one/codelab/minikafka/base:kafka_binary_reader",
+        "//one/codelab/minikafka/protocol:api_versions_request",
+        "//one/codelab/minikafka/protocol:request_header",
         "//one/jinduo/net",
-        "//one/jinduo/net/http",
-        "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/base",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/functional:bind_front",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/synchronization",
+        "@com_google_absl//absl/types:span",
     ],
 )

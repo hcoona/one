@@ -23,7 +23,7 @@
 
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "one/codelab/minikafka/kafka_binary_reader.h"
+#include "one/codelab/minikafka/base/kafka_binary_reader.h"
 
 namespace hcoona {
 namespace minikafka {

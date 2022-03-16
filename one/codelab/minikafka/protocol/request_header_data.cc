@@ -15,32 +15,35 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/codelab/minikafka/api_versions_request_data.h"
+#include "one/codelab/minikafka/protocol/request_header_data.h"
 
 #include <limits>
 #include <vector>
 
 #include "one/base/macros.h"
-#include "one/codelab/minikafka/kafka_binary_reader.h"
+#include "one/codelab/minikafka/base/kafka_binary_reader.h"
 
 namespace hcoona {
 namespace minikafka {
 
-absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
-                                               int16_t api_version) {
-  if (api_version >= 3) {
-    ONE_RETURN_IF_NOT_OK(reader->ReadCompactString(&client_software_name_));
+absl::Status RequestHeaderData::ParseFrom(KafkaBinaryReader* reader,
+                                          int16_t header_version) {
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&request_api_key_));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&request_api_version_));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt32(&correlation_id_));
+  if (header_version >= 1) {
+    int16_t client_id_length{};
+    ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&client_id_length));
+    if (client_id_length < 0) {
+      client_id_.clear();
+    } else {
+      ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_id_, client_id_length));
+    }
   } else {
-    client_software_name_.clear();
+    client_id_.clear();
   }
 
-  if (api_version >= 3) {
-    ONE_RETURN_IF_NOT_OK(reader->ReadCompactString(&client_software_version_));
-  } else {
-    client_software_version_.clear();
-  }
-
-  if (api_version >= 3) {
+  if (header_version >= 2) {
     // TODO(zhangshuai.ustc): Store unknown tagged fields.
 
     std::vector<ZeroCopyRawTaggedFields> tagged_fields;
