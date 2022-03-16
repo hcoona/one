@@ -32,9 +32,9 @@ absl::Status RequestHeader::ParseFrom(KafkaBinaryReader* reader) {
   reader->RecordCurrentPosition();
 
   int16_t api_key_number;
-  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&api_key_number));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&api_key_number));
   int16_t api_version;
-  ONE_RETURN_IF_NOT_OK(reader->ReadBe(&api_version));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&api_version));
 
   auto api_key = static_cast<ApiKey>(api_key_number);
   ONE_ASSIGN_OR_RETURN(header_version_,

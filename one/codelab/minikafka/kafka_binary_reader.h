@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -33,10 +35,13 @@
 #include "absl/strings/escaping.h"
 #include "absl/strings/str_format.h"
 #include "absl/types/span.h"
+#include "glog/logging.h"
+#include "one/base/macros.h"
 
 namespace hcoona {
 namespace minikafka {
 
+// Read https://kafka.apache.org/protocol#protocol_types from underlying bytes.
 class KafkaBinaryReader {
   // TODO(zhangshuai.ustc): any reading must be verified not exceeding the
   // `end_` position.
@@ -58,19 +63,11 @@ class KafkaBinaryReader {
 
   void ClearRecordedPosition() { recorded_positions_.clear(); }
 
-  absl::Status ReadLe(std::int16_t* value) {
-    return Read<std::int16_t, &LoadInt16Le>(value);
-  }
-
-  absl::Status ReadLe(std::int32_t* value) {
-    return Read<std::int32_t, &LoadInt32Le>(value);
-  }
-
-  absl::Status ReadBe(std::int16_t* value) {
+  absl::Status ReadInt16(std::int16_t* value) {
     return Read<std::int16_t, &LoadInt16Be>(value);
   }
 
-  absl::Status ReadBe(std::int32_t* value) {
+  absl::Status ReadInt32(std::int32_t* value) {
     return Read<std::int32_t, &LoadInt32Be>(value);
   }
 
@@ -121,6 +118,8 @@ class KafkaBinaryReader {
   }
 
   absl::Status ReadString(std::string* value, int32_t length) {
+    CHECK_GE(length, 0);
+
     if (current_ + length <= end_) {
       *value = std::string(current_, current_ + length);
       current_ += length;
@@ -130,6 +129,37 @@ class KafkaBinaryReader {
     return absl::FailedPreconditionError(absl::StrFormat(
         "There is no enough data for reading. current=%p, end=%p, length=%d",
         current_, end_, length));
+  }
+
+  // Represents a sequence of characters. First the length N is given as an
+  // INT16. Then N bytes follow which are the UTF-8 encoding of the character
+  // sequence. Length must not be negative.
+  absl::Status ReadString(std::string* value) {
+    return ReadString(value, /*nullable=*/false);
+  }
+
+  // Represents a sequence of characters or null. For non-null strings, first
+  // the length N is given as an INT16. Then N bytes follow which are the UTF-8
+  // encoding of the character sequence. A null value is encoded with length of
+  // -1 and there are no following bytes.
+  absl::Status ReadNullableString(std::string* value) {
+    return ReadString(value, /*nullable=*/true);
+  }
+
+  // Represents a sequence of characters. First the length N + 1 is given as an
+  // UNSIGNED_VARINT . Then N bytes follow which are the UTF-8 encoding of the
+  // character sequence.
+  absl::Status ReadCompactString(std::string* value) {
+    return ReadCompactString(value, /*nullable=*/false,
+                             std::numeric_limits<int32_t>::max());
+  }
+
+  // Represents a sequence of characters. First the length N + 1 is given as an
+  // UNSIGNED_VARINT . Then N bytes follow which are the UTF-8 encoding of the
+  // character sequence. A null string is represented with a length of 0.
+  absl::Status ReadNullableCompactString(std::string* value) {
+    return ReadCompactString(value, /*nullable=*/true,
+                             std::numeric_limits<int32_t>::max());
   }
 
  private:
@@ -168,6 +198,42 @@ class KafkaBinaryReader {
   int64_t ReadVarint32Fallback(uint32_t first_byte_or_zero);
   bool ReadVarint64Slow(uint64_t* value);
   std::pair<uint64_t, bool> ReadVarint64Fallback();
+
+  absl::Status ReadString(std::string* value, bool nullable) {
+    int16_t length;
+    ONE_RETURN_IF_NOT_OK(ReadInt16(&length));
+    if (length < 0) {
+      if (nullable) {
+        CHECK_EQ(-1, length);
+        value->clear();
+        return absl::OkStatus();
+      }
+      return absl::UnknownError("String length is less than 0");
+    }
+    return ReadString(value, length);
+  }
+
+  absl::Status ReadCompactString(std::string* value, bool nullable,
+                                 std::optional<int64_t> length_max) {
+    uint32_t length_plus_one;
+    ONE_RETURN_IF_NOT_OK(ReadVarint32(&length_plus_one));
+    int64_t length = static_cast<int64_t>(length_plus_one) - 1;
+    if (length < 0) {
+      return absl::UnknownError("CompactString length is less than 0");
+    }
+    if (length == 0) {
+      if (nullable) {
+        value->clear();
+        return absl::OkStatus();
+      }
+      return absl::UnknownError("Non-nullable CompactString length is 0");
+    }
+    if (length_max.has_value() && length > length_max.value()) {
+      return absl::UnknownError("String length is larger than limit");
+    }
+    CHECK_LE(length, std::numeric_limits<int32_t>::max());
+    return ReadString(value, static_cast<int32_t>(length));
+  }
 
   const std::uint8_t* begin_{nullptr};
   const std::uint8_t* current_{nullptr};

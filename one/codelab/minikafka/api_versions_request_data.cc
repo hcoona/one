@@ -88,7 +88,8 @@ absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
       }
 
       std::string data;
-      ONE_RETURN_IF_NOT_OK(reader->ReadString(&data, length));
+      ONE_RETURN_IF_NOT_OK(
+          reader->ReadString(&data, static_cast<int32_t>(length)));
     }
   }
 
