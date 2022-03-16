@@ -17,7 +17,8 @@
 //
 // This file header defines utility pre-processor macros.
 //
-// ONE_PREDICT_TRUE & ONE_PREDICT_FALSE are coming from
+// ONE_PREDICT_TRUE, ONE_PREDICT_FALSE, ONE_ASSERT, ONE_INTERNAL_HARDENING_ABORT
+// and ONE_HARDENING_ASSERT are coming from
 // https://github.com/abseil/abseil-cpp/blob/c5a424a2a21005660b182516eb7a079cd8021699/absl/base/optimization.h
 //
 // Copyright 2017 The Abseil Authors.
@@ -88,3 +89,58 @@
 #define ONE_ASSIGN_OR_RETURN(lhs, rexpr)                                       \
   ONE_ASSIGN_OR_RETURN_IMPL(ONE_ASSIGN_OR_RETURN_NAME(status_or, __COUNTER__), \
                             lhs, rexpr);
+
+// ONE_ASSERT()
+//
+// In C++11, `assert` can't be used portably within constexpr functions.
+// ONE_ASSERT functions as a runtime assert but works in C++11 constexpr
+// functions.  Example:
+//
+// constexpr double Divide(double a, double b) {
+//   return ONE_ASSERT(b != 0), a / b;
+// }
+//
+// This macro is inspired by
+// https://akrzemi1.wordpress.com/2017/05/18/asserts-in-constexpr-functions/
+#if defined(NDEBUG)
+#define ONE_ASSERT(expr) \
+  (false ? static_cast<void>(expr) : static_cast<void>(0))
+#else
+#define ONE_ASSERT(expr)                           \
+  (ONE_PREDICT_TRUE((expr)) ? static_cast<void>(0) \
+                            : [] { assert(false && #expr); }())  // NOLINT
+#endif
+
+// `ONE_INTERNAL_HARDENING_ABORT()` controls how `ONE_HARDENING_ASSERT()`
+// aborts the program in release mode (when NDEBUG is defined). The
+// implementation should abort the program as quickly as possible and ideally it
+// should not be possible to ignore the abort request.
+#if (__has_builtin(__builtin_trap) && __has_builtin(__builtin_unreachable)) || \
+    (defined(__GNUC__) && !defined(__clang__))
+#define ONE_INTERNAL_HARDENING_ABORT() \
+  do {                                 \
+    __builtin_trap();                  \
+    __builtin_unreachable();           \
+  } while (false)
+#else
+#define ONE_INTERNAL_HARDENING_ABORT() abort()
+#endif
+
+// ONE_HARDENING_ASSERT()
+//
+// `ONE_HARDENING_ASSERT()` is like `ONE_ASSERT()`, but used to implement
+// runtime assertions that should be enabled in hardened builds even when
+// `NDEBUG` is defined.
+//
+// When `NDEBUG` is not defined, `ONE_HARDENING_ASSERT()` is identical to
+// `ONE_ASSERT()`.
+//
+// See `ONE_OPTION_HARDENED` in `absl/base/options.h` for more information on
+// hardened mode.
+#if ONE_OPTION_HARDENED == 1 && defined(NDEBUG)
+#define ONE_HARDENING_ASSERT(expr)                 \
+  (ONE_PREDICT_TRUE((expr)) ? static_cast<void>(0) \
+                            : [] { ONE_INTERNAL_HARDENING_ABORT(); }())
+#else
+#define ONE_HARDENING_ASSERT(expr) ONE_ASSERT(expr)
+#endif

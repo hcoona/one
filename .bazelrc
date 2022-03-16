@@ -44,6 +44,8 @@ build --host_force_python=PY3
 build --cxxopt="-std=c++17"
 # Use gnu11 for asm keyword.
 build --conlyopt="-std=gnu11"
+# Enable hardening.
+build --copt="-DONE_OPTION_HARDENED=1"
 
 build --java_language_version=11
 build --java_runtime_version=remotejdk_11
