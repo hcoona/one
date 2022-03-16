@@ -17,14 +17,98 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <initializer_list>
+#include <iterator>
+#include <type_traits>
 #include <utility>
+
+#include "glog/logging.h"
 
 namespace hcoona {
 
 template <typename T, size_t kCapacity>
-class FixedRingBufferIterator {};
+class FixedRingBuffer;
+
+namespace details {
+
+// https://isocpp.org/wiki/faq/templates#template-friends
+template <typename T, size_t kCapacity, bool kIsConst>
+class FixedRingBufferIterator;  // pre-declare the template class itself
+template <typename T, size_t kCapacity, bool kIsConst>
+bool operator==(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
+                const FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs);
+
+// Meets https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator.
+// TODO(zhangshuai.ds): implement the methods.
+// https://en.cppreference.com/w/cpp/named_req/ForwardIterator
+// https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator
+// https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
+template <typename T, size_t kCapacity, bool kIsConst>
+class FixedRingBufferIterator {
+  using owner_type =
+      typename std::conditional<kIsConst, const FixedRingBuffer<T, kCapacity>*,
+                                FixedRingBuffer<T, kCapacity>*>::type;
+
+ public:
+  using difference_type = size_t;
+  using value_type = typename std::conditional<kIsConst, const T, T>::type;
+  using pointer = typename std::conditional<kIsConst, const T*, T*>::type;
+  using const_pointer = const T*;
+  using reference = typename std::conditional<kIsConst, const T&, T&>::type;
+  using const_reference = const T&;
+  using iterator_category = std::random_access_iterator_tag;
+
+  constexpr explicit FixedRingBufferIterator(owner_type buffer) noexcept
+      : buffer_(buffer), current_index_(buffer->begin_index_) {}
+  constexpr FixedRingBufferIterator(owner_type buffer,
+                                    size_t current_index) noexcept
+      : buffer_(buffer), current_index_(current_index) {}
+  ~FixedRingBufferIterator() = default;
+
+  // Allow copy.
+  constexpr FixedRingBufferIterator(const FixedRingBufferIterator&) noexcept =
+      default;
+  constexpr FixedRingBufferIterator& operator=(
+      const FixedRingBufferIterator&) noexcept = default;
+
+  // Allow move.
+  constexpr FixedRingBufferIterator(FixedRingBufferIterator&&) noexcept =
+      default;
+  constexpr FixedRingBufferIterator& operator=(
+      FixedRingBufferIterator&&) noexcept = default;
+
+  void swap(FixedRingBufferIterator& other) noexcept {
+    std::swap(buffer_, other.buffer_);
+    std::swap(current_index_, other.current_index_);
+  }
+
+  constexpr reference operator*() {
+    return buffer_->operator[](current_index_);
+  }
+  constexpr const_reference operator*() const {
+    return buffer_->operator[](current_index_);
+  }
+
+  constexpr FixedRingBufferIterator& operator++() {
+    current_index_++;
+    if (current_index_ == kCapacity) {
+      current_index_ = 0;
+    }
+    return *this;
+  }
+
+ private:
+  owner_type buffer_;
+  size_t current_index_;
+
+  friend bool operator==
+      <>(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
+         const FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs);
+};
+
+}  // namespace details
 
 // As `std::queue` required, it meets
 // https://en.cppreference.com/w/cpp/named_req/SequenceContainer, without
@@ -36,57 +120,115 @@ class FixedRingBufferIterator {};
 // * `pop_front()`
 template <typename T, size_t kCapacity>
 class FixedRingBuffer {
+  static_assert(kCapacity > 0, "Capacity cannot be zero.");
+
  public:
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
-  using iterator = FixedRingBufferIterator<T, kCapacity>;
-  using const_iterator = const iterator;
+  using iterator =
+      details::FixedRingBufferIterator<T, kCapacity, /*kIsConst=*/false>;
+  using const_iterator =
+      details::FixedRingBufferIterator<T, kCapacity, /*kIsConst=*/true>;
   using difference_type = size_t;
   using size_type = size_t;
 
-  FixedRingBuffer() noexcept = default;
-  explicit FixedRingBuffer(size_t count);
-  FixedRingBuffer(size_t count, const T& value);
+  constexpr FixedRingBuffer() noexcept = default;
+  constexpr explicit FixedRingBuffer(size_t count) : size_(count) {
+    CHECK_LE(count, max_size());
+  }
+  constexpr FixedRingBuffer(size_t count, const T& value)
+      : FixedRingBuffer(count) {
+    std::fill_n(begin(), count, value);
+  }
 
   template <typename InputIt>
-  FixedRingBuffer(InputIt begin, InputIt end);
+  constexpr FixedRingBuffer(InputIt begin, InputIt end) {
+    while (begin != end) {
+      CHECK_LT(size_, max_size());
+      storage_[size_] = *begin;
+      begin++;
+      size_++;
+    }
+  }
 
-  FixedRingBuffer(std::initializer_list<T> ilist);
+  constexpr FixedRingBuffer(std::initializer_list<T> ilist)
+      : FixedRingBuffer(ilist.begin(), ilist.end()) {}
 
   ~FixedRingBuffer() = default;
 
   // Allow copy.
-  FixedRingBuffer(const FixedRingBuffer&) noexcept = default;
-  FixedRingBuffer& operator=(const FixedRingBuffer&) noexcept = default;
+  constexpr FixedRingBuffer(const FixedRingBuffer&) noexcept = default;
+  constexpr FixedRingBuffer& operator=(const FixedRingBuffer&) noexcept =
+      default;
 
   // Allow move.
-  FixedRingBuffer(FixedRingBuffer&&) noexcept = default;
-  FixedRingBuffer& operator=(FixedRingBuffer&&) noexcept = default;
+  constexpr FixedRingBuffer(FixedRingBuffer&&) noexcept = default;
+  constexpr FixedRingBuffer& operator=(FixedRingBuffer&&) noexcept = default;
 
-  FixedRingBuffer& operator=(std::initializer_list<T> ilist);
+  constexpr FixedRingBuffer& operator=(std::initializer_list<T> ilist) {
+    CHECK_LE(ilist.size(), max_size());
+    begin_index_ = 0;
+    size_ = 0;
+    for (T&& v : ilist) {
+      storage_[size_] = std::move<T>(v);
+      size_++;
+    }
+  }
 
-  void swap(FixedRingBuffer& other) noexcept;
+  void swap(FixedRingBuffer& other) noexcept {
+    std::swap(storage_, other.storage_);
+    std::swap(begin_index_, other.begin_index_);
+    std::swap(size_, other.size_);
+  }
 
-  iterator begin() noexcept;
-  const_iterator begin() const noexcept;
-  const_iterator cbegin() const noexcept;
+  constexpr iterator begin() noexcept { return iterator(this); }
+  constexpr const_iterator begin() const noexcept {
+    return const_iterator(this);
+  }
+  constexpr const_iterator cbegin() const noexcept {
+    return const_iterator(this);
+  }
 
-  iterator end() noexcept;
-  const_iterator end() const noexcept;
-  const_iterator cend() const noexcept;
+  constexpr iterator end() noexcept {
+    return iterator(this, ToStorageIndex(size_));
+  }
+  constexpr const_iterator end() const noexcept {
+    return const_iterator(this, ToStorageIndex(size_));
+  }
+  constexpr const_iterator cend() const noexcept {
+    return const_iterator(this, ToStorageIndex(size_));
+  }
 
-  [[nodiscard]] size_t size() const;
-  [[nodiscard]] size_t max_size() const { return kCapacity; }
-  [[nodiscard]] bool empty() const { size() == 0; }
+  [[nodiscard]] constexpr size_t size() const noexcept { return size_; }
+  [[nodiscard]] constexpr size_t max_size() const noexcept { return kCapacity; }
+  [[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+  [[nodiscard]] constexpr bool full() const noexcept {
+    return size() == max_size();
+  }
 
-  void clear() noexcept;
+  constexpr void clear() noexcept {
+    begin_index_ = 0;
+    size_ = 0;
+  }
 
-  reference front();
-  const_reference front() const;
+  reference front() { return operator[](0); }
+  const_reference front() const { return operator[](0); }
 
-  reference back();
-  const_reference back() const;
+  reference back() {
+    CHECK(!empty());
+    return operator[](size_ - 1);
+  }
+  const_reference back() const {
+    CHECK(!empty());
+    return operator[](size_ - 1);
+  }
+
+  template <class... Args>
+  reference emplace_front(Args&&... args);
+
+  void push_front(const T& value);
+  void push_front(T&& value);
 
   template <class... Args>
   reference emplace_back(Args&&... args);
@@ -97,20 +239,67 @@ class FixedRingBuffer {
   void pop_front();
   void pop_back();
 
-  reference operator[](size_type pos);
-  const_reference operator[](size_type pos) const;
+  constexpr reference operator[](size_t pos) {
+    return storage_[ToStorageIndex(pos)];
+  }
+  constexpr const_reference operator[](size_t pos) const {
+    return storage_[ToStorageIndex(pos)];
+  }
 
  private:
+  [[nodiscard]] constexpr size_t ToStorageIndex(size_t pos) const {
+    CHECK_LE(pos, size_);
+    return (begin_index_ + pos) % kCapacity;
+  }
+
   T storage_[kCapacity];
-  size_t current_index_{0};
+  size_t begin_index_{0};
+  size_t size_{0};
+
+  template <typename, size_t, bool>
+  friend class details::FixedRingBufferIterator;
 };
 
 template <typename T, size_t kCapacity>
-bool operator==(const FixedRingBuffer<T, kCapacity>& lhs,
-                const FixedRingBuffer<T, kCapacity>& rhs);
+inline bool operator==(const FixedRingBuffer<T, kCapacity>& lhs,
+                       const FixedRingBuffer<T, kCapacity>& rhs) {
+  return lhs.size() == rhs.size() &&
+         std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
 
 template <typename T, size_t kCapacity>
-bool operator!=(const FixedRingBuffer<T, kCapacity>& lhs,
-                const FixedRingBuffer<T, kCapacity>& rhs);
+inline bool operator!=(const FixedRingBuffer<T, kCapacity>& lhs,
+                       const FixedRingBuffer<T, kCapacity>& rhs) {
+  return !(lhs == rhs);
+}
+
+template <typename T, size_t kCapacity>
+inline void swap(FixedRingBuffer<T, kCapacity>& lhs,
+                 FixedRingBuffer<T, kCapacity>& rhs) {
+  lhs.swap(rhs);
+}
+
+namespace details {
+
+template <typename T, size_t kCapacity, bool kIsConst>
+bool operator==(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
+                const FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs) {
+  return lhs.buffer_ == rhs.buffer_ && lhs.current_index_ == rhs.current_index_;
+}
+
+template <typename T, size_t kCapacity, bool kIsConst>
+inline bool operator!=(
+    const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
+    const FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs) {
+  return !(lhs == rhs);
+}
+
+template <typename T, size_t kCapacity, bool kIsConst>
+inline void swap(FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
+                 FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs) {
+  lhs.swap(rhs);
+}
+
+}  // namespace details
 
 }  // namespace hcoona

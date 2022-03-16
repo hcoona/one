@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/container/lru.h"
+#include "one/base/container/lru.h"
 
 #include <fstream>
 #include <memory>
@@ -37,7 +37,7 @@ TEST(TestLru, Case01) {
       bazel::tools::cpp::runfiles::Runfiles::CreateForTest(&error));
   ASSERT_TRUE(runfiles != nullptr) << error;
   const std::string& file_path = runfiles->Rlocation(
-      "com_github_hcoona_one/one/container/lru_test_case01.txt");
+      "com_github_hcoona_one/one/base/container/lru_test_case01.txt");
 
   static constexpr size_t kLruCapacity = 3000;
   Lru<int, int> lru{kLruCapacity};
