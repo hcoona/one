@@ -41,6 +41,16 @@
 namespace hcoona {
 namespace minikafka {
 
+// https://cwiki.apache.org/confluence/display/KAFKA/KIP-482%3A+The+Kafka+Protocol+should+Support+Optional+Tagged+Fields#KIP482:TheKafkaProtocolshouldSupportOptionalTaggedFields-TagHeaders
+// TAG_BUFFER => VARINT (VARINT VARINT bytes)
+struct ZeroCopyRawTaggedFields {
+  ZeroCopyRawTaggedFields(uint32_t tag, const uint8_t* data, size_t length)
+      : tag(tag), data(data, length) {}
+
+  uint32_t tag;
+  absl::Span<const uint8_t> data;
+};
+
 // Read https://kafka.apache.org/protocol#protocol_types from underlying bytes.
 class KafkaBinaryReader {
   // TODO(zhangshuai.ustc): any reading must be verified not exceeding the
@@ -160,6 +170,34 @@ class KafkaBinaryReader {
   absl::Status ReadNullableCompactString(std::string* value) {
     return ReadCompactString(value, /*nullable=*/true,
                              std::numeric_limits<int32_t>::max());
+  }
+
+  absl::Status ReadTaggedFields(
+      std::vector<ZeroCopyRawTaggedFields>* tagged_fields) {
+    uint32_t fields_count;
+    ONE_RETURN_IF_NOT_OK(ReadVarint32(&fields_count));
+    tagged_fields->reserve(fields_count);
+    for (int64_t i = 0; i < static_cast<int64_t>(fields_count); i++) {
+      uint32_t tag;
+      ONE_RETURN_IF_NOT_OK(ReadVarint32(&tag));
+      uint32_t length;
+      ONE_RETURN_IF_NOT_OK(ReadVarint32(&length));
+      if (length > std::numeric_limits<int32_t>::max()) {
+        return absl::UnknownError(
+            "Tagged field data length is larger than INT_MAX");
+      }
+      if (current_ + length > end_) {
+        return absl::FailedPreconditionError(
+            absl::StrFormat("There is no enough data for reading. current=%p, "
+                            "end=%p, length=%d",
+                            current_, end_, length));
+      }
+      tagged_fields->emplace_back(
+          ZeroCopyRawTaggedFields{tag, current_, length});
+      current_ += length;
+    }
+
+    return absl::OkStatus();
   }
 
  private:
