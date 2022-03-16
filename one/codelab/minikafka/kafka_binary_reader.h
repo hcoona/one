@@ -182,7 +182,7 @@ class KafkaBinaryReader {
       ONE_RETURN_IF_NOT_OK(ReadVarint32(&tag));
       uint32_t length;
       ONE_RETURN_IF_NOT_OK(ReadVarint32(&length));
-      if (length > std::numeric_limits<int32_t>::max()) {
+      if (length > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) {
         return absl::UnknownError(
             "Tagged field data length is larger than INT_MAX");
       }
@@ -198,6 +198,11 @@ class KafkaBinaryReader {
     }
 
     return absl::OkStatus();
+  }
+
+  [[nodiscard]] std::string DumpHex() const {
+    return absl::BytesToHexString({reinterpret_cast<const char*>(current_),
+                                   static_cast<size_t>(end_ - current_)});
   }
 
  private:

@@ -112,6 +112,7 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
       {
         std::string_view request_content_string_view =
             buffer->toStringView().substr(0, known_request_leading_size_);
+
         KafkaBinaryReader reader{
             absl::MakeConstSpan(reinterpret_cast<const uint8_t*>(
                                     request_content_string_view.data()),
@@ -119,11 +120,8 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
 
         ONE_RETURN_IF_NOT_OK(request_header_and_body.header.ParseFrom(&reader));
 
-        ApiVersionsRequest body;
         ONE_RETURN_IF_NOT_OK(Parse(&reader, request_header_and_body.header,
                                    &request_header_and_body.body));
-
-        request_header_and_body.body = std::move(body);
       }
 
       kafka_requests_.emplace_back(std::move(request_header_and_body));

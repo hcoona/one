@@ -29,43 +29,13 @@ namespace minikafka {
 absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
                                                int16_t api_version) {
   if (api_version >= 3) {
-    uint32_t length;
-    ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&length));
-
-    if (length == 0) {
-      return absl::UnknownError(
-          "non-nullable field clientSoftwareVersion was serialized as null");
-    }
-    length--;
-
-    if (length > static_cast<uint32_t>(std::numeric_limits<int16_t>::max())) {
-      return absl::UnknownError(absl::StrCat(
-          "string field clientSoftwareName had invalid length ", length));
-    }
-
-    ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_software_name_,
-                                            static_cast<int32_t>(length)));
+    ONE_RETURN_IF_NOT_OK(reader->ReadCompactString(&client_software_name_));
   } else {
     client_software_name_.clear();
   }
 
   if (api_version >= 3) {
-    uint32_t length;
-    ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&length));
-
-    if (length == 0) {
-      return absl::UnknownError(
-          "non-nullable field clientSoftwareVersion was serialized as null");
-    }
-    length--;
-
-    if (length > static_cast<uint32_t>(std::numeric_limits<int16_t>::max())) {
-      return absl::UnknownError(absl::StrCat(
-          "string field clientSoftwareVersion had invalid length ", length));
-    }
-
-    ONE_RETURN_IF_NOT_OK(reader->ReadString(&client_software_version_,
-                                            static_cast<int32_t>(length)));
+    ONE_RETURN_IF_NOT_OK(reader->ReadCompactString(&client_software_version_));
   } else {
     client_software_version_.clear();
   }
