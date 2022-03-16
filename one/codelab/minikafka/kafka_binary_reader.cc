@@ -65,6 +65,7 @@ namespace {
 
 constexpr int kMaxVarintBytes = 10;
 constexpr int kMaxVarint32Bytes = 5;
+constexpr uint8_t kVarintMostSignificantBitMask = 0x80U;
 
 // Decodes varint64 with known size, N, and returns next pointer. Knowing N at
 // compile time, compiler can generate optimal code. For example, instead of
@@ -74,7 +75,8 @@ const uint8_t* DecodeVarint64KnownSize(const uint8_t* buffer, uint64_t* value) {
   DCHECK_GT(N, 0U);
   uint64_t result = static_cast<uint64_t>(buffer[N - 1]) << (7U * (N - 1));
   for (size_t i = 0, offset = 0; i < N - 1; i++, offset += 7) {
-    result += static_cast<uint64_t>(buffer[i] - 0x80U) << offset;
+    result += static_cast<uint64_t>(buffer[i] - kVarintMostSignificantBitMask)
+              << offset;
   }
   *value = result;
   return buffer + N;
@@ -89,41 +91,43 @@ inline ::std::pair<bool, const uint8_t*> ReadVarint32FromArray(
   // Fast path:  We have enough bytes left in the buffer to guarantee that
   // this read won't cross the end, so we can skip the checks.
   DCHECK_EQ(*buffer, first_byte);
-  DCHECK_EQ(first_byte & 0x80U, 0x80U) << first_byte;
+  DCHECK_EQ(first_byte & kVarintMostSignificantBitMask,
+            kVarintMostSignificantBitMask)
+      << first_byte;
   const uint8_t* ptr = buffer;
   uint32_t b;
-  uint32_t result = first_byte - 0x80U;
+  uint32_t result = first_byte - kVarintMostSignificantBitMask;
   ++ptr;  // We just processed the first byte.  Move on to the second.
   b = *(ptr++);
   result += b << 7U;
-  if ((b & 0x80U) == 0U) {
+  if ((b & kVarintMostSignificantBitMask) == 0U) {
     goto done;
   }
-  result -= 0x80U << 7U;
+  result -= kVarintMostSignificantBitMask << 7U;
   b = *(ptr++);
   result += b << 14U;
-  if ((b & 0x80U) == 0U) {
+  if ((b & kVarintMostSignificantBitMask) == 0U) {
     goto done;
   }
-  result -= 0x80U << 14U;
+  result -= kVarintMostSignificantBitMask << 14U;
   b = *(ptr++);
   result += b << 21U;
-  if ((b & 0x80U) == 0U) {
+  if ((b & kVarintMostSignificantBitMask) == 0U) {
     goto done;
   }
-  result -= 0x80U << 21U;
+  result -= kVarintMostSignificantBitMask << 21U;
   b = *(ptr++);
   result += b << 28U;
-  if ((b & 0x80U) == 0U) {
+  if ((b & kVarintMostSignificantBitMask) == 0U) {
     goto done;
   }
-  // "result -= 0x80U << 28" is irrevelant.
+  // "result -= kVarintMostSignificantBitMask << 28" is irrelevant.
 
   // If the input is larger than 32 bits, we still need to read it all
   // and discard the high-order bits.
   for (int i = 0; i < kMaxVarintBytes - kMaxVarint32Bytes; i++) {
     b = *(ptr++);
-    if ((b & 0x80U) == 0U) {
+    if ((b & kVarintMostSignificantBitMask) == 0U) {
       goto done;
     }
   }
@@ -172,32 +176,6 @@ inline ::std::pair<bool, const uint8_t*> ReadVarint64FromArray(
 
 }  // namespace
 
-bool KafkaBinaryReader::ReadVarint32(std::uint32_t* value) {
-  uint32_t v = 0;
-  if (ABSL_PREDICT_TRUE(current_ < end_)) {
-    v = *current_;
-    if (v < 0x80U) {
-      *value = v;
-      current_++;
-      return true;
-    }
-  }
-  int64_t result = ReadVarint32Fallback(v);
-  *value = static_cast<uint32_t>(result);
-  return result >= 0;
-}
-
-bool KafkaBinaryReader::ReadVarint64(std::uint64_t* value) {
-  if (ABSL_PREDICT_TRUE(current_ < end_) && *current_ < 0x80U) {
-    *value = *current_;
-    current_++;
-    return true;
-  }
-  std::pair<uint64_t, bool> p = ReadVarint64Fallback();
-  *value = p.first;
-  return p.second;
-}
-
 bool KafkaBinaryReader::ReadVarint32Slow(uint32_t* value) {
   // Directly invoke ReadVarint64Fallback, since we already tried to optimize
   // for one-byte varints.
@@ -210,7 +188,7 @@ int64_t KafkaBinaryReader::ReadVarint32Fallback(uint32_t first_byte_or_zero) {
   if (end_ - current_ >= kMaxVarintBytes ||
       // Optimization:  We're also safe if the buffer is non-empty and it ends
       // with a byte that would terminate a varint.
-      (end_ > current_ && !(end_[-1] & 0x80U))) {
+      (end_ > current_ && !(end_[-1] & kVarintMostSignificantBitMask))) {
     DCHECK_NE(first_byte_or_zero, 0U)
         << "Caller should provide us with *buffer_ when buffer is non-empty";
     uint32_t temp;
@@ -251,7 +229,7 @@ bool KafkaBinaryReader::ReadVarint64Slow(uint64_t* value) {
     result |= static_cast<uint64_t>(b & 0x7FU) << (7U * count);
     current_++;
     ++count;
-  } while ((b & 0x80U) != 0U);
+  } while ((b & kVarintMostSignificantBitMask) != 0U);
 
   *value = result;
   return true;
@@ -261,7 +239,7 @@ std::pair<uint64_t, bool> KafkaBinaryReader::ReadVarint64Fallback() {
   if (end_ - current_ >= kMaxVarintBytes ||
       // Optimization:  We're also safe if the buffer is non-empty and it ends
       // with a byte that would terminate a varint.
-      (end_ > current_ && ((end_[-1] & 0x80U) == 0U))) {
+      (end_ > current_ && ((end_[-1] & kVarintMostSignificantBitMask) == 0U))) {
     uint64_t temp;
     ::std::pair<bool, const uint8_t*> p =
         ReadVarint64FromArray(current_, &temp);

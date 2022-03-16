@@ -29,10 +29,7 @@ absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
                                                int16_t api_version) {
   if (api_version >= 3) {
     uint32_t length;
-    if (!reader->ReadVarint32(&length)) {
-      // TODO(zhangshuai.ustc): attach related bytes in HEX.
-      return absl::UnknownError("Failed to parse length.");
-    }
+    ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&length));
 
     if (length != 0) {
       //   return absl::UnknownError(
@@ -54,10 +51,7 @@ absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
 
   if (api_version >= 3) {
     uint32_t length;
-    if (!reader->ReadVarint32(&length)) {
-      // TODO(zhangshuai.ustc): attach related bytes in HEX.
-      return absl::UnknownError("Failed to parse length.");
-    }
+    ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&length));
 
     if (length == 0) {
       return absl::UnknownError(
@@ -80,22 +74,13 @@ absl::Status ApiVersionsRequestData::ParseFrom(KafkaBinaryReader* reader,
     // TODO(zhangshuai.ustc): Store unknown tagged fields.
 
     uint32_t tagged_fields_count;
-    if (!reader->ReadVarint32(&tagged_fields_count)) {
-      // TODO(zhangshuai.ustc): attach related bytes in HEX.
-      return absl::UnknownError("Failed to parse tagged_fields count.");
-    }
+    ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&tagged_fields_count));
 
     for (uint32_t i = 0; i < tagged_fields_count; i++) {
       uint32_t tag;
-      if (!reader->ReadVarint32(&tag)) {
-        // TODO(zhangshuai.ustc): attach related bytes in HEX.
-        return absl::UnknownError("Failed to parse tagged_fields tag.");
-      }
+      ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&tag));
       uint32_t length;
-      if (!reader->ReadVarint32(&length)) {
-        // TODO(zhangshuai.ustc): attach related bytes in HEX.
-        return absl::UnknownError("Failed to parse tagged_fields length.");
-      }
+      ONE_RETURN_IF_NOT_OK(reader->ReadVarint32(&length));
 
       if (length > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) {
         return absl::UnknownError(

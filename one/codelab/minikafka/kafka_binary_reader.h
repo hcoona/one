@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -24,9 +25,12 @@
 #include <utility>
 #include <vector>
 
+#include "absl/base/attributes.h"
 #include "absl/base/casts.h"
 #include "absl/base/internal/endian.h"
+#include "absl/base/optimization.h"
 #include "absl/status/status.h"
+#include "absl/strings/escaping.h"
 #include "absl/strings/str_format.h"
 #include "absl/types/span.h"
 
@@ -36,6 +40,9 @@ namespace minikafka {
 class KafkaBinaryReader {
   // TODO(zhangshuai.ustc): any reading must be verified not exceeding the
   // `end_` position.
+
+  static constexpr uint8_t kVarintMostSignificantBitMask = 0x80U;
+
  public:
   explicit KafkaBinaryReader(absl::Span<const uint8_t> span)
       : begin_(span.data()),
@@ -67,8 +74,51 @@ class KafkaBinaryReader {
     return Read<std::int32_t, &LoadInt32Be>(value);
   }
 
-  bool ReadVarint32(std::uint32_t* value);
-  bool ReadVarint64(std::uint64_t* value);
+  ABSL_ATTRIBUTE_ALWAYS_INLINE absl::Status ReadVarint32(std::uint32_t* value) {
+    uint32_t v = 0;
+    if (ABSL_PREDICT_TRUE(current_ < end_)) {
+      v = *current_;
+      if (v < kVarintMostSignificantBitMask) {
+        *value = v;
+        current_++;
+        return absl::OkStatus();
+      }
+    }
+    int64_t result = ReadVarint32Fallback(v);
+    *value = static_cast<uint32_t>(result);
+    if (result < 0) {
+      static constexpr size_t kVarintEncodedBytesMax = 10;
+      return absl::UnknownError(
+          absl::StrCat("Failed to read varint value. HEX=",
+                       absl::BytesToHexString(
+                           {reinterpret_cast<const char*>(current_),
+                            std::min(kVarintEncodedBytesMax,
+                                     static_cast<size_t>(end_ - current_))})));
+    }
+
+    return absl::OkStatus();
+  }
+
+  ABSL_ATTRIBUTE_ALWAYS_INLINE absl::Status ReadVarint64(std::uint64_t* value) {
+    if (ABSL_PREDICT_TRUE(current_ < end_) &&
+        *current_ < kVarintMostSignificantBitMask) {
+      *value = *current_;
+      current_++;
+      return absl::OkStatus();
+    }
+    std::pair<uint64_t, bool> p = ReadVarint64Fallback();
+    *value = p.first;
+    if (!p.second) {
+      static constexpr size_t kVarintEncodedBytesMax = 10;
+      return absl::UnknownError(
+          absl::StrCat("Failed to read varint value. HEX=",
+                       absl::BytesToHexString(
+                           {reinterpret_cast<const char*>(current_),
+                            std::min(kVarintEncodedBytesMax,
+                                     static_cast<size_t>(end_ - current_))})));
+    }
+    return absl::OkStatus();
+  }
 
   absl::Status ReadString(std::string* value, int32_t length) {
     if (current_ + length <= end_) {
