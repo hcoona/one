@@ -42,8 +42,6 @@ bool operator==(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
 
 // Meets https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator.
 // TODO(zhangshuai.ds): implement the methods.
-// https://en.cppreference.com/w/cpp/named_req/ForwardIterator
-// https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator
 // https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
 template <typename T, size_t kCapacity, bool kIsConst>
 class FixedRingBufferIterator {
@@ -60,6 +58,7 @@ class FixedRingBufferIterator {
   using const_reference = const T&;
   using iterator_category = std::random_access_iterator_tag;
 
+  FixedRingBufferIterator() = default;
   constexpr explicit FixedRingBufferIterator(owner_type buffer) noexcept
       : buffer_(buffer), current_index_(buffer->begin_index_) {}
   constexpr FixedRingBufferIterator(owner_type buffer,
@@ -99,9 +98,37 @@ class FixedRingBufferIterator {
     return *this;
   }
 
+  constexpr FixedRingBufferIterator& operator++(int) {
+    auto it = *this;
+    current_index_++;
+    if (current_index_ == kCapacity) {
+      current_index_ = 0;
+    }
+    return it;
+  }
+
+  constexpr FixedRingBufferIterator& operator--() {
+    if (current_index_ == 0) {
+      current_index_ = kCapacity - 1;
+    } else {
+      current_index_--;
+    }
+    return *this;
+  }
+
+  constexpr FixedRingBufferIterator& operator--(int) {
+    auto it = *this;
+    if (current_index_ == 0) {
+      current_index_ = kCapacity - 1;
+    } else {
+      current_index_--;
+    }
+    return it;
+  }
+
  private:
-  owner_type buffer_;
-  size_t current_index_;
+  owner_type buffer_{nullptr};
+  size_t current_index_{0};
 
   friend bool operator==
       <>(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
