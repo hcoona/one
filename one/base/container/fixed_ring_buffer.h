@@ -41,7 +41,7 @@ bool operator==(const FixedRingBufferIterator<T, kCapacity, kIsConst>& lhs,
                 const FixedRingBufferIterator<T, kCapacity, kIsConst>& rhs);
 
 // Meets https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator.
-// TODO(zhangshuai.ds): implement the methods.
+// TODO(zhangshuai.ustc): implement the methods.
 // https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
 template <typename T, size_t kCapacity, bool kIsConst>
 class FixedRingBufferIterator {
@@ -56,7 +56,9 @@ class FixedRingBufferIterator {
   using const_pointer = const T*;
   using reference = typename std::conditional<kIsConst, const T&, T&>::type;
   using const_reference = const T&;
-  using iterator_category = std::random_access_iterator_tag;
+  // TODO(zhangshuai.ustc): implement it and switch to
+  // random_access_iterator_tag.
+  using iterator_category = std::bidirectional_iterator_tag;
 
   FixedRingBufferIterator() = default;
   constexpr explicit FixedRingBufferIterator(owner_type buffer) noexcept

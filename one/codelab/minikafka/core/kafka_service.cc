@@ -18,7 +18,5 @@
 #include "one/codelab/minikafka/core/kafka_service.h"
 
 namespace hcoona {
-namespace minikafka {
-
-}  // namespace minikafka
+namespace minikafka {}  // namespace minikafka
 }  // namespace hcoona

@@ -46,13 +46,13 @@ int main(int argc, char* argv[]) {
   google::InstallFailureSignalHandler();
   gflags::ParseCommandLineFlags(&argc, &argv, /*remove_flags=*/true);
 
-  // TODO(zhangshuai.ds): Turn signal into an event to help stop the event loop
-  // gracefully.
+  // TODO(zhangshuai.ustc): Turn signal into an event to help stop the event
+  // loop gracefully.
 
-  // TODO(zhangshuai.ds): Bind a HTTP server to inspect the state of the
+  // TODO(zhangshuai.ustc): Bind a HTTP server to inspect the state of the
   // service.
 
-  // TODO(zhangshuai.ds): Launch multiple TCP servers binding on the same port
+  // TODO(zhangshuai.ustc): Launch multiple TCP servers binding on the same port
   // to process accept in parallel.
 
   jinduo::net::EventLoop loop;

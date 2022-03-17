@@ -265,7 +265,7 @@ http_archive(
     ],
 )
 
-# TODO(zhangshuai.ds): SIMD optimization.
+# TODO(zhangshuai.ustc): SIMD optimization.
 # https://github.com/cloudflare/zlib
 # zlib-ng
 http_archive(
@@ -324,7 +324,7 @@ Set-Content protobuf.bzl -Value $content -Encoding UTF8
     urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.19.1.tar.gz"],
 )
 
-# TODO(zhangshuai.ds): consider about libressl.
+# TODO(zhangshuai.ustc): consider about libressl.
 http_archive(
     name = "openssl",
     build_file = "//bazel/third_party/openssl:openssl.BUILD",

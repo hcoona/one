@@ -192,7 +192,7 @@ void KafkaTcpSession::OnMessage(
 
 void KafkaTcpSession::ProcessRequests(
     std::vector<RequestHeaderAndBody>&& requests) {
-  // TODO(zhangshuai.ds): prepare response & context, then deliver to
+  // TODO(zhangshuai.ustc): prepare response & context, then deliver to
   // kafka_service queue.
   for (auto&& request : requests) {
     LOG(INFO) << request.header;
