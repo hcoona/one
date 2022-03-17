@@ -135,6 +135,7 @@ build:clang-asan --linkopt --rtlib=compiler-rt
 build:clang-asan --linkopt --unwindlib=libgcc
 
 # Clang TSAN
+build:clang-tsan --config=clang
 build:clang-tsan --action_env=ONE_TSAN=1
 build:clang-tsan --config=sanitizer
 build:clang-tsan --define ONE_CONFIG_TSAN=1
@@ -153,6 +154,7 @@ build:clang-tsan --test_env="TSAN_OPTIONS=report_atomic_races=0"
 # Clang MSAN - this is the base config for remote-msan and docker-msan. To run this config without
 # our build image, follow https://github.com/google/sanitizers/wiki/MemorySanitizerLibcxxHowTo
 # with libc++ instruction and provide corresponding `--copt` and `--linkopt` as well.
+build:clang-msan --config=clang
 build:clang-msan --action_env=ONE_MSAN=1
 build:clang-msan --config=sanitizer
 build:clang-msan --define ONE_CONFIG_MSAN=1
