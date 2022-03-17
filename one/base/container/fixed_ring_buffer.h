@@ -145,7 +145,7 @@ class FixedRingBuffer {
   template <typename InputIt>
   constexpr FixedRingBuffer(InputIt begin, InputIt end) {
     while (begin != end) {
-      CHECK_LT(size_, max_size());
+      CHECK(!full());
       storage_[size_] = *begin;
       begin++;
       size_++;
@@ -170,8 +170,8 @@ class FixedRingBuffer {
     CHECK_LE(ilist.size(), max_size());
     begin_index_ = 0;
     size_ = 0;
-    for (T&& v : ilist) {
-      storage_[size_] = std::move<T>(v);
+    for (const T& v : ilist) {
+      storage_[size_] = v;
       size_++;
     }
   }
@@ -225,19 +225,47 @@ class FixedRingBuffer {
   }
 
   template <class... Args>
-  reference emplace_front(Args&&... args);
+  constexpr reference emplace_front(Args&&... args) {
+    CHECK(!full());
+    if (begin_index_ == 0) {
+      begin_index_ = kCapacity - 1;
+    } else {
+      begin_index_--;
+    }
+    size_++;
+    return storage_[begin_index_] = T(std::forward<Args>(args)...);
+  }
 
-  void push_front(const T& value);
-  void push_front(T&& value);
+  constexpr reference push_front(const T& value) {
+    return emplace_front(value);
+  }
+  constexpr reference push_front(T&& value) {
+    return emplace_front(std::forward<T>(value));
+  }
 
   template <class... Args>
-  reference emplace_back(Args&&... args);
+  reference emplace_back(Args&&... args) {
+    CHECK(!full());
+    size_++;
+    return storage_[ToStorageIndex(size_ - 1)] = T(std::forward<Args>(args)...);
+  }
 
-  void push_back(const T& value);
-  void push_back(T&& value);
+  constexpr reference push_back(const T& value) { return emplace_back(value); }
+  constexpr reference push_back(T&& value) { return emplace_back(value); }
 
-  void pop_front();
-  void pop_back();
+  constexpr void pop_front() {
+    CHECK(!empty());
+    size_--;
+    if (begin_index_ == kCapacity - 1) {
+      begin_index_ = 0;
+    } else {
+      begin_index_++;
+    }
+  }
+  constexpr void pop_back() {
+    CHECK(!empty());
+    size_--;
+  }
 
   constexpr reference operator[](size_t pos) {
     return storage_[ToStorageIndex(pos)];

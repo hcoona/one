@@ -24,6 +24,30 @@
 
 namespace hcoona {
 
+namespace {
+
+class MoveOnlyInt {
+ public:
+  MoveOnlyInt() = default;
+  constexpr explicit MoveOnlyInt(int value) : value_(value) {}
+  ~MoveOnlyInt() = default;
+
+  // Disallow copy.
+  MoveOnlyInt(const MoveOnlyInt&) = delete;
+  MoveOnlyInt& operator=(const MoveOnlyInt&) = delete;
+
+  // Allow move.
+  constexpr MoveOnlyInt(MoveOnlyInt&&) noexcept = default;
+  MoveOnlyInt& operator=(MoveOnlyInt&&) noexcept = default;
+
+  explicit operator int() const { return value_; }
+
+ private:
+  int value_;
+};
+
+}  // namespace
+
 TEST(FixedRingBuffer, ConstructTrivial) {
   FixedRingBuffer<int32_t, 3> ring_buffer;
 }
@@ -57,6 +81,106 @@ TEST(FixedRingBuffer, Copy) {
 
   FixedRingBuffer<int32_t, 3> ring_buffer_other(ring_buffer);
   EXPECT_EQ(ring_buffer, ring_buffer_other);
+}
+
+TEST(FixedRingBuffer, EmplaceBack) {
+  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  ring_buffer.emplace_back(1);
+  ring_buffer.emplace_back(2);
+  ring_buffer.emplace_back(3);
+  ASSERT_EQ(3, ring_buffer.size());
+  EXPECT_EQ(1, static_cast<int>(ring_buffer[0]));
+  EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
+  EXPECT_EQ(3, static_cast<int>(ring_buffer[2]));
+}
+
+TEST(FixedRingBuffer, EmplaceFront) {
+  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  ring_buffer.emplace_front(3);
+  ring_buffer.emplace_front(2);
+  ring_buffer.emplace_front(1);
+  ASSERT_EQ(3, ring_buffer.size());
+  EXPECT_EQ(1, static_cast<int>(ring_buffer[0]));
+  EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
+  EXPECT_EQ(3, static_cast<int>(ring_buffer[2]));
+}
+
+TEST(FixedRingBuffer, Move) {
+  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  ring_buffer.emplace_back(1);
+  ring_buffer.emplace_back(2);
+  ring_buffer.emplace_back(3);
+  ASSERT_EQ(3, ring_buffer.size());
+  EXPECT_EQ(1, static_cast<int>(ring_buffer[0]));
+  EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
+  EXPECT_EQ(3, static_cast<int>(ring_buffer[2]));
+
+  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer_other(std::move(ring_buffer));
+  ASSERT_EQ(3, ring_buffer_other.size());
+  EXPECT_EQ(1, static_cast<int>(ring_buffer_other[0]));
+  EXPECT_EQ(2, static_cast<int>(ring_buffer_other[1]));
+  EXPECT_EQ(3, static_cast<int>(ring_buffer_other[2]));
+}
+
+TEST(FixedRingBuffer, RangeFor) {
+  FixedRingBuffer<int, 3> ring_buffer{1, 2, 3};
+  ASSERT_EQ(3, ring_buffer.size());
+
+  int count = 0;
+  for (int v : ring_buffer) {
+    EXPECT_EQ(count + 1, v);
+    count++;
+  }
+}
+
+TEST(FixedRingBuffer, EmptyHit) {
+  FixedRingBuffer<int, 3> ring_buffer;
+  EXPECT_TRUE(ring_buffer.empty());
+}
+
+TEST(FixedRingBuffer, EmptyMiss) {
+  FixedRingBuffer<int, 3> ring_buffer(1);
+  EXPECT_FALSE(ring_buffer.empty());
+}
+
+TEST(FixedRingBuffer, FullHit) {
+  FixedRingBuffer<int, 3> ring_buffer(3);
+  EXPECT_TRUE(ring_buffer.full());
+}
+
+TEST(FixedRingBuffer, FullMiss) {
+  FixedRingBuffer<int, 3> ring_buffer(1);
+  EXPECT_FALSE(ring_buffer.full());
+}
+
+TEST(FixedRingBuffer, Clear) {
+  FixedRingBuffer<int, 3> ring_buffer(3);
+  ring_buffer.clear();
+  EXPECT_TRUE(ring_buffer.empty());
+}
+
+TEST(FixedRingBuffer, Front) {
+  FixedRingBuffer<int, 3> ring_buffer{1, 2, 3};
+  EXPECT_EQ(1, ring_buffer.front());
+}
+
+TEST(FixedRingBuffer, Back) {
+  FixedRingBuffer<int, 3> ring_buffer{1, 2, 3};
+  EXPECT_EQ(3, ring_buffer.back());
+}
+
+TEST(FixedRingBuffer, PopFront) {
+  FixedRingBuffer<int, 3> ring_buffer{1, 2, 3};
+  ring_buffer.pop_front();
+  EXPECT_EQ(2, static_cast<int>(ring_buffer[0]));
+  EXPECT_EQ(3, static_cast<int>(ring_buffer[1]));
+}
+
+TEST(FixedRingBuffer, PopBack) {
+  FixedRingBuffer<int, 3> ring_buffer{1, 2, 3};
+  ring_buffer.pop_back();
+  EXPECT_EQ(1, static_cast<int>(ring_buffer[0]));
+  EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
 }
 
 }  // namespace hcoona
