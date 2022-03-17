@@ -24,7 +24,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "glog/logging.h"
+#include "one/base/macros.h"
 
 namespace hcoona {
 
@@ -162,7 +162,7 @@ class FixedRingBuffer {
 
   constexpr FixedRingBuffer() noexcept = default;
   constexpr explicit FixedRingBuffer(size_t count) : size_(count) {
-    CHECK_LE(count, max_size());
+    ONE_HARDENING_ASSERT(count <= max_size());
   }
   constexpr FixedRingBuffer(size_t count, const T& value)
       : FixedRingBuffer(count) {
@@ -172,7 +172,7 @@ class FixedRingBuffer {
   template <typename InputIt>
   constexpr FixedRingBuffer(InputIt begin, InputIt end) {
     while (begin != end) {
-      CHECK(!full());
+      ONE_HARDENING_ASSERT(!full());
       storage_[size_] = *begin;
       begin++;
       size_++;
@@ -194,7 +194,7 @@ class FixedRingBuffer {
   constexpr FixedRingBuffer& operator=(FixedRingBuffer&&) noexcept = default;
 
   constexpr FixedRingBuffer& operator=(std::initializer_list<T> ilist) {
-    CHECK_LE(ilist.size(), max_size());
+    ONE_HARDENING_ASSERT(ilist.size() <= max_size());
     begin_index_ = 0;
     size_ = 0;
     for (const T& v : ilist) {
@@ -243,17 +243,17 @@ class FixedRingBuffer {
   const_reference front() const { return operator[](0); }
 
   reference back() {
-    CHECK(!empty());
+    ONE_HARDENING_ASSERT(!empty());
     return operator[](size_ - 1);
   }
   const_reference back() const {
-    CHECK(!empty());
+    ONE_HARDENING_ASSERT(!empty());
     return operator[](size_ - 1);
   }
 
   template <class... Args>
   constexpr reference emplace_front(Args&&... args) {
-    CHECK(!full());
+    ONE_HARDENING_ASSERT(!full());
     if (begin_index_ == 0) {
       begin_index_ = kCapacity - 1;
     } else {
@@ -272,7 +272,7 @@ class FixedRingBuffer {
 
   template <class... Args>
   reference emplace_back(Args&&... args) {
-    CHECK(!full());
+    ONE_HARDENING_ASSERT(!full());
     size_++;
     return storage_[ToStorageIndex(size_ - 1)] = T(std::forward<Args>(args)...);
   }
@@ -281,7 +281,7 @@ class FixedRingBuffer {
   constexpr reference push_back(T&& value) { return emplace_back(value); }
 
   constexpr void pop_front() {
-    CHECK(!empty());
+    ONE_HARDENING_ASSERT(!empty());
     size_--;
     if (begin_index_ == kCapacity - 1) {
       begin_index_ = 0;
@@ -290,7 +290,7 @@ class FixedRingBuffer {
     }
   }
   constexpr void pop_back() {
-    CHECK(!empty());
+    ONE_HARDENING_ASSERT(!empty());
     size_--;
   }
 
@@ -303,7 +303,7 @@ class FixedRingBuffer {
 
  private:
   [[nodiscard]] constexpr size_t ToStorageIndex(size_t pos) const {
-    CHECK_LE(pos, size_);
+    ONE_HARDENING_ASSERT(pos <= size_);
     return (begin_index_ + pos) % kCapacity;
   }
 

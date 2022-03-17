@@ -37,6 +37,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <utility>
 
 // ONE_PREDICT_TRUE, ONE_PREDICT_FALSE
