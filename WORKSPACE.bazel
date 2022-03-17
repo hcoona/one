@@ -258,6 +258,9 @@ http_archive(
 http_archive(
     name = "com_github_libevent_libevent",  # 2020-07-05T13:33:03Z
     build_file = "//bazel/third_party/event:event.BUILD",
+    patch_cmds = [
+        "sed -i '43s/$/ \\&\\& LIBRESSL_VERSION_NUMBER < 0x3050000fL/' openssl-compat.h"
+    ],
     sha256 = "92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb",
     strip_prefix = "libevent-2.1.12-stable",
     urls = [
@@ -324,15 +327,13 @@ Set-Content protobuf.bzl -Value $content -Encoding UTF8
     urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.19.1.tar.gz"],
 )
 
-# TODO(zhangshuai.ustc): consider about libressl.
 http_archive(
     name = "openssl",
-    build_file = "//bazel/third_party/openssl:openssl.BUILD",
-    sha256 = "f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96",
-    strip_prefix = "openssl-1.1.1m",
+    build_file = "//bazel/third_party/libressl:libressl.BUILD",
+    sha256 = "a7d0026f67622275ec8f8239ded422a653d5ccc84df55dea2acd406017185608",
+    strip_prefix = "libressl-3.5.1",
     urls = [
-        "https://www.openssl.org/source/openssl-1.1.1m.tar.gz",
-        "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1m.tar.gz",
+        "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.5.1.tar.gz",
     ],
 )
 
