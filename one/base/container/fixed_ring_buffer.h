@@ -307,6 +307,7 @@ class FixedRingBuffer {
     return (begin_index_ + pos) % kCapacity;
   }
 
+  // TODO(zhangshuai.ustc): consider use `kCapacity + 1` for boundary detection.
   T storage_[kCapacity];
   size_t begin_index_{0};
   size_t size_{0};

@@ -183,4 +183,21 @@ TEST(FixedRingBuffer, PopBack) {
   EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
 }
 
+TEST(FixedRingBuffer, ManyPushPop) {
+  FixedRingBuffer<int, 3> ring_buffer;
+  ring_buffer.emplace_back(1);
+  ring_buffer.emplace_back(2);
+  ring_buffer.emplace_back(3);
+  static constexpr int kLastNumber = 379;
+  for (int i = 4; i <= kLastNumber; i++) {
+    ring_buffer.pop_front();
+    ring_buffer.emplace_back(i);
+  }
+
+  ASSERT_EQ(3, ring_buffer.size());
+  EXPECT_EQ(kLastNumber - 2, ring_buffer[0]);
+  EXPECT_EQ(kLastNumber - 1, ring_buffer[1]);
+  EXPECT_EQ(kLastNumber, ring_buffer[2]);
+}
+
 }  // namespace hcoona
