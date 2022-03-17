@@ -24,3 +24,10 @@ cc_library(
         "@com_google_googletest//:gtest",
     ],
 )
+
+cc_library(
+    name = "move_only_value",
+    testonly = True,
+    hdrs = ["move_only_value.h"],
+    visibility = ["//visibility:public"],
+)

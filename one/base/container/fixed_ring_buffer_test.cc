@@ -21,32 +21,9 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "one/test/move_only_value.h"
 
 namespace hcoona {
-
-namespace {
-
-class MoveOnlyInt {
- public:
-  MoveOnlyInt() = default;
-  constexpr explicit MoveOnlyInt(int value) : value_(value) {}
-  ~MoveOnlyInt() = default;
-
-  // Disallow copy.
-  MoveOnlyInt(const MoveOnlyInt&) = delete;
-  MoveOnlyInt& operator=(const MoveOnlyInt&) = delete;
-
-  // Allow move.
-  constexpr MoveOnlyInt(MoveOnlyInt&&) noexcept = default;
-  MoveOnlyInt& operator=(MoveOnlyInt&&) noexcept = default;
-
-  explicit operator int() const { return value_; }
-
- private:
-  int value_;
-};
-
-}  // namespace
 
 TEST(FixedRingBuffer, ConstructTrivial) {
   FixedRingBuffer<int32_t, 3> ring_buffer;
@@ -84,7 +61,7 @@ TEST(FixedRingBuffer, Copy) {
 }
 
 TEST(FixedRingBuffer, EmplaceBack) {
-  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  FixedRingBuffer<MoveOnlyValue<int>, 3> ring_buffer;
   ring_buffer.emplace_back(1);
   ring_buffer.emplace_back(2);
   ring_buffer.emplace_back(3);
@@ -95,7 +72,7 @@ TEST(FixedRingBuffer, EmplaceBack) {
 }
 
 TEST(FixedRingBuffer, EmplaceFront) {
-  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  FixedRingBuffer<MoveOnlyValue<int>, 3> ring_buffer;
   ring_buffer.emplace_front(3);
   ring_buffer.emplace_front(2);
   ring_buffer.emplace_front(1);
@@ -106,7 +83,7 @@ TEST(FixedRingBuffer, EmplaceFront) {
 }
 
 TEST(FixedRingBuffer, Move) {
-  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer;
+  FixedRingBuffer<MoveOnlyValue<int>, 3> ring_buffer;
   ring_buffer.emplace_back(1);
   ring_buffer.emplace_back(2);
   ring_buffer.emplace_back(3);
@@ -115,7 +92,8 @@ TEST(FixedRingBuffer, Move) {
   EXPECT_EQ(2, static_cast<int>(ring_buffer[1]));
   EXPECT_EQ(3, static_cast<int>(ring_buffer[2]));
 
-  FixedRingBuffer<MoveOnlyInt, 3> ring_buffer_other(std::move(ring_buffer));
+  FixedRingBuffer<MoveOnlyValue<int>, 3> ring_buffer_other(
+      std::move(ring_buffer));
   ASSERT_EQ(3, ring_buffer_other.size());
   EXPECT_EQ(1, static_cast<int>(ring_buffer_other[0]));
   EXPECT_EQ(2, static_cast<int>(ring_buffer_other[1]));

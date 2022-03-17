@@ -18,23 +18,29 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
 cc_library(
-    name = "lru",
-    hdrs = ["lru.h"],
+    name = "blocking_bounded_queue",
+    hdrs = ["blocking_bounded_queue.h"],
     visibility = ["//visibility:public"],
+    deps = [
+        ":fixed_ring_buffer",
+        "@com_google_absl//absl/base",
+        "@com_google_absl//absl/synchronization",
+    ],
 )
 
 cc_test(
-    name = "lru_test",
+    name = "blocking_bounded_queue_test",
     srcs = [
-        "lru_test.cc",
+        "blocking_bounded_queue_test.cc",
     ],
-    data = [
-        ":lru_test_case01.txt",
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
     ],
     deps = [
-        ":lru",
-        "@bazel_tools//tools/cpp/runfiles",
-        "@com_google_absl//absl/strings",
+        ":blocking_bounded_queue",
+        "//one/test:move_only_value",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
@@ -54,8 +60,42 @@ cc_test(
     srcs = [
         "fixed_ring_buffer_test.cc",
     ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
     deps = [
         ":fixed_ring_buffer",
+        "//one/test:move_only_value",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "lru",
+    hdrs = ["lru.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "lru_test",
+    srcs = [
+        "lru_test.cc",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    data = [
+        ":lru_test_case01.txt",
+    ],
+    deps = [
+        ":lru",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
