@@ -829,7 +829,10 @@ cc_library(
         "ssl/bs_cbb.c",
         "ssl/bs_cbs.c",
         "ssl/bytestring.h",
-    ],
+    ] + glob([
+        "crypto/**/*.h",
+        "include/compat/**/*.h",
+    ]),
     copts = RESSL_CFLAGS + [
         "-Wno-implicit-function-declaration",
     ] + [
