@@ -41,6 +41,7 @@ cc_library(
 
 cc_test(
     name = "kafka_binary_reader_test",
+    size = "small",
     srcs = ["kafka_binary_reader_test.cc"],
     copts = [
         "-Wall",

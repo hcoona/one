@@ -129,6 +129,7 @@ cc_binary(
 
 cc_test(
     name = "event_loop_thread_pool_test",
+    size = "small",
     srcs = [
         "event_loop_thread_pool_test.cc",
     ],
@@ -147,6 +148,7 @@ cc_test(
 
 cc_test(
     name = "buffer_test",
+    size = "small",
     srcs = ["buffer_test.cc"],
     copts = [
         "-Wall",
@@ -162,6 +164,7 @@ cc_test(
 
 cc_test(
     name = "inet_address_test",
+    size = "small",
     srcs = ["inet_address_test.cc"],
     copts = [
         "-Wall",
@@ -177,6 +180,7 @@ cc_test(
 
 cc_test(
     name = "timer_queue_test",
+    size = "medium",
     srcs = ["internal/timer_queue_test.cc"],
     copts = [
         "-Wall",

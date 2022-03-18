@@ -30,6 +30,7 @@ cc_library(
 
 cc_test(
     name = "blocking_bounded_queue_test",
+    size = "small",
     srcs = [
         "blocking_bounded_queue_test.cc",
     ],
@@ -57,6 +58,7 @@ cc_library(
 
 cc_test(
     name = "fixed_ring_buffer_test",
+    size = "small",
     srcs = [
         "fixed_ring_buffer_test.cc",
     ],
@@ -81,6 +83,7 @@ cc_library(
 
 cc_test(
     name = "lru_test",
+    size = "small",
     srcs = [
         "lru_test.cc",
     ],
