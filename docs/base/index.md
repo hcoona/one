@@ -1,13 +1,19 @@
 # Base
 
-## Container
+This directory provided some common utilities to accelerate daily development.
 
-* ARC: [ARC: A Self-Tuning, Low Overhead Replacement Cache](https://www.usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache), [one up on LRU](https://www.usenix.org/publications/login/august-2003-volume-28-number-4/one-lru), not started yet.
-* CircularBuffer: A port from Boost or Chromium, not started yet.
-* LRU: a cache which evicts the least recently used item when it is full, not started yet.
-* Trie: [An Implementation of Double-Array Trie](https://linux.thai.net/~thep/datrie/datrie.html), [Compressed double-array tries for string dictionaries supporting fast lookup](https://link.springer.com/article/10.1007/s10115-016-0999-8), not started yet.
+* `c_string_arg.h`: to accept C-style string in either `const char*` or `const std::string&` format. This shim class would avoid repeating the same business logics in two different types, or avoid construct a temporary `std::string` instance for performance reason. `std::string_view` don't work here because it's not `\0` terminated.
+* `down_cast.h`: do `dynamic_cast` in debug profile for checking violations while do `static_cast` in release profile for performance reason and avoid using RTTI.
+* `macros.h`: a few utilities macros to accelerate daily development.
+    * `ONE_PREDICT_TRUE`, `ONE_PREDICT_FALSE`: performance annotation for branch predicating.
+    * `ONE_RETURN_IF_NOT_OK`, `ONE_ASSIGN_OR_RETURN`: handy macros for error handling with `absl::Status` & `absl::StatusOr<>`.
+    * `ONE_HARDENING_ASSERT`: for hardening. See [Sanitize, Fuzz, and Harden Your C++ Code](https://www.usenix.org/conference/enigma2016/conference-program/presentation/serebryany) for further details about why hardening.
 
-## Retry Manager & Rate limiter
+# Sub-directories
+
+* [container](container/index.md): some useful containers not provided in C++17 STL.
+
+## Retry Manager & Rate limiter (not started yet)
 
 Port from [resilience4j](https://resilience4j.readme.io/), and [Polly](https://github.com/App-vNext/Polly).
 

@@ -30,9 +30,17 @@ I'd like to make following changes to muduo library:
     * Replace the `base` directory with our `base`/STL/abseil-cpp/...
     * Support only C++17 and higher.
 * Feature
-    * Support IPv6.
+    * Support IPv6 (muduo already supported?).
     * Support signal event.
-    * Redesign the `Buffer` class. The current design has a great chance never shrink.
+    * Redesign the `Buffer` class. The current design has a great chance never shrink the spaces.
+* Performance
+    * Use C++11 `move` for performance.
 * Chore
     * Regular CI pipeline.
     * Testing against sanitizers.
+
+And there are some idea not being decided yet:
+
+* Support io_uring.
+* Support coroutine. This must be done very carefully because we have little support debugging with coroutines.
+* Provide a generic dispatcher model. This dispatcher could use separately in other systems, such as between stages in [SEDA architecture](http://sosp.org/2001/papers/welsh.pdf), or in Actor pattern, etc.
