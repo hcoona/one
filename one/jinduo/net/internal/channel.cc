@@ -55,7 +55,7 @@ Channel::~Channel() {
   assert(!eventHandling_);
   assert(!addedToLoop_);
   if (loop_->IsInLoopThread()) {
-    assert(!loop_->hasChannel(this));
+    assert(!loop_->HasChannel(this));
   }
 }
 
@@ -66,13 +66,13 @@ void Channel::tie(const std::shared_ptr<void>& obj) {
 
 void Channel::update() {
   addedToLoop_ = true;
-  loop_->updateChannel(this);
+  loop_->UpdateChannel(this);
 }
 
 void Channel::remove() {
   assert(isNoneEvent());
   addedToLoop_ = false;
-  loop_->removeChannel(this);
+  loop_->RemoveChannel(this);
 }
 
 void Channel::handleEvent(absl::Time receiveTime) {

@@ -23,9 +23,9 @@
 //
 // Author: Shuo Chen (chenshuo at chenshuo dot com)
 
-#include <stdio.h>
 #include <unistd.h>
 
+#include <cstdio>
 #include <memory>
 #include <utility>
 #include <vector>
