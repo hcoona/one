@@ -56,6 +56,7 @@
 
 #include <csignal>
 #include <map>
+#include <memory>
 
 #include "absl/functional/bind_front.h"
 #include "absl/time/clock.h"
@@ -158,14 +159,16 @@ int main(int argc, char* argv[]) {
   }
   threadPool.Start();
 
-  std::vector<std::unique_ptr<jinduo::net::HttpServer>> servers;
+  std::vector<jinduo::net::HttpServer*> servers;
   for (int i = 0; i < numThreads; ++i) {
-    servers.emplace_back(new jinduo::net::HttpServer(
-        threadPool.GetNextLoop(), jinduo::net::InetAddress(kBindingPort),
-        "shorturl", jinduo::net::TcpServer::kReusePort));
-    servers.back()->setHttpCallback(onRequest);
-    servers.back()->getLoop()->RunInLoop(
-        [server = servers.back().get()] { server->start(); });
+    auto* loop = threadPool.GetNextLoop();
+    auto server = std::make_shared<jinduo::net::HttpServer>(
+        loop, jinduo::net::InetAddress(kBindingPort), "shorturl",
+        jinduo::net::TcpServer::kReusePort);
+    servers.emplace_back(server.get());
+    server->setHttpCallback(onRequest);
+    server->getLoop()->RunInLoop([server = server.get()] { server->start(); });
+    loop->set_context(std::move(server));
   }
   loop.Loop();
 }
