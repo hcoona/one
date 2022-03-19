@@ -91,16 +91,15 @@ TimerQueue::TimerQueue(EventLoop* loop)
       timerfd_(details::createTimerfd()),
       timerfdChannel_(loop, timerfd_),
       callingExpiredTimers_(false) {
-  timerfdChannel_.setReadCallback(std::bind(  // NOLINT(modernize-avoid-bind):
-                                              // By-design ignore timestamp arg
-      &TimerQueue::handleRead, this));
+  timerfdChannel_.SetReadCallback(
+      [this](absl::Time /*ignored*/) { handleRead(); });
   // we are always reading the timerfd, we disarm it with timerfd_settime.
-  timerfdChannel_.enableReading();
+  timerfdChannel_.EnableReading();
 }
 
 TimerQueue::~TimerQueue() {
-  timerfdChannel_.disableAll();
-  timerfdChannel_.remove();
+  timerfdChannel_.DisableAll();
+  timerfdChannel_.RemoveFromOwnerEventLoop();
   ::close(timerfd_);
   // do not remove channel, since we're in EventLoop::dtor();
   for (const Entry& timer : timers_) {

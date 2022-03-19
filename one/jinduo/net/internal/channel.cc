@@ -27,6 +27,8 @@
 
 #include <poll.h>
 
+#include <atomic>
+#include <memory>
 #include <sstream>
 
 #include "glog/logging.h"
@@ -40,63 +42,46 @@ const uint32_t Channel::kReadEvent =
     POLLIN | POLLPRI;  // NOLINT(hicpp-signed-bitwise)
 const uint32_t Channel::kWriteEvent = POLLOUT;
 
-Channel::Channel(EventLoop* loop, int fd)
-    : loop_(loop),
-      fd_(fd),
-      events_(0),
-      revents_(0),
-      index_(-1),
-      logHup_(true),
-      tied_(false),
-      eventHandling_(false),
-      addedToLoop_(false) {}
+Channel::Channel(EventLoop* loop, int fd) : loop_(loop), fd_(fd) {}
 
 Channel::~Channel() {
-  assert(!eventHandling_);
-  assert(!addedToLoop_);
+  assert(!event_handling_.load(std::memory_order_acquire));
+  assert(!added_to_loop_.load(std::memory_order_acquire));
+
   if (loop_->IsInLoopThread()) {
     assert(!loop_->HasChannel(this));
   }
 }
 
-void Channel::tie(const std::shared_ptr<void>& obj) {
-  tie_ = obj;
+void Channel::Tie(const std::shared_ptr<void>& obj) {
+  tie_ = std::weak_ptr<void>(obj);
   tied_ = true;
 }
 
-void Channel::update() {
-  addedToLoop_ = true;
-  loop_->UpdateChannel(this);
-}
-
-void Channel::remove() {
-  assert(isNoneEvent());
-  addedToLoop_ = false;
-  loop_->RemoveChannel(this);
-}
-
-void Channel::handleEvent(absl::Time receiveTime) {
+void Channel::HandleEvent(absl::Time receive_time) {
   std::shared_ptr<void> guard;
   if (tied_) {
     guard = tie_.lock();
     if (guard) {
-      handleEventWithGuard(receiveTime);
+      HandleEventWithGuard(receive_time);
     }
   } else {
-    handleEventWithGuard(receiveTime);
+    HandleEventWithGuard(receive_time);
   }
 }
 
-void Channel::handleEventWithGuard(absl::Time receiveTime) {
-  eventHandling_ = true;
-  VLOG(1) << reventsToString();
+void Channel::HandleEventWithGuard(absl::Time receiveTime) {
+  event_handling_.store(true, std::memory_order_release);
+
+  VLOG(1) << REventsToString();
+
   if (((revents_ & POLLHUP) != 0) &&  // NOLINT(hicpp-signed-bitwise)
       ((revents_ & POLLIN) == 0)) {   // NOLINT(hicpp-signed-bitwise)
-    if (logHup_) {
+    if (log_hup_enabled_) {
       LOG(WARNING) << "fd = " << fd_ << " Channel::handle_event() POLLHUP";
     }
-    if (closeCallback_) {
-      closeCallback_();
+    if (close_callback_) {
+      close_callback_();
     }
   }
 
@@ -105,33 +90,40 @@ void Channel::handleEventWithGuard(absl::Time receiveTime) {
   }
 
   if ((revents_ & (POLLERR | POLLNVAL)) != 0) {  // NOLINT(hicpp-signed-bitwise)
-    if (errorCallback_) {
-      errorCallback_();
+    if (error_callback_) {
+      error_callback_();
     }
   }
   if ((revents_ &                               // NOLINT(hicpp-signed-bitwise)
        (POLLIN | POLLPRI | POLLRDHUP)) != 0) {  // NOLINT(hicpp-signed-bitwise)
-    if (readCallback_) {
-      readCallback_(receiveTime);
+    if (read_callback_) {
+      read_callback_(receiveTime);
     }
   }
   if ((revents_ & POLLOUT) != 0) {  // NOLINT(hicpp-signed-bitwise)
-    if (writeCallback_) {
-      writeCallback_();
+    if (write_callback_) {
+      write_callback_();
     }
   }
-  eventHandling_ = false;
+
+  event_handling_.store(false, std::memory_order_release);
 }
 
-std::string Channel::reventsToString() const {
-  return eventsToString(fd_, revents_);
+void Channel::RemoveFromOwnerEventLoop() {
+  assert(IsNoneEvent());
+
+  added_to_loop_.store(false, std::memory_order_release);
+  loop_->RemoveChannel(this);
 }
 
-std::string Channel::eventsToString() const {
-  return eventsToString(fd_, events_);
+void Channel::Update() {
+  added_to_loop_.store(true, std::memory_order_release);
+  loop_->UpdateChannel(this);
 }
 
-std::string Channel::eventsToString(int fd, uint32_t ev) {
+namespace {
+
+std::string EventsToStringInternal(int fd, uint32_t ev) {
   std::ostringstream oss;
   oss << fd << ": ";
   if ((ev & POLLIN) != 0) {  // NOLINT(hicpp-signed-bitwise)
@@ -157,6 +149,16 @@ std::string Channel::eventsToString(int fd, uint32_t ev) {
   }
 
   return oss.str();
+}
+
+}  // namespace
+
+std::string Channel::REventsToString() const {
+  return EventsToStringInternal(fd_, revents_);
+}
+
+std::string Channel::EventsToString() const {
+  return EventsToStringInternal(fd_, events_);
 }
 
 }  // namespace net

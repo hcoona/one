@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <functional>
 #include <memory>
 #include <string>
@@ -41,10 +42,13 @@ class EventLoop;
 
 // A selectable I/O channel.
 //
-// This class doesn't own the file descriptor.
-// The file descriptor could be a socket,
-// an eventfd, a timerfd, or a signalfd
+// This class doesn't own the file descriptor. The file descriptor could be a
+// socket, an eventfd, a timerfd, or a signalfd
 class Channel {
+  static const uint32_t kNoneEvent;
+  static const uint32_t kReadEvent;
+  static const uint32_t kWriteEvent;
+
  public:
   using EventCallback = std::function<void()>;
   using ReadEventCallback = std::function<void(absl::Time)>;
@@ -56,88 +60,114 @@ class Channel {
   Channel(const Channel&) noexcept = delete;
   Channel& operator=(const Channel&) noexcept = delete;
 
-  // Allow move but not implemented yet.
+  // Disallow move.
   Channel(Channel&&) noexcept = delete;
   Channel& operator=(Channel&&) noexcept = delete;
 
-  void handleEvent(absl::Time receiveTime);
-  void setReadCallback(ReadEventCallback cb) { readCallback_ = std::move(cb); }
-  void setWriteCallback(EventCallback cb) { writeCallback_ = std::move(cb); }
-  void setCloseCallback(EventCallback cb) { closeCallback_ = std::move(cb); }
-  void setErrorCallback(EventCallback cb) { errorCallback_ = std::move(cb); }
+  // Tie this channel to the owner object managed by shared_ptr,
+  // prevent the owner object being destroyed in handleEvent.
+  void Tie(const std::shared_ptr<void>& obj);
 
-  /// Tie this channel to the owner object managed by shared_ptr,
-  /// prevent the owner object being destroyed in handleEvent.
-  void tie(const std::shared_ptr<void>&);
+  //
+  // Event handling.
+  //
+
+  void HandleEvent(absl::Time receive_time);
+
+  void SetReadCallback(ReadEventCallback cb) { read_callback_ = std::move(cb); }
+  void SetWriteCallback(EventCallback cb) { write_callback_ = std::move(cb); }
+  void SetCloseCallback(EventCallback cb) { close_callback_ = std::move(cb); }
+  void SetErrorCallback(EventCallback cb) { error_callback_ = std::move(cb); }
+
+  //
+  // Status accessors & modifiers.
+  //
 
   [[nodiscard]] int fd() const { return fd_; }
+
   [[nodiscard]] uint32_t events() const { return events_; }
-  void set_revents(uint32_t revt) { revents_ = revt; }  // used by pollers
-  // int revents() const { return revents_; }
-  [[nodiscard]] bool isNoneEvent() const { return events_ == kNoneEvent; }
+  [[nodiscard]] uint32_t revents() const { return revents_; }
+  void set_revents(uint32_t revents) { revents_ = revents; }  // used by pollers
 
-  void enableReading() {
+  [[nodiscard]] bool IsNoneEvent() const { return events_ == kNoneEvent; }
+
+  void EnableReading() {
     events_ |= kReadEvent;
-    update();
+    Update();
   }
-  void disableReading() {
+  void DisableReading() {
     events_ &= ~kReadEvent;
-    update();
+    Update();
   }
-  void enableWriting() {
-    events_ |= kWriteEvent;
-    update();
-  }
-  void disableWriting() {
-    events_ &= ~kWriteEvent;
-    update();
-  }
-  void disableAll() {
-    events_ = kNoneEvent;
-    update();
-  }
-  [[nodiscard]] bool isWriting() const { return (events_ & kWriteEvent) != 0U; }
-  [[nodiscard]] bool isReading() const { return (events_ & kReadEvent) != 0U; }
 
-  // for Poller
+  void EnableWriting() {
+    events_ |= kWriteEvent;
+    Update();
+  }
+  void DisableWriting() {
+    events_ &= ~kWriteEvent;
+    Update();
+  }
+
+  void DisableAll() {
+    events_ = kNoneEvent;
+    Update();
+  }
+
+  [[nodiscard]] bool IsReadingEnabled() const {
+    return (events_ & kReadEvent) != 0U;
+  }
+  [[nodiscard]] bool IsWritingEnabled() const {
+    return (events_ & kWriteEvent) != 0U;
+  }
+
+  //
+  // For poller
+  //
+
   [[nodiscard]] int index() const { return index_; }
   void set_index(int idx) { index_ = idx; }
 
-  // for debug
-  [[nodiscard]] std::string reventsToString() const;
-  [[nodiscard]] std::string eventsToString() const;
+  //
+  // For debugging
+  //
 
-  void doNotLogHup() { logHup_ = false; }
+  [[nodiscard]] std::string REventsToString() const;
+  [[nodiscard]] std::string EventsToString() const;
 
-  EventLoop* ownerLoop() { return loop_; }
-  void remove();
+  void DisableLogHup() {
+    log_hup_enabled_.store(false, std::memory_order_release);
+  }
+
+  //
+  // For EventLoop
+  //
+
+  EventLoop* owner_event_loop() { return loop_; }
+  void RemoveFromOwnerEventLoop();
 
  private:
-  static std::string eventsToString(int fd, uint32_t ev);
+  void Update();
 
-  void update();
-  void handleEventWithGuard(absl::Time receiveTime);
-
-  static const uint32_t kReadEvent;
-  static const uint32_t kNoneEvent;
-  static const uint32_t kWriteEvent;
+  void HandleEventWithGuard(absl::Time receiveTime);
 
   EventLoop* loop_;
-  const int fd_;
-  uint32_t events_;
-  uint32_t revents_;  // it's the received event types of epoll or poll
-  int index_;         // used by Poller.
-  bool logHup_;
+  int fd_;
+  uint32_t events_{0};
+  uint32_t revents_{0};  // it's the received event types of epoll or poll
+  int index_{-1};        // used by Poller.
+  std::atomic<bool> log_hup_enabled_{true};
 
   std::weak_ptr<void> tie_;
-  bool tied_;
-  bool eventHandling_;
-  bool addedToLoop_;
+  bool tied_{false};
 
-  ReadEventCallback readCallback_;
-  EventCallback writeCallback_;
-  EventCallback closeCallback_;
-  EventCallback errorCallback_;
+  std::atomic<bool> event_handling_{false};
+  std::atomic<bool> added_to_loop_{false};
+
+  ReadEventCallback read_callback_;
+  EventCallback write_callback_;
+  EventCallback close_callback_;
+  EventCallback error_callback_;
 };
 
 }  // namespace net

@@ -90,17 +90,17 @@ EventLoop::EventLoop()
   } else {
     this_thread_event_loop = this;
   }
-  wakeup_channel_->setReadCallback(
+  wakeup_channel_->SetReadCallback(
       [this](absl::Time /*ignored*/) { HandleRead(); });
   // we are always reading the wakeup fd
-  wakeup_channel_->enableReading();
+  wakeup_channel_->EnableReading();
 }
 
 EventLoop::~EventLoop() {
   VLOG(1) << "EventLoop " << this << " of thread " << thread_id_
           << " destructs in thread " << this_thread::tid();
-  wakeup_channel_->disableAll();
-  wakeup_channel_->remove();
+  wakeup_channel_->DisableAll();
+  wakeup_channel_->RemoveFromOwnerEventLoop();
   ::close(wakeup_fd_);
   this_thread_event_loop = nullptr;
 }
@@ -124,7 +124,7 @@ void EventLoop::Loop() {
 
     if (VLOG_IS_ON(1)) {
       for (const Channel* channel : active_channels_) {
-        VLOG(1) << "{" << channel->reventsToString() << "} ";
+        VLOG(1) << "{" << channel->REventsToString() << "} ";
       }
     }
 
@@ -133,7 +133,7 @@ void EventLoop::Loop() {
     handling_events_.store(true, std::memory_order_release);
     for (Channel* channel : active_channels_) {
       current_active_channel_ = channel;
-      current_active_channel_->handleEvent(poll_return_time);
+      current_active_channel_->HandleEvent(poll_return_time);
     }
     current_active_channel_ = nullptr;
     handling_events_.store(false, std::memory_order_release);
@@ -201,13 +201,13 @@ void EventLoop::CancelTimer(TimerId timer_id) {
 }
 
 void EventLoop::UpdateChannel(Channel* channel) {
-  assert(channel->ownerLoop() == this);
+  assert(channel->owner_event_loop() == this);
   AssertInLoopThread();
   poller_->UpdateChannel(channel);
 }
 
 void EventLoop::RemoveChannel(Channel* channel) {
-  assert(channel->ownerLoop() == this);
+  assert(channel->owner_event_loop() == this);
   AssertInLoopThread();
   if (handling_events_.load(std::memory_order_acquire)) {
     assert(current_active_channel_ == channel ||
@@ -218,7 +218,7 @@ void EventLoop::RemoveChannel(Channel* channel) {
 }
 
 bool EventLoop::HasChannel(Channel* channel) {
-  assert(channel->ownerLoop() == this);
+  assert(channel->owner_event_loop() == this);
   AssertInLoopThread();
   return poller_->HasChannel(channel);
 }

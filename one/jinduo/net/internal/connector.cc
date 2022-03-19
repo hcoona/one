@@ -139,19 +139,19 @@ void Connector::connecting(int sockfd) {
   setState(kConnecting);
   assert(!channel_);
   channel_ = std::make_unique<Channel>(loop_, sockfd);
-  channel_->setWriteCallback(
+  channel_->SetWriteCallback(
       absl::bind_front(&Connector::handleWrite, this));  // FIXME: unsafe
-  channel_->setErrorCallback(
+  channel_->SetErrorCallback(
       absl::bind_front(&Connector::handleError, this));  // FIXME: unsafe
 
   // channel_->tie(shared_from_this()); is not working,
   // as channel_ is not managed by shared_ptr
-  channel_->enableWriting();
+  channel_->EnableWriting();
 }
 
 int Connector::removeAndResetChannel() {
-  channel_->disableAll();
-  channel_->remove();
+  channel_->DisableAll();
+  channel_->RemoveFromOwnerEventLoop();
   int sockfd = channel_->fd();
   // Can't reset channel_ here, because we are inside Channel::handleEvent
   loop_->QueueInLoop(

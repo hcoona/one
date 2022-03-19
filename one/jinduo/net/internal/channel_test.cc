@@ -69,11 +69,9 @@ class PeriodicTimer {
         timerfdChannel_(loop, timerfd_),
         interval_(interval),
         cb_(std::move(cb)) {
-    timerfdChannel_.setReadCallback(
-        std::bind(  // NOLINT(modernize-avoid-bind):
-                    // By-design ignore timestamp arg
-            &PeriodicTimer::handleRead, this));
-    timerfdChannel_.enableReading();
+    timerfdChannel_.SetReadCallback(
+        [this](absl::Time /*ignored*/) { handleRead(); });
+    timerfdChannel_.EnableReading();
   }
 
   // Disallow copy.
@@ -97,8 +95,8 @@ class PeriodicTimer {
   }
 
   ~PeriodicTimer() {
-    timerfdChannel_.disableAll();
-    timerfdChannel_.remove();
+    timerfdChannel_.DisableAll();
+    timerfdChannel_.RemoveFromOwnerEventLoop();
     ::close(timerfd_);
   }
 

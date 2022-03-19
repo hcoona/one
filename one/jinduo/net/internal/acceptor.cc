@@ -49,12 +49,12 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr,
   acceptSocket_.setReuseAddr(true);
   acceptSocket_.setReusePort(reuseport);
   acceptSocket_.bindAddress(listenAddr);
-  acceptChannel_.setReadCallback([this](absl::Time) { handleRead(); });
+  acceptChannel_.SetReadCallback([this](absl::Time) { handleRead(); });
 }
 
 Acceptor::~Acceptor() {
-  acceptChannel_.disableAll();
-  acceptChannel_.remove();
+  acceptChannel_.DisableAll();
+  acceptChannel_.RemoveFromOwnerEventLoop();
   ::close(idleFd_);
 }
 
@@ -62,7 +62,7 @@ void Acceptor::listen() {
   loop_->AssertInLoopThread();
   listening_ = true;
   acceptSocket_.listen();
-  acceptChannel_.enableReading();
+  acceptChannel_.EnableReading();
 }
 
 void Acceptor::handleRead() {

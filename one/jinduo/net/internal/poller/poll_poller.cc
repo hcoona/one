@@ -87,7 +87,7 @@ void PollPoller::UpdateChannel(Channel* channel) {
     // NOLINTNEXTLINE(google-runtime-int)
     pfd.events = static_cast<short>(channel->events());  // NOLINT(runtime/int)
     pfd.revents = 0;
-    if (channel->isNoneEvent()) {
+    if (channel->IsNoneEvent()) {
       // ignore this pollfd
       pfd.fd = -channel->fd() - 1;
     }
@@ -99,7 +99,7 @@ void PollPoller::RemoveChannel(Channel* channel) {
   VLOG(1) << "fd = " << channel->fd();
   assert(channels_.find(channel->fd()) != channels_.end());
   assert(channels_[channel->fd()] == channel);
-  assert(channel->isNoneEvent());
+  assert(channel->IsNoneEvent());
   int idx = channel->index();
   assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
   const struct pollfd& pfd = pollfds_[idx];

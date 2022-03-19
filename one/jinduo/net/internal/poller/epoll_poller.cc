@@ -161,7 +161,7 @@ void EPollPoller::UpdateChannel(Channel* channel) {
     assert(channels_.find(fd) != channels_.end());
     assert(channels_[fd] == channel);
     assert(index == kAdded);
-    if (channel->isNoneEvent()) {
+    if (channel->IsNoneEvent()) {
       Update(EPOLL_CTL_DEL, channel);
       channel->set_index(kDeleted);
     } else {
@@ -178,7 +178,7 @@ void EPollPoller::RemoveChannel(Channel* channel) {
 
   assert(channels_.find(fd) != channels_.end());
   assert(channels_[fd] == channel);
-  assert(channel->isNoneEvent());
+  assert(channel->IsNoneEvent());
 
   int index = channel->index();
   assert(index == kAdded || index == kDeleted);
@@ -201,7 +201,7 @@ void EPollPoller::Update(int operation, Channel* channel) const {
 
   int fd = channel->fd();
   VLOG(1) << "epoll_ctl op=" << OperationToString(operation) << ", fd=" << fd
-          << ", event={" << channel->eventsToString() << "}";
+          << ", event={" << channel->EventsToString() << "}";
   if (::epoll_ctl(epoll_fd_, operation, fd, &event) < 0) {
     if (operation == EPOLL_CTL_DEL) {
       LOG(ERROR) << "epoll_ctl failed to DEL. fd=" << fd;
