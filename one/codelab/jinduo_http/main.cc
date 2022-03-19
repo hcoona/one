@@ -54,19 +54,26 @@
 
 #include <sys/socket.h>  // SO_REUSEPORT
 
+#include <csignal>
 #include <map>
 
+#include "absl/functional/bind_front.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
+#include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/event_loop_thread_pool.h"
 #include "one/jinduo/net/http/http_request.h"
 #include "one/jinduo/net/http/http_response.h"
 #include "one/jinduo/net/http/http_server.h"
+#include "one/jinduo/net/signal_handler_manager.h"
 
 constexpr size_t kFaviconByteSize = 555;
 extern char favicon[kFaviconByteSize];
+
+namespace {
+
 bool benchmark = false;
 
 std::map<std::string, std::string> redirections;
@@ -116,7 +123,13 @@ void onRequest(const jinduo::net::HttpRequest& req,
   }
 }
 
+}  // namespace
+
 int main(int argc, char* argv[]) {
+  google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
+  gflags::ParseCommandLineFlags(&argc, &argv, /*remove_flags=*/true);
+
   redirections["/1"] = "http://chenshuo.com";
   redirections["/2"] = "http://blog.csdn.net/Solstice";
 
@@ -128,14 +141,20 @@ int main(int argc, char* argv[]) {
 
   static constexpr uint16_t kBindingPort = 8000;
 
-#ifdef SO_REUSEPORT
-  LOG(WARNING) << "SO_REUSEPORT";
   jinduo::net::EventLoop loop;
+  jinduo::net::SignalHandlerManager signal_handler_manager(&loop);
+  std::function<void(int)> signal_handler = [&loop](int signum) {
+    LOG(WARNING) << "Signal received, exiting. signum=" << signum;
+    loop.QueueInLoop(absl::bind_front(&jinduo::net::EventLoop::Quit, &loop));
+  };
+  signal_handler_manager.SetSignalCallback(SIGINT, signal_handler);
+  signal_handler_manager.SetSignalCallback(SIGTERM, signal_handler);
+
   jinduo::net::EventLoopThreadPool threadPool(&loop, "shorturl");
-  if (numThreads > 1) {
+  if (numThreads > 0) {
     threadPool.set_thread_num(numThreads);
   } else {
-    numThreads = 1;
+    numThreads = 0;
   }
   threadPool.Start();
 
@@ -149,16 +168,6 @@ int main(int argc, char* argv[]) {
         [server = servers.back().get()] { server->start(); });
   }
   loop.Loop();
-#else
-  LOG_WARN << "Normal";
-  jinduo::net::EventLoop loop;
-  jinduo::net::HttpServer server(&loop, jinduo::net::InetAddress(kBindingPort),
-                                 "shorturl");
-  server.setHttpCallback(onRequest);
-  server.set_thread_num(numThreads);
-  server.start();
-  loop.Loop();
-#endif
 }
 
 char favicon[kFaviconByteSize] = {
