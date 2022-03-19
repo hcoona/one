@@ -138,7 +138,6 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr) {
 #endif  // VALGRIND || defined(NO_ACCEPT4)
   if (connfd < 0) {
     int savedErrno = errno;
-    LOG(ERROR) << "Socket::accept";
     switch (savedErrno) {
       case EAGAIN:
       case ECONNABORTED:

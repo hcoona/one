@@ -49,7 +49,7 @@ TcpServer::TcpServer(EventLoop* loop, const InetAddress& listenAddr,
       threadPool_(new EventLoopThreadPool(loop, name_)),
       connectionCallback_(defaultConnectionCallback),
       messageCallback_(defaultMessageCallback) {
-  acceptor_->setNewConnectionCallback(
+  acceptor_->SetNewConnectionCallback(
       absl::bind_front(&TcpServer::newConnection, this));
 }
 
@@ -77,7 +77,7 @@ void TcpServer::start() {
     threadPool_->Start(threadInitCallback_);
 
     assert(!acceptor_->listening());
-    loop_->RunInLoop(absl::bind_front(&Acceptor::listen, acceptor_.get()));
+    loop_->RunInLoop(absl::bind_front(&Acceptor::Listen, acceptor_.get()));
   }
 }
 
@@ -89,7 +89,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   ++nextConnId_;
   std::string connName = name_ + buf;
 
-  LOG(INFO) << "TcpServer::newConnection [" << name_ << "] - new connection ["
+  VLOG(1) << "TcpServer::newConnection [" << name_ << "] - new connection ["
             << connName << "] from " << peerAddr.toIpPort();
   InetAddress localAddr(sockets::getLocalAddr(sockfd));
   // FIXME poll with zero timeout to double confirm the new connection
@@ -114,8 +114,8 @@ void TcpServer::removeConnection(const std::shared_ptr<TcpConnection>& conn) {
 void TcpServer::removeConnectionInLoop(
     const std::shared_ptr<TcpConnection>& conn) {
   loop_->AssertInLoopThread();
-  LOG(INFO) << "TcpServer::removeConnectionInLoop [" << name_
-            << "] - connection " << conn->name();
+  VLOG(1) << "TcpServer::removeConnectionInLoop [" << name_ << "] - connection "
+          << conn->name();
   size_t n = connections_.erase(conn->name());
   (void)n;
   assert(n == 1);

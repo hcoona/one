@@ -28,6 +28,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 namespace jinduo {
 namespace net {

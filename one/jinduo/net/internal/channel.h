@@ -85,9 +85,13 @@ class Channel {
 
   [[nodiscard]] int fd() const { return fd_; }
 
+  // Requested events for poller. See poll(2) manpage.
   [[nodiscard]] uint32_t events() const { return events_; }
+
+  // Returned events from poller. See poll(2) manpage.
   [[nodiscard]] uint32_t revents() const { return revents_; }
-  void set_revents(uint32_t revents) { revents_ = revents; }  // used by pollers
+  // Set returned events by poller.
+  void set_revents(uint32_t revents) { revents_ = revents; }
 
   [[nodiscard]] bool IsNoneEvent() const { return events_ == kNoneEvent; }
 

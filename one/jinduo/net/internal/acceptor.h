@@ -27,8 +27,10 @@
 
 #pragma once
 
+#include <atomic>
 #include <functional>
 
+#include "absl/time/time.h"
 #include "one/jinduo/net/internal/channel.h"
 #include "one/jinduo/net/internal/socket.h"
 
@@ -41,36 +43,41 @@ class InetAddress;
 // Acceptor of incoming TCP connections.
 class Acceptor {
  public:
-  using NewConnectionCallback = std::function<void(int, const InetAddress&)>;
+  using NewConnectionCallback =
+      std::function<void(int /*fd*/, const InetAddress&)>;
 
-  Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport);
+  Acceptor(EventLoop* loop, const InetAddress& listen_address, bool reuse_port);
   ~Acceptor();
 
   // Disallow copy.
   Acceptor(const Acceptor&) noexcept = delete;
   Acceptor& operator=(const Acceptor&) noexcept = delete;
 
-  // Allow move but not implemented yet.
+  // Disallow move.
   Acceptor(Acceptor&&) noexcept = delete;
   Acceptor& operator=(Acceptor&&) noexcept = delete;
 
-  void setNewConnectionCallback(const NewConnectionCallback& cb) {
-    newConnectionCallback_ = cb;
+  void SetNewConnectionCallback(const NewConnectionCallback& cb) {
+    new_connection_callback_ = cb;
   }
 
-  void listen();
+  void Listen();
 
-  [[nodiscard]] bool listening() const { return listening_; }
+  [[nodiscard]] bool listening() const {
+    return listening_.load(std::memory_order_acquire);
+  }
 
  private:
-  void handleRead();
+  void HandleRead(absl::Time /*receive_time*/);
 
   EventLoop* loop_;
-  Socket acceptSocket_;
-  Channel acceptChannel_;
-  NewConnectionCallback newConnectionCallback_;
-  bool listening_;
-  int idleFd_;
+  Socket accept_socket_;
+  Channel accept_channel_;
+  int idle_fd_;
+
+  NewConnectionCallback new_connection_callback_;
+
+  std::atomic<bool> listening_{false};
 };
 
 }  // namespace net
