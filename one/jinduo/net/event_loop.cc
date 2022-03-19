@@ -149,6 +149,9 @@ void EventLoop::Loop() {
 void EventLoop::Quit() {
   // There is a chance that loop() just executes while(!quit_) and exits,
   // then EventLoop destructs, then we are accessing an invalid object.
+  //
+  // No need to use `absl::MutexLockMaybe` because pending functors are executed
+  // out of lock.
   absl::MutexLock quit_lock(&quit_mutex_);
   quit_ = true;
 
