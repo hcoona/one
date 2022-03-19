@@ -44,26 +44,23 @@ class EPollPoller : public Poller {
   EPollPoller(const EPollPoller&) noexcept = delete;
   EPollPoller& operator=(const EPollPoller&) noexcept = delete;
 
-  // Allow move but not implemented yet.
-  EPollPoller(EPollPoller&&) noexcept = delete;
-  EPollPoller& operator=(EPollPoller&&) noexcept = delete;
+  // Allow move.
+  EPollPoller(EPollPoller&&) noexcept = default;
+  EPollPoller& operator=(EPollPoller&&) noexcept = default;
 
-  absl::Time poll(int timeoutMs, ChannelList* activeChannels) override;
-  void updateChannel(Channel* channel) override;
-  void removeChannel(Channel* channel) override;
+  absl::Time Poll(int timeout_ms,
+                  std::vector<Channel*>* active_channels) override;
+
+  void UpdateChannel(Channel* channel) override;
+  void RemoveChannel(Channel* channel) override;
 
  private:
-  static const int kInitEventListSize = 16;
+  void FillActiveChannels(int events_num,
+                          std::vector<Channel*>* active_channels) const;
+  void Update(int operation, Channel* channel) const;
 
-  static const char* operationToString(int op);
-
-  void fillActiveChannels(int numEvents, ChannelList* activeChannels) const;
-  void update(int operation, Channel* channel);
-
-  using EventList = std::vector<struct epoll_event>;
-
-  int epollfd_;
-  EventList events_;
+  int epoll_fd_{-1};
+  std::vector<epoll_event> events_;
 };
 
 }  // namespace net

@@ -79,7 +79,7 @@ EventLoop* EventLoop::GetCurrentThreadEventLoop() {
 
 EventLoop::EventLoop()
     : thread_id_(this_thread::tid()),
-      poller_(Poller::newDefaultPoller(this)),
+      poller_(Poller::CreateDefaultPoller(this)),
       timer_queue_(new TimerQueue(this)),
       wakeup_fd_(CreateEventFd()),
       wakeup_channel_(new Channel(this, wakeup_fd_)) {
@@ -115,7 +115,7 @@ void EventLoop::Loop() {
   while (!quit_) {
     quit_mutex_.Unlock();
     active_channels_.clear();
-    absl::Time poll_return_time = poller_->poll(kPollTimeMs, &active_channels_);
+    absl::Time poll_return_time = poller_->Poll(kPollTimeMs, &active_channels_);
     {
       absl::WriterMutexLock lock(&poll_return_time_mutex_);
       poll_return_time_ = poll_return_time;
@@ -203,7 +203,7 @@ void EventLoop::CancelTimer(TimerId timer_id) {
 void EventLoop::UpdateChannel(Channel* channel) {
   assert(channel->ownerLoop() == this);
   AssertInLoopThread();
-  poller_->updateChannel(channel);
+  poller_->UpdateChannel(channel);
 }
 
 void EventLoop::RemoveChannel(Channel* channel) {
@@ -214,13 +214,13 @@ void EventLoop::RemoveChannel(Channel* channel) {
            std::find(active_channels_.begin(), active_channels_.end(),
                      channel) == active_channels_.end());
   }
-  poller_->removeChannel(channel);
+  poller_->RemoveChannel(channel);
 }
 
 bool EventLoop::HasChannel(Channel* channel) {
   assert(channel->ownerLoop() == this);
   AssertInLoopThread();
-  return poller_->hasChannel(channel);
+  return poller_->HasChannel(channel);
 }
 
 void EventLoop::AbortIfNotInLoopThread() {

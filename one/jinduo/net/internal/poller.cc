@@ -30,12 +30,13 @@
 namespace jinduo {
 namespace net {
 
-Poller::Poller(EventLoop* loop) : ownerLoop_(loop) {}
+Poller::Poller(EventLoop* loop) : owner_loop_(loop) {}
 
 Poller::~Poller() = default;
 
-bool Poller::hasChannel(Channel* channel) const {
+bool Poller::HasChannel(Channel* channel) const {
   AssertInLoopThread();
+
   auto it = channels_.find(channel->fd());
   return it != channels_.end() && it->second == channel;
 }

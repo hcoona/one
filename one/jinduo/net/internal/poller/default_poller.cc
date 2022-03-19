@@ -20,7 +20,7 @@
 //
 // Author: Shuo Chen (chenshuo at chenshuo dot com)
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "one/jinduo/net/internal/poller.h"
 #include "one/jinduo/net/internal/poller/epoll_poller.h"
@@ -29,7 +29,8 @@
 namespace jinduo {
 namespace net {
 
-Poller* Poller::newDefaultPoller(EventLoop* loop) {
+// static
+Poller* Poller::CreateDefaultPoller(EventLoop* loop) {
   if (::getenv("JINDUO_USE_POLL") != nullptr) {
     return new PollPoller(loop);
   }

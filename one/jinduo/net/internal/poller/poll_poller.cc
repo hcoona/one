@@ -25,9 +25,10 @@
 
 #include "one/jinduo/net/internal/poller/poll_poller.h"
 
-#include <assert.h>
-#include <errno.h>
 #include <poll.h>
+
+#include <cassert>
+#include <cerrno>
 
 #include "absl/time/clock.h"
 #include "glog/logging.h"
@@ -40,43 +41,26 @@ PollPoller::PollPoller(EventLoop* loop) : Poller(loop) {}
 
 PollPoller::~PollPoller() = default;
 
-absl::Time PollPoller::poll(int timeoutMs, ChannelList* activeChannels) {
-  // XXX pollfds_ shouldn't change
-  int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeoutMs);
+absl::Time PollPoller::Poll(int timeout_ms,
+                            std::vector<Channel*>* active_channels) {
+  int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeout_ms);
   int savedErrno = errno;
   absl::Time now(absl::Now());
   if (numEvents > 0) {
     VLOG(1) << numEvents << " events happened";
-    fillActiveChannels(numEvents, activeChannels);
+    FillActiveChannels(numEvents, active_channels);
   } else if (numEvents == 0) {
     VLOG(1) << " nothing happened";
   } else {
     if (savedErrno != EINTR) {
       errno = savedErrno;
-      LOG(ERROR) << "PollPoller::poll()";
+      PLOG(ERROR) << "PollPoller::poll()";
     }
   }
   return now;
 }
 
-void PollPoller::fillActiveChannels(int numEvents,
-                                    ChannelList* activeChannels) const {
-  for (auto pfd = pollfds_.begin(); pfd != pollfds_.end() && numEvents > 0;
-       ++pfd) {
-    if (pfd->revents > 0) {
-      --numEvents;
-      auto ch = channels_.find(pfd->fd);
-      assert(ch != channels_.end());
-      Channel* channel = ch->second;
-      assert(channel->fd() == pfd->fd);
-      channel->set_revents(pfd->revents);
-      // pfd->revents = 0;
-      activeChannels->push_back(channel);
-    }
-  }
-}
-
-void PollPoller::updateChannel(Channel* channel) {
+void PollPoller::UpdateChannel(Channel* channel) {
   Poller::AssertInLoopThread();
   VLOG(1) << "fd = " << channel->fd() << " events = " << channel->events();
   if (channel->index() < 0) {
@@ -84,7 +68,8 @@ void PollPoller::updateChannel(Channel* channel) {
     assert(channels_.find(channel->fd()) == channels_.end());
     pollfd pfd{};
     pfd.fd = channel->fd();
-    pfd.events = static_cast<short>(channel->events());
+    // NOLINTNEXTLINE(google-runtime-int)
+    pfd.events = static_cast<short>(channel->events());  // NOLINT(runtime/int)
     pfd.revents = 0;
     pollfds_.push_back(pfd);
     int idx = static_cast<int>(pollfds_.size()) - 1;
@@ -99,7 +84,8 @@ void PollPoller::updateChannel(Channel* channel) {
     struct pollfd& pfd = pollfds_[idx];
     assert(pfd.fd == channel->fd() || pfd.fd == -channel->fd() - 1);
     pfd.fd = channel->fd();
-    pfd.events = static_cast<short>(channel->events());
+    // NOLINTNEXTLINE(google-runtime-int)
+    pfd.events = static_cast<short>(channel->events());  // NOLINT(runtime/int)
     pfd.revents = 0;
     if (channel->isNoneEvent()) {
       // ignore this pollfd
@@ -108,7 +94,7 @@ void PollPoller::updateChannel(Channel* channel) {
   }
 }
 
-void PollPoller::removeChannel(Channel* channel) {
+void PollPoller::RemoveChannel(Channel* channel) {
   Poller::AssertInLoopThread();
   VLOG(1) << "fd = " << channel->fd();
   assert(channels_.find(channel->fd()) != channels_.end());
@@ -133,6 +119,23 @@ void PollPoller::removeChannel(Channel* channel) {
     }
     channels_[channelAtEnd]->set_index(idx);
     pollfds_.pop_back();
+  }
+}
+
+void PollPoller::FillActiveChannels(
+    int numEvents, std::vector<Channel*>* active_channels) const {
+  for (auto pfd = pollfds_.begin(); pfd != pollfds_.end() && numEvents > 0;
+       ++pfd) {
+    if (pfd->revents > 0) {
+      --numEvents;
+      auto ch = channels_.find(pfd->fd);
+      assert(ch != channels_.end());
+      Channel* channel = ch->second;
+      assert(channel->fd() == pfd->fd);
+      channel->set_revents(pfd->revents);
+      // pfd->revents = 0;
+      active_channels->push_back(channel);
+    }
   }
 }
 

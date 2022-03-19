@@ -38,13 +38,11 @@ namespace net {
 
 class Channel;
 
-// Base class for IO Multiplexing
+// Base class for IO multiplexing
 //
-// This class doesn't own the Channel objects.
+// This class doesn't own the `Channel` objects.
 class Poller {
  public:
-  using ChannelList = std::vector<Channel*>;
-
   explicit Poller(EventLoop* loop);
   virtual ~Poller();
 
@@ -52,34 +50,34 @@ class Poller {
   Poller(const Poller&) noexcept = delete;
   Poller& operator=(const Poller&) noexcept = delete;
 
-  // Allow move but not implemented yet.
-  Poller(Poller&&) noexcept = delete;
-  Poller& operator=(Poller&&) noexcept = delete;
+  // Allow move.
+  Poller(Poller&&) noexcept = default;
+  Poller& operator=(Poller&&) noexcept = default;
+
+  static Poller* CreateDefaultPoller(EventLoop* loop);
 
   /// Polls the I/O events.
   /// Must be called in the loop thread.
-  virtual absl::Time poll(int timeoutMs, ChannelList* activeChannels) = 0;
+  virtual absl::Time Poll(int timeout_ms,
+                          std::vector<Channel*>* active_channels) = 0;
 
   /// Changes the interested I/O events.
   /// Must be called in the loop thread.
-  virtual void updateChannel(Channel* channel) = 0;
+  virtual void UpdateChannel(Channel* channel) = 0;
 
   /// Remove the channel, when it destructs.
   /// Must be called in the loop thread.
-  virtual void removeChannel(Channel* channel) = 0;
+  virtual void RemoveChannel(Channel* channel) = 0;
 
-  virtual bool hasChannel(Channel* channel) const;
+  virtual bool HasChannel(Channel* channel) const;
 
-  static Poller* newDefaultPoller(EventLoop* loop);
-
-  void AssertInLoopThread() const { ownerLoop_->AssertInLoopThread(); }
+  void AssertInLoopThread() const { owner_loop_->AssertInLoopThread(); }
 
  protected:
-  using ChannelMap = std::map<int, Channel*>;
-  ChannelMap channels_;
+  std::map<int /*fd*/, Channel*> channels_;
 
  private:
-  EventLoop* ownerLoop_;
+  EventLoop* owner_loop_;
 };
 
 }  // namespace net

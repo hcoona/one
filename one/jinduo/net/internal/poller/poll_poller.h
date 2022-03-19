@@ -51,15 +51,17 @@ class PollPoller : public Poller {
   PollPoller(PollPoller&&) noexcept = delete;
   PollPoller& operator=(PollPoller&&) noexcept = delete;
 
-  absl::Time poll(int timeoutMs, ChannelList* activeChannels) override;
-  void updateChannel(Channel* channel) override;
-  void removeChannel(Channel* channel) override;
+  absl::Time Poll(int timeout_ms,
+                  std::vector<Channel*>* active_channels) override;
+
+  void UpdateChannel(Channel* channel) override;
+  void RemoveChannel(Channel* channel) override;
 
  private:
-  void fillActiveChannels(int numEvents, ChannelList* activeChannels) const;
+  void FillActiveChannels(int numEvents,
+                          std::vector<Channel*>* active_channels) const;
 
-  using PollFdList = std::vector<struct pollfd>;
-  PollFdList pollfds_;
+  std::vector<pollfd> pollfds_;
 };
 
 }  // namespace net
