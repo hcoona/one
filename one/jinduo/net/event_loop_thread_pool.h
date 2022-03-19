@@ -42,39 +42,42 @@ class EventLoopThreadPool {
  public:
   using ThreadInitCallback = std::function<void(EventLoop*)>;
 
-  EventLoopThreadPool(EventLoop* baseLoop, std::string nameArg);
+  EventLoopThreadPool(EventLoop* base_loop, std::string name);
   ~EventLoopThreadPool();
 
   // Disallow copy.
   EventLoopThreadPool(const EventLoopThreadPool&) noexcept = delete;
   EventLoopThreadPool& operator=(const EventLoopThreadPool&) noexcept = delete;
 
-  // Allow move but not implemented yet.
-  EventLoopThreadPool(EventLoopThreadPool&&) noexcept = delete;
-  EventLoopThreadPool& operator=(EventLoopThreadPool&&) noexcept = delete;
-
-  void setThreadNum(int numThreads) { numThreads_ = numThreads; }
-  void start(const ThreadInitCallback& cb = ThreadInitCallback());
-
-  // valid after calling start()
-  /// round-robin
-  EventLoop* getNextLoop();
-
-  /// with the same hash code, it will always return the same EventLoop
-  EventLoop* getLoopForHash(size_t hashCode);
-
-  std::vector<EventLoop*> getAllLoops();
+  // Allow move.
+  EventLoopThreadPool(EventLoopThreadPool&&) noexcept = default;
+  EventLoopThreadPool& operator=(EventLoopThreadPool&&) noexcept = default;
 
   [[nodiscard]] bool started() const { return started_; }
-
   [[nodiscard]] const std::string& name() const { return name_; }
 
+  // 0 to use `base_loop`, any positive numbers to establish a thread pool with
+  // each thread a event loop.
+  void set_thread_num(int num_threads) { num_threads_ = num_threads; }
+  void Start(const ThreadInitCallback& cb = ThreadInitCallback());
+
+  // Get next loop in a round-robin policy. Must call after `Start()`.
+  EventLoop* GetNextLoop();
+
+  /// Get next loop in a hashing policy. It will always return the same
+  /// EventLoop for same hash_code.
+  EventLoop* GetLoopForHash(size_t hash_code);
+
+  std::vector<EventLoop*> all_loops();
+
  private:
-  EventLoop* baseLoop_;
+  EventLoop* base_loop_;
   std::string name_;
+
   bool started_{false};
-  int numThreads_{0};
-  int next_{0};
+  int num_threads_{0};
+  int next_loop_index_{0};
+
   std::vector<std::unique_ptr<EventLoopThread>> threads_;
   std::vector<EventLoop*> loops_;
 };

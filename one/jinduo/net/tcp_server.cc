@@ -65,16 +65,16 @@ TcpServer::~TcpServer() {
   }
 }
 
-void TcpServer::setThreadNum(int numThreads) {
+void TcpServer::set_thread_num(int numThreads) {
   assert(0 <= numThreads);
-  threadPool_->setThreadNum(numThreads);
+  threadPool_->set_thread_num(numThreads);
 }
 
 void TcpServer::start() {
   bool expected = false;
   if (started_.compare_exchange_strong(expected, true,
                                        std::memory_order_acq_rel)) {
-    threadPool_->start(threadInitCallback_);
+    threadPool_->Start(threadInitCallback_);
 
     assert(!acceptor_->listening());
     loop_->RunInLoop(absl::bind_front(&Acceptor::listen, acceptor_.get()));
@@ -83,7 +83,7 @@ void TcpServer::start() {
 
 void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   loop_->AssertInLoopThread();
-  EventLoop* ioLoop = threadPool_->getNextLoop();
+  EventLoop* ioLoop = threadPool_->GetNextLoop();
   char buf[64];
   snprintf(buf, sizeof buf, "-%s#%d", ipPort_.c_str(), nextConnId_);
   ++nextConnId_;

@@ -32,68 +32,67 @@
 #include <vector>
 
 #include "absl/base/casts.h"
-#include "absl/container/fixed_array.h"
+#include "absl/strings/str_cat.h"
 #include "one/jinduo/net/event_loop.h"
 #include "one/jinduo/net/event_loop_thread.h"
 
 namespace jinduo {
 namespace net {
 
-EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop,
-                                         std::string nameArg)
-    : baseLoop_(baseLoop), name_(std::move(nameArg)) {}
+EventLoopThreadPool::EventLoopThreadPool(EventLoop* base_loop, std::string name)
+    : base_loop_(base_loop), name_(std::move(name)) {}
 
 EventLoopThreadPool::~EventLoopThreadPool() = default;
 
-void EventLoopThreadPool::start(const ThreadInitCallback& cb) {
+void EventLoopThreadPool::Start(const ThreadInitCallback& cb) {
   assert(!started_);
-  baseLoop_->AssertInLoopThread();
+  base_loop_->AssertInLoopThread();
 
   started_ = true;
 
-  for (int i = 0; i < numThreads_; ++i) {
-    absl::FixedArray<char> buf(name_.size() + 32);
-    snprintf(buf.data(), buf.size(), "%s%d", name_.c_str(), i);
-    auto* t = new EventLoopThread(cb, buf.data());
+  for (int i = 0; i < num_threads_; ++i) {
+    auto* t = new EventLoopThread(cb, absl::StrCat(name_, i));
     threads_.emplace_back(t);
     loops_.emplace_back(t->StartLoop());
   }
-  if (numThreads_ == 0 && cb) {
-    cb(baseLoop_);
+
+  if (num_threads_ == 0 && cb) {
+    cb(base_loop_);
   }
 }
 
-EventLoop* EventLoopThreadPool::getNextLoop() {
-  baseLoop_->AssertInLoopThread();
+EventLoop* EventLoopThreadPool::GetNextLoop() {
+  base_loop_->AssertInLoopThread();
   assert(started_);
-  EventLoop* loop = baseLoop_;
+  EventLoop* loop = base_loop_;
 
   if (!loops_.empty()) {
     // round-robin
-    loop = loops_[next_];
-    ++next_;
-    if (absl::implicit_cast<size_t>(next_) >= loops_.size()) {
-      next_ = 0;
+    loop = loops_[next_loop_index_];
+    ++next_loop_index_;
+    if (absl::implicit_cast<size_t>(next_loop_index_) >= loops_.size()) {
+      next_loop_index_ = 0;
     }
   }
   return loop;
 }
 
-EventLoop* EventLoopThreadPool::getLoopForHash(size_t hashCode) {
-  baseLoop_->AssertInLoopThread();
-  EventLoop* loop = baseLoop_;
+EventLoop* EventLoopThreadPool::GetLoopForHash(size_t hash_code) {
+  base_loop_->AssertInLoopThread();
+  EventLoop* loop = base_loop_;
 
   if (!loops_.empty()) {
-    loop = loops_[hashCode % loops_.size()];
+    loop = loops_[hash_code % loops_.size()];
   }
+
   return loop;
 }
 
-std::vector<EventLoop*> EventLoopThreadPool::getAllLoops() {
-  baseLoop_->AssertInLoopThread();
+std::vector<EventLoop*> EventLoopThreadPool::all_loops() {
+  base_loop_->AssertInLoopThread();
   assert(started_);
   if (loops_.empty()) {
-    return {baseLoop_};
+    return {base_loop_};
   }
   return loops_;
 }

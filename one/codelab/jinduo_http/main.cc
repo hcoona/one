@@ -133,16 +133,16 @@ int main(int argc, char* argv[]) {
   jinduo::net::EventLoop loop;
   jinduo::net::EventLoopThreadPool threadPool(&loop, "shorturl");
   if (numThreads > 1) {
-    threadPool.setThreadNum(numThreads);
+    threadPool.set_thread_num(numThreads);
   } else {
     numThreads = 1;
   }
-  threadPool.start();
+  threadPool.Start();
 
   std::vector<std::unique_ptr<jinduo::net::HttpServer>> servers;
   for (int i = 0; i < numThreads; ++i) {
     servers.emplace_back(new jinduo::net::HttpServer(
-        threadPool.getNextLoop(), jinduo::net::InetAddress(kBindingPort),
+        threadPool.GetNextLoop(), jinduo::net::InetAddress(kBindingPort),
         "shorturl", jinduo::net::TcpServer::kReusePort));
     servers.back()->setHttpCallback(onRequest);
     servers.back()->getLoop()->RunInLoop(
@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
   jinduo::net::HttpServer server(&loop, jinduo::net::InetAddress(kBindingPort),
                                  "shorturl");
   server.setHttpCallback(onRequest);
-  server.setThreadNum(numThreads);
+  server.set_thread_num(numThreads);
   server.start();
   loop.Loop();
 #endif

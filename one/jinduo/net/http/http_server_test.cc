@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
   EventLoop loop;
   HttpServer server(&loop, InetAddress(8000), "dummy");
   server.setHttpCallback(onRequest);
-  server.setThreadNum(numThreads);
+  server.set_thread_num(numThreads);
   server.start();
   loop.Loop();
 }

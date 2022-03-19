@@ -60,7 +60,7 @@ class HttpServer {
   /// Not thread safe, callback be registered before calling start().
   void setHttpCallback(const HttpCallback& cb) { httpCallback_ = cb; }
 
-  void setThreadNum(int numThreads) { server_.setThreadNum(numThreads); }
+  void set_thread_num(int numThreads) { server_.set_thread_num(numThreads); }
 
   void start();
 

@@ -50,7 +50,7 @@ class EchoServer {
       : loop_(loop), server_(loop, listenAddr, "EchoServer") {
     server_.setConnectionCallback(&EchoServer::onConnection);
     server_.setMessageCallback(absl::bind_front(&EchoServer::onMessage, this));
-    server_.setThreadNum(numThreads);
+    server_.set_thread_num(numThreads);
   }
 
   void start() { server_.start(); }

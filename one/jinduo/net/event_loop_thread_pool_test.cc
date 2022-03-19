@@ -59,37 +59,37 @@ int main(int argc, char* argv[]) {
   {
     LOG(INFO) << "Single thread (p=" << &loop << ")";
     EventLoopThreadPool model(&loop, "single");
-    model.setThreadNum(0);
-    model.start(init);
-    assert(model.getNextLoop() == &loop);
-    assert(model.getNextLoop() == &loop);
-    assert(model.getNextLoop() == &loop);
+    model.set_thread_num(0);
+    model.Start(init);
+    assert(model.GetNextLoop() == &loop);
+    assert(model.GetNextLoop() == &loop);
+    assert(model.GetNextLoop() == &loop);
   }
 
   {
     LOG(INFO) << "Another thread (p=" << &loop << ")";
     EventLoopThreadPool model(&loop, "another");
-    model.setThreadNum(1);
-    model.start(init);
-    EventLoop* nextLoop = model.getNextLoop();
+    model.set_thread_num(1);
+    model.Start(init);
+    EventLoop* nextLoop = model.GetNextLoop();
     nextLoop->RunAfter(absl::Seconds(2), absl::bind_front(print, nextLoop));
     assert(nextLoop != &loop);
-    assert(nextLoop == model.getNextLoop());
-    assert(nextLoop == model.getNextLoop());
+    assert(nextLoop == model.GetNextLoop());
+    assert(nextLoop == model.GetNextLoop());
     ::sleep(3);
   }
 
   {
     LOG(INFO) << "Three threads (p=" << &loop << ")";
     EventLoopThreadPool model(&loop, "three");
-    model.setThreadNum(3);
-    model.start(init);
-    EventLoop* nextLoop = model.getNextLoop();
+    model.set_thread_num(3);
+    model.Start(init);
+    EventLoop* nextLoop = model.GetNextLoop();
     nextLoop->RunInLoop(absl::bind_front(print, nextLoop));
     assert(nextLoop != &loop);
-    assert(nextLoop != model.getNextLoop());
-    assert(nextLoop != model.getNextLoop());
-    assert(nextLoop == model.getNextLoop());
+    assert(nextLoop != model.GetNextLoop());
+    assert(nextLoop != model.GetNextLoop());
+    assert(nextLoop == model.GetNextLoop());
   }
 
   loop.Loop();

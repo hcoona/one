@@ -80,7 +80,7 @@ class TcpServer {
   /// - 1 means all I/O in another thread.
   /// - N means a thread pool with N threads, new connections
   ///   are assigned on a round-robin basis.
-  void setThreadNum(int numThreads);
+  void set_thread_num(int numThreads);
   void setThreadInitCallback(const ThreadInitCallback& cb) {
     threadInitCallback_ = cb;
   }
