@@ -58,12 +58,12 @@ Connector::~Connector() {
 
 void Connector::start() {
   connect_ = true;
-  loop_->runInLoop(
+  loop_->RunInLoop(
       absl::bind_front(&Connector::startInLoop, this));  // FIXME: unsafe
 }
 
 void Connector::startInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   assert(state_ == kDisconnected);
   if (connect_) {
     connect();
@@ -74,13 +74,13 @@ void Connector::startInLoop() {
 
 void Connector::stop() {
   connect_ = false;
-  loop_->queueInLoop(
+  loop_->QueueInLoop(
       absl::bind_front(&Connector::stopInLoop, this));  // FIXME: unsafe
   // FIXME: cancel timer
 }
 
 void Connector::stopInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (state_ == kConnecting) {
     setState(kDisconnected);
     int sockfd = removeAndResetChannel();
@@ -128,7 +128,7 @@ void Connector::connect() {
 }
 
 void Connector::restart() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   setState(kDisconnected);
   retryDelayMs_ = kInitRetryDelayMs;
   connect_ = true;
@@ -154,7 +154,7 @@ int Connector::removeAndResetChannel() {
   channel_->remove();
   int sockfd = channel_->fd();
   // Can't reset channel_ here, because we are inside Channel::handleEvent
-  loop_->queueInLoop(
+  loop_->QueueInLoop(
       absl::bind_front(&Connector::resetChannel, this));  // FIXME: unsafe
   return sockfd;
 }
@@ -205,7 +205,7 @@ void Connector::retry(int sockfd) {
     LOG(INFO) << "Connector::retry - Retry connecting to "
               << serverAddr_.toIpPort() << " in " << retryDelayMs_
               << " milliseconds. ";
-    loop_->runAfter(
+    loop_->RunAfter(
         absl::Milliseconds(retryDelayMs_),
         absl::bind_front(&Connector::startInLoop, shared_from_this()));
     retryDelayMs_ = std::min(retryDelayMs_ * 2, kMaxRetryDelayMs);

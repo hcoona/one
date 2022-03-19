@@ -75,7 +75,7 @@ class EchoServer {
       conn->shutdown();
     }
     if (msg == "quit\n") {
-      loop_->quit();
+      loop_->Quit();
     }
     conn->send(msg);
   }
@@ -97,5 +97,5 @@ int main(int argc, char* argv[]) {
 
   server.start();
 
-  loop.loop();
+  loop.Loop();
 }

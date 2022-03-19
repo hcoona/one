@@ -54,13 +54,13 @@ TcpServer::TcpServer(EventLoop* loop, const InetAddress& listenAddr,
 }
 
 TcpServer::~TcpServer() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   VLOG(1) << "TcpServer::~TcpServer [" << name_ << "] destructing";
 
   for (auto& item : connections_) {
     std::shared_ptr<TcpConnection> conn(item.second);
     item.second.reset();
-    conn->getLoop()->runInLoop(
+    conn->getLoop()->RunInLoop(
         absl::bind_front(&TcpConnection::connectDestroyed, conn));
   }
 }
@@ -77,12 +77,12 @@ void TcpServer::start() {
     threadPool_->start(threadInitCallback_);
 
     assert(!acceptor_->listening());
-    loop_->runInLoop(absl::bind_front(&Acceptor::listen, acceptor_.get()));
+    loop_->RunInLoop(absl::bind_front(&Acceptor::listen, acceptor_.get()));
   }
 }
 
 void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   EventLoop* ioLoop = threadPool_->getNextLoop();
   char buf[64];
   snprintf(buf, sizeof buf, "-%s#%d", ipPort_.c_str(), nextConnId_);
@@ -102,25 +102,25 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   conn->setWriteCompleteCallback(writeCompleteCallback_);
   conn->setCloseCallback(
       absl::bind_front(&TcpServer::removeConnection, this));  // FIXME: unsafe
-  ioLoop->runInLoop(absl::bind_front(&TcpConnection::connectEstablished, conn));
+  ioLoop->RunInLoop(absl::bind_front(&TcpConnection::connectEstablished, conn));
 }
 
 void TcpServer::removeConnection(const std::shared_ptr<TcpConnection>& conn) {
   // FIXME: unsafe
-  loop_->runInLoop(
+  loop_->RunInLoop(
       absl::bind_front(&TcpServer::removeConnectionInLoop, this, conn));
 }
 
 void TcpServer::removeConnectionInLoop(
     const std::shared_ptr<TcpConnection>& conn) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   LOG(INFO) << "TcpServer::removeConnectionInLoop [" << name_
             << "] - connection " << conn->name();
   size_t n = connections_.erase(conn->name());
   (void)n;
   assert(n == 1);
   EventLoop* ioLoop = conn->getLoop();
-  ioLoop->queueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
+  ioLoop->QueueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
 }
 
 }  // namespace net

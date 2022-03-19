@@ -96,7 +96,7 @@ class EchoClient {
       conn->send("bye\n");
       conn->shutdown();
     } else if (msg == "shutdown\n") {
-      loop_->quit();
+      loop_->Quit();
     } else {
       conn->send(msg);
     }
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     }
 
     clients[current]->connect();
-    loop.loop();
+    loop.Loop();
   } else {
     printf("Usage: %s host_ip [current#]\n", argv[0]);
   }

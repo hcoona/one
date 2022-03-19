@@ -72,7 +72,7 @@ class Poller {
 
   static Poller* newDefaultPoller(EventLoop* loop);
 
-  void assertInLoopThread() const { ownerLoop_->assertInLoopThread(); }
+  void AssertInLoopThread() const { ownerLoop_->AssertInLoopThread(); }
 
  protected:
   using ChannelMap = std::map<int, Channel*>;

@@ -54,7 +54,7 @@ Channel::Channel(EventLoop* loop, int fd)
 Channel::~Channel() {
   assert(!eventHandling_);
   assert(!addedToLoop_);
-  if (loop_->isInLoopThread()) {
+  if (loop_->IsInLoopThread()) {
     assert(!loop_->hasChannel(this));
   }
 }

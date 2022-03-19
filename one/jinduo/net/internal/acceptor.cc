@@ -59,14 +59,14 @@ Acceptor::~Acceptor() {
 }
 
 void Acceptor::listen() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   listening_ = true;
   acceptSocket_.listen();
   acceptChannel_.enableReading();
 }
 
 void Acceptor::handleRead() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   InetAddress peerAddr;
   // FIXME loop until no more
   int connfd = acceptSocket_.accept(&peerAddr);

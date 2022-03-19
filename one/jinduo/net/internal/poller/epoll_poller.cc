@@ -103,7 +103,7 @@ void EPollPoller::fillActiveChannels(int numEvents,
 }
 
 void EPollPoller::updateChannel(Channel* channel) {
-  Poller::assertInLoopThread();
+  Poller::AssertInLoopThread();
   const int index = channel->index();
   VLOG(1) << "fd = " << channel->fd() << " events = " << channel->events()
           << " index = " << index;
@@ -137,7 +137,7 @@ void EPollPoller::updateChannel(Channel* channel) {
 }
 
 void EPollPoller::removeChannel(Channel* channel) {
-  Poller::assertInLoopThread();
+  Poller::AssertInLoopThread();
   int fd = channel->fd();
   VLOG(1) << "fd = " << fd;
   assert(channels_.find(fd) != channels_.end());

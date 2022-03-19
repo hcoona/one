@@ -43,23 +43,23 @@ void threadFunc() {
   printf("threadFunc(): pid = %d, tid = %d\n", getpid(),
          jinduo::this_thread::tid());
 
-  assert(jinduo::net::EventLoop::getEventLoopOfCurrentThread() == nullptr);
+  assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == nullptr);
   jinduo::net::EventLoop loop;
-  assert(jinduo::net::EventLoop::getEventLoopOfCurrentThread() == &loop);
-  loop.runAfter(absl::Seconds(1), callback);
-  loop.loop();
+  assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == &loop);
+  loop.RunAfter(absl::Seconds(1), callback);
+  loop.Loop();
 }
 
 int main() {
   printf("main(): pid = %d, tid = %d\n", getpid(), jinduo::this_thread::tid());
 
-  assert(jinduo::net::EventLoop::getEventLoopOfCurrentThread() == nullptr);
+  assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == nullptr);
   jinduo::net::EventLoop loop;
-  assert(jinduo::net::EventLoop::getEventLoopOfCurrentThread() == &loop);
+  assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == &loop);
 
   std::thread thread(threadFunc);
 
-  loop.loop();
+  loop.Loop();
 
   thread.join();
 }

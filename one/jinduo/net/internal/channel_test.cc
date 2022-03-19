@@ -104,7 +104,7 @@ class PeriodicTimer {
 
  private:
   void handleRead() {
-    loop_->assertInLoopThread();
+    loop_->AssertInLoopThread();
     jinduo::net::details::readTimerfd(timerfd_, absl::Now());
     if (cb_) {
       cb_();
@@ -144,6 +144,6 @@ int main(int argc, char* argv[]) {
   jinduo::net::EventLoop loop;
   PeriodicTimer timer(&loop, 1, [] { return print("PeriodicTimer"); });
   timer.start();
-  loop.runEvery(absl::Seconds(1), [] { return print("EventLoop::runEvery"); });
-  loop.loop();
+  loop.RunEvery(absl::Seconds(1), [] { return print("EventLoop::RunEvery"); });
+  loop.Loop();
 }

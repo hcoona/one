@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);
   server.start();
-  loop.loop();
+  loop.Loop();
 }
 
 char favicon[555] = {

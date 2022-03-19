@@ -48,12 +48,12 @@ void printTid() {
 void print(const char* msg) {
   LOG(INFO) << msg;
   if (++cnt == 20) {
-    g_loop->quit();
+    g_loop->Quit();
   }
 }
 
 void cancel(TimerId timer) {
-  g_loop->cancel(timer);
+  g_loop->CancelTimer(timer);
   LOG(INFO) << "cancelled.";
 }
 
@@ -69,27 +69,27 @@ int main(int argc, char* argv[]) {
     g_loop = &loop;
 
     print("main");
-    loop.runAfter(absl::Seconds(1), absl::bind_front(print, "once1"));
-    loop.runAfter(absl::Seconds(1.5), absl::bind_front(print, "once1.5"));
-    loop.runAfter(absl::Seconds(2.5), absl::bind_front(print, "once2.5"));
-    loop.runAfter(absl::Seconds(3.5), absl::bind_front(print, "once3.5"));
+    loop.RunAfter(absl::Seconds(1), absl::bind_front(print, "once1"));
+    loop.RunAfter(absl::Seconds(1.5), absl::bind_front(print, "once1.5"));
+    loop.RunAfter(absl::Seconds(2.5), absl::bind_front(print, "once2.5"));
+    loop.RunAfter(absl::Seconds(3.5), absl::bind_front(print, "once3.5"));
     TimerId t45 =
-        loop.runAfter(absl::Seconds(4.5), absl::bind_front(print, "once4.5"));
-    loop.runAfter(absl::Seconds(4.2), absl::bind_front(cancel, t45));
-    loop.runAfter(absl::Seconds(4.8), absl::bind_front(cancel, t45));
-    loop.runEvery(absl::Seconds(2), absl::bind_front(print, "every2"));
+        loop.RunAfter(absl::Seconds(4.5), absl::bind_front(print, "once4.5"));
+    loop.RunAfter(absl::Seconds(4.2), absl::bind_front(cancel, t45));
+    loop.RunAfter(absl::Seconds(4.8), absl::bind_front(cancel, t45));
+    loop.RunEvery(absl::Seconds(2), absl::bind_front(print, "every2"));
     TimerId t3 =
-        loop.runEvery(absl::Seconds(3), absl::bind_front(print, "every3"));
-    loop.runAfter(absl::Seconds(9.001), absl::bind_front(cancel, t3));
+        loop.RunEvery(absl::Seconds(3), absl::bind_front(print, "every3"));
+    loop.RunAfter(absl::Seconds(9.001), absl::bind_front(cancel, t3));
 
-    loop.loop();
+    loop.Loop();
     print("main loop exits");
   }
   sleep(1);
   {
     EventLoopThread loopThread;
     EventLoop* loop = loopThread.startLoop();
-    loop->runAfter(absl::Seconds(2), printTid);
+    loop->RunAfter(absl::Seconds(2), printTid);
     sleep(3);
     print("thread loop exits");
   }

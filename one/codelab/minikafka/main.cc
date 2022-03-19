@@ -63,5 +63,5 @@ int main(int argc, char* argv[]) {
 
   LOG(INFO) << "Binding at " << kafka_tcp_server.GetIpPort();
 
-  loop.loop();
+  loop.Loop();
 }

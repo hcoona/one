@@ -43,7 +43,7 @@ void print(EventLoop* p = nullptr) {
 
 void quit(EventLoop* p) {
   print(p);
-  p->quit();
+  p->Quit();
 }
 
 int main(int /*argc*/, char* argv[]) {
@@ -62,7 +62,7 @@ int main(int /*argc*/, char* argv[]) {
     // dtor calls quit()
     EventLoopThread thr2{};
     EventLoop* loop = thr2.startLoop();
-    loop->runInLoop(absl::bind_front(print, loop));
+    loop->RunInLoop(absl::bind_front(print, loop));
     absl::SleepFor(absl::Milliseconds(500));
   }
 
@@ -70,7 +70,7 @@ int main(int /*argc*/, char* argv[]) {
     // quit() before dtor
     EventLoopThread thr3{};
     EventLoop* loop = thr3.startLoop();
-    loop->runInLoop(absl::bind_front(quit, loop));
+    loop->RunInLoop(absl::bind_front(quit, loop));
     absl::SleepFor(absl::Milliseconds(500));
   }
 }

@@ -77,7 +77,7 @@ void PollPoller::fillActiveChannels(int numEvents,
 }
 
 void PollPoller::updateChannel(Channel* channel) {
-  Poller::assertInLoopThread();
+  Poller::AssertInLoopThread();
   VLOG(1) << "fd = " << channel->fd() << " events = " << channel->events();
   if (channel->index() < 0) {
     // a new one, add to pollfds_
@@ -109,7 +109,7 @@ void PollPoller::updateChannel(Channel* channel) {
 }
 
 void PollPoller::removeChannel(Channel* channel) {
-  Poller::assertInLoopThread();
+  Poller::AssertInLoopThread();
   VLOG(1) << "fd = " << channel->fd();
   assert(channels_.find(channel->fd()) != channels_.end());
   assert(channels_[channel->fd()] == channel);

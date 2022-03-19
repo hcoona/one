@@ -43,7 +43,7 @@ EventLoopThread::~EventLoopThread() {
     // still a tiny chance to call destructed object, if threadFunc exits just
     // now. but when EventLoopThread destructs, usually programming is exiting
     // anyway.
-    loop_->quit();
+    loop_->Quit();
   }
   if (thread_) {
     thread_->join();
@@ -79,7 +79,7 @@ void EventLoopThread::threadFunc() {
     cond_.Signal();
   }
 
-  loop.loop();
+  loop.Loop();
   // assert(exiting_);
   absl::MutexLock lock(&mutex_);
   loop_ = nullptr;

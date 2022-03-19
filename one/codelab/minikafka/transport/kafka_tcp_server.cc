@@ -35,7 +35,7 @@ KafkaTcpServer::KafkaTcpServer(KafkaService* kafka_service,
 }
 
 void KafkaTcpServer::Stop() {
-  loop_->runInLoop(absl::bind_front(&jinduo::net::EventLoop::quit, loop_));
+  loop_->RunInLoop(absl::bind_front(&jinduo::net::EventLoop::Quit, loop_));
 }
 
 void KafkaTcpServer::OnConnect(

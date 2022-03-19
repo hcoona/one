@@ -63,19 +63,21 @@ class EventLoop {
   EventLoop(EventLoop&&) noexcept = delete;
   EventLoop& operator=(EventLoop&&) noexcept = delete;
 
+  static EventLoop* GetCurrentThreadEventLoop();
+
   // Loops forever.
   //
   // Must be called in the same thread as creation of the object.
-  void loop();
+  void Loop();
 
   // Quits loop.
   //
-  // This is not 100% thread safe, if you call through a raw pointer,
-  // better to call through shared_ptr<EventLoop> for 100% safety.
-  void quit();
+  // This is not 100% thread safe if you call through a raw pointer.
+  // It's better to call through shared_ptr<EventLoop> for 100% safety.
+  void Quit();
 
   // Time when poll returns, usually means data arrival.
-  absl::Time pollReturnTime() const { return pollReturnTime_; }
+  absl::Time PollReturnTime() const { return poll_return_time_; }
 
   int64_t iteration() const { return iteration_; }
 
@@ -83,14 +85,14 @@ class EventLoop {
   // It wakes up the loop, and run the cb.
   // If in the same loop thread, cb is run within the function.
   // Safe to call from other threads.
-  void runInLoop(Functor cb);
+  void RunInLoop(Functor cb);
 
   // Queues callback in the loop thread.
   // Runs after finish pooling.
   // Safe to call from other threads.
-  void queueInLoop(Functor cb);
+  void QueueInLoop(Functor cb);
 
-  size_t queueSize() const;
+  size_t QueueSize() const;
 
   //
   // timers
@@ -98,71 +100,72 @@ class EventLoop {
 
   // Runs callback at 'time'.
   // Safe to call from other threads.
-  TimerId runAt(absl::Time time, TimerCallback cb);
+  TimerId RunAt(absl::Time time, TimerCallback cb);
   // Runs callback after @c delay seconds.
   // Safe to call from other threads.
-  TimerId runAfter(absl::Duration delay, TimerCallback cb);
+  TimerId RunAfter(absl::Duration delay, TimerCallback cb);
   // Runs callback every @c interval seconds.
   // Safe to call from other threads.
-  TimerId runEvery(absl::Duration interval, TimerCallback cb);
+  TimerId RunEvery(absl::Duration interval, TimerCallback cb);
   // Cancels the timer.
   // Safe to call from other threads.
-  void cancel(TimerId timerId);
+  void CancelTimer(TimerId timer_id);
 
+  // pid_t threadId() const { return threadId_; }
+  void AssertInLoopThread() {
+    if (!IsInLoopThread()) {
+      AbortIfNotInLoopThread();
+    }
+  }
+  bool IsInLoopThread() const { return thread_id_ == this_thread::tid(); }
+  // bool callingPendingFunctors() const { return callingPendingFunctors_; }
+  bool event_handling() const { return event_handling_; }
+
+  void set_context(const std::any& context) { context_ = context; }
+
+  const std::any& context() const { return context_; }
+
+  std::any* mutable_context() { return &context_; }
+
+  //
   // internal usage
+  //
+
   void wakeup();
   void updateChannel(Channel* channel);
   void removeChannel(Channel* channel);
   bool hasChannel(Channel* channel);
 
-  // pid_t threadId() const { return threadId_; }
-  void assertInLoopThread() {
-    if (!isInLoopThread()) {
-      abortNotInLoopThread();
-    }
-  }
-  bool isInLoopThread() const { return threadId_ == this_thread::tid(); }
-  // bool callingPendingFunctors() const { return callingPendingFunctors_; }
-  bool eventHandling() const { return eventHandling_; }
-
-  void setContext(const std::any& context) { context_ = context; }
-
-  const std::any& getContext() const { return context_; }
-
-  std::any* getMutableContext() { return &context_; }
-
-  static EventLoop* getEventLoopOfCurrentThread();
-
  private:
-  void abortNotInLoopThread();
-  void handleRead();  // waked up
-  void doPendingFunctors();
+  void AbortIfNotInLoopThread();
+  void HandleRead();  // waked up
+  void InvokePendingFunctors();
 
-  void printActiveChannels() const;  // DEBUG
+  void PrintActiveChannels() const;  // DEBUG
 
   using ChannelList = std::vector<Channel*>;
 
   bool looping_; /* atomic */
   std::atomic<bool> quit_;
-  bool eventHandling_;          /* atomic */
-  bool callingPendingFunctors_; /* atomic */
+  bool event_handling_;           /* atomic */
+  bool calling_pending_functors_; /* atomic */
   int64_t iteration_;
-  const pid_t threadId_;
-  absl::Time pollReturnTime_;
+  const int thread_id_;
+  absl::Time poll_return_time_;
   std::unique_ptr<Poller> poller_;
-  std::unique_ptr<TimerQueue> timerQueue_;
-  int wakeupFd_;
+  std::unique_ptr<TimerQueue> timer_queue_;
+  int wakeup_fd_;
   // unlike in TimerQueue, which is an internal class,
   // we don't expose Channel to client.
-  std::unique_ptr<Channel> wakeupChannel_;
+  std::unique_ptr<Channel> wakeup_channel_;
   std::any context_;
 
   // scratch variables
-  ChannelList activeChannels_;
-  Channel* currentActiveChannel_;
+  ChannelList active_channels_;
+  Channel* current_active_channel_;
 
   mutable absl::Mutex mutex_;
-  std::vector<Functor> pendingFunctors_ ABSL_GUARDED_BY(mutex_);
+  std::vector<Functor> pending_functors_ ABSL_GUARDED_BY(mutex_);
 };
 
 }  // namespace net

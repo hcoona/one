@@ -101,12 +101,12 @@ void TcpConnection::send(const void* message, int len) {
 
 void TcpConnection::send(const std::string_view& message) {
   if (state_ == kConnected) {
-    if (loop_->isInLoopThread()) {
+    if (loop_->IsInLoopThread()) {
       sendInLoop(message);
     } else {
       void (TcpConnection::*fp)(const std::string_view& message) =
           &TcpConnection::sendInLoop;
-      loop_->runInLoop(absl::bind_front(fp,
+      loop_->RunInLoop(absl::bind_front(fp,
                                         this,  // FIXME
                                         std::string(message)));
       // std::forward<std::string>(message)));
@@ -117,13 +117,13 @@ void TcpConnection::send(const std::string_view& message) {
 // FIXME efficiency!!!
 void TcpConnection::send(Buffer* message) {
   if (state_ == kConnected) {
-    if (loop_->isInLoopThread()) {
+    if (loop_->IsInLoopThread()) {
       sendInLoop(message->peek(), message->readableBytes());
       message->retrieveAll();
     } else {
       void (TcpConnection::*fp)(const std::string_view& message) =
           &TcpConnection::sendInLoop;
-      loop_->runInLoop(absl::bind_front(fp,
+      loop_->RunInLoop(absl::bind_front(fp,
                                         this,  // FIXME
                                         message->retrieveAllAsString()));
       // std::forward<std::string>(message)));
@@ -136,7 +136,7 @@ void TcpConnection::sendInLoop(const std::string_view& message) {
 }
 
 void TcpConnection::sendInLoop(const void* message, size_t len) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   ssize_t nwrote = 0;
   size_t remaining = len;
   bool faultError = false;
@@ -150,7 +150,7 @@ void TcpConnection::sendInLoop(const void* message, size_t len) {
     if (nwrote >= 0) {
       remaining = len - nwrote;
       if (remaining == 0 && writeCompleteCallback_) {
-        loop_->queueInLoop(
+        loop_->QueueInLoop(
             absl::bind_front(writeCompleteCallback_, shared_from_this()));
       }
     } else {  // nwrote < 0
@@ -169,7 +169,7 @@ void TcpConnection::sendInLoop(const void* message, size_t len) {
     size_t oldLen = outputBuffer_.readableBytes();
     if (oldLen + remaining >= highWaterMark_ && oldLen < highWaterMark_ &&
         highWaterMarkCallback_) {
-      loop_->queueInLoop(absl::bind_front(
+      loop_->QueueInLoop(absl::bind_front(
           highWaterMarkCallback_, shared_from_this(), oldLen + remaining));
     }
     outputBuffer_.append(static_cast<const char*>(message) + nwrote, remaining);
@@ -184,12 +184,12 @@ void TcpConnection::shutdown() {
   if (state_ == kConnected) {
     setState(kDisconnecting);
     // FIXME: shared_from_this()?
-    loop_->runInLoop(absl::bind_front(&TcpConnection::shutdownInLoop, this));
+    loop_->RunInLoop(absl::bind_front(&TcpConnection::shutdownInLoop, this));
   }
 }
 
 void TcpConnection::shutdownInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (!channel_->isWriting()) {
     // we are not writing
     socket_->shutdownWrite();
@@ -202,20 +202,20 @@ void TcpConnection::shutdownInLoop() {
 //   if (state_ == kConnected)
 //   {
 //     setState(kDisconnecting);
-//     loop_->runInLoop(std::bind(&TcpConnection::shutdownAndForceCloseInLoop,
+//     loop_->RunInLoop(std::bind(&TcpConnection::shutdownAndForceCloseInLoop,
 //     this, seconds));
 //   }
 // }
 
 // void TcpConnection::shutdownAndForceCloseInLoop(double seconds)
 // {
-//   loop_->assertInLoopThread();
+//   loop_->AssertInLoopThread();
 //   if (!channel_->isWriting())
 //   {
 //     // we are not writing
 //     socket_->shutdownWrite();
 //   }
-//   loop_->runAfter(
+//   loop_->RunAfter(
 //       seconds,
 //       makeWeakCallback(shared_from_this(),
 //                        &TcpConnection::forceCloseInLoop));
@@ -225,7 +225,7 @@ void TcpConnection::forceClose() {
   // FIXME: use compare and swap
   if (state_ == kConnected || state_ == kDisconnecting) {
     setState(kDisconnecting);
-    loop_->queueInLoop(
+    loop_->QueueInLoop(
         absl::bind_front(&TcpConnection::forceCloseInLoop, shared_from_this()));
   }
 }
@@ -233,7 +233,7 @@ void TcpConnection::forceClose() {
 void TcpConnection::forceCloseWithDelay(absl::Duration duration) {
   if (state_ == kConnected || state_ == kDisconnecting) {
     setState(kDisconnecting);
-    loop_->runAfter(duration, [weak_this = weak_from_this()] {
+    loop_->RunAfter(duration, [weak_this = weak_from_this()] {
       auto shared_this = weak_this.lock();
       if (shared_this) {
         shared_this->forceClose();
@@ -244,7 +244,7 @@ void TcpConnection::forceCloseWithDelay(absl::Duration duration) {
 }
 
 void TcpConnection::forceCloseInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (state_ == kConnected || state_ == kDisconnecting) {
     // as if we received 0 byte in handleRead();
     handleClose();
@@ -269,11 +269,11 @@ const char* TcpConnection::stateToString() const {
 void TcpConnection::setTcpNoDelay(bool on) { socket_->setTcpNoDelay(on); }
 
 void TcpConnection::startRead() {
-  loop_->runInLoop(absl::bind_front(&TcpConnection::startReadInLoop, this));
+  loop_->RunInLoop(absl::bind_front(&TcpConnection::startReadInLoop, this));
 }
 
 void TcpConnection::startReadInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (!reading_ || !channel_->isReading()) {
     channel_->enableReading();
     reading_ = true;
@@ -281,11 +281,11 @@ void TcpConnection::startReadInLoop() {
 }
 
 void TcpConnection::stopRead() {
-  loop_->runInLoop(absl::bind_front(&TcpConnection::stopReadInLoop, this));
+  loop_->RunInLoop(absl::bind_front(&TcpConnection::stopReadInLoop, this));
 }
 
 void TcpConnection::stopReadInLoop() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (reading_ || channel_->isReading()) {
     channel_->disableReading();
     reading_ = false;
@@ -293,7 +293,7 @@ void TcpConnection::stopReadInLoop() {
 }
 
 void TcpConnection::connectEstablished() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   assert(state_ == kConnecting);
   setState(kConnected);
   channel_->tie(shared_from_this());
@@ -303,7 +303,7 @@ void TcpConnection::connectEstablished() {
 }
 
 void TcpConnection::connectDestroyed() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (state_ == kConnected) {
     setState(kDisconnected);
     channel_->disableAll();
@@ -314,7 +314,7 @@ void TcpConnection::connectDestroyed() {
 }
 
 void TcpConnection::handleRead(absl::Time receiveTime) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   int savedErrno = 0;
   ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
   if (n > 0) {
@@ -329,7 +329,7 @@ void TcpConnection::handleRead(absl::Time receiveTime) {
 }
 
 void TcpConnection::handleWrite() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   if (channel_->isWriting()) {
     ssize_t n = sockets::write(channel_->fd(), outputBuffer_.peek(),
                                outputBuffer_.readableBytes());
@@ -338,7 +338,7 @@ void TcpConnection::handleWrite() {
       if (outputBuffer_.readableBytes() == 0) {
         channel_->disableWriting();
         if (writeCompleteCallback_) {
-          loop_->queueInLoop(
+          loop_->QueueInLoop(
               absl::bind_front(writeCompleteCallback_, shared_from_this()));
         }
         if (state_ == kDisconnecting) {
@@ -359,7 +359,7 @@ void TcpConnection::handleWrite() {
 }
 
 void TcpConnection::handleClose() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   VLOG(1) << "fd = " << channel_->fd() << " state = " << stateToString();
   assert(state_ == kConnected || state_ == kDisconnecting);
   // we don't close fd, leave it to dtor, so we can find leaks easily.

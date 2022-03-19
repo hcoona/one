@@ -145,10 +145,10 @@ int main(int argc, char* argv[]) {
         threadPool.getNextLoop(), jinduo::net::InetAddress(kBindingPort),
         "shorturl", jinduo::net::TcpServer::kReusePort));
     servers.back()->setHttpCallback(onRequest);
-    servers.back()->getLoop()->runInLoop(
+    servers.back()->getLoop()->RunInLoop(
         [server = servers.back().get()] { server->start(); });
   }
-  loop.loop();
+  loop.Loop();
 #else
   LOG_WARN << "Normal";
   jinduo::net::EventLoop loop;
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);
   server.start();
-  loop.loop();
+  loop.Loop();
 #endif
 }
 

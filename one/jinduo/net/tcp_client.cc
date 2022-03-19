@@ -42,7 +42,7 @@ namespace details {
 
 void removeConnection(EventLoop* loop,
                       const std::shared_ptr<TcpConnection>& conn) {
-  loop->queueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
+  loop->QueueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
 }
 
 void removeConnector(const std::shared_ptr<Connector>& /*connector*/) {
@@ -82,7 +82,7 @@ TcpClient::~TcpClient() {
     assert(loop_ == conn->getLoop());
     // FIXME: not 100% safe, if we are in different thread
     CloseCallback cb = absl::bind_front(&details::removeConnection, loop_);
-    loop_->runInLoop(
+    loop_->RunInLoop(
         absl::bind_front(&TcpConnection::setCloseCallback, conn, cb));
     if (unique) {
       conn->forceClose();
@@ -90,7 +90,7 @@ TcpClient::~TcpClient() {
   } else {
     connector_->stop();
     // FIXME: HACK
-    loop_->runAfter(absl::Seconds(1),
+    loop_->RunAfter(absl::Seconds(1),
                     absl::bind_front(&details::removeConnector, connector_));
   }
 }
@@ -120,7 +120,7 @@ void TcpClient::stop() {
 }
 
 void TcpClient::newConnection(int sockfd) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   InetAddress peerAddr(sockets::getPeerAddr(sockfd));
   char buf[32];
   snprintf(buf, sizeof buf, ":%s#%d", peerAddr.toIpPort().c_str(), nextConnId_);
@@ -146,7 +146,7 @@ void TcpClient::newConnection(int sockfd) {
 }
 
 void TcpClient::removeConnection(const std::shared_ptr<TcpConnection>& conn) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   assert(loop_ == conn->getLoop());
 
   {
@@ -155,7 +155,7 @@ void TcpClient::removeConnection(const std::shared_ptr<TcpConnection>& conn) {
     connection_.reset();
   }
 
-  loop_->queueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
+  loop_->QueueInLoop(absl::bind_front(&TcpConnection::connectDestroyed, conn));
   if (retry_ && connect_) {
     LOG(INFO) << "TcpClient::connect[" << name_ << "] - Reconnecting to "
               << connector_->serverAddress().toIpPort();

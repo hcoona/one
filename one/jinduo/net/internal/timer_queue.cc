@@ -111,16 +111,16 @@ TimerQueue::~TimerQueue() {
 TimerId TimerQueue::addTimer(TimerCallback cb, absl::Time when,
                              absl::Duration interval) {
   auto* timer = new Timer(std::move(cb), when, interval);
-  loop_->runInLoop(absl::bind_front(&TimerQueue::addTimerInLoop, this, timer));
+  loop_->RunInLoop(absl::bind_front(&TimerQueue::addTimerInLoop, this, timer));
   return {timer, timer->sequence()};
 }
 
 void TimerQueue::cancel(TimerId timerId) {
-  loop_->runInLoop(absl::bind_front(&TimerQueue::cancelInLoop, this, timerId));
+  loop_->RunInLoop(absl::bind_front(&TimerQueue::cancelInLoop, this, timerId));
 }
 
 void TimerQueue::addTimerInLoop(Timer* timer) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   bool earliestChanged = insert(timer);
 
   if (earliestChanged) {
@@ -129,7 +129,7 @@ void TimerQueue::addTimerInLoop(Timer* timer) {
 }
 
 void TimerQueue::cancelInLoop(TimerId timerId) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   assert(timers_.size() == activeTimers_.size());
   ActiveTimer timer(timerId.timer_, timerId.sequence_);
   auto it = activeTimers_.find(timer);
@@ -146,7 +146,7 @@ void TimerQueue::cancelInLoop(TimerId timerId) {
 }
 
 void TimerQueue::handleRead() {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   absl::Time now = absl::Now();
   details::readTimerfd(timerfd_, now);
 
@@ -210,7 +210,7 @@ void TimerQueue::reset(const std::vector<Entry>& expired, absl::Time now) {
 }
 
 bool TimerQueue::insert(Timer* timer) {
-  loop_->assertInLoopThread();
+  loop_->AssertInLoopThread();
   assert(timers_.size() == activeTimers_.size());
   bool earliestChanged = false;
   absl::Time when = timer->expiration();

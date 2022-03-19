@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
   print();
 
   EventLoop loop;
-  loop.runAfter(absl::Seconds(11), absl::bind_front(&EventLoop::quit, &loop));
+  loop.RunAfter(absl::Seconds(11), absl::bind_front(&EventLoop::Quit, &loop));
 
   {
     LOG(INFO) << "Single thread (p=" << &loop << ")";
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     model.setThreadNum(1);
     model.start(init);
     EventLoop* nextLoop = model.getNextLoop();
-    nextLoop->runAfter(absl::Seconds(2), absl::bind_front(print, nextLoop));
+    nextLoop->RunAfter(absl::Seconds(2), absl::bind_front(print, nextLoop));
     assert(nextLoop != &loop);
     assert(nextLoop == model.getNextLoop());
     assert(nextLoop == model.getNextLoop());
@@ -85,12 +85,12 @@ int main(int argc, char* argv[]) {
     model.setThreadNum(3);
     model.start(init);
     EventLoop* nextLoop = model.getNextLoop();
-    nextLoop->runInLoop(absl::bind_front(print, nextLoop));
+    nextLoop->RunInLoop(absl::bind_front(print, nextLoop));
     assert(nextLoop != &loop);
     assert(nextLoop != model.getNextLoop());
     assert(nextLoop != model.getNextLoop());
     assert(nextLoop == model.getNextLoop());
   }
 
-  loop.loop();
+  loop.Loop();
 }
