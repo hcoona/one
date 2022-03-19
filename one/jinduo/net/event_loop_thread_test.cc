@@ -61,7 +61,7 @@ int main(int /*argc*/, char* argv[]) {
   {
     // dtor calls quit()
     EventLoopThread thr2{};
-    EventLoop* loop = thr2.startLoop();
+    EventLoop* loop = thr2.StartLoop();
     loop->RunInLoop(absl::bind_front(print, loop));
     absl::SleepFor(absl::Milliseconds(500));
   }
@@ -69,7 +69,7 @@ int main(int /*argc*/, char* argv[]) {
   {
     // quit() before dtor
     EventLoopThread thr3{};
-    EventLoop* loop = thr3.startLoop();
+    EventLoop* loop = thr3.StartLoop();
     loop->RunInLoop(absl::bind_front(quit, loop));
     absl::SleepFor(absl::Milliseconds(500));
   }

@@ -39,8 +39,8 @@ void callback() {
   jinduo::net::EventLoop anotherLoop;
 }
 
-void threadFunc() {
-  printf("threadFunc(): pid = %d, tid = %d\n", getpid(),
+void ThreadFunc() {
+  printf("ThreadFunc(): pid = %d, tid = %d\n", getpid(),
          jinduo::this_thread::tid());
 
   assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == nullptr);
@@ -57,7 +57,7 @@ int main() {
   jinduo::net::EventLoop loop;
   assert(jinduo::net::EventLoop::GetCurrentThreadEventLoop() == &loop);
 
-  std::thread thread(threadFunc);
+  std::thread thread(ThreadFunc);
 
   loop.Loop();
 

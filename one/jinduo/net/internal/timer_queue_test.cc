@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
   sleep(1);
   {
     EventLoopThread loopThread;
-    EventLoop* loop = loopThread.startLoop();
+    EventLoop* loop = loopThread.StartLoop();
     loop->RunAfter(absl::Seconds(2), printTid);
     sleep(3);
     print("thread loop exits");

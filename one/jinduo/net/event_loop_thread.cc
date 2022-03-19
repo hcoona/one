@@ -25,9 +25,12 @@
 
 #include "one/jinduo/net/event_loop_thread.h"
 
+#include <pthread.h>
+
 #include <utility>
 
 #include "absl/functional/bind_front.h"
+#include "glog/logging.h"
 #include "one/jinduo/net/event_loop.h"
 
 namespace jinduo {
@@ -37,28 +40,28 @@ EventLoopThread::EventLoopThread(ThreadInitCallback cb, std::string name)
     : callback_(std::move(cb)), thread_name_(std::move(name)) {}
 
 EventLoopThread::~EventLoopThread() {
-  exiting_ = true;
-  if (loop_ != nullptr) {  // not 100% race-free, eg. threadFunc could be
+  if (loop_ != nullptr) {  // not 100% race-free, eg. ThreadFunc could be
                            // running callback_.
-    // still a tiny chance to call destructed object, if threadFunc exits just
+    // still a tiny chance to call destructed object, if ThreadFunc exits just
     // now. but when EventLoopThread destructs, usually programming is exiting
     // anyway.
     loop_->Quit();
   }
+
   if (thread_) {
     thread_->join();
   }
 }
 
-EventLoop* EventLoopThread::startLoop() {
+EventLoop* EventLoopThread::StartLoop() {
   assert(!thread_);
-  thread_ = std::make_optional<std::thread>(&EventLoopThread::threadFunc, this);
+  thread_ = std::make_optional<std::thread>(&EventLoopThread::ThreadFunc, this);
 
   EventLoop* loop = nullptr;
   {
     absl::MutexLock lock(&mutex_);
     while (loop_ == nullptr) {
-      cond_.Wait(&mutex_);
+      loop_initialized_cv_.Wait(&mutex_);
     }
     loop = loop_;
   }
@@ -66,7 +69,18 @@ EventLoop* EventLoopThread::startLoop() {
   return loop;
 }
 
-void EventLoopThread::threadFunc() {
+void EventLoopThread::ThreadFunc() {
+  static constexpr size_t kThreadNameLengthMax = 15;
+  PLOG_IF(WARNING,
+          pthread_setname_np(
+              thread_->native_handle(),
+              thread_name_.size() < kThreadNameLengthMax
+                  ? thread_name_.c_str()
+                  : std::string(thread_name_.begin(),
+                                thread_name_.begin() + kThreadNameLengthMax)
+                        .c_str()) != 0)
+      << "Failed to set event loop thread name. name=" << thread_name_;
+
   EventLoop loop;
 
   if (callback_) {
@@ -76,13 +90,15 @@ void EventLoopThread::threadFunc() {
   {
     absl::MutexLock lock(&mutex_);
     loop_ = &loop;
-    cond_.Signal();
+    loop_initialized_cv_.Signal();
   }
 
   loop.Loop();
-  // assert(exiting_);
-  absl::MutexLock lock(&mutex_);
-  loop_ = nullptr;
+
+  {
+    absl::MutexLock lock(&mutex_);
+    loop_ = nullptr;
+  }
 }
 
 }  // namespace net

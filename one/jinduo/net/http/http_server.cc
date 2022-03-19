@@ -52,8 +52,8 @@ HttpServer::HttpServer(EventLoop* loop, const InetAddress& listenAddr,
 }
 
 void HttpServer::start() {
-  LOG(WARNING) << "HttpServer[" << server_.name() << "] starts listening on "
-               << server_.ipPort();
+  LOG(INFO) << "HttpServer[" << server_.name() << "] starts listening on "
+            << server_.ipPort();
   server_.start();
 }
 

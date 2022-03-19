@@ -56,7 +56,7 @@ void EventLoopThreadPool::start(const ThreadInitCallback& cb) {
     snprintf(buf.data(), buf.size(), "%s%d", name_.c_str(), i);
     auto* t = new EventLoopThread(cb, buf.data());
     threads_.emplace_back(t);
-    loops_.emplace_back(t->startLoop());
+    loops_.emplace_back(t->StartLoop());
   }
   if (numThreads_ == 0 && cb) {
     cb(baseLoop_);

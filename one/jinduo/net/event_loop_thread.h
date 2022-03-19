@@ -40,6 +40,8 @@ namespace net {
 
 class EventLoop;
 
+// Run EventLoop in background thread. Quit the loop & join the background
+// thread when destroying.
 class EventLoopThread {
  public:
   using ThreadInitCallback = std::function<void(EventLoop*)>;
@@ -52,19 +54,18 @@ class EventLoopThread {
   EventLoopThread(const EventLoopThread&) noexcept = delete;
   EventLoopThread& operator=(const EventLoopThread&) noexcept = delete;
 
-  // Allow move but not implemented yet.
-  EventLoopThread(EventLoopThread&&) noexcept = delete;
-  EventLoopThread& operator=(EventLoopThread&&) noexcept = delete;
+  // Disallow move because we cannot rebind the `ThreadFunc()`.
+  EventLoopThread(EventLoopThread&& other) noexcept = delete;
+  EventLoopThread& operator=(EventLoopThread&& other) noexcept = delete;
 
-  EventLoop* startLoop();
+  EventLoop* StartLoop();
 
  private:
-  void threadFunc();
+  void ThreadFunc();
 
   absl::Mutex mutex_{};
-  absl::CondVar cond_ ABSL_GUARDED_BY(mutex_){};
+  absl::CondVar loop_initialized_cv_ ABSL_GUARDED_BY(mutex_){};
   EventLoop* loop_ ABSL_GUARDED_BY(mutex_){nullptr};
-  bool exiting_{false};
 
   ThreadInitCallback callback_{};
   std::optional<std::thread> thread_{};
