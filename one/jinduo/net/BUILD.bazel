@@ -111,8 +111,9 @@ cc_binary(
     ],
 )
 
-cc_binary(
+cc_test(
     name = "event_loop_thread_test",
+    size = "small",
     srcs = ["event_loop_thread_test.cc"],
     copts = [
         "-Wall",
