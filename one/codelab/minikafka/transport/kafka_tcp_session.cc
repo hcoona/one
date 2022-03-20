@@ -201,6 +201,12 @@ void KafkaTcpSession::ProcessRequests(
       LOG(INFO) << *body;
     }
   }
+
+  // TODO(zhangshuai.ustc): Dispatch the requests to `kafka_service_`,
+  // processing in arbitrary order, how to write the response in the request
+  // coming order?
+  //
+  // We need to ordering the requests somewhere.
   (void)kafka_service_;
 }
 

@@ -51,8 +51,9 @@ class KafkaTcpSession {
   }
 
  private:
-  void OnMessage(const std::shared_ptr<jinduo::net::TcpConnection>& connection,
-                 jinduo::net::Buffer* buffer, absl::Time receive_time);
+  void OnMessage(
+      const std::shared_ptr<jinduo::net::TcpConnection>& /*connection*/,
+      jinduo::net::Buffer* buffer, absl::Time receive_time);
   void ProcessRequests(std::vector<RequestHeaderAndBody>&& requests);
 
   KafkaService* kafka_service_;
