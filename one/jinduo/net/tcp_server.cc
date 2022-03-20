@@ -90,7 +90,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   std::string connName = name_ + buf;
 
   VLOG(1) << "TcpServer::newConnection [" << name_ << "] - new connection ["
-            << connName << "] from " << peerAddr.toIpPort();
+          << connName << "] from " << peerAddr.toIpPort();
   InetAddress localAddr(sockets::getLocalAddr(sockfd));
   // FIXME poll with zero timeout to double confirm the new connection
   // FIXME use make_shared if necessary

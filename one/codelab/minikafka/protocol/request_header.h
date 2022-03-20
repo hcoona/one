@@ -33,12 +33,10 @@ class RequestHeader {
  public:
   absl::Status ParseFrom(KafkaBinaryReader* reader);
 
-  [[nodiscard]] ApiKey request_api_key() const {
-    return static_cast<ApiKey>(data_.request_api_key());
+  [[nodiscard]] ApiKey api_key() const {
+    return static_cast<ApiKey>(data_.api_key());
   }
-  [[nodiscard]] int16_t request_api_version() const {
-    return data_.request_api_version();
-  }
+  [[nodiscard]] int16_t api_version() const { return data_.api_version(); }
   [[nodiscard]] int16_t header_version() const { return header_version_; }
   [[nodiscard]] int32_t correlation_id() const {
     return data_.correlation_id();

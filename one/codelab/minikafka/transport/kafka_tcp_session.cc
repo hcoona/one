@@ -138,18 +138,17 @@ absl::Status KafkaTcpSessionContext::Parse(jinduo::net::Buffer* buffer,
 absl::Status KafkaTcpSessionContext::Parse(
     KafkaBinaryReader* reader, const RequestHeader& request_header,
     decltype(RequestHeaderAndBody::body)* body) {
-  switch (request_header.request_api_key()) {
+  switch (request_header.api_key()) {
     case ApiKey::kApiVersions: {
       ApiVersionsRequest api_versions_request;
-      ONE_RETURN_IF_NOT_OK(api_versions_request.ParseFrom(
-          reader, request_header.request_api_version()));
+      ONE_RETURN_IF_NOT_OK(
+          api_versions_request.ParseFrom(reader, request_header.api_version()));
       *body = std::move(api_versions_request);
       break;
     }
     default:
-      return absl::UnimplementedError(
-          "Not implemented yet. api_key=" +
-          to_string(request_header.request_api_key()));
+      return absl::UnimplementedError("Not implemented yet. api_key=" +
+                                      to_string(request_header.api_key()));
   }
   return absl::OkStatus();
 }
@@ -196,7 +195,7 @@ void KafkaTcpSession::ProcessRequests(
   // kafka_service queue.
   for (auto&& request : requests) {
     LOG(INFO) << request.header;
-    if (request.header.request_api_key() == ApiKey::kApiVersions) {
+    if (request.header.api_key() == ApiKey::kApiVersions) {
       auto* body = std::get_if<ApiVersionsRequest>(&request.body);
       LOG(INFO) << *body;
     }

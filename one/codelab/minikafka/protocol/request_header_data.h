@@ -41,17 +41,11 @@ class RequestHeaderData {
     return kHighestSupportedVersion;
   }
 
-  [[nodiscard]] int16_t request_api_key() const { return request_api_key_; }
-  void set_request_api_key(std::int16_t request_api_key) {
-    request_api_key_ = request_api_key;
-  }
+  [[nodiscard]] int16_t api_key() const { return api_key_; }
+  void set_api_key(std::int16_t api_key) { api_key_ = api_key; }
 
-  [[nodiscard]] int16_t request_api_version() const {
-    return request_api_version_;
-  }
-  void set_request_api_version(int16_t request_api_version) {
-    request_api_version_ = request_api_version;
-  }
+  [[nodiscard]] int16_t api_version() const { return api_version_; }
+  void set_api_version(int16_t api_version) { api_version_ = api_version; }
 
   [[nodiscard]] int32_t correlation_id() const { return correlation_id_; }
   void correlation_id(int32_t correlation_id) {
@@ -66,8 +60,8 @@ class RequestHeaderData {
   absl::Status ParseFrom(KafkaBinaryReader* reader, int16_t header_version);
 
  private:
-  std::int16_t request_api_key_{0};
-  std::int16_t request_api_version_{0};
+  std::int16_t api_key_{0};
+  std::int16_t api_version_{0};
   std::int32_t correlation_id_{0};
   std::string client_id_;
 

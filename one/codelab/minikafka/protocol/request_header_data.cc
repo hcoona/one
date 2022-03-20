@@ -28,8 +28,8 @@ namespace minikafka {
 
 absl::Status RequestHeaderData::ParseFrom(KafkaBinaryReader* reader,
                                           int16_t header_version) {
-  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&request_api_key_));
-  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&request_api_version_));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&api_key_));
+  ONE_RETURN_IF_NOT_OK(reader->ReadInt16(&api_version_));
   ONE_RETURN_IF_NOT_OK(reader->ReadInt32(&correlation_id_));
   if (header_version >= 1) {
     int16_t client_id_length{};

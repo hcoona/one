@@ -49,8 +49,8 @@ absl::Status RequestHeader::ParseFrom(KafkaBinaryReader* reader) {
 
 std::ostream& operator<<(std::ostream& os,
                          const RequestHeader& request_header) {
-  os << "RequestHeader(api_key=" << request_header.request_api_key()
-     << ",api_version=" << request_header.request_api_version()
+  os << "RequestHeader(api_key=" << request_header.api_key()
+     << ",api_version=" << request_header.api_version()
      << ",header_version=" << request_header.header_version()
      << ",correlation_id=" << request_header.correlation_id()
      << ",client_id=" << request_header.client_id() << ")";
