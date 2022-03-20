@@ -75,3 +75,24 @@ cc_library(
         "@com_google_absl//absl/types:span",
     ],
 )
+
+cc_library(
+    name = "response_header",
+    hdrs = [
+        "response_header.h",
+        "response_header_data.h",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//one/codelab/minikafka:__subpackages__"],
+    deps = [
+        ":api_key",
+        "//one/base:macros",
+        "//one/codelab/minikafka/base:kafka_binary_writer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+    ],
+)
