@@ -52,3 +52,12 @@ cc_library(
         "@com_google_absl//absl/base",
     ],
 )
+
+cc_library(
+    name = "narrow_cast",
+    hdrs = ["narrow_cast.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":macros",
+    ],
+)
