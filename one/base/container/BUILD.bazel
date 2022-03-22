@@ -103,3 +103,32 @@ cc_test(
         "@com_google_googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "span",
+    hdrs = ["span.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//one/base:macros",
+        "//one/base:narrow_cast",
+    ],
+)
+
+cc_test(
+    name = "span_test",
+    size = "small",
+    srcs = [
+        "span_test.cc",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-missing-braces",
+    ],
+    deps = [
+        ":span",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
