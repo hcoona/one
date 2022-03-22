@@ -52,6 +52,27 @@ cc_library(
 )
 
 cc_library(
+    name = "api_versions_response",
+    hdrs = [
+        "api_versions_response.h",
+        "api_versions_response_data.h",
+    ],
+    copts = [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    visibility = ["//one/codelab/minikafka:__subpackages__"],
+    deps = [
+        ":api_key",
+        "//one/base:macros",
+        "//one/codelab/minikafka/base:kafka_binary_writer",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+    ],
+)
+
+cc_library(
     name = "request_header",
     srcs = [
         "request_header.cc",

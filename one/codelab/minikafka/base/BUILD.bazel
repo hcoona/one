@@ -61,7 +61,7 @@ cc_test(
 
 cc_library(
     name = "kafka_binary_writer",
-    hdrs = ["kafka_binary_reader.h"],
+    hdrs = ["kafka_binary_writer.h"],
     copts = [
         "-Wall",
         "-Wextra",

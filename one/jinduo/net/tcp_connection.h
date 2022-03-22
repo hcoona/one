@@ -82,9 +82,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   // void send(std::string&& message); // C++11
   void send(const void* message, int len);
   void send(const std::string_view& message);
-  // void send(Buffer&& message); // C++11
-  void send(Buffer* message);  // this one will swap data
-  void shutdown();             // NOT thread safe, no simultaneous calling
+  void send(Buffer* message);   // this one will swap data
+  void shutdown();              // NOT thread safe, no simultaneous calling
   // void shutdownAndForceCloseAfter(double seconds); // NOT thread safe, no
   // simultaneous calling
   void forceClose();

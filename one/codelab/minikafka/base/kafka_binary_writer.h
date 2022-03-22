@@ -50,6 +50,8 @@ class KafkaBinaryWriter {
         current_(span.data()),
         end_(span.data() + span.size()) {}
 
+  [[nodiscard]] size_t size() const { return current_ - begin_; }
+
   absl::Status WriteInt16(std::int16_t value) {
     if (current_ + sizeof(value) > end_) {
       return absl::FailedPreconditionError(absl::StrFormat(
