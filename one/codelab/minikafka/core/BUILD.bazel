@@ -32,7 +32,14 @@ cc_library(
     ],
     visibility = ["//one/codelab/minikafka:__subpackages__"],
     deps = [
+        "//one/codelab/minikafka/base:kafka_binary_writer",
+        "//one/codelab/minikafka/protocol:api_versions_request",
+        "//one/codelab/minikafka/protocol:api_versions_response",
+        "//one/codelab/minikafka/protocol:request_header",
+        "//one/codelab/minikafka/protocol:response_header",
+        "//one/jinduo/net",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/base",
+        "@com_google_absl//absl/time",
     ],
 )

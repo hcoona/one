@@ -17,10 +17,43 @@
 
 #pragma once
 
+#include <memory>
+#include <variant>
+#include <vector>
+
+#include "absl/time/time.h"
+#include "one/codelab/minikafka/protocol/api_versions_request.h"
+#include "one/codelab/minikafka/protocol/request_header.h"
+#include "one/jinduo/net/tcp_connection.h"
+
 namespace hcoona {
 namespace minikafka {
 
-class KafkaService {};
+struct RequestHeaderAndBody {
+  RequestHeader header;
+  std::variant<std::monostate, ApiVersionsRequest> body;
+  absl::Time receive_time;
+};
+
+class KafkaService {
+ public:
+  // TODO(zhangshuai.ds): dispatch into different processing queues.
+  //
+  // 1. Metadata
+  // 2. Producing
+  // 3. Consuming
+  // 4. Coordinator
+  // 5. Administrator
+  void PostRequests(std::weak_ptr<jinduo::net::TcpConnection> connection,
+                    std::vector<RequestHeaderAndBody>&& requests);
+
+ private:
+  // TODO(zhangshuai.ds): process different API requests in arbitrary order, but
+  // send response in origin ordering.
+  static void ProcessApiVersionsRequest(
+      std::weak_ptr<jinduo::net::TcpConnection> connection,
+      RequestHeaderAndBody&& request_header_and_body);
+};
 
 }  // namespace minikafka
 }  // namespace hcoona

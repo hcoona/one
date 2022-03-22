@@ -209,64 +209,13 @@ void KafkaTcpSession::ProcessRequests(
   // coming order?
   //
   // We need to ordering the requests somewhere.
-  (void)kafka_service_;
-
-  // TODO(zhangshuai.ds): package the continuation as a callback, queue the
-  // response with ordering & send with the connection if not disconnected
-  // (weak_ptr).
-  for (auto&& request : requests) {
-    if (request.header.api_key() == ApiKey::kApiVersions) {
-      auto* body = std::get_if<ApiVersionsRequest>(&request.body);
-      (void)body;
-
-      // TODO(zhangshuai.ds): accelerate the size estimation.
-      static constexpr size_t kLargeEnoughBufferSize = 65535;
-      static constexpr size_t kHeaderStartPosition = sizeof(int32_t);
-      auto buffer = std::make_unique<uint8_t[]>(kLargeEnoughBufferSize);
-      KafkaBinaryWriter writer(
-          absl::MakeSpan(buffer.get() + kHeaderStartPosition,
-                         kLargeEnoughBufferSize - kHeaderStartPosition));
-      ResponseHeader response_header(request.header.correlation_id(),
-                                     request.header.header_version());
-      ApiVersionsResponse response_body(
-          0, {ApiVersionsResponseData::ApiVersionEntry{
-                 .api_key = static_cast<int16_t>(ApiKey::kApiVersions),
-                 .min_version = 0,
-                 .max_version = 3}});
-
-      absl::Status s = response_header.WriteTo(&writer);
-      if (!s.ok()) {
-        LOG(ERROR) << "Failed to serialize response_header. reason=" << s;
-        connection_->shutdown();
-        return;
-      }
-      s = response_body.WriteTo(&writer, request.header.api_version());
-      if (!s.ok()) {
-        LOG(ERROR) << "Failed to serialize response_body. reason=" << s;
-        connection_->shutdown();
-        return;
-      }
-      if (writer.size() > std::numeric_limits<int32_t>::max()) {
-        LOG(ERROR) << "Failed to serialize response. header+body size is "
-                      "larger than INT32_MAX.";
-        connection_->shutdown();
-        return;
-      }
-
-      absl::big_endian::Store32(buffer.get(), writer.size());
-
-      CHECK_LE(writer.size() + kHeaderStartPosition,
-               static_cast<size_t>(std::numeric_limits<int>::max()));
-
-      connection_->send(buffer.get(),
-                        static_cast<int>(writer.size() + kHeaderStartPosition));
-    } else {
-      LOG(ERROR) << "Unimplemented yet for API. api_key="
-                 << request.header.api_key();
-      connection_->shutdown();
-      return;
-    }
-  }
+  //
+  // This session instance is destoried on disconnecting, during which would
+  // destory the `connection_`, so passing weak pointer here to avoid always
+  // holding the `TcpConnection` instance.
+  kafka_service_->PostRequests(
+      std::weak_ptr<jinduo::net::TcpConnection>(connection_),
+      std::move(requests));
 }
 
 }  // namespace minikafka

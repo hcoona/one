@@ -19,26 +19,17 @@
 
 #include <memory>
 #include <utility>
-#include <variant>
 #include <vector>
 
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "one/codelab/minikafka/core/kafka_service.h"
-#include "one/codelab/minikafka/protocol/api_versions_request.h"
-#include "one/codelab/minikafka/protocol/request_header.h"
 #include "one/jinduo/net/buffer.h"
 #include "one/jinduo/net/tcp_connection.h"
 
 namespace hcoona {
 namespace minikafka {
-
-struct RequestHeaderAndBody {
-  RequestHeader header;
-  std::variant<std::monostate, ApiVersionsRequest> body;
-  absl::Time receive_time;
-};
 
 class KafkaTcpSession {
  public:
