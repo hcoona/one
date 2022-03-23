@@ -50,7 +50,7 @@ cc_test(
     ],
     deps = [
         ":kafka_binary_reader",
-        "//one/test:macros",
+        "//one/test:status",
         "@com_google_absl//absl/base",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/types:span",

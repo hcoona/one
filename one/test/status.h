@@ -38,8 +38,17 @@
 
 #include "gtest/gtest.h"
 
-#define ONE_ASSERT_STATUS_OK(status) \
-  do {                               \
-    auto&& __s = (status);           \
-    ASSERT_TRUE(__s.ok()) << __s;    \
-  } while (false)
+namespace hcoona {
+namespace test {
+
+template <typename Status>
+::testing::AssertionResult AssertStatusOk(Status&& s) {
+  if (!s.ok()) {
+    return ::testing::AssertionFailure() << s;
+  }
+
+  return ::testing::AssertionSuccess();
+}
+
+}  // namespace test
+}  // namespace hcoona

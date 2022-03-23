@@ -24,7 +24,7 @@
 #include "absl/base/macros.h"
 #include "absl/types/span.h"
 #include "gtest/gtest.h"
-#include "one/test/macros.h"
+#include "one/test/status.h"
 
 // Varint tests vendor from Protobuf source code.
 //
@@ -168,7 +168,7 @@ TEST_1D(KafkaBinaryReaderTest, ReadVarint32, kVarintCases) {
         absl::MakeConstSpan(buffer_, sizeof(buffer_)));
 
     uint32_t value;
-    ONE_ASSERT_STATUS_OK(reader.ReadVarint32(&value));
+    hcoona::test::AssertStatusOk(reader.ReadVarint32(&value));
     EXPECT_EQ(static_cast<uint32_t>(kVarintCases_case.value), value);
   }
 }
@@ -181,7 +181,7 @@ TEST_1D(KafkaBinaryReaderTest, ReadVarint64, kVarintCases) {
         absl::MakeConstSpan(buffer_, sizeof(buffer_)));
 
     uint64_t value;
-    ONE_ASSERT_STATUS_OK(reader.ReadVarint64(&value));
+    hcoona::test::AssertStatusOk(reader.ReadVarint64(&value));
     EXPECT_EQ(kVarintCases_case.value, value);
   }
 }

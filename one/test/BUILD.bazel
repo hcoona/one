@@ -16,9 +16,9 @@
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
 cc_library(
-    name = "macros",
+    name = "status",
     testonly = True,
-    hdrs = ["macros.h"],
+    hdrs = ["status.h"],
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_googletest//:gtest",
