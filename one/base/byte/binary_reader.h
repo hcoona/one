@@ -42,7 +42,10 @@ class BinaryReader {
                 "T must be a scalar type which size is same as a byte.");
 
  public:
-  explicit BinaryReader(span<const T> buffer) : buffer_(buffer) {}
+  explicit BinaryReader(span<const T> buffer)
+      : begin_(buffer.data()),
+        current_(buffer.data()),
+        end_(buffer.data() + buffer.size()) {}
 
   // Implicit copy & move are allowed.
 
@@ -50,27 +53,27 @@ class BinaryReader {
   // Element access
   //
 
-  span<const T> underlying_buffer() const { return buffer_; }
+  span<const T> underlying_buffer() const { return {begin_, end_}; }
 
   const T* data() const {
     // Allow accessing the position of `end()`.
-    ONE_HARDENING_ASSERT(position_ <= buffer_.size());
-    return buffer_.data() + position_;
+    ONE_HARDENING_ASSERT(current_ <= end_);
+    return current_;
   }
 
   //
   // Position
   //
 
-  [[nodiscard]] size_t position() const { return position_; }
+  [[nodiscard]] size_t position() const { return current_ - begin_; }
   void set_position(size_t position) {
-    ONE_HARDENING_ASSERT(position <= buffer_.size());
-    position_ = position;
+    ONE_HARDENING_ASSERT(begin_ + position <= end_);
+    current_ = begin_ + position;
   }
-  void Rewind() { position_ = 0; }
+  void Rewind() { current_ = begin_; }
   void Advance(size_t n) {
-    ONE_HARDENING_ASSERT(position_ + n <= buffer_.size());
-    position_ += n;
+    ONE_HARDENING_ASSERT(current_ + n <= end_);
+    current_ = current_ + n;
   }
 
   //
@@ -78,22 +81,22 @@ class BinaryReader {
   //
 
   [[nodiscard]] bool empty() const { return size() == 0; }
-  [[nodiscard]] size_t size() const { return buffer_.size() - position_; }
-  [[nodiscard]] size_t max_size() const { return buffer_.max_size(); }
+  [[nodiscard]] size_t size() const { return end_ - current_; }
+  [[nodiscard]] size_t max_size() const { return end_ - begin_; }
 
   //
   // Bytes reading
   //
 
   [[nodiscard]] span<const T> Peek(size_t n = 1) const {
-    ONE_HARDENING_ASSERT(position_ + n <= buffer_.size());
-    return buffer_.subspan(position_, n);
+    ONE_HARDENING_ASSERT(current_ + n <= end_);
+    return {current_, n};
   }
 
   [[nodiscard]] span<const T> Read(size_t n = 1) {
-    ONE_HARDENING_ASSERT(position_ + n <= buffer_.size());
-    span<const T> result = buffer_.subspan(position_, n);
-    position_ += n;
+    ONE_HARDENING_ASSERT(current_ + n <= end_);
+    span<const T> result = {current_, n};
+    current_ = current_ + n;
     return result;
   }
 
@@ -109,12 +112,12 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint16_t PeekUInt16Le() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint16_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint16_t) <= end_);
     return absl::little_endian::Load16(Peek(sizeof(uint16_t)).data());
   }
 
   [[nodiscard]] uint16_t PeekUInt16Be() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint16_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint16_t) <= end_);
     return absl::big_endian::Load16(Peek(sizeof(uint16_t)).data());
   }
 
@@ -139,13 +142,13 @@ class BinaryReader {
 
   [[nodiscard]] uint16_t ReadUInt16Le() {
     uint16_t result = PeekUInt16Le();
-    position_ += sizeof(uint16_t);
+    current_ += sizeof(uint16_t);
     return result;
   }
 
   [[nodiscard]] uint16_t ReadUInt16Be() {
     uint16_t result = PeekUInt16Be();
-    position_ += sizeof(uint16_t);
+    current_ += sizeof(uint16_t);
     return result;
   }
 
@@ -158,13 +161,13 @@ class BinaryReader {
 
   [[nodiscard]] int16_t ReadInt16Le() {
     int16_t result = PeekInt16Le();
-    position_ += sizeof(int16_t);
+    current_ += sizeof(int16_t);
     return result;
   }
 
   [[nodiscard]] int16_t ReadInt16Be() {
     int16_t result = PeekInt16Be();
-    position_ += sizeof(int16_t);
+    current_ += sizeof(int16_t);
     return result;
   }
 
@@ -180,12 +183,12 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint32_t PeekUInt32Le() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint32_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint32_t) <= end_);
     return absl::little_endian::Load32(Peek(sizeof(uint32_t)).data());
   }
 
   [[nodiscard]] uint32_t PeekUInt32Be() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint32_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint32_t) <= end_);
     return absl::big_endian::Load32(Peek(sizeof(uint32_t)).data());
   }
 
@@ -210,13 +213,13 @@ class BinaryReader {
 
   [[nodiscard]] uint32_t ReadUInt32Le() {
     uint32_t result = PeekUInt32Le();
-    position_ += sizeof(uint32_t);
+    current_ += sizeof(uint32_t);
     return result;
   }
 
   [[nodiscard]] uint32_t ReadUInt32Be() {
     uint32_t result = PeekUInt32Be();
-    position_ += sizeof(uint32_t);
+    current_ += sizeof(uint32_t);
     return result;
   }
 
@@ -229,13 +232,13 @@ class BinaryReader {
 
   [[nodiscard]] int32_t ReadInt32Le() {
     int32_t result = PeekInt32Le();
-    position_ += sizeof(int32_t);
+    current_ += sizeof(int32_t);
     return result;
   }
 
   [[nodiscard]] int32_t ReadInt32Be() {
     int32_t result = PeekInt32Be();
-    position_ += sizeof(int32_t);
+    current_ += sizeof(int32_t);
     return result;
   }
 
@@ -251,12 +254,12 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint64_t PeekUInt64Le() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint64_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint64_t) <= end_);
     return absl::little_endian::Load64(Peek(sizeof(uint64_t)).data());
   }
 
   [[nodiscard]] uint64_t PeekUInt64Be() const {
-    ONE_HARDENING_ASSERT(position_ + sizeof(uint64_t) <= buffer_.size());
+    ONE_HARDENING_ASSERT(current_ + sizeof(uint64_t) <= end_);
     return absl::big_endian::Load64(Peek(sizeof(uint64_t)).data());
   }
 
@@ -281,13 +284,13 @@ class BinaryReader {
 
   [[nodiscard]] uint64_t ReadUInt64Le() {
     uint64_t result = PeekUInt64Le();
-    position_ += sizeof(uint64_t);
+    current_ += sizeof(uint64_t);
     return result;
   }
 
   [[nodiscard]] uint64_t ReadUInt64Be() {
     uint64_t result = PeekUInt64Be();
-    position_ += sizeof(uint64_t);
+    current_ += sizeof(uint64_t);
     return result;
   }
 
@@ -300,13 +303,13 @@ class BinaryReader {
 
   [[nodiscard]] int64_t ReadInt64Le() {
     int64_t result = PeekInt64Le();
-    position_ += sizeof(int64_t);
+    current_ += sizeof(int64_t);
     return result;
   }
 
   [[nodiscard]] int64_t ReadInt64Be() {
     int64_t result = PeekInt64Be();
-    position_ += sizeof(int64_t);
+    current_ += sizeof(int64_t);
     return result;
   }
 
@@ -367,8 +370,9 @@ class BinaryReader {
   }
   std::optional<uint64_t> ReadVarint64Slow();
 
-  span<const T> buffer_;
-  size_t position_{0};
+  const T* begin_;
+  const T* current_;
+  const T* end_;
 };
 
 //
@@ -578,7 +582,7 @@ int64_t BinaryReader<T>::ReadVarint32Fallback(std::byte first_byte_or_zero) {
       // Optimization:  We're also safe if the buffer is non-empty and it ends
       // with a byte that would terminate a varint.
       (!empty() &&
-       std::to_integer<uint8_t>(std::byte(buffer_.back()) &
+       std::to_integer<uint8_t>(std::byte(end_[-1]) &
                                 kByteMostSignificantBitMask) == 0)) {
     // Caller should provide us with *buffer_ when buffer is non-empty
     ONE_ASSERT(first_byte_or_zero != std::byte(0));
@@ -588,7 +592,7 @@ int64_t BinaryReader<T>::ReadVarint32Fallback(std::byte first_byte_or_zero) {
     if (!result) {
       return -1;
     }
-    position_ = new_buffer_begin - buffer_.data();
+    current_ = new_buffer_begin;
     return static_cast<int64_t>(result.value());
   }
 
@@ -604,15 +608,15 @@ std::optional<uint64_t> BinaryReader<T>::ReadVarint64Fallback() {
       // Optimization:  We're also safe if the buffer is non-empty and it ends
       // with a byte that would terminate a varint.
       (!empty() &&
-       std::to_integer<uint8_t>(std::byte(buffer_.back()) &
+       std::to_integer<uint8_t>(std::byte(end_[-1]) &
                                 kByteMostSignificantBitMask) == 0)) {
     const T* new_buffer_begin;
-    std::optional<uint64_t> result = details::ReadVarint64FromArray(
-        buffer_.data() + position_, &new_buffer_begin);
+    std::optional<uint64_t> result =
+        details::ReadVarint64FromArray(current_, &new_buffer_begin);
     if (!result) {
       return std::nullopt;
     }
-    position_ = new_buffer_begin - buffer_.data();
+    current_ = new_buffer_begin;
     return result;
   }
 
@@ -636,7 +640,7 @@ std::optional<uint64_t> BinaryReader<T>::ReadVarint64Slow() {
       return std::nullopt;
     }
 
-    b = std::byte(buffer_[position_]);
+    b = std::byte(*current_);
     result |= std::to_integer<uint64_t>(
                   b & details::kByteWithoutMostSignificantBitMask)
               << (details::kByteWithoutMsbBitCount * count);
