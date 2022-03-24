@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <optional>
@@ -103,7 +102,7 @@ class BinaryReader {
   //
 
   [[nodiscard]] uint16_t PeekUInt16() const {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return PeekUInt16Le();
     }
     return PeekUInt16Be();
@@ -132,7 +131,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint16_t ReadUInt16() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadUInt16Le();
     }
     return ReadUInt16Be();
@@ -151,7 +150,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] int16_t ReadInt16() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadInt16Le();
     }
     return ReadInt16Be();
@@ -174,7 +173,7 @@ class BinaryReader {
   //
 
   [[nodiscard]] uint32_t PeekUInt32() const {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return PeekUInt32Le();
     }
     return PeekUInt32Be();
@@ -203,7 +202,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint32_t ReadUInt32() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadUInt32Le();
     }
     return ReadUInt32Be();
@@ -222,7 +221,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] int32_t ReadInt32() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadInt32Le();
     }
     return ReadInt32Be();
@@ -245,7 +244,7 @@ class BinaryReader {
   //
 
   [[nodiscard]] uint64_t PeekUInt64() const {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return PeekUInt64Le();
     }
     return PeekUInt64Be();
@@ -274,7 +273,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] uint64_t ReadUInt64() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadUInt64Le();
     }
     return ReadUInt64Be();
@@ -293,7 +292,7 @@ class BinaryReader {
   }
 
   [[nodiscard]] int64_t ReadInt64() {
-    if (absl::little_endian::IsLittleEndian()) {
+    if constexpr (absl::little_endian::IsLittleEndian()) {
       return ReadInt64Le();
     }
     return ReadInt64Be();
@@ -582,7 +581,7 @@ int64_t BinaryReader<T>::ReadVarint32Fallback(std::byte first_byte_or_zero) {
        std::to_integer<uint8_t>(std::byte(buffer_.back()) &
                                 kByteMostSignificantBitMask) == 0)) {
     // Caller should provide us with *buffer_ when buffer is non-empty
-    assert(first_byte_or_zero);
+    ONE_ASSERT(first_byte_or_zero != std::byte(0));
     const T* new_buffer_begin;
     std::optional<uint32_t> result = details::ReadVarint32FromArray(
         first_byte_or_zero, data(), &new_buffer_begin);

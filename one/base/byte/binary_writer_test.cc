@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with
 // ONE. If not, see <https://www.gnu.org/licenses/>.
 
-#include "one/base/byte/binary_reader.h"
+#include "one/base/byte/binary_writer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -23,6 +23,7 @@
 #include <optional>
 
 #include "gtest/gtest.h"
+#include "one/base/byte/binary_reader.h"
 #include "one/base/container/span.h"
 #include "one/test/status.h"
 
@@ -64,7 +65,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 template <typename T>
-class BinaryReaderTest : public testing::TestWithParam<T> {
+class BinaryWriterTest : public testing::TestWithParam<T> {
  protected:
   // Buffer used during most of the tests. This assumes tests run sequentially.
   static constexpr size_t kBufferSize = static_cast<size_t>(1024) * 64;
@@ -117,119 +118,117 @@ VarintCase kVarintCases[] = {
 };
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-using BinaryReaderSucceededTest = BinaryReaderTest<VarintCase>;
+using BinaryWriterSucceededTest = BinaryWriterTest<VarintCase>;
 
-TEST_P(BinaryReaderSucceededTest, ReadVarint32) {
-  const VarintCase& kVarintCases_case = GetParam();
-  ::memcpy(buffer_, kVarintCases_case.bytes, kVarintCases_case.size);
-
-  {
-    auto reader = hcoona::MakeBinaryReader(
-        hcoona::span<const std::byte>(buffer_, sizeof(buffer_)));
-
-    std::optional<uint32_t> value = reader.ReadVarint32();
-    ASSERT_TRUE(value.has_value());
-    EXPECT_EQ(static_cast<uint32_t>(kVarintCases_case.value), value);
+TEST_P(BinaryWriterSucceededTest, WriteVarint32) {
+  const auto& kVarintCases_case = GetParam();
+  if (kVarintCases_case.value > uint64_t{0x00000000FFFFFFFFu}) {
+    // Skip this test for the 64-bit values.
+    return;
   }
+
+  hcoona::BinaryWriter<std::byte> writer{hcoona::span<std::byte>(buffer_)};
+  {
+    ASSERT_TRUE(
+        writer.WriteVarint(static_cast<uint32_t>(kVarintCases_case.value)));
+
+    EXPECT_EQ(kVarintCases_case.size, writer.size());
+  }
+
+  EXPECT_EQ(0,
+            memcmp(buffer_, kVarintCases_case.bytes, kVarintCases_case.size));
 }
 
-TEST_P(BinaryReaderSucceededTest, ReadVarint64) {
-  const VarintCase& kVarintCases_case = GetParam();
-  ::memcpy(buffer_, kVarintCases_case.bytes, kVarintCases_case.size);
+TEST_P(BinaryWriterSucceededTest, WriteVarint64) {
+  const auto& kVarintCases_case = GetParam();
 
+  hcoona::BinaryWriter<std::byte> writer{hcoona::span<std::byte>(buffer_)};
   {
-    auto reader = hcoona::MakeBinaryReader(
-        hcoona::span<const std::byte>(buffer_, sizeof(buffer_)));
+    ASSERT_TRUE(writer.WriteVarint(kVarintCases_case.value));
 
-    std::optional<uint64_t> value = reader.ReadVarint64();
-    ASSERT_TRUE(value.has_value());
-    EXPECT_EQ(kVarintCases_case.value, value);
+    EXPECT_EQ(kVarintCases_case.size, writer.size());
   }
+
+  EXPECT_EQ(0,
+            memcmp(buffer_, kVarintCases_case.bytes, kVarintCases_case.size));
 }
 
-INSTANTIATE_TEST_SUITE_P(VarintSucceededCases, BinaryReaderSucceededTest,
+INSTANTIATE_TEST_SUITE_P(VarintSucceededCases, BinaryWriterSucceededTest,
                          ::testing::ValuesIn(kVarintCases));
 
-// -------------------------------------------------------------------
-// Varint failure test.
+int32_t kSignExtendedVarintCases[] = {0, 1, -1, 1237894, -37895138};
 
-struct VarintErrorCase {
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-  uint8_t bytes[12];
-  int size;
-  bool can_parse;
-};
+using BinaryWriterSignedExtendedSucceededTest = BinaryWriterTest<int32_t>;
 
-inline std::ostream& operator<<(std::ostream& os, const VarintErrorCase& c) {
-  return os << "size " << c.size;
+TEST_P(BinaryWriterSignedExtendedSucceededTest, WriteVarint32SignExtended) {
+  const auto& kSignExtendedVarintCases_case = GetParam();
+
+  hcoona::BinaryWriter<std::byte> writer{hcoona::span<std::byte>(buffer_)};
+  {
+    ASSERT_TRUE(writer.WriteVarint(kSignExtendedVarintCases_case));
+
+    if (kSignExtendedVarintCases_case < 0) {
+      EXPECT_EQ(10, writer.size());
+    } else {
+      EXPECT_LE(writer.size(), 5);
+    }
+  }
+
+  // Read value back in as a varint64 and insure it matches.
+  hcoona::BinaryReader<std::byte> reader{hcoona::span<std::byte>(buffer_)};
+  {
+    std::optional<uint64_t> value = reader.ReadVarint64();
+    ASSERT_TRUE(value.has_value());
+
+    EXPECT_EQ(kSignExtendedVarintCases_case,
+              static_cast<int64_t>(value.value()));
+  }
+
+  EXPECT_EQ(writer.size(), reader.position());
 }
 
-const VarintErrorCase kVarintErrorCases[] = {
-    // Control case.  (Insures that there isn't something else wrong that
-    // makes parsing always fail.)
-    {{0x00}, 1, true},
-
-    // No input data.
-    {{}, 0, false},
-
-    // Input ends unexpectedly.
-    {{0xf0, 0xab}, 2, false},
-
-    // Input ends unexpectedly after 32 bits.
-    {{0xf0, 0xab, 0xc9, 0x9a, 0xf8, 0xb2}, 6, false},
-
-    // Longer than 10 bytes.
-    {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01},
-     11,
-     false},
-};
-
-using BinaryReaderFailureTest = BinaryReaderTest<VarintErrorCase>;
-
-TEST_P(BinaryReaderFailureTest, ReadVarint32Error) {
-  const auto& kVarintErrorCases_case = GetParam();
-  ::memcpy(buffer_, kVarintErrorCases_case.bytes, kVarintErrorCases_case.size);
-
-  auto reader = hcoona::MakeBinaryReader(
-      hcoona::span<const std::byte>(buffer_, kVarintErrorCases_case.size));
-
-  std::optional<uint32_t> value = reader.ReadVarint32();
-  EXPECT_EQ(kVarintErrorCases_case.can_parse, value.has_value())
-      << (value.has_value() ? value.value() : -1);
-}
-
-TEST_P(BinaryReaderFailureTest, ReadVarint64Error) {
-  const auto& kVarintErrorCases_case = GetParam();
-  ::memcpy(buffer_, kVarintErrorCases_case.bytes, kVarintErrorCases_case.size);
-
-  auto reader = hcoona::MakeBinaryReader(
-      hcoona::span<const std::byte>(buffer_, kVarintErrorCases_case.size));
-
-  std::optional<uint64_t> value = reader.ReadVarint64();
-  EXPECT_EQ(kVarintErrorCases_case.can_parse, value.has_value());
-}
-
-INSTANTIATE_TEST_SUITE_P(VarintFailuresCases, BinaryReaderFailureTest,
-                         ::testing::ValuesIn(kVarintErrorCases));
+INSTANTIATE_TEST_SUITE_P(VarintSucceededCases,
+                         BinaryWriterSignedExtendedSucceededTest,
+                         ::testing::ValuesIn(kSignExtendedVarintCases));
 
 //
-// Continuation reading test.
+// Continuation writing test.
 //
 
-TEST(BinaryReaderContinuesReadingTest, ReadInt16Int32) {
-  static const uint8_t kBytes[]{0x00, 0x80, 0x00, 0x00, 0x00, 0x01};
-  auto reader = hcoona::MakeBinaryReader(hcoona::span<const uint8_t>(kBytes));
+TEST(BinaryWriterContinuesReadingTest, WriteNativeVarintBe) {
+  static constexpr size_t kBufferSize{65535};
+  static constexpr uint8_t kPoisonByte{0xFE};
+  std::byte buffer[kBufferSize];
+  ::memset(buffer, kPoisonByte, kBufferSize);
 
-  EXPECT_EQ(static_cast<int16_t>(0x8000), reader.ReadInt16());
-  EXPECT_EQ(static_cast<int32_t>(0x01000000), reader.ReadInt32());
-  EXPECT_TRUE(reader.empty());
+  auto reader = hcoona::MakeBinaryReader(hcoona::span<const std::byte>(buffer));
+  auto writer = hcoona::MakeBinaryWriter(hcoona::span<std::byte>(buffer));
+
+  writer.Write(static_cast<int16_t>(128));
+  ASSERT_TRUE(writer.WriteVarint(static_cast<int32_t>(25500)));
+  writer.WriteBe(static_cast<int32_t>(3555));
+
+  EXPECT_EQ(static_cast<int32_t>(128), reader.ReadInt16());
+  EXPECT_EQ(static_cast<int32_t>(25500), reader.ReadVarint32());
+  EXPECT_EQ(static_cast<int32_t>(3555), reader.ReadInt32Be());
+  EXPECT_EQ(reader.position(), writer.size());
 }
 
-TEST(BinaryReaderContinuesReadingTest, ReadVarint32Varint32) {
-  static const uint8_t kBytes[]{0x01, 0x96, 0x01};
-  auto reader = hcoona::MakeBinaryReader(hcoona::span<const uint8_t>(kBytes));
+TEST(BinaryWriterContinuesReadingTest, WriteVarint32Varint64Varint32) {
+  static constexpr size_t kBufferSize{65535};
+  static constexpr uint8_t kPoisonByte{0xFE};
+  std::byte buffer[kBufferSize];
+  ::memset(buffer, kPoisonByte, kBufferSize);
 
-  EXPECT_EQ(static_cast<uint32_t>(0x01), reader.ReadVarint32());
-  EXPECT_EQ(static_cast<uint32_t>(150), reader.ReadVarint32());
-  EXPECT_TRUE(reader.empty());
+  auto reader = hcoona::MakeBinaryReader(hcoona::span<const std::byte>(buffer));
+  auto writer = hcoona::MakeBinaryWriter(hcoona::span<std::byte>(buffer));
+
+  ASSERT_TRUE(writer.WriteVarint(static_cast<uint32_t>(1U)));
+  ASSERT_TRUE(writer.WriteVarint(static_cast<uint64_t>(2147483652ULL)));
+  ASSERT_TRUE(writer.WriteVarint(static_cast<uint32_t>(2550U)));
+
+  EXPECT_EQ(static_cast<uint32_t>(1U), reader.ReadVarint32());
+  EXPECT_EQ(static_cast<uint64_t>(2147483652ULL), reader.ReadVarint64());
+  EXPECT_EQ(static_cast<uint32_t>(2550U), reader.ReadVarint32());
+  EXPECT_EQ(reader.position(), writer.size());
 }
