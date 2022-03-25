@@ -65,3 +65,20 @@ Still need further investigation, it seems that the abstraction of Java NIO supp
 I think dispatcher model is different from our poller model.
 
 We need the thread pull events from a set of fd(s) and read from/write to the active fd. The dispatcher model would pull nothing, instead it just dispatch the items in queue to downstream.
+
+## Learned from Java NIO & Netty
+
+### High resolution epoll wait
+
+Use `epoll_pwait2` if possible (require kernel 5.11+).
+
+Fallback to `epoll_wait` if we allow milliseconds precision.
+
+Use `epoll_wait` & `timerfd` to simulate an high resolution wait.
+
+### TCP & epoll options
+
+* `TCP_FASTOPEN_CONNECT`
+* `TCP_FASTOPEN`
+
+* `EPOLLRDHUP`
