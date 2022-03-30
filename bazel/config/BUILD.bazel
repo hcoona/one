@@ -16,25 +16,37 @@
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
 load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
+
+string_flag(
+    name = "simd_level",
+    build_setting_default = "none",
+    values = [
+        "none",
+        "sse2",
+        "sse42",
+        "avx2",
+    ],
+)
 
 config_setting(
     name = "enable_sse2",
-    values = {
-        "copt": "-msse2",
+    flag_values = {
+        ":simd_level": "sse2",
     },
 )
 
 config_setting(
     name = "enable_sse42",
-    values = {
-        "copt": "-msse4.2",
+    flag_values = {
+        ":simd_level": "sse42",
     },
 )
 
 config_setting(
     name = "enable_avx2",
-    values = {
-        "copt": "-mavx2",
+    flag_values = {
+        ":simd_level": "avx2",
     },
 )
 
@@ -48,23 +60,42 @@ selects.config_setting_group(
 )
 
 selects.config_setting_group(
-    name = "enable_sse4_or_later",
+    name = "enable_sse42_or_later",
     match_any = [
         ":enable_sse42",
         ":enable_avx2",
     ],
 )
 
+selects.config_setting_group(
+    name = "enable_avx2_or_later",
+    match_any = [
+        ":enable_avx2",
+    ],
+)
+
+bool_flag(
+    name = "bmi2",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
+)
+
 config_setting(
     name = "enable_bmi2",
-    values = {
-        "copt": "-mbmi2",
+    flag_values = {
+        ":bmi2": "true",
     },
+)
+
+bool_flag(
+    name = "pclmul",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
     name = "enable_pclmul",
-    values = {
-        "copt": "-mpclmul",
+    flag_values = {
+        ":pclmul": "true",
     },
 )
