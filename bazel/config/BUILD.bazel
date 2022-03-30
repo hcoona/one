@@ -15,5 +15,56 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-# Thie empty BUILD.bazel file is required to make Bazel treat
-# this directory as a package.
+load("@bazel_skylib//lib:selects.bzl", "selects")
+
+config_setting(
+    name = "enable_sse2",
+    values = {
+        "copt": "-msse2",
+    },
+)
+
+config_setting(
+    name = "enable_sse42",
+    values = {
+        "copt": "-msse4.2",
+    },
+)
+
+config_setting(
+    name = "enable_avx2",
+    values = {
+        "copt": "-mavx2",
+    },
+)
+
+selects.config_setting_group(
+    name = "enable_sse2_or_later",
+    match_any = [
+        ":enable_sse2",
+        ":enable_sse42",
+        ":enable_avx2",
+    ],
+)
+
+selects.config_setting_group(
+    name = "enable_sse4_or_later",
+    match_any = [
+        ":enable_sse42",
+        ":enable_avx2",
+    ],
+)
+
+config_setting(
+    name = "enable_bmi2",
+    values = {
+        "copt": "-mbmi2",
+    },
+)
+
+config_setting(
+    name = "enable_pclmul",
+    values = {
+        "copt": "-mpclmul",
+    },
+)
