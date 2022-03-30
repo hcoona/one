@@ -20,13 +20,22 @@ load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
 
 string_flag(
     name = "simd_level",
-    build_setting_default = "none",
+    build_setting_default = "mmx",
     values = [
-        "none",
+        "mmx",
         "sse2",
         "sse42",
+        "avx",
         "avx2",
+        "avx512f",
     ],
+)
+
+config_setting(
+    name = "enable_mmx",
+    flag_values = {
+        ":simd_level": "mmx",
+    },
 )
 
 config_setting(
@@ -44,10 +53,36 @@ config_setting(
 )
 
 config_setting(
+    name = "enable_avx",
+    flag_values = {
+        ":simd_level": "avx",
+    },
+)
+
+config_setting(
     name = "enable_avx2",
     flag_values = {
         ":simd_level": "avx2",
     },
+)
+
+config_setting(
+    name = "enable_avx512f",
+    flag_values = {
+        ":simd_level": "avx512f",
+    },
+)
+
+selects.config_setting_group(
+    name = "enable_mmx_or_later",
+    match_any = [
+        ":enable_mmx",
+        ":enable_sse2",
+        ":enable_sse42",
+        ":enable_avx",
+        ":enable_avx2",
+        ":enable_avx512f",
+    ],
 )
 
 selects.config_setting_group(
@@ -55,7 +90,9 @@ selects.config_setting_group(
     match_any = [
         ":enable_sse2",
         ":enable_sse42",
+        ":enable_avx",
         ":enable_avx2",
+        ":enable_avx512f",
     ],
 )
 
@@ -63,7 +100,18 @@ selects.config_setting_group(
     name = "enable_sse42_or_later",
     match_any = [
         ":enable_sse42",
+        ":enable_avx",
         ":enable_avx2",
+        ":enable_avx512f",
+    ],
+)
+
+selects.config_setting_group(
+    name = "enable_avx_or_later",
+    match_any = [
+        ":enable_avx",
+        ":enable_avx2",
+        ":enable_avx512f",
     ],
 )
 
@@ -71,6 +119,14 @@ selects.config_setting_group(
     name = "enable_avx2_or_later",
     match_any = [
         ":enable_avx2",
+        ":enable_avx512f",
+    ],
+)
+
+selects.config_setting_group(
+    name = "enable_avx512f_or_later",
+    match_any = [
+        ":enable_avx512f",
     ],
 )
 
@@ -97,5 +153,31 @@ config_setting(
     name = "enable_pclmul",
     flag_values = {
         ":pclmul": "true",
+    },
+)
+
+bool_flag(
+    name = "aes",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "enable_aes",
+    flag_values = {
+        ":aes": "true",
+    },
+)
+
+bool_flag(
+    name = "rdrand",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "enable_rdrand",
+    flag_values = {
+        ":rdrand": "true",
     },
 )
