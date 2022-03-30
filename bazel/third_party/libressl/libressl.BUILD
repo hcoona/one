@@ -22,7 +22,6 @@ RESSL_DEFINES = [
     "_POSIX_SOURCE",
     "_GNU_SOURCE",
     # Libressl specific
-    "LIBRESSL_INTERNAL",
     "OPENSSL_NO_HW_PADLOCK",
     "__BEGIN_HIDDEN_DECLS=",
     "__END_HIDDEN_DECLS=",
@@ -733,12 +732,13 @@ cc_library(
         "-Iexternal/openssl/crypto/x509",
         "-Iexternal/openssl/include/compat",
     ],
-    defines = RESSL_DEFINES + [
-        "LIBRESSL_CRYPTO_INTERNAL",
-    ],
+    defines = RESSL_DEFINES,
     includes = ["include"],
     linkopts = RESSL_LDFLAGS + PLATFORM_LIBS,
-    local_defines = CRYTPO_LOCAL_DEFINES,
+    local_defines = CRYTPO_LOCAL_DEFINES + [
+        "LIBRESSL_INTERNAL",
+        "LIBRESSL_CRYPTO_INTERNAL",
+    ],
     textual_hdrs = [
         "crypto/chacha/chacha-merged.c",
         "crypto/des/ncbc_enc.c",
@@ -815,6 +815,10 @@ cc_library(
     defines = RESSL_DEFINES,
     includes = ["include"],
     linkopts = RESSL_LDFLAGS + PLATFORM_LIBS,
+    local_defines = CRYTPO_LOCAL_DEFINES + [
+        "LIBRESSL_INTERNAL",
+        "LIBRESSL_CRYPTO_INTERNAL",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         ":bs",
@@ -842,4 +846,7 @@ cc_library(
     defines = RESSL_DEFINES,
     includes = ["include"],
     linkopts = RESSL_LDFLAGS + PLATFORM_LIBS,
+    local_defines = [
+        "LIBRESSL_INTERNAL",
+    ],
 )

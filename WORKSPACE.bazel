@@ -230,6 +230,37 @@ http_archive(
 )
 
 http_archive(
+    name = "com_github_facebook_folly",  # 2022-03-28T07:14:25Z
+    build_file = "//bazel/third_party/folly:folly.BUILD",
+    patch_args = ["-p1"],
+    patches = [
+        "//bazel/third_party/folly:0001-fix-for-libressl.patch",
+        "//bazel/third_party/folly:0002-fix-override-warning.patch",
+    ],
+    sha256 = "e4ff1467598f8a7bedf175489eb7dd270ab023e128f0aeef770eb5b087c4b4dd",
+    urls = ["https://github.com/facebook/folly/releases/download/v2022.03.28.00/folly-v2022.03.28.00.tar.gz"],
+)
+
+# TODO(zhangshuai.ds): Use common xxhash?
+http_archive(
+    name = "com_github_facebook_zstd",  # 2022-01-20T21:54:37Z
+    build_file = "//bazel/third_party/zstd:zstd.BUILD",
+    sha256 = "7c42d56fac126929a6a85dbc73ff1db2411d04f104fae9bdea51305663a83fd0",
+    strip_prefix = "zstd-1.5.2",
+    urls = [
+        "https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_fmtlib_fmt",  # 2022-01-06T22:52:40Z
+    build_file = "//bazel/third_party/fmt:fmt.BUILD",
+    sha256 = "3d794d3cf67633b34b2771eb9f073bde87e846e0d395d254df7b211ef1ec7346",
+    strip_prefix = "fmt-8.1.1",
+    urls = ["https://github.com/fmtlib/fmt/archive/refs/tags/8.1.1.tar.gz"],
+)
+
+http_archive(
     name = "com_github_gflags_gflags",  # 2018-11-11T21:30:10Z
     sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
     strip_prefix = "gflags-2.2.2",
@@ -241,6 +272,13 @@ http_archive(
     sha256 = "018311a866428019cdfd052ea675e8b04082bb8c1e00869fb61875aadc637ede",
     strip_prefix = "benchmark-7cb2914292886a1c2625faf5cc84743d1855d21b",
     urls = ["https://github.com/google/benchmark/archive/7cb2914292886a1c2625faf5cc84743d1855d21b.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_google_double_conversion",  # 2022-01-30T20:52:33Z
+    sha256 = "3cdf5e962ef903168618dc664da7460db34bcb9911ee9ca9a343c33efd649e2d",
+    strip_prefix = "double-conversion-a109d7d05165b338513e3e379ecb5697a22b05c3",
+    urls = ["https://github.com/google/double-conversion/archive/a109d7d05165b338513e3e379ecb5697a22b05c3.tar.gz"],
 )
 
 http_archive(
@@ -256,6 +294,28 @@ http_archive(
 )
 
 http_archive(
+    name = "com_github_google_snappy",  # 2017-08-25
+    build_file = "//bazel/third_party/snappy:snappy.BUILD",
+    sha256 = "3dfa02e873ff51a11ee02b9ca391807f0c8ea0529a4924afa645fbf97163f9d4",
+    strip_prefix = "snappy-1.1.7",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/1.1.7.tar.gz",
+        "https://github.com/google/snappy/archive/1.1.7.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_jedisct1_libsodium",  # 2019-05-30T21:02:19Z
+    build_file = "//bazel/third_party/libsodium:libsodium.BUILD",
+    sha256 = "6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1",
+    strip_prefix = "libsodium-1.0.18",
+    urls = [
+        "https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz",
+        "https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18.tar.gz",
+    ],
+)
+
+http_archive(
     name = "com_github_libevent_libevent",  # 2020-07-05T13:33:03Z
     build_file = "//bazel/third_party/event:event.BUILD",
     patch_cmds = [
@@ -268,6 +328,14 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "com_github_lz4_lz4",  # 2019-08-20
+    build_file = "//bazel/third_party/lz4:lz4.BUILD",
+    sha256 = "658ba6191fa44c92280d4aa2c271b0f4fbc0e34d249578dd05e50e76d0e5efcc",
+    strip_prefix = "lz4-1.9.2",
+    urls = ["https://github.com/lz4/lz4/archive/v1.9.2.tar.gz"],
+)
+
 # TODO(zhangshuai.ustc): SIMD optimization.
 # https://github.com/cloudflare/zlib
 # zlib-ng
@@ -276,16 +344,15 @@ http_archive(
     build_file = "//bazel/third_party/zlib:zlib.BUILD",
     sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
     strip_prefix = "zlib-1.2.11",
-    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+    urls = ["https://zlib.net/fossils/zlib-1.2.11.tar.gz"],
 )
 
 http_archive(
     name = "com_github_nelhage_rules_boost",  # 2021-08-27T15:46:06Z
-    patch_cmds = ["sed -i 's/net_zlib_zlib/com_github_madler_zlib/g' BUILD.boost"],
-    patch_cmds_win = [
-        """$content = (Get-Content 'BUILD.boost') -replace "net_zlib_zlib", "com_github_madler_zlib"
-Set-Content BUILD.boost -Value $content -Encoding UTF8
-""",
+    patch_args = ["-p1"],
+    patches = [
+        "//bazel/third_party/boost:0001-fix-deps-repo-name.patch",
+        "//bazel/third_party/boost:0002-rename-lzma-repo-name-in-build-file.patch",
     ],
     sha256 = "2d0b2eef7137730dbbb180397fe9c3d601f8f25950c43222cb3ee85256a21869",
     strip_prefix = "rules_boost-fce83babe3f6287bccb45d2df013a309fa3194b8",
@@ -333,11 +400,30 @@ http_archive(
     patch_args = ["-p1"],
     patches = [
         "//bazel/third_party/libressl:0001-fix-attribute-directive-ignored-warning.patch",
+        "//bazel/third_party/libressl:0002-add-SSL_SESSION_get0_hostname.patch",
     ],
     sha256 = "a7d0026f67622275ec8f8239ded422a653d5ccc84df55dea2acd406017185608",
     strip_prefix = "libressl-3.5.1",
     urls = [
         "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.5.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "org_sourceware_bzip2",  # 2019-06-13
+    build_file = "//bazel/third_party/bzip2:bzip2.BUILD",
+    sha256 = "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269",
+    strip_prefix = "bzip2-1.0.8",
+    urls = ["https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"],
+)
+
+http_archive(
+    name = "org_tukaani_xz",
+    build_file = "@com_github_nelhage_rules_boost//:BUILD.lzma",
+    sha256 = "71928b357d0a09a12a4b4c5fafca8c31c19b0e7d3b8ebb19622e96f26dbf28cb",
+    strip_prefix = "xz-5.2.3",
+    urls = [
+        "https://tukaani.org/xz/xz-5.2.3.tar.gz",
     ],
 )
 

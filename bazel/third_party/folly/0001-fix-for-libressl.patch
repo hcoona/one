@@ -1,0 +1,78 @@
+diff --git a/folly/io/async/AsyncSSLSocket.cpp b/folly/io/async/AsyncSSLSocket.cpp
+index ce245befe..7609a5581 100644
+--- a/folly/io/async/AsyncSSLSocket.cpp
++++ b/folly/io/async/AsyncSSLSocket.cpp
+@@ -463,9 +463,15 @@ std::unique_ptr<IOBuf> AsyncSSLSocket::getExportedKeyingMaterial(
+     return nullptr;
+   }
+ 
++#if  !defined(LIBRESSL_VERSION_NUMBER)
+   if (getSSLVersion() == TLS1_2_VERSION && !SSL_get_extms_support(ssl_.get())) {
+     return nullptr;
+   }
++#else
++  if (getSSLVersion() == TLS1_2_VERSION) {
++    return nullptr;
++  }
++#endif
+   auto buf = IOBuf::create(length);
+   const unsigned char* contextBuf = nullptr;
+   size_t contextLength = 0;
+diff --git a/folly/io/async/SSLContext.cpp b/folly/io/async/SSLContext.cpp
+index d32e3e842..69a7eb51b 100644
+--- a/folly/io/async/SSLContext.cpp
++++ b/folly/io/async/SSLContext.cpp
+@@ -183,7 +183,7 @@ void SSLContext::setClientECCurvesList(
+   if (ecCurves.empty()) {
+     return;
+   }
+-#if OPENSSL_VERSION_NUMBER >= 0x1000200fL
++#if OPENSSL_VERSION_NUMBER >= 0x1000200fL && !defined(LIBRESSL_VERSION_NUMBER)
+   std::string ecCurvesList;
+   join(":", ecCurves, ecCurvesList);
+   int rc = SSL_CTX_set1_curves_list(ctx_, ecCurvesList.c_str());
+@@ -247,7 +247,7 @@ void SSLContext::setCiphersOrThrow(const std::string& ciphers) {
+ }
+ 
+ void SSLContext::setSigAlgsOrThrow(const std::string& sigalgs) {
+-#if OPENSSL_VERSION_NUMBER >= 0x1000200fL
++#if OPENSSL_VERSION_NUMBER >= 0x1000200fL && !defined(LIBRESSL_VERSION_NUMBER)
+   int rc = SSL_CTX_set1_sigalgs_list(ctx_, sigalgs.c_str());
+   if (rc == 0) {
+     throw std::runtime_error("SSL_CTX_set1_sigalgs_list " + getErrors());
+@@ -887,7 +887,7 @@ void SSLContext::setSessionLifecycleCallbacks(
+   sessionLifecycleCallbacks_ = std::move(cb);
+ }
+ 
+-#if FOLLY_OPENSSL_PREREQ(1, 1, 1)
++#if FOLLY_OPENSSL_PREREQ(1, 1, 1) && !defined(LIBRESSL_VERSION_NUMBER)
+ void SSLContext::setCiphersuitesOrThrow(const std::string& ciphersuites) {
+   auto rc = SSL_CTX_set_ciphersuites(ctx_, ciphersuites.c_str());
+   if (rc == 0) {
+diff --git a/folly/ssl/Init.cpp b/folly/ssl/Init.cpp
+index 2eda611c3..b9577a022 100644
+--- a/folly/ssl/Init.cpp
++++ b/folly/ssl/Init.cpp
+@@ -63,7 +63,9 @@ void cleanupOpenSSLLocked() {
+     return;
+   }
+ 
++#if !defined(LIBRESSL_VERSION_NUMBER)
+   OPENSSL_cleanup();
++#endif
+   initialized_ = false;
+ }
+ } // namespace
+diff --git a/folly/ssl/OpenSSLPtrTypes.h b/folly/ssl/OpenSSLPtrTypes.h
+index 8af258a31..16ddbb1c5 100644
+--- a/folly/ssl/OpenSSLPtrTypes.h
++++ b/folly/ssl/OpenSSLPtrTypes.h
+@@ -146,7 +146,7 @@ FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(SSLSession, SSL_SESSION, SSL_SESSION_free);
+ // the appropriate destructor:
+ //    * OwningStackOf* -> Invokes sk_T_free
+ //    * BorrowingStackOf* -> Invokes sk_T_pop_free
+-#if FOLLY_OPENSSL_PREREQ(1, 1, 0)
++#if FOLLY_OPENSSL_PREREQ(1, 1, 0) && !defined(LIBRESSL_VERSION_NUMBER)
+ namespace detail {
+ template <
+     class StackType,
