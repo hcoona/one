@@ -1,0 +1,26 @@
+diff --git a/BUILD.boost b/BUILD.boost
+index dcb4adb..a22754f 100644
+--- a/BUILD.boost
++++ b/BUILD.boost
+@@ -447,7 +447,7 @@ cc_library(
+     visibility = ["//visibility:public"],
+     deps = [
+         ":asio",
+-        "@openssl//:ssl",
++        "@boringssl//:ssl",
+     ],
+ )
+ 
+@@ -1073,9 +1073,9 @@ boost_library(
+         ":type_traits",
+         ":utility",
+         "@com_github_facebook_zstd//:zstd",
+-        "@net_zlib_zlib//:zlib",
+-        "@org_bzip_bzip2//:bz2lib",
+-        "@org_lzma_lzma//:lzma",
++        "@com_github_madler_zlib//:zlib",
++        "@org_sourceware_bzip2//:bz2",
++        "@org_tukaani_xz//:lzma",
+     ],
+ )
+ 
