@@ -233,6 +233,12 @@ http_archive(
     name = "com_github_facebook_folly",  # 2022-03-28T07:14:25Z
     build_file = "//bazel/third_party/folly:folly.BUILD",
     patch_args = ["-p1"],
+    patch_cmds = [
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <boost\\([^>]*\\)>/#include "boost\\1"/g\' {} \\;',
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <double-conversion\\([^>]*\\)>/#include "double-conversion\\1"/g\' {} \\;',
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <folly\\([^>]*\\)>/#include "folly\\1"/g\' {} \\;',
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <glog\\([^>]*\\)>/#include "glog\\1"/g\' {} \\;',
+    ],
     patches = [
         "//bazel/third_party/folly:0001-fix-for-libressl.patch",
         "//bazel/third_party/folly:0002-fix-override-warning.patch",
