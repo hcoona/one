@@ -90,6 +90,7 @@ cc_library(
     ],
     linkopts = [
         "-pthread",
+        "-ldl",
         "-lrt",
     ],
     local_defines = ["OPENSSL_NO_BLAKE2"],
