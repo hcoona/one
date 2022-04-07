@@ -80,11 +80,6 @@ cc_library(
     ) + ["folly/folly-config.h"],
     copts = [
         "-Wno-nullability-completeness",
-        # Workarounds for folly using angle brackets.
-        "-Iexternal/com_github_facebook_folly",
-        "-Ibazel-out/k8-fastbuild/bin/external/com_github_facebook_folly",
-        "-Iexternal/boost",
-        "-Iexternal/com_github_google_double_conversion",
     ],
     linkopts = [
         "-pthread",
