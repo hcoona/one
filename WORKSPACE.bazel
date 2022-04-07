@@ -246,6 +246,21 @@ http_archive(
     urls = ["https://github.com/facebook/folly/releases/download/v2022.03.28.00/folly-v2022.03.28.00.tar.gz"],
 )
 
+http_archive(
+    name = "com_github_facebookincubator_fizz",  # 2022-03-28T07:14:25Z
+    build_file = "//bazel/third_party/fizz:fizz.BUILD",
+    patch_args = ["-p1"],
+    patch_cmds = [
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <\\(fizz[^>]*\\)>/#include "\\1"/g\' {} \\;',
+        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <\\(folly[^>]*\\)>/#include "\\1"/g\' {} \\;',
+    ],
+    patches = [
+        "//bazel/third_party/fizz:0001-no-ed25519-libressl.patch",
+    ],
+    sha256 = "c88e7b74bdd60f03077f74cb3cabefabfa7cedc979818dff394646df17fd60a0",
+    urls = ["https://github.com/facebookincubator/fizz/releases/download/v2022.03.28.00/fizz-v2022.03.28.00.tar.gz"],
+)
+
 # TODO(zhangshuai.ds): Use common xxhash?
 http_archive(
     name = "com_github_facebook_zstd",  # 2022-01-20T21:54:37Z

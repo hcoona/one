@@ -1,0 +1,11 @@
+diff --git a/fizz/crypto/openssl/OpenSSL.h b/fizz/crypto/openssl/OpenSSL.h
+index 3c3a1bd..cb8bb9b 100644
+--- a/fizz/crypto/openssl/OpenSSL.h
++++ b/fizz/crypto/openssl/OpenSSL.h
+@@ -4,4 +4,6 @@
+ 
+ #include <openssl/opensslv.h>
+ 
++#if !defined(LIBRESSL_VERSION_NUMBER)
+ #define FIZZ_OPENSSL_HAS_ED25519 (OPENSSL_VERSION_NUMBER >= 0x10101000L)
++#endif
