@@ -38,8 +38,10 @@ alias(
 configure_make(
     name = "openssl",
     configure_command = "config",
-    configure_in_place = True,
+    configure_in_place = False,
     configure_options = [
+        "--api=1.1.0",
+        "--openssldir=/usr/lib/ssl",
         "no-idea",
         "no-mdc2",
         "no-rc5",
@@ -49,14 +51,10 @@ configure_make(
         "enable-cms",
         "no-capieng",
         "enable-ec_nistp_64_gcc_128",
-        "--with-zlib-include=$$EXT_BUILD_DEPS$$",
-        "--with-zlib-lib=$$EXT_BUILD_DEPS$$",
+        "no-zlib",
         # https://stackoverflow.com/questions/36220341/struct-in6-addr-has-no-member-named-s6-addr32-with-ansi
         "-D_DEFAULT_SOURCE=1",
         "-DPEDANTIC",
-    ],
-    copts = [
-        "-std=gnu11",
     ],
     env = select({
         "@platforms//os:macos": {
@@ -81,9 +79,6 @@ configure_make(
     ],
     toolchains = ["@rules_perl//:current_toolchain"],
     visibility = ["//visibility:public"],
-    deps = [
-        "@com_github_madler_zlib//:zlib",
-    ],
 )
 
 filegroup(
