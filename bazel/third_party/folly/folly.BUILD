@@ -86,7 +86,6 @@ cc_library(
         "-ldl",
         "-lrt",
     ],
-    local_defines = ["OPENSSL_NO_BLAKE2"],
     visibility = ["//visibility:public"],
     deps = [
         "@boost//:algorithm",
