@@ -50,7 +50,6 @@ cc_library(
         ],
         exclude = [
             "folly/build/**",
-            # "folly/python/**",
             "folly/logging/example/**",
             "folly/**/*test/**",
             "folly/tools/**",
@@ -72,7 +71,6 @@ cc_library(
         ],
         exclude = [
             "folly/build/**",
-            # "folly/python/**",
             "folly/logging/example/**",
             "folly/**/*test/**",
             "folly/tools/**",
