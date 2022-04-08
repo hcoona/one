@@ -18,7 +18,6 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 _LOCAL_DEFINES = [
-    "-D_FORTIFY_SOURCE=2",
     "-DHAVE_PTHREAD_PRIO_INHERIT=1",
     "-DHAVE_PTHREAD=1",
     "-DSTDC_HEADERS=1",
@@ -92,6 +91,9 @@ _LOCAL_DEFINES = [
 }) + select({
     "@//bazel/config:enable_rdrand": ["-DHAVE_RDRAND=1"],
     "//conditions:default": [],
+}) + select({
+    "@//bazel/config:with_sanitizer": [],
+    "//conditions:default": ["-D_FORTIFY_SOURCE=2"],
 })
 
 genrule(
@@ -291,7 +293,7 @@ cc_library(
     ) + [":version_h"],
     copts = [
         "-iquote external/com_github_jedisct1_libsodium/src/libsodium/include/sodium",
-        "-iquote bazel-out/k8-fastbuild/bin/external/com_github_jedisct1_libsodium/src/libsodium/include/sodium",
+        "-iquote $(GENDIR)/external/com_github_jedisct1_libsodium/src/libsodium/include/sodium",
         "-pthread",
         "-fvisibility=hidden",
         "-fno-strict-aliasing",
