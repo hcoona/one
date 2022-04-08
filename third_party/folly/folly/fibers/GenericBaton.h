@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/synchronization/Baton.h>
+#include "folly/synchronization/Baton.h"
 
-#include <folly/fibers/Baton.h>
+#include "folly/fibers/Baton.h"
 
 namespace folly {
 namespace fibers {

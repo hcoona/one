@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/crypto/LtHash.h>
+#include "folly/experimental/crypto/LtHash.h"
 
-#include <folly/CpuId.h>
+#include "folly/CpuId.h"
 
 #ifdef __SSE2__
 #include <emmintrin.h>
@@ -25,7 +25,7 @@
 #include <immintrin.h>
 #endif
 
-#include <folly/Memory.h>
+#include "folly/Memory.h"
 
 namespace folly {
 namespace crypto {

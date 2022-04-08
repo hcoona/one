@@ -26,7 +26,7 @@ using folly_port_struct_timezone = struct timezone;
 #else
 
 // Someone decided this was a good place to define timeval.....
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 struct folly_port_struct_timezone_ {
   int tz_minuteswest;

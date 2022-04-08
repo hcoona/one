@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/SaturatingSemaphore.h>
+#include "folly/synchronization/SaturatingSemaphore.h"
 
-#include <folly/portability/GTest.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/portability/GTest.h"
+#include "folly/test/DeterministicSchedule.h"
 
 /// Test helper functions
 

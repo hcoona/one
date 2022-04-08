@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/system/ThreadId.h>
+#include "folly/system/ThreadId.h"
 
-#include <folly/portability/PThread.h>
-#include <folly/portability/SysSyscall.h>
-#include <folly/portability/Unistd.h>
-#include <folly/portability/Windows.h>
+#include "folly/portability/PThread.h"
+#include "folly/portability/SysSyscall.h"
+#include "folly/portability/Unistd.h"
+#include "folly/portability/Windows.h"
 
 #ifdef __XROS__
 #include <xr/execution/accessors.h> // @manual

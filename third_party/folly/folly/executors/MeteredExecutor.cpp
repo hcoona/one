@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/executors/MeteredExecutor.h>
+#include "folly/executors/MeteredExecutor.h"
 
 #include <limits>
 
-#include <folly/io/async/AtomicNotificationQueue.h>
+#include "folly/io/async/AtomicNotificationQueue.h"
 
 namespace folly {
 

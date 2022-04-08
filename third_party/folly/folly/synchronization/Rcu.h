@@ -20,12 +20,12 @@
 #include <functional>
 #include <limits>
 
-#include <folly/Indestructible.h>
-#include <folly/Optional.h>
-#include <folly/detail/TurnSequencer.h>
-#include <folly/executors/QueuedImmediateExecutor.h>
-#include <folly/synchronization/detail/ThreadCachedInts.h>
-#include <folly/synchronization/detail/ThreadCachedLists.h>
+#include "folly/Indestructible.h"
+#include "folly/Optional.h"
+#include "folly/detail/TurnSequencer.h"
+#include "folly/executors/QueuedImmediateExecutor.h"
+#include "folly/synchronization/detail/ThreadCachedInts.h"
+#include "folly/synchronization/detail/ThreadCachedLists.h"
 
 // Implementation of proposed Read-Copy-Update (RCU) C++ API
 // http://open-std.org/JTC1/SC22/WG21/docs/papers/2017/p0566r3.pdf
@@ -541,4 +541,4 @@ class rcu_obj_base : detail::ThreadCachedListsBase::Node {
 
 } // namespace folly
 
-#include <folly/synchronization/Rcu-inl.h>
+#include "folly/synchronization/Rcu-inl.h"

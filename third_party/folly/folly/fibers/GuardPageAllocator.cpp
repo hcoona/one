@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/fibers/GuardPageAllocator.h>
+#include "folly/fibers/GuardPageAllocator.h"
 
 #ifndef _WIN32
 #include <dlfcn.h>
@@ -24,13 +24,13 @@
 #include <iostream>
 #include <mutex>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Singleton.h>
-#include <folly/SpinLock.h>
-#include <folly/Synchronized.h>
-#include <folly/portability/SysMman.h>
-#include <folly/portability/Unistd.h>
+#include "folly/Singleton.h"
+#include "folly/SpinLock.h"
+#include "folly/Synchronized.h"
+#include "folly/portability/SysMman.h"
+#include "folly/portability/Unistd.h"
 
 namespace folly {
 namespace fibers {

@@ -19,7 +19,7 @@
 #include <atomic>
 #include <type_traits>
 
-#include <folly/Traits.h>
+#include "folly/Traits.h"
 
 namespace folly {
 

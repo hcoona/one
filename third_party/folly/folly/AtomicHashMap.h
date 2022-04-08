@@ -86,12 +86,12 @@
 #include <functional>
 #include <stdexcept>
 
-#include <folly/AtomicHashArray.h>
-#include <folly/CPortability.h>
-#include <folly/Likely.h>
-#include <folly/ThreadCachedInt.h>
-#include <folly/container/Foreach.h>
-#include <folly/hash/Hash.h>
+#include "folly/AtomicHashArray.h"
+#include "folly/CPortability.h"
+#include "folly/Likely.h"
+#include "folly/ThreadCachedInt.h"
+#include "folly/container/Foreach.h"
+#include "folly/hash/Hash.h"
 
 namespace folly {
 
@@ -485,4 +485,4 @@ using QuadraticProbingAtomicHashMap = AtomicHashMap<
     AtomicHashArrayQuadraticProbeFcn>;
 } // namespace folly
 
-#include <folly/AtomicHashMap-inl.h>
+#include "folly/AtomicHashMap-inl.h"

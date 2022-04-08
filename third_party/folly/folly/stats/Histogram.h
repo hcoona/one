@@ -26,9 +26,9 @@
 #include <type_traits>
 #include <vector>
 
-#include <folly/CPortability.h>
-#include <folly/Traits.h>
-#include <folly/stats/detail/Bucket.h>
+#include "folly/CPortability.h"
+#include "folly/Traits.h"
+#include "folly/stats/detail/Bucket.h"
 
 namespace folly {
 
@@ -463,4 +463,4 @@ class Histogram {
 
 } // namespace folly
 
-#include <folly/stats/Histogram-inl.h>
+#include "folly/stats/Histogram-inl.h"

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/executors/task_queue/UnboundedBlockingQueue.h>
+#include "folly/executors/task_queue/UnboundedBlockingQueue.h"
 
 #include <thread>
 
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 

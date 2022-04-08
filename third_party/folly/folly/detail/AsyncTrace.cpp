@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/detail/AsyncTrace.h>
+#include "folly/detail/AsyncTrace.h"
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 namespace folly {
 namespace async_tracing {

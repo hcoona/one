@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/hash/Checksum.h>
+#include "folly/hash/Checksum.h"
 
-#include <boost/crc.hpp>
+#include "boost/crc.hpp"
 
-#include <folly/Benchmark.h>
-#include <folly/Random.h>
-#include <folly/hash/Hash.h>
-#include <folly/hash/detail/ChecksumDetail.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/Benchmark.h"
+#include "folly/Random.h"
+#include "folly/hash/Hash.h"
+#include "folly/hash/detail/ChecksumDetail.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 namespace {
 const unsigned int BUFFER_SIZE = 512 * 1024 * sizeof(uint64_t);

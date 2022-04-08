@@ -19,9 +19,9 @@
 #include <cstddef>
 #include <memory>
 
-#include <folly/Range.h>
-#include <folly/experimental/crypto/Blake2xb.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Range.h"
+#include "folly/experimental/crypto/Blake2xb.h"
+#include "folly/io/IOBuf.h"
 
 namespace folly {
 namespace crypto {
@@ -271,7 +271,7 @@ class LtHash {
 } // namespace crypto
 } // namespace folly
 
-#include <folly/experimental/crypto/LtHash-inl.h>
+#include "folly/experimental/crypto/LtHash-inl.h"
 
 namespace folly {
 namespace crypto {

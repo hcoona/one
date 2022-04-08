@@ -20,8 +20,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/Utility.h>
-#include <folly/lang/Align.h>
+#include "folly/Utility.h"
+#include "folly/lang/Align.h"
 
 namespace folly {
 

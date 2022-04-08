@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/io/GlobalShutdownSocketSet.h>
+#include "folly/io/GlobalShutdownSocketSet.h"
 
-#include <folly/Singleton.h>
+#include "folly/Singleton.h"
 
 namespace folly {
 

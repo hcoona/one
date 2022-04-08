@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/Math.h>
+#include "folly/Math.h"
 
 #include <algorithm>
 #include <random>
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 namespace {
 template <typename T>

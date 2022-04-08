@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogName.h>
+#include "folly/logging/LogName.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

@@ -18,7 +18,7 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
-#include <folly/io/async/EventBase.h>
+#include "folly/io/async/EventBase.h"
 
 #include <fcntl.h>
 
@@ -26,16 +26,16 @@
 #include <mutex>
 #include <thread>
 
-#include <folly/ExceptionString.h>
-#include <folly/Memory.h>
-#include <folly/String.h>
-#include <folly/io/async/EventBaseAtomicNotificationQueue.h>
-#include <folly/io/async/EventBaseBackendBase.h>
-#include <folly/io/async/EventBaseLocal.h>
-#include <folly/io/async/VirtualEventBase.h>
-#include <folly/portability/Unistd.h>
-#include <folly/synchronization/Baton.h>
-#include <folly/system/ThreadName.h>
+#include "folly/ExceptionString.h"
+#include "folly/Memory.h"
+#include "folly/String.h"
+#include "folly/io/async/EventBaseAtomicNotificationQueue.h"
+#include "folly/io/async/EventBaseBackendBase.h"
+#include "folly/io/async/EventBaseLocal.h"
+#include "folly/io/async/VirtualEventBase.h"
+#include "folly/portability/Unistd.h"
+#include "folly/synchronization/Baton.h"
+#include "folly/system/ThreadName.h"
 
 namespace {
 

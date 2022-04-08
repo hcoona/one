@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/init/Phase.h>
+#include "folly/init/Phase.h"
 
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Singleton.h>
-#include <folly/portability/GTest.h>
+#include "folly/Singleton.h"
+#include "folly/portability/GTest.h"
 
 /// Types
 

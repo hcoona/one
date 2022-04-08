@@ -21,8 +21,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include <folly/CPortability.h>
-#include <folly/Memory.h>
+#include "folly/CPortability.h"
+#include "folly/Memory.h"
 
 namespace folly {
 namespace experimental {

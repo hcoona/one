@@ -17,7 +17,7 @@
 #pragma once
 #define FOLLY_GEN_COMBINE_H_
 
-#include <folly/gen/Base.h>
+#include "folly/gen/Base.h"
 
 namespace folly {
 namespace gen {
@@ -42,4 +42,4 @@ Interleave interleave(Source2&& source2) {
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/Combine-inl.h>
+#include "folly/gen/Combine-inl.h"

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/CacheLocality.h>
+#include "folly/concurrency/CacheLocality.h"
 
 #include <memory>
 #include <thread>
 #include <unordered_map>
 
-#include <folly/portability/GTest.h>
-#include <folly/portability/SysResource.h>
+#include "folly/portability/GTest.h"
+#include "folly/portability/SysResource.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 using namespace folly;
 

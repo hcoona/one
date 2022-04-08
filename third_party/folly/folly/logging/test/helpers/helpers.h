@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/logging/xlog.h>
+#include "folly/logging/xlog.h"
 
 class LogOnDestruction {
  public:

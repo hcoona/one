@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include <folly/Executor.h>
+#include "folly/Executor.h"
 
 namespace folly {
 class ExecutorWithPriority {
@@ -32,4 +32,4 @@ class ExecutorWithPriority {
 };
 } // namespace folly
 
-#include <folly/executors/ExecutorWithPriority-inl.h>
+#include "folly/executors/ExecutorWithPriority-inl.h"

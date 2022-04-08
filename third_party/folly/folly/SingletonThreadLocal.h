@@ -21,12 +21,12 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <folly/ScopeGuard.h>
-#include <folly/ThreadLocal.h>
-#include <folly/detail/Iterators.h>
-#include <folly/detail/Singleton.h>
-#include <folly/detail/UniqueInstance.h>
-#include <folly/functional/Invoke.h>
+#include "folly/ScopeGuard.h"
+#include "folly/ThreadLocal.h"
+#include "folly/detail/Iterators.h"
+#include "folly/detail/Singleton.h"
+#include "folly/detail/UniqueInstance.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 

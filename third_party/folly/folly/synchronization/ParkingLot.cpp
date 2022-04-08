@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/ParkingLot.h>
+#include "folly/synchronization/ParkingLot.h"
 
 #include <array>
 

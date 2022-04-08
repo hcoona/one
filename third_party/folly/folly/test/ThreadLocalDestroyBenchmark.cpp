@@ -18,8 +18,8 @@
 #include <mutex>
 #include <thread>
 
-#include <folly/Benchmark.h>
-#include <folly/ThreadLocal.h>
+#include "folly/Benchmark.h"
+#include "folly/ThreadLocal.h"
 
 using namespace folly;
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/detail/MemoryIdler.h>
+#include "folly/detail/MemoryIdler.h"
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 using namespace folly::detail;
 

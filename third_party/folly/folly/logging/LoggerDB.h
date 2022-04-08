@@ -21,13 +21,13 @@
 #include <unordered_map>
 #include <vector>
 
-#include <folly/Conv.h>
-#include <folly/CppAttributes.h>
-#include <folly/Range.h>
-#include <folly/ScopeGuard.h>
-#include <folly/Synchronized.h>
-#include <folly/detail/StaticSingletonManager.h>
-#include <folly/logging/LogName.h>
+#include "folly/Conv.h"
+#include "folly/CppAttributes.h"
+#include "folly/Range.h"
+#include "folly/ScopeGuard.h"
+#include "folly/Synchronized.h"
+#include "folly/detail/StaticSingletonManager.h"
+#include "folly/logging/LogName.h"
 
 namespace folly {
 

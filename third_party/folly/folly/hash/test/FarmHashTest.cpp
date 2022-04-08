@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/hash/FarmHash.h>
+#include "folly/hash/FarmHash.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(farmhash, simple) {
   EXPECT_NE(

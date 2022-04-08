@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogMessage.h>
+#include "folly/logging/LogMessage.h"
 
-#include <folly/logging/LogCategory.h>
-#include <folly/logging/LoggerDB.h>
-#include <folly/system/ThreadId.h>
+#include "folly/logging/LogCategory.h"
+#include "folly/logging/LoggerDB.h"
+#include "folly/system/ThreadId.h"
 
 using std::chrono::system_clock;
 

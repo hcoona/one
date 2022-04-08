@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/Lazy.h>
+#include "folly/Lazy.h"
 
 #include <functional>
 #include <iostream>
 #include <map>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

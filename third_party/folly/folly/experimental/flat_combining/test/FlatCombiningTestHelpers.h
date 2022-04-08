@@ -16,15 +16,15 @@
 
 #pragma once
 
-#include <folly/experimental/flat_combining/test/FlatCombiningExamples.h>
+#include "folly/experimental/flat_combining/test/FlatCombiningExamples.h"
 
 #include <atomic>
 #include <chrono>
 #include <thread>
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 namespace test {

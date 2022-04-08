@@ -16,8 +16,8 @@
 
 #include <thread>
 
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Latch.h>
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Latch.h"
 
 TEST(LatchTest, ExpectedZero) {
   folly::Latch latch(0);

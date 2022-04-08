@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/functional/Invoke.h>
-#include <folly/futures/Promise.h>
+#include "folly/functional/Invoke.h"
+#include "folly/futures/Promise.h"
 
 namespace folly {
 namespace fibers {

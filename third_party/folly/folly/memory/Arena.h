@@ -22,15 +22,15 @@
 #include <stdexcept>
 #include <utility>
 
-#include <boost/intrusive/slist.hpp>
+#include "boost/intrusive/slist.hpp"
 
-#include <folly/Conv.h>
-#include <folly/Likely.h>
-#include <folly/Memory.h>
-#include <folly/lang/Align.h>
-#include <folly/lang/CheckedMath.h>
-#include <folly/lang/Exception.h>
-#include <folly/memory/Malloc.h>
+#include "folly/Conv.h"
+#include "folly/Likely.h"
+#include "folly/Memory.h"
+#include "folly/lang/Align.h"
+#include "folly/lang/CheckedMath.h"
+#include "folly/lang/Exception.h"
+#include "folly/memory/Malloc.h"
 
 namespace folly {
 
@@ -321,4 +321,4 @@ using FallbackSysArenaAllocator = FallbackArenaAllocator<T, SysAllocator<char>>;
 
 } // namespace folly
 
-#include <folly/memory/Arena-inl.h>
+#include "folly/memory/Arena-inl.h"

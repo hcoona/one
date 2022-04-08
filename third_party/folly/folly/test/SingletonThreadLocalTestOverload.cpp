@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/SingletonThreadLocal.h>
+#include "folly/SingletonThreadLocal.h"
 
 using namespace folly;
 

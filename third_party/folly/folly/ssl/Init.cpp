@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/ssl/Init.h>
+#include "folly/ssl/Init.h"
 
 #include <mutex>
 
-#include <folly/portability/OpenSSL.h>
-#include <folly/ssl/detail/OpenSSLThreading.h>
+#include "folly/portability/OpenSSL.h"
+#include "folly/ssl/detail/OpenSSLThreading.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 namespace ssl {

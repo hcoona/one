@@ -18,8 +18,8 @@
 
 #include <memory>
 
-#include <folly/Memory.h>
-#include <folly/SharedMutex.h>
+#include "folly/Memory.h"
+#include "folly/SharedMutex.h"
 
 namespace folly {
 
@@ -86,4 +86,4 @@ class DigestBuilder {
 
 } // namespace folly
 
-#include <folly/stats/DigestBuilder-inl.h>
+#include "folly/stats/DigestBuilder-inl.h"

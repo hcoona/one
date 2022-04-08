@@ -19,13 +19,13 @@
 #include <atomic>
 #include <memory>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/CPortability.h>
-#include <folly/Portability.h>
-#include <folly/concurrency/CacheLocality.h>
-#include <folly/synchronization/Hazptr-fwd.h>
-#include <folly/synchronization/detail/HazptrUtils.h>
+#include "folly/CPortability.h"
+#include "folly/Portability.h"
+#include "folly/concurrency/CacheLocality.h"
+#include "folly/synchronization/Hazptr-fwd.h"
+#include "folly/synchronization/detail/HazptrUtils.h"
 
 ///
 /// Classes related to objects protectable by hazard pointers.

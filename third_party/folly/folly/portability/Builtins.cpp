@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Builtins.h>
+#include "folly/portability/Builtins.h"
 
 #ifdef _WIN32
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 namespace folly {
 namespace portability {

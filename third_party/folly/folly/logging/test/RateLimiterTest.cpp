@@ -20,9 +20,9 @@
 #include <string>
 #include <thread>
 
-#include <folly/Conv.h>
-#include <folly/logging/RateLimiter.h>
-#include <folly/portability/GTest.h>
+#include "folly/Conv.h"
+#include "folly/logging/RateLimiter.h"
+#include "folly/portability/GTest.h"
 
 using folly::logging::IntervalRateLimiter;
 using std::chrono::duration_cast;

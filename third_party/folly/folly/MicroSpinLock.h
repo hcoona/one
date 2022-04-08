@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/MicroSpinLock.h> // @shim
+#include "folly/synchronization/MicroSpinLock.h" // @shim

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/SingletonRelaxedCounter.h>
+#include "folly/experimental/SingletonRelaxedCounter.h"
 
 #include <cstddef>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
-#include <folly/Benchmark.h>
-#include <folly/init/Init.h>
-#include <folly/lang/Keep.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/init/Init.h"
+#include "folly/lang/Keep.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_int32(num_threads, 4, "No. of threads allocting the objects");
 

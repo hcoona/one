@@ -20,7 +20,7 @@
 
 // Implementation of Arena.h functions
 
-#include <folly/lang/SafeAssert.h>
+#include "folly/lang/SafeAssert.h"
 
 namespace folly {
 

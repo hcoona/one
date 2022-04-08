@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 #include <vector>
 
-#include <folly/executors/InlineExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/Promise.h>
-#include <folly/futures/test/TestExecutor.h>
-#include <folly/portability/GFlags.h>
-#include <folly/synchronization/Baton.h>
-#include <folly/synchronization/NativeSemaphore.h>
+#include "folly/executors/InlineExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/Promise.h"
+#include "folly/futures/test/TestExecutor.h"
+#include "folly/portability/GFlags.h"
+#include "folly/synchronization/Baton.h"
+#include "folly/synchronization/NativeSemaphore.h"
 
 using namespace folly;
 

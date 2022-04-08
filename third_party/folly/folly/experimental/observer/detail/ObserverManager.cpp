@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/observer/detail/ObserverManager.h>
+#include "folly/experimental/observer/detail/ObserverManager.h"
 
 #include <future>
 
-#include <folly/ExceptionString.h>
-#include <folly/Format.h>
-#include <folly/Range.h>
-#include <folly/Singleton.h>
-#include <folly/concurrency/UnboundedQueue.h>
-#include <folly/portability/GFlags.h>
-#include <folly/system/ThreadName.h>
+#include "folly/ExceptionString.h"
+#include "folly/Format.h"
+#include "folly/Range.h"
+#include "folly/Singleton.h"
+#include "folly/concurrency/UnboundedQueue.h"
+#include "folly/portability/GFlags.h"
+#include "folly/system/ThreadName.h"
 
 namespace folly {
 namespace observer_detail {

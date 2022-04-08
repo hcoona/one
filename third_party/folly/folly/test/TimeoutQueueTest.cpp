@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/TimeoutQueue.h>
+#include "folly/TimeoutQueue.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

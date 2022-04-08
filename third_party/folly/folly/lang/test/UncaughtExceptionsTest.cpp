@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/lang/UncaughtExceptions.h>
+#include "folly/lang/UncaughtExceptions.h"
 
-#include <folly/Conv.h>
-#include <folly/functional/Invoke.h>
-#include <folly/portability/GTest.h>
+#include "folly/Conv.h"
+#include "folly/functional/Invoke.h"
+#include "folly/portability/GTest.h"
 
 FOLLY_CREATE_QUAL_INVOKER(invoke_std, std::uncaught_exceptions);
 FOLLY_CREATE_QUAL_INVOKER(invoke_folly, folly::uncaught_exceptions);

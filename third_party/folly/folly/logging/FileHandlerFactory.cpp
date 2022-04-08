@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/logging/FileHandlerFactory.h>
+#include "folly/logging/FileHandlerFactory.h"
 
-#include <folly/logging/FileWriterFactory.h>
-#include <folly/logging/StandardLogHandler.h>
-#include <folly/logging/StandardLogHandlerFactory.h>
+#include "folly/logging/FileWriterFactory.h"
+#include "folly/logging/StandardLogHandler.h"
+#include "folly/logging/StandardLogHandlerFactory.h"
 
 namespace folly {
 

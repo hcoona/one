@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/crypto/LtHash.h>
+#include "folly/experimental/crypto/LtHash.h"
 
 #include <algorithm>
 #include <memory>
@@ -24,10 +24,10 @@
 
 #include <sodium.h>
 
-#include <folly/Random.h>
-#include <folly/String.h>
-#include <folly/io/IOBuf.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/String.h"
+#include "folly/io/IOBuf.h"
+#include "folly/portability/GTest.h"
 
 using namespace ::testing;
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/ConstexprMath.h>
+#include "folly/ConstexprMath.h"
 
 #include <limits>
 #include <type_traits>
 
-#include <folly/lang/Bits.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Bits.h"
+#include "folly/portability/GTest.h"
 
 namespace {
 class ConstexprMathTest : public testing::Test {};

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/lang/CheckedMath.h>
+#include "folly/lang/CheckedMath.h"
 
 #include <limits>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(CheckedMath, checked_add_no_overflow) {
   unsigned int a;

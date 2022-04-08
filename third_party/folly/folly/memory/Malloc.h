@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <folly/CPortability.h>
-#include <folly/portability/Config.h>
-#include <folly/portability/Malloc.h>
+#include "folly/CPortability.h"
+#include "folly/portability/Config.h"
+#include "folly/portability/Malloc.h"
 
 /**
  * Define various MALLOCX_* macros normally provided by jemalloc.  We define
@@ -40,8 +40,8 @@
 #endif
 #endif
 
-#include <folly/lang/Exception.h> /* nolint */
-#include <folly/memory/detail/MallocImpl.h> /* nolint */
+#include "folly/lang/Exception.h" /* nolint */
+#include "folly/memory/detail/MallocImpl.h" /* nolint */
 
 #include <cassert>
 #include <cstddef>

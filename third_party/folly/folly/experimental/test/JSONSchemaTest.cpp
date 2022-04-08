@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/JSONSchema.h>
-#include <folly/json.h>
-#include <folly/portability/GTest.h>
+#include "folly/experimental/JSONSchema.h"
+#include "folly/json.h"
+#include "folly/portability/GTest.h"
 
 using folly::dynamic;
 using folly::parseJson;

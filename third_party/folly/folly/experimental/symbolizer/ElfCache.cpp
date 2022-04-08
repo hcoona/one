@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/symbolizer/ElfCache.h>
+#include "folly/experimental/symbolizer/ElfCache.h"
 
 #include <signal.h>
 
-#include <folly/ScopeGuard.h>
-#include <folly/portability/Config.h>
-#include <folly/portability/SysMman.h>
+#include "folly/ScopeGuard.h"
+#include "folly/portability/Config.h"
+#include "folly/portability/SysMman.h"
 
 #if FOLLY_HAVE_ELF
 

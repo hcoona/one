@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/net/NetOpsDispatcher.h>
-#include <folly/portability/GMock.h>
+#include "folly/net/NetOpsDispatcher.h"
+#include "folly/portability/GMock.h"
 
 namespace folly {
 namespace netops {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Singleton.h>
+#include "folly/Singleton.h"
 
 folly::Singleton<int> foo;
 folly::Singleton<int> bar;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/portability/PThread.h>
+#include "folly/portability/PThread.h"
 
 #if !FOLLY_HAVE_PTHREAD && defined(_WIN32)
-#include <boost/thread/exceptions.hpp>
-#include <boost/thread/tss.hpp>
-#include <boost/version.hpp>
+#include "boost/thread/exceptions.hpp"
+#include "boost/thread/tss.hpp"
+#include "boost/version.hpp"
 
 #include <errno.h>
 
@@ -32,8 +32,8 @@
 #include <shared_mutex>
 #include <thread>
 
-#include <folly/lang/Assume.h>
-#include <folly/portability/Windows.h>
+#include "folly/lang/Assume.h"
+#include "folly/portability/Windows.h"
 
 namespace folly {
 namespace portability {

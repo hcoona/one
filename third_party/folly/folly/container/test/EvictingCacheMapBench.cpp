@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/container/EvictingCacheMap.h>
+#include "folly/container/EvictingCacheMap.h"
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 using namespace folly;
 

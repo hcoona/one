@@ -16,8 +16,8 @@
 
 #include <type_traits>
 
-#include <folly/lang/Badge.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Badge.h"
+#include "folly/portability/GTest.h"
 
 namespace {
 

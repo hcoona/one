@@ -16,8 +16,8 @@
 
 #include <ctime>
 
-#include <folly/portability/GTest.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "folly/portability/GTest.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 using namespace folly;
 using namespace folly::ssl;

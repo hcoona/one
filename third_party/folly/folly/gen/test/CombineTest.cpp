@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/gen/Combine.h>
+#include "folly/gen/Combine.h"
 
 #include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/FBVector.h>
-#include <folly/Range.h>
-#include <folly/gen/Base.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/FBVector.h"
+#include "folly/Range.h"
+#include "folly/gen/Base.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::gen;
 using namespace folly;

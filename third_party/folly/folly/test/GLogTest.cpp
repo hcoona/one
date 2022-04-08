@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/GLog.h>
+#include "folly/GLog.h"
 
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(LogEveryMs, basic) {
   std::vector<std::chrono::steady_clock::time_point> hist;

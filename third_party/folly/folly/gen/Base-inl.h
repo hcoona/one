@@ -18,11 +18,11 @@
 #error This file may only be included from folly/gen/Base.h
 #endif
 
-#include <folly/Function.h>
-#include <folly/Portability.h>
-#include <folly/container/F14Map.h>
-#include <folly/container/F14Set.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Function.h"
+#include "folly/Portability.h"
+#include "folly/container/F14Map.h"
+#include "folly/container/F14Set.h"
+#include "folly/functional/Invoke.h"
 
 // inner condition from:
 // https://github.com/ericniebler/range-v3/blob/0.11.0/include/range/v3/detail/config.hpp#L222

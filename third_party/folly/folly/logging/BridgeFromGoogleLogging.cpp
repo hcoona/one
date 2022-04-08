@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/logging/BridgeFromGoogleLogging.h>
+#include "folly/logging/BridgeFromGoogleLogging.h"
 
-#include <folly/Utility.h>
-#include <folly/logging/Logger.h>
-#include <folly/logging/xlog.h>
+#include "folly/Utility.h"
+#include "folly/logging/Logger.h"
+#include "folly/logging/xlog.h"
 
 namespace folly {
 namespace logging {

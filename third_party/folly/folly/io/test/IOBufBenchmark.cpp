@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Benchmark.h"
+#include "folly/io/IOBuf.h"
 
 using folly::IOBuf;
 

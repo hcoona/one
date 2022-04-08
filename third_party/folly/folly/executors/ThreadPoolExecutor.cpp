@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/executors/ThreadPoolExecutor.h>
+#include "folly/executors/ThreadPoolExecutor.h"
 
 #include <ctime>
 
-#include <folly/executors/GlobalThreadPoolList.h>
-#include <folly/portability/PThread.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
-#include <folly/tracing/StaticTracepoint.h>
+#include "folly/executors/GlobalThreadPoolList.h"
+#include "folly/portability/PThread.h"
+#include "folly/synchronization/AsymmetricMemoryBarrier.h"
+#include "folly/tracing/StaticTracepoint.h"
 
 namespace folly {
 

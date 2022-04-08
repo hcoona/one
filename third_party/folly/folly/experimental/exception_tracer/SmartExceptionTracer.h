@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/ExceptionWrapper.h>
-#include <folly/experimental/exception_tracer/ExceptionTracer.h>
+#include "folly/ExceptionWrapper.h"
+#include "folly/experimental/exception_tracer/ExceptionTracer.h"
 
 #if FOLLY_HAVE_ELF && FOLLY_HAVE_DWARF
 

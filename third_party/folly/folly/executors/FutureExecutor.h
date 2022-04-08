@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/functional/Invoke.h>
-#include <folly/futures/Future.h>
+#include "folly/functional/Invoke.h"
+#include "folly/futures/Future.h"
 
 namespace folly {
 

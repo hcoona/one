@@ -16,18 +16,18 @@
 
 // Implementation of the MathOperation<MathEngine::AVX2> template
 // specializations.
-#include <folly/experimental/crypto/detail/LtHashInternal.h>
+#include "folly/experimental/crypto/detail/LtHashInternal.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #ifdef __AVX2__
 #include <immintrin.h>
 #include <sodium.h>
 
-#include <folly/lang/Bits.h>
+#include "folly/lang/Bits.h"
 #endif // __AVX2__
 
-#include <folly/Memory.h>
+#include "folly/Memory.h"
 
 namespace folly {
 namespace crypto {

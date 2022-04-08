@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/WaitOptions.h>
+#include "folly/synchronization/WaitOptions.h"
 
 namespace folly {
 

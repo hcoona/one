@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/io/SocketOptionMap.h>
+#include "folly/io/SocketOptionMap.h"
 
 #include <errno.h>
 
-#include <folly/net/NetworkSocket.h>
+#include "folly/net/NetworkSocket.h"
 
 namespace folly {
 

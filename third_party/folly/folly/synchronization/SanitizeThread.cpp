@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/SanitizeThread.h>
+#include "folly/synchronization/SanitizeThread.h"
 
-#include <folly/lang/Extern.h>
+#include "folly/lang/Extern.h"
 
 // abseil uses size_t for size params while other FB code and libraries use
 // long, so it is helpful to keep these declarations out of widely-included

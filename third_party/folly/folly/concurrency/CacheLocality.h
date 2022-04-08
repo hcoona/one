@@ -28,14 +28,14 @@
 #include <unordered_map>
 #include <vector>
 
-#include <folly/Indestructible.h>
-#include <folly/Likely.h>
-#include <folly/Memory.h>
-#include <folly/Portability.h>
-#include <folly/detail/StaticSingletonManager.h>
-#include <folly/lang/Align.h>
-#include <folly/lang/Exception.h>
-#include <folly/synchronization/RelaxedAtomic.h>
+#include "folly/Indestructible.h"
+#include "folly/Likely.h"
+#include "folly/Memory.h"
+#include "folly/Portability.h"
+#include "folly/detail/StaticSingletonManager.h"
+#include "folly/lang/Align.h"
+#include "folly/lang/Exception.h"
+#include "folly/synchronization/RelaxedAtomic.h"
 
 namespace folly {
 

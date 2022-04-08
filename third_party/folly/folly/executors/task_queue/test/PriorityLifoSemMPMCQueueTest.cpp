@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/executors/task_queue/PriorityLifoSemMPMCQueue.h>
+#include "folly/executors/task_queue/PriorityLifoSemMPMCQueue.h"
 
 #include <vector>
 
-#include <folly/Range.h>
-#include <folly/container/Enumerate.h>
-#include <folly/portability/GTest.h>
+#include "folly/Range.h"
+#include "folly/container/Enumerate.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

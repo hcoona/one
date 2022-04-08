@@ -18,8 +18,8 @@
 
 #include <memory>
 
-#include <folly/Memory.h>
-#include <folly/Synchronized.h>
+#include "folly/Memory.h"
+#include "folly/Synchronized.h"
 
 namespace folly {
 namespace compression {

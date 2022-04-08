@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/channels/detail/AtomicQueue.h>
+#include "folly/experimental/channels/detail/AtomicQueue.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <folly/synchronization/Baton.h>
+#include "folly/synchronization/Baton.h"
 
 namespace folly {
 namespace channels {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/detail/Sse.h>
+#include "folly/detail/Sse.h"
 
 namespace folly {
 namespace detail {

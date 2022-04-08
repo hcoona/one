@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/Utility.h>
+#include "folly/Utility.h"
 
 #include <type_traits>
 
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

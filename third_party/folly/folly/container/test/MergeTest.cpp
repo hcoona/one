@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/container/Merge.h>
+#include "folly/container/Merge.h"
 
 #include <map>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(MergeTest, NonOverlapping) {
   std::vector<int> a = {0, 2, 4, 6};

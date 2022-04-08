@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/test/Semaphore.h>
+#include "folly/synchronization/test/Semaphore.h"
 
 #include <array>
 #include <numeric>
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Traits.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/SysMman.h>
-#include <folly/synchronization/Latch.h>
-#include <folly/synchronization/test/Barrier.h>
+#include "folly/Traits.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/SysMman.h"
+#include "folly/synchronization/Latch.h"
+#include "folly/synchronization/test/Barrier.h"
 
 using namespace folly::test;
 

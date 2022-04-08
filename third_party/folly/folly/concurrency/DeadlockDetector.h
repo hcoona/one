@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Executor.h>
-#include <folly/executors/QueueObserver.h>
+#include "folly/Executor.h"
+#include "folly/executors/QueueObserver.h"
 
 namespace folly {
 class DeadlockDetector {

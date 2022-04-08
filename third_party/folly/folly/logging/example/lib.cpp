@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/logging/example/lib.h>
+#include "folly/logging/example/lib.h"
 
 namespace example {
 ExampleObject::~ExampleObject() {

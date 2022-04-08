@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include <folly/folly-config.h>
+#include "folly/folly-config.h"
 
 #if FOLLY_HAVE_LIBZSTD
-#include <zstd.h>
+#include "zstd.h"
 #endif
 
-#include <folly/compression/CompressionCoreLocalContextPool.h>
+#include "folly/compression/CompressionCoreLocalContextPool.h"
 
 // When this header is present, folly/compression/Compression.h defines
 // FOLLY_COMPRESSION_HAS_CONTEXT_POOL_SINGLETONS.

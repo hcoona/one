@@ -19,8 +19,8 @@
 #include <initializer_list>
 #include <iterator>
 
-#include <folly/Portability.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Portability.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 

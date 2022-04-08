@@ -18,10 +18,10 @@
 
 #include <memory>
 
-#include <folly/Executor.h>
-#include <folly/fibers/ExecutorBasedLoopController.h>
-#include <folly/fibers/FiberManagerInternal.h>
-#include <folly/futures/Future.h>
+#include "folly/Executor.h"
+#include "folly/fibers/ExecutorBasedLoopController.h"
+#include "folly/fibers/FiberManagerInternal.h"
+#include "folly/futures/Future.h"
 
 namespace folly {
 namespace fibers {
@@ -144,4 +144,4 @@ class ExecutorLoopController : public fibers::ExecutorBasedLoopController {
 } // namespace fibers
 } // namespace folly
 
-#include <folly/fibers/ExecutorLoopController-inl.h>
+#include "folly/fibers/ExecutorLoopController-inl.h"

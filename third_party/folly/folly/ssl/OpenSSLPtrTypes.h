@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Memory.h>
-#include <folly/portability/OpenSSL.h>
+#include "folly/Memory.h"
+#include "folly/portability/OpenSSL.h"
 
 namespace folly {
 namespace ssl {

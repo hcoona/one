@@ -24,13 +24,13 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Likely.h>
-#include <folly/Optional.h>
-#include <folly/experimental/Instructions.h>
-#include <folly/portability/GTest.h>
+#include "folly/Benchmark.h"
+#include "folly/Likely.h"
+#include "folly/Optional.h"
+#include "folly/experimental/Instructions.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace compression {

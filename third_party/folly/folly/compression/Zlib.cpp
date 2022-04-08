@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/compression/Zlib.h>
+#include "folly/compression/Zlib.h"
 
 #if FOLLY_HAVE_LIBZ
 
-#include <folly/Conv.h>
-#include <folly/Optional.h>
-#include <folly/Range.h>
-#include <folly/ScopeGuard.h>
-#include <folly/compression/Compression.h>
-#include <folly/compression/Utils.h>
-#include <folly/io/Cursor.h>
+#include "folly/Conv.h"
+#include "folly/Optional.h"
+#include "folly/Range.h"
+#include "folly/ScopeGuard.h"
+#include "folly/compression/Compression.h"
+#include "folly/compression/Utils.h"
+#include "folly/io/Cursor.h"
 
 using folly::io::compression::detail::dataStartsWithLE;
 using folly::io::compression::detail::prefixToStringLE;

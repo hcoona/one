@@ -19,8 +19,8 @@
 #include <cstdint>
 #include <typeinfo>
 
-#include <folly/CppAttributes.h>
-#include <folly/detail/StaticSingletonManager.h>
+#include "folly/CppAttributes.h"
+#include "folly/detail/StaticSingletonManager.h"
 
 namespace folly {
 namespace detail {

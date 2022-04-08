@@ -20,11 +20,11 @@
 #define FOLLY_HAVE_TIMERFD
 #endif
 
-#include <folly/io/async/EventBase.h>
+#include "folly/io/async/EventBase.h"
 #ifdef FOLLY_HAVE_TIMERFD
-#include <folly/io/async/EventHandler.h>
+#include "folly/io/async/EventHandler.h"
 #else
-#include <folly/io/async/AsyncTimeout.h>
+#include "folly/io/async/AsyncTimeout.h"
 #endif
 #include <chrono>
 

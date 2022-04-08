@@ -30,10 +30,10 @@
 #include <memory>
 #include <mutex>
 
-#include <folly/File.h>
-#include <folly/Range.h>
-#include <folly/io/IOBuf.h>
-#include <folly/system/MemoryMapping.h>
+#include "folly/File.h"
+#include "folly/Range.h"
+#include "folly/io/IOBuf.h"
+#include "folly/system/MemoryMapping.h"
 
 namespace folly {
 
@@ -194,4 +194,4 @@ RecordInfo validateRecord(ByteRange range, uint32_t fileId);
 
 } // namespace folly
 
-#include <folly/io/RecordIO-inl.h>
+#include "folly/io/RecordIO-inl.h"

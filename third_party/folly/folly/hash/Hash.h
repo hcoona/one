@@ -25,13 +25,13 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/CPortability.h>
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/functional/ApplyTuple.h>
-#include <folly/hash/SpookyHashV1.h>
-#include <folly/hash/SpookyHashV2.h>
-#include <folly/lang/Bits.h>
+#include "folly/CPortability.h"
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/functional/ApplyTuple.h"
+#include "folly/hash/SpookyHashV1.h"
+#include "folly/hash/SpookyHashV2.h"
+#include "folly/lang/Bits.h"
 
 #if FOLLY_HAS_STRING_VIEW
 #include <string_view>

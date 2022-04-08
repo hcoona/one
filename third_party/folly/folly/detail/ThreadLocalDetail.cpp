@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/detail/ThreadLocalDetail.h>
+#include "folly/detail/ThreadLocalDetail.h"
 
 #include <list>
 #include <mutex>
 
-#include <folly/synchronization/CallOnce.h>
+#include "folly/synchronization/CallOnce.h"
 
 constexpr auto kSmallGrowthFactor = 1.1;
 constexpr auto kBigGrowthFactor = 1.7;

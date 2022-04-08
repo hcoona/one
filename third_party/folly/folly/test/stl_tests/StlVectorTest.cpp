@@ -160,7 +160,7 @@ THOUGHTS:
 #include <vector>
 #define VECTOR_ std::vector
 #else
-#include <folly/FBVector.h>
+#include "folly/FBVector.h"
 #define VECTOR_ folly::fbvector
 #endif
 
@@ -178,16 +178,16 @@ THOUGHTS:
 #include <string>
 #include <type_traits>
 
-#include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/preprocessor.hpp>
+#include "boost/iterator/iterator_adaptor.hpp"
+#include "boost/preprocessor.hpp"
 
-#include <folly/Conv.h>
-#include <folly/Portability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/lang/Pretty.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/TestUtils.h>
+#include "folly/Conv.h"
+#include "folly/Portability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/lang/Pretty.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/TestUtils.h"
 
 // We use some pre-processor magic to auto-generate setup and destruct code,
 // but it also means we have some parameters that may not be used.

@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/experimental/channels/Channel-fwd.h>
-#include <folly/experimental/channels/detail/ChannelBridge.h>
+#include "folly/experimental/channels/Channel-fwd.h"
+#include "folly/experimental/channels/detail/ChannelBridge.h"
 
 namespace folly {
 namespace channels {
@@ -257,4 +257,4 @@ class Receiver {
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/Channel-inl.h>
+#include "folly/experimental/channels/Channel-inl.h"

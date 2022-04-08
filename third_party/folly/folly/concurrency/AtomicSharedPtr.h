@@ -19,10 +19,10 @@
 #include <atomic>
 #include <thread>
 
-#include <folly/PackedSyncPtr.h>
-#include <folly/concurrency/detail/AtomicSharedPtr-detail.h>
-#include <folly/synchronization/AtomicStruct.h>
-#include <folly/synchronization/detail/AtomicUtils.h>
+#include "folly/PackedSyncPtr.h"
+#include "folly/concurrency/detail/AtomicSharedPtr-detail.h"
+#include "folly/synchronization/AtomicStruct.h"
+#include "folly/synchronization/detail/AtomicUtils.h"
 
 /*
  * This is an implementation of the std::atomic_shared_ptr TS

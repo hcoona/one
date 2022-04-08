@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/Uri.h>
+#include "folly/Uri.h"
 
-#include <folly/Benchmark.h>
-#include <folly/init/Init.h>
+#include "folly/Benchmark.h"
+#include "folly/init/Init.h"
 
 using namespace folly;
 

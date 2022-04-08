@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/futures/ManualTimekeeper.h>
+#include "folly/futures/ManualTimekeeper.h"
 
 #include <chrono>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace std::literals;
 

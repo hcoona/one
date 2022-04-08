@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Hazptr.h>
+#include "folly/synchronization/Hazptr.h"
 
 #include <atomic>
 #include <thread>
 
-#include <folly/Singleton.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/HazptrThreadPoolExecutor.h>
-#include <folly/synchronization/example/HazptrLockFreeLIFO.h>
-#include <folly/synchronization/example/HazptrSWMRSet.h>
-#include <folly/synchronization/example/HazptrWideCAS.h>
-#include <folly/synchronization/test/Barrier.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/Singleton.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/HazptrThreadPoolExecutor.h"
+#include "folly/synchronization/example/HazptrLockFreeLIFO.h"
+#include "folly/synchronization/example/HazptrSWMRSet.h"
+#include "folly/synchronization/example/HazptrWideCAS.h"
+#include "folly/synchronization/test/Barrier.h"
+#include "folly/test/DeterministicSchedule.h"
 
 DEFINE_bool(bench, false, "run benchmark");
 DEFINE_int64(num_reps, 10, "Number of test reps");

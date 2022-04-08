@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include <folly/lang/Assume.h>
+#include "folly/lang/Assume.h"
 
 namespace folly {
 namespace detail {

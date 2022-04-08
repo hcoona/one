@@ -18,10 +18,10 @@
 
 #include <functional>
 
-#include <folly/Portability.h>
-#include <folly/Try.h>
-#include <folly/futures/detail/Core.h>
-#include <folly/lang/Exception.h>
+#include "folly/Portability.h"
+#include "folly/Try.h"
+#include "folly/futures/detail/Core.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 
@@ -449,5 +449,5 @@ class Promise {
 
 } // namespace folly
 
-#include <folly/futures/Future.h>
-#include <folly/futures/Promise-inl.h>
+#include "folly/futures/Future.h"
+#include "folly/futures/Promise-inl.h"

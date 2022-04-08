@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogStream.h>
+#include "folly/logging/LogStream.h"
 
 namespace folly {
 

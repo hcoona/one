@@ -19,9 +19,9 @@
 #include <chrono>
 #include <map>
 
-#include <folly/Synchronized.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/Promise.h>
+#include "folly/Synchronized.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/Promise.h"
 
 namespace folly {
 

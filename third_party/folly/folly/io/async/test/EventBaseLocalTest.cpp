@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/io/async/EventBaseLocal.h>
+#include "folly/io/async/EventBaseLocal.h"
 
-#include <folly/io/async/EventBaseAtomicNotificationQueue.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/io/async/EventBaseAtomicNotificationQueue.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 struct Foo {
   Foo(int n_, std::function<void()> dtorFn_)

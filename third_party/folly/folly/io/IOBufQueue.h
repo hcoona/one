@@ -19,8 +19,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <folly/ScopeGuard.h>
-#include <folly/io/IOBuf.h>
+#include "folly/ScopeGuard.h"
+#include "folly/io/IOBuf.h"
 
 namespace folly {
 

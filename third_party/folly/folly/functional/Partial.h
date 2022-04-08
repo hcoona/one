@@ -19,8 +19,8 @@
 #include <tuple>
 #include <utility>
 
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 

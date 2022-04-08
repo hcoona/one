@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/lang/SafeAssert.h>
+#include "folly/lang/SafeAssert.h"
 
 #include <algorithm>
 #include <cerrno>
 #include <cstdarg>
 
-#include <folly/detail/FileUtilDetail.h>
-#include <folly/lang/ToAscii.h>
-#include <folly/portability/SysTypes.h>
-#include <folly/portability/Windows.h>
+#include "folly/detail/FileUtilDetail.h"
+#include "folly/lang/ToAscii.h"
+#include "folly/portability/SysTypes.h"
+#include "folly/portability/Windows.h"
 
 #if defined(_WIN32)
 

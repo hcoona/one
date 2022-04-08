@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/io/IOBufIovecBuilder.h>
-#include <folly/portability/IOVec.h>
+#include "folly/io/IOBufIovecBuilder.h"
+#include "folly/portability/IOVec.h"
 
 namespace folly {
 size_t IOBufIovecBuilder::allocateBuffers(IoVecVec& iovs, size_t len) {

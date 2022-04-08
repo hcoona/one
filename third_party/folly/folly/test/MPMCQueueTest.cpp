@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/MPMCQueue.h>
+#include "folly/MPMCQueue.h"
 
 #include <functional>
 #include <memory>
@@ -22,17 +22,17 @@
 #include <thread>
 #include <utility>
 
-#include <boost/intrusive_ptr.hpp>
-#include <boost/thread/barrier.hpp>
+#include "boost/intrusive_ptr.hpp"
+#include "boost/thread/barrier.hpp"
 
-#include <folly/Format.h>
-#include <folly/Memory.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/SysResource.h>
-#include <folly/portability/SysTime.h>
-#include <folly/portability/Unistd.h>
-#include <folly/stop_watch.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/Format.h"
+#include "folly/Memory.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/SysResource.h"
+#include "folly/portability/SysTime.h"
+#include "folly/portability/Unistd.h"
+#include "folly/stop_watch.h"
+#include "folly/test/DeterministicSchedule.h"
 
 FOLLY_ASSUME_FBVECTOR_COMPATIBLE_1(boost::intrusive_ptr)
 

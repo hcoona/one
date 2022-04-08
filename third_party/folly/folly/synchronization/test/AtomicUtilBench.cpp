@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AtomicUtil.h>
+#include "folly/synchronization/AtomicUtil.h"
 
 #include <random>
 
-#include <folly/Benchmark.h>
-#include <folly/ConstexprMath.h>
-#include <folly/init/Init.h>
-#include <folly/lang/Aligned.h>
-#include <folly/lang/Assume.h>
-#include <folly/lang/Keep.h>
+#include "folly/Benchmark.h"
+#include "folly/ConstexprMath.h"
+#include "folly/init/Init.h"
+#include "folly/lang/Aligned.h"
+#include "folly/lang/Assume.h"
+#include "folly/lang/Keep.h"
 
 static constexpr size_t atomic_fetch_bit_op_lo_size = 2;
 

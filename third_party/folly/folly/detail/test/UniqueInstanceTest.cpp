@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/detail/UniqueInstance.h>
+#include "folly/detail/UniqueInstance.h"
 
 #include <tuple>
 
-#include <folly/String.h>
-#include <folly/Traits.h>
-#include <folly/portability/GTest.h>
+#include "folly/String.h"
+#include "folly/Traits.h"
+#include "folly/portability/GTest.h"
 
 struct Key1 {};
 struct Key2 {};

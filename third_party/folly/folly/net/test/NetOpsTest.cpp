@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/net/NetOps.h>
+#include "folly/net/NetOps.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/net/NetworkSocket.h>
-#include <folly/portability/GTest.h>
+#include "folly/net/NetworkSocket.h"
+#include "folly/portability/GTest.h"
 
 class NetOpsTest : public testing::Test {};
 

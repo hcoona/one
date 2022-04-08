@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <boost/context/detail/fcontext.hpp>
-#include <glog/logging.h>
+#include "boost/context/detail/fcontext.hpp"
+#include "glog/logging.h"
 
 /**
  * Wrappers for different versions of boost::context library
@@ -26,7 +26,7 @@
  * https://github.com/boostorg/context/blob/boost-1.61.0/include/boost/context/detail/fcontext.hpp
  */
 
-#include <folly/Function.h>
+#include "folly/Function.h"
 
 namespace folly {
 namespace fibers {

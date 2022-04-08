@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogMessage.h>
+#include "folly/logging/LogMessage.h"
 
-#include <folly/String.h>
-#include <folly/logging/Logger.h>
-#include <folly/logging/LoggerDB.h>
-#include <folly/portability/GTest.h>
+#include "folly/String.h"
+#include "folly/logging/Logger.h"
+#include "folly/logging/LoggerDB.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

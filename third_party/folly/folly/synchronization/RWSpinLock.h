@@ -135,8 +135,8 @@ pthread_rwlock_t Read        728698     24us       101ns     7.28ms     194us
 
 */
 
-#include <folly/Portability.h>
-#include <folly/portability/Asm.h>
+#include "folly/Portability.h"
+#include "folly/portability/Asm.h"
 
 #if defined(__GNUC__) && (defined(__i386) || FOLLY_X64 || defined(ARCH_K8))
 #define RW_SPINLOCK_USE_X86_INTRINSIC_
@@ -160,7 +160,7 @@ pthread_rwlock_t Read        728698     24us       101ns     7.28ms     194us
 #include <atomic>
 #include <thread>
 
-#include <folly/Likely.h>
+#include "folly/Likely.h"
 
 namespace folly {
 

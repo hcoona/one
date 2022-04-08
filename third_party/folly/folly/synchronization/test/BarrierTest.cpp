@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/test/Barrier.h>
+#include "folly/synchronization/test/Barrier.h"
 
 #include <atomic>
 #include <thread>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly::test;
 

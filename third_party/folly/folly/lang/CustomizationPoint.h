@@ -18,8 +18,8 @@
 
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/lang/StaticConst.h>
+#include "folly/Portability.h"
+#include "folly/lang/StaticConst.h"
 
 //  FOLLY_DEFINE_CPO
 //

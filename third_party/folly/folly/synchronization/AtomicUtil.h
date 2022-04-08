@@ -19,8 +19,8 @@
 #include <atomic>
 #include <cstdint>
 
-#include <folly/Portability.h>
-#include <folly/Traits.h>
+#include "folly/Portability.h"
+#include "folly/Traits.h"
 
 namespace folly {
 
@@ -119,4 +119,4 @@ FOLLY_INLINE_VARIABLE constexpr atomic_fetch_flip_fn atomic_fetch_flip{};
 
 } // namespace folly
 
-#include <folly/synchronization/AtomicUtil-inl.h>
+#include "folly/synchronization/AtomicUtil-inl.h"

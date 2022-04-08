@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include "folly/synchronization/AsymmetricMemoryBarrier.h"
 
 #include <mutex>
 
-#include <folly/Exception.h>
-#include <folly/Indestructible.h>
-#include <folly/portability/SysMembarrier.h>
-#include <folly/portability/SysMman.h>
+#include "folly/Exception.h"
+#include "folly/Indestructible.h"
+#include "folly/portability/SysMembarrier.h"
+#include "folly/portability/SysMman.h"
 
 namespace folly {
 

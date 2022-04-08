@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/container/Iterator.h>
+#include "folly/container/Iterator.h"
 
 #include <algorithm>
 #include <cassert>
@@ -29,7 +29,7 @@
 #include <utility>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class IteratorTest : public testing::Test {};
 

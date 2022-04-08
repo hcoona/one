@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/memory/ReentrantAllocator.h>
+#include "folly/memory/ReentrantAllocator.h"
 
 #include <new>
 #include <utility>
 
-#include <folly/lang/Bits.h>
-#include <folly/lang/SafeAssert.h>
-#include <folly/portability/SysMman.h>
+#include "folly/lang/Bits.h"
+#include "folly/lang/SafeAssert.h"
+#include "folly/portability/SysMman.h"
 
 namespace folly {
 

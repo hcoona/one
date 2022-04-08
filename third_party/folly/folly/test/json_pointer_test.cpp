@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/json_pointer.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/json_pointer.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
 using folly::json_pointer;
 using ::testing::ElementsAreArray;

@@ -20,9 +20,9 @@
 #include <tuple>
 #include <utility>
 
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 

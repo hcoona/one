@@ -26,12 +26,12 @@
 //   August 5 2012: SpookyV2: d = should be d += in short hash, and remove
 //                  extra mix from long hash
 
-#include <folly/hash/SpookyHashV2.h>
+#include "folly/hash/SpookyHashV2.h"
 
 #include <cstring>
 
-#include <folly/CppAttributes.h>
-#include <folly/Portability.h>
+#include "folly/CppAttributes.h"
+#include "folly/Portability.h"
 
 namespace folly {
 namespace hash {

@@ -17,7 +17,7 @@
 //
 // Author: andrei.alexandrescu@fb.com
 
-#include <folly/FBString.h>
+#include "folly/FBString.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -25,10 +25,10 @@
 #include <random>
 #include <sstream>
 
-#include <folly/Benchmark.h>
-#include <folly/Random.h>
-#include <folly/container/Foreach.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/Random.h"
+#include "folly/container/Foreach.h"
+#include "folly/portability/GFlags.h"
 
 using namespace std;
 using namespace folly;
@@ -78,10 +78,10 @@ std::list<char> RandomList(unsigned int maxSize) {
 #define BENCHFUN(F) CONCAT(CONCAT(BM_, F), CONCAT(_, STRING))
 
 #define STRING string
-#include <folly/test/FBStringTestBenchmarks.cpp.h> // nolint
+#include "folly/test/FBStringTestBenchmarks.cpp.h" // nolint
 #undef STRING
 #define STRING fbstring
-#include <folly/test/FBStringTestBenchmarks.cpp.h> // nolint
+#include "folly/test/FBStringTestBenchmarks.cpp.h" // nolint
 #undef STRING
 
 int main(int argc, char** argv) {

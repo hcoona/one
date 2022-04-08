@@ -19,12 +19,12 @@
 #include <algorithm>
 #include <cstdint>
 
-#include <folly/Bits.h>
-#include <folly/ConstexprMath.h>
-#include <folly/Likely.h>
-#include <folly/Portability.h>
-#include <folly/lang/Assume.h>
-#include <folly/lang/SafeAssert.h>
+#include "folly/Bits.h"
+#include "folly/ConstexprMath.h"
+#include "folly/Likely.h"
+#include "folly/Portability.h"
+#include "folly/lang/Assume.h"
+#include "folly/lang/SafeAssert.h"
 
 #if (FOLLY_SSE >= 2 || (FOLLY_NEON && FOLLY_AARCH64)) && !FOLLY_MOBILE
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/system/HardwareConcurrency.h>
+#include "folly/system/HardwareConcurrency.h"
 
 #include <thread>
 
-#include <folly/portability/Sched.h>
+#include "folly/portability/Sched.h"
 
 namespace folly {
 

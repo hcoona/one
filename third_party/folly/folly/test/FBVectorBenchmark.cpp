@@ -22,13 +22,13 @@
 #include <memory>
 #include <string>
 
-#include <folly/Benchmark.h>
-#include <folly/FBVector.h>
-#include <folly/Traits.h>
-#include <folly/container/Foreach.h>
-#include <folly/portability/GFlags.h>
-#include <folly/small_vector.h>
-#include <folly/test/FBVectorTestUtil.h>
+#include "folly/Benchmark.h"
+#include "folly/FBVector.h"
+#include "folly/Traits.h"
+#include "folly/container/Foreach.h"
+#include "folly/portability/GFlags.h"
+#include "folly/small_vector.h"
+#include "folly/test/FBVectorTestUtil.h"
 
 using namespace std;
 using namespace folly;
@@ -50,50 +50,50 @@ using FBStringVector = vector<folly::fbstring>;
 using FBStringFBVector = fbvector<folly::fbstring>;
 
 #define VECTOR IntVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR IntFBVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR IntSmallVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR IntList
 #define SKIP_RESERVE
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef SKIP_RESERVE
 #undef VECTOR
 #define VECTOR IntDeque
 #define SKIP_RESERVE
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef SKIP_RESERVE
 #undef VECTOR
 
 #define VECTOR StringVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR StringFBVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR StringSmallVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR StringList
 #define SKIP_RESERVE
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef SKIP_RESERVE
 #undef VECTOR
 #define VECTOR StringDeque
 #define SKIP_RESERVE
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef SKIP_RESERVE
 #undef VECTOR
 
 #define VECTOR FBStringVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR FBStringFBVector
-#include <folly/test/FBVectorBenchmarks.cpp.h> // nolint
+#include "folly/test/FBVectorBenchmarks.cpp.h" // nolint
 #undef VECTOR
 
 int main(int argc, char** argv) {

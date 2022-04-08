@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/CppAttributes.h>
+#include "folly/CppAttributes.h"
 
 #if FOLLY_HAVE_ELF
 #include <link.h>

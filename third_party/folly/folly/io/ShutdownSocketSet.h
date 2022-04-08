@@ -19,9 +19,9 @@
 #include <cstdlib>
 #include <memory>
 
-#include <folly/File.h>
-#include <folly/net/NetworkSocket.h>
-#include <folly/synchronization/RelaxedAtomic.h>
+#include "folly/File.h"
+#include "folly/net/NetworkSocket.h"
+#include "folly/synchronization/RelaxedAtomic.h"
 
 namespace folly {
 

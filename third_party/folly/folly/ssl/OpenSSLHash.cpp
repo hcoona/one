@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/ssl/OpenSSLHash.h>
+#include "folly/ssl/OpenSSLHash.h"
 
-#include <folly/Format.h>
+#include "folly/Format.h"
 
 namespace folly {
 namespace ssl {

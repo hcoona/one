@@ -21,7 +21,7 @@
 #define __STDC_FORMAT_MACROS 1
 #endif
 
-#include <folly/hash/SpookyHashV2.h>
+#include "folly/hash/SpookyHashV2.h"
 
 #include <cinttypes>
 #include <cstddef>
@@ -29,10 +29,10 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
-#include <folly/portability/Time.h>
+#include "folly/portability/GTest.h"
+#include "folly/portability/Time.h"
 
 using namespace ::folly::hash;
 

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/detail/Hardware.h>
+#include "folly/synchronization/detail/Hardware.h"
 
 #include <atomic>
 #include <cstdlib>
 #include <stdexcept>
 #include <utility>
 
-#include <boost/preprocessor/repetition/repeat.hpp>
+#include "boost/preprocessor/repetition/repeat.hpp"
 
-#include <folly/CppAttributes.h>
-#include <folly/lang/Assume.h>
-#include <folly/lang/Exception.h>
+#include "folly/CppAttributes.h"
+#include "folly/lang/Assume.h"
+#include "folly/lang/Exception.h"
 
 #if FOLLY_X64 && defined(__RTM__)
 #include <immintrin.h>

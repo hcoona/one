@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/io/async/test/AsyncSignalHandlerTestLib.h>
+#include "folly/io/async/test/AsyncSignalHandlerTestLib.h"
 
 namespace folly {
 namespace test {

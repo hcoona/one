@@ -21,12 +21,12 @@
 #include <type_traits>
 #include <unordered_set>
 
-#include <folly/Likely.h>
-#include <folly/Portability.h>
-#include <folly/Synchronized.h>
-#include <folly/Utility.h>
-#include <folly/detail/StaticSingletonManager.h>
-#include <folly/detail/ThreadLocalDetail.h>
+#include "folly/Likely.h"
+#include "folly/Portability.h"
+#include "folly/Synchronized.h"
+#include "folly/Utility.h"
+#include "folly/detail/StaticSingletonManager.h"
+#include "folly/detail/ThreadLocalDetail.h"
 
 namespace folly {
 

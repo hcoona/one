@@ -17,7 +17,7 @@
 #pragma once
 #define FOLLY_GEN_PARALLELMAP_H_
 
-#include <folly/gen/Core.h>
+#include "folly/gen/Core.h"
 
 namespace folly {
 namespace gen {
@@ -45,4 +45,4 @@ PMap pmap(Predicate pred = Predicate(), size_t nThreads = 0) {
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/ParallelMap-inl.h>
+#include "folly/gen/ParallelMap-inl.h"

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/executors/GlobalExecutor.h>
+#include "folly/executors/GlobalExecutor.h"
 
-#include <folly/executors/CPUThreadPoolExecutor.h>
-#include <folly/executors/IOExecutor.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/executors/IOExecutor.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 

@@ -24,14 +24,14 @@
 #include <iostream>
 #include <mutex>
 
-#include <folly/Random.h>
-#include <folly/SpinLock.h>
-#include <folly/ThreadLocal.h>
-#include <folly/detail/Futex.h>
-#include <folly/lang/Align.h>
-#include <folly/synchronization/Hazptr.h>
-#include <folly/synchronization/WaitOptions.h>
-#include <folly/synchronization/detail/Spin.h>
+#include "folly/Random.h"
+#include "folly/SpinLock.h"
+#include "folly/ThreadLocal.h"
+#include "folly/detail/Futex.h"
+#include "folly/lang/Align.h"
+#include "folly/synchronization/Hazptr.h"
+#include "folly/synchronization/WaitOptions.h"
+#include "folly/synchronization/detail/Spin.h"
 
 /// ------ Concurrent Priority Queue Implementation ------
 // The concurrent priority queue implementation is based on the

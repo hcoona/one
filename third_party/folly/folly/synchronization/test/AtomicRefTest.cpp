@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AtomicRef.h>
+#include "folly/synchronization/AtomicRef.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class AtomicRefTest : public testing::Test {};
 

@@ -24,8 +24,8 @@
 
 #include <atomic>
 
-#include <folly/Likely.h>
-#include <folly/ThreadLocal.h>
+#include "folly/Likely.h"
+#include "folly/ThreadLocal.h"
 
 namespace folly {
 

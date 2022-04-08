@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/futures/FutureSplitter.h>
+#include "folly/futures/FutureSplitter.h"
 
-#include <folly/executors/ManualExecutor.h>
-#include <folly/portability/GTest.h>
+#include "folly/executors/ManualExecutor.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

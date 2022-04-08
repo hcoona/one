@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Portability.h>
-#include <folly/Preprocessor.h>
+#include "folly/Portability.h"
+#include "folly/Preprocessor.h"
 
 #include <type_traits>
 
@@ -206,4 +206,4 @@ notThereYet(T& iter, const U& end) {
        ::folly::detail::notThereYet(i, (end)); \
        ++i)
 
-#include <folly/container/Foreach-inl.h>
+#include "folly/container/Foreach-inl.h"

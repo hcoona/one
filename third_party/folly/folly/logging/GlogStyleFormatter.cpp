@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/logging/GlogStyleFormatter.h>
+#include "folly/logging/GlogStyleFormatter.h"
 
-#include <folly/Format.h>
-#include <folly/logging/LogLevel.h>
-#include <folly/logging/LogMessage.h>
-#include <folly/portability/Time.h>
+#include "folly/Format.h"
+#include "folly/logging/LogLevel.h"
+#include "folly/logging/LogMessage.h"
+#include "folly/portability/Time.h"
 
 namespace {
 using folly::LogLevel;

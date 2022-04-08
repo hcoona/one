@@ -19,8 +19,8 @@
 #include <chrono>
 #include <cstdint>
 
-#include <folly/Function.h>
-#include <folly/Optional.h>
+#include "folly/Function.h"
+#include "folly/Optional.h"
 
 namespace folly {
 

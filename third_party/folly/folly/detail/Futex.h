@@ -23,7 +23,7 @@
 #include <limits>
 #include <type_traits>
 
-#include <folly/portability/Unistd.h>
+#include "folly/portability/Unistd.h"
 
 namespace folly {
 namespace detail {
@@ -106,4 +106,4 @@ struct EmulatedFutexAtomic : public std::atomic<T> {
 } // namespace detail
 } // namespace folly
 
-#include <folly/detail/Futex-inl.h>
+#include "folly/detail/Futex-inl.h"

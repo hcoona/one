@@ -18,8 +18,8 @@
 #include <memory>
 #include <thread>
 
-#include <folly/memory/SanitizeLeak.h>
-#include <folly/portability/GTest.h>
+#include "folly/memory/SanitizeLeak.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

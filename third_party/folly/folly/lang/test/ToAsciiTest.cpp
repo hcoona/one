@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/lang/ToAscii.h>
+#include "folly/lang/ToAscii.h"
 
 #include <string>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 template <typename F>
 static void to_ascii_size_16(F _) {

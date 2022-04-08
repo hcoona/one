@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/Singleton.h>
+#include "folly/Singleton.h"
 
 #include <iostream>
 #include <thread>
 
-#include <folly/Benchmark.h>
-#include <folly/Memory.h>
-#include <folly/SingletonThreadLocal.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/Memory.h"
+#include "folly/SingletonThreadLocal.h"
+#include "folly/portability/GFlags.h"
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 

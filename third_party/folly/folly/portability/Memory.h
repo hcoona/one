@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/Memory.h> // @shim
+#include "folly/Memory.h" // @shim
 
 namespace folly {
 namespace detail {

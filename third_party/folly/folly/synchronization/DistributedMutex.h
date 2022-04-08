@@ -20,8 +20,8 @@
 #include <chrono>
 #include <cstdint>
 
-#include <folly/Optional.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Optional.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 namespace detail {
@@ -339,4 +339,4 @@ using DistributedMutex = detail::distributed_mutex::DistributedMutex<>;
 
 } // namespace folly
 
-#include <folly/synchronization/DistributedMutex-inl.h>
+#include "folly/synchronization/DistributedMutex-inl.h"

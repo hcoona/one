@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/exception_tracer/SmartExceptionTracerSingleton.h>
+#include "folly/experimental/exception_tracer/SmartExceptionTracerSingleton.h"
 
 namespace folly::exception_tracer::detail {
 

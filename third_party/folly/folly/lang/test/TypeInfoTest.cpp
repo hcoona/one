@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/TypeInfo.h>
+#include "folly/lang/TypeInfo.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class TypeInfoTest : public testing::Test {};
 

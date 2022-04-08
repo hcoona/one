@@ -19,10 +19,10 @@
 // These _must_ be included before gmock.h, because
 // it tries to include <io.h> on it's own, but we
 // override all of those functions in Unistd.h :(
-#include <folly/portability/Unistd.h>
-#include <folly/portability/Windows.h>
+#include "folly/portability/Unistd.h"
+#include "folly/portability/Windows.h"
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 // Disable a couple of warnings due to GMock exporting classes
 // that derive from stdlib classes which aren't explicitly exported.

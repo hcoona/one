@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogCategoryConfig.h>
+#include "folly/logging/LogCategoryConfig.h"
 
 namespace folly {
 

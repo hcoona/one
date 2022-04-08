@@ -18,10 +18,10 @@
 #include <mutex>
 #include <queue>
 
-#include <folly/executors/ManualExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/Promise.h>
-#include <folly/portability/GTest.h>
+#include "folly/executors/ManualExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/Promise.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

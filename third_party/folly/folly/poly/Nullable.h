@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Poly.h>
-#include <folly/poly/Regular.h>
+#include "folly/Poly.h"
+#include "folly/poly/Regular.h"
 
 namespace folly {
 namespace poly {

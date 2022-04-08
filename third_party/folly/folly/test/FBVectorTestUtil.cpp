@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/test/FBVectorTestUtil.h>
+#include "folly/test/FBVectorTestUtil.h"
 
 #include <list>
 #include <string>
 
-#include <folly/FBString.h>
-#include <folly/Random.h>
+#include "folly/FBString.h"
+#include "folly/Random.h"
 
 namespace folly {
 namespace test {

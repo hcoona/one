@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-#include <folly/detail/MemoryIdler.h>
+#include "folly/detail/MemoryIdler.h"
 
 #include <climits>
 #include <cstdio>
 #include <cstring>
 #include <utility>
 
-#include <folly/GLog.h>
-#include <folly/Portability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/concurrency/CacheLocality.h>
-#include <folly/memory/MallctlHelper.h>
-#include <folly/memory/Malloc.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/PThread.h>
-#include <folly/portability/SysMman.h>
-#include <folly/portability/Unistd.h>
+#include "folly/GLog.h"
+#include "folly/Portability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/concurrency/CacheLocality.h"
+#include "folly/memory/MallctlHelper.h"
+#include "folly/memory/Malloc.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/PThread.h"
+#include "folly/portability/SysMman.h"
+#include "folly/portability/Unistd.h"
 
 DEFINE_bool(
     folly_memory_idler_purge_arenas,

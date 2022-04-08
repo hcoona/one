@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include <folly/Executor.h>
-#include <folly/IntrusiveList.h>
-#include <folly/experimental/channels/Channel.h>
-#include <folly/experimental/channels/ChannelCallbackHandle.h>
-#include <folly/experimental/coro/Task.h>
+#include "folly/Executor.h"
+#include "folly/IntrusiveList.h"
+#include "folly/experimental/channels/Channel.h"
+#include "folly/experimental/channels/ChannelCallbackHandle.h"
+#include "folly/experimental/coro/Task.h"
 
 namespace folly {
 namespace channels {
@@ -97,4 +97,4 @@ void consumeChannelWithCallback(
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/ConsumeChannel-inl.h>
+#include "folly/experimental/channels/ConsumeChannel-inl.h"

@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <folly/Portability.h>
-#include <folly/compression/Compression.h>
+#include "folly/Portability.h"
+#include "folly/compression/Compression.h"
 
 #if FOLLY_HAVE_LIBZ
 
-#include <zlib.h>
+#include "zlib.h"
 
 /**
  * Interface for Zlib-specific codec initialization.

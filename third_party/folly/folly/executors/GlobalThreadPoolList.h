@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include <folly/Indestructible.h>
-#include <folly/Synchronized.h>
-#include <folly/ThreadLocal.h>
+#include "folly/Indestructible.h"
+#include "folly/Synchronized.h"
+#include "folly/ThreadLocal.h"
 
 namespace folly {
 

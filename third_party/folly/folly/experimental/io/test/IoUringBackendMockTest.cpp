@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/io/IoUringBackend.h>
-#include <folly/portability/GTest.h>
+#include "folly/experimental/io/IoUringBackend.h"
+#include "folly/portability/GTest.h"
 
 namespace folly::test {
 

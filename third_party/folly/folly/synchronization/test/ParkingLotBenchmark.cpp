@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/ParkingLot.h>
+#include "folly/synchronization/ParkingLot.h"
 
 #include <thread>
 
-#include <folly/Benchmark.h>
-#include <folly/detail/Futex.h>
-#include <folly/synchronization/Baton.h>
-#include <folly/synchronization/test/Barrier.h>
+#include "folly/Benchmark.h"
+#include "folly/detail/Futex.h"
+#include "folly/synchronization/Baton.h"
+#include "folly/synchronization/test/Barrier.h"
 
 DEFINE_uint64(threads, 32, "Number of threads for benchmark");
 

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AtomicUtil.h>
+#include "folly/synchronization/AtomicUtil.h"
 
 #include <utility>
 
-#include <folly/Benchmark.h>
-#include <folly/Portability.h>
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/AtomicRef.h>
+#include "folly/Benchmark.h"
+#include "folly/Portability.h"
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/AtomicRef.h"
 
 static constexpr auto relaxed = std::memory_order_relaxed;
 static constexpr auto consume = std::memory_order_consume;

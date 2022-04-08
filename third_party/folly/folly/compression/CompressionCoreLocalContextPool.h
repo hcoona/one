@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/compression/CompressionContextPool.h>
-#include <folly/concurrency/CacheLocality.h>
+#include "folly/compression/CompressionContextPool.h"
+#include "folly/concurrency/CacheLocality.h"
 
 namespace folly {
 namespace compression {

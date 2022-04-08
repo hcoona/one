@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/io/HugePages.h>
+#include "folly/experimental/io/HugePages.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -27,17 +27,17 @@
 #include <stdexcept>
 #include <system_error>
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
-#include <folly/Conv.h>
-#include <folly/CppAttributes.h>
-#include <folly/Format.h>
-#include <folly/Range.h>
-#include <folly/String.h>
+#include "folly/Conv.h"
+#include "folly/CppAttributes.h"
+#include "folly/Format.h"
+#include "folly/Range.h"
+#include "folly/String.h"
 
-#include <folly/gen/Base.h>
-#include <folly/gen/File.h>
-#include <folly/gen/String.h>
+#include "folly/gen/Base.h"
+#include "folly/gen/File.h"
+#include "folly/gen/String.h"
 
 namespace folly {
 

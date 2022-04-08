@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Malloc.h>
+#include "folly/portability/Malloc.h"
 
 #if !defined(USE_JEMALLOC) && !defined(FOLLY_USE_JEMALLOC)
 #if defined(__APPLE__) && !defined(FOLLY_HAVE_MALLOC_USABLE_SIZE)

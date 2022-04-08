@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/RWSpinLock.h> // @shim
+#include "folly/synchronization/RWSpinLock.h" // @shim

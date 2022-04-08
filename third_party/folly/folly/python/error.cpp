@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/python/error.h>
+#include "folly/python/error.h"
 
 #include <stdexcept>
 #include <string>
 
-#include <Python.h>
+#include "Python.h"
 
-#include <folly/Conv.h>
-#include <folly/ScopeGuard.h>
+#include "folly/Conv.h"
+#include "folly/ScopeGuard.h"
 
 namespace folly {
 namespace python {

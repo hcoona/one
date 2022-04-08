@@ -20,7 +20,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 namespace folly {
 namespace exception_tracer {

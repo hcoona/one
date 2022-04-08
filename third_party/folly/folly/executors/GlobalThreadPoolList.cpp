@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/executors/GlobalThreadPoolList.h>
+#include "folly/executors/GlobalThreadPoolList.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <folly/CppAttributes.h>
-#include <folly/Indestructible.h>
-#include <folly/Synchronized.h>
-#include <folly/ThreadLocal.h>
+#include "folly/CppAttributes.h"
+#include "folly/Indestructible.h"
+#include "folly/Synchronized.h"
+#include "folly/ThreadLocal.h"
 
 namespace folly {
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/portability/SysMman.h>
+#include "folly/portability/SysMman.h"
 
 #ifdef _WIN32
 
 #include <cassert>
 
-#include <folly/Portability.h>
-#include <folly/portability/Windows.h>
+#include "folly/Portability.h"
+#include "folly/portability/Windows.h"
 
 static bool mmap_to_page_protection(int prot, DWORD& ret, DWORD& acc) {
   if (prot == PROT_NONE) {

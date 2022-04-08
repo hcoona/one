@@ -60,11 +60,11 @@
 #include <utility>
 #include <vector>
 
-#include <folly/Expected.h>
-#include <folly/Range.h>
-#include <folly/Traits.h>
-#include <folly/container/F14Map.h>
-#include <folly/json_pointer.h>
+#include "folly/Expected.h"
+#include "folly/Range.h"
+#include "folly/Traits.h"
+#include "folly/container/F14Map.h"
+#include "folly/json_pointer.h"
 
 namespace folly {
 
@@ -1050,4 +1050,4 @@ auto make_dynamic_view(dynamic&&) = delete;
 
 } // namespace folly
 
-#include <folly/dynamic-inl.h>
+#include "folly/dynamic-inl.h"

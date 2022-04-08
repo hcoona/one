@@ -43,9 +43,9 @@
 #include <iosfwd>
 #include <string>
 
-#include <folly/Function.h>
-#include <folly/Range.h>
-#include <folly/dynamic.h>
+#include "folly/Function.h"
+#include "folly/Range.h"
+#include "folly/dynamic.h"
 
 namespace folly {
 

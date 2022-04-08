@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Singleton.h>
+#include "folly/Singleton.h"
 
 #ifndef _WIN32
 #include <dlfcn.h>
@@ -28,11 +28,11 @@
 #include <iostream>
 #include <string>
 
-#include <folly/Demangle.h>
-#include <folly/ScopeGuard.h>
-#include <folly/experimental/symbolizer/Symbolizer.h>
-#include <folly/portability/Config.h>
-#include <folly/portability/FmtCompile.h>
+#include "folly/Demangle.h"
+#include "folly/ScopeGuard.h"
+#include "folly/experimental/symbolizer/Symbolizer.h"
+#include "folly/portability/Config.h"
+#include "folly/portability/FmtCompile.h"
 
 #if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
 #define FOLLY_SINGLETON_HAVE_DLSYM 1

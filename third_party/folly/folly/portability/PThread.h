@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 #if !defined(_WIN32)
 
@@ -31,11 +31,11 @@
 #include <cstdint>
 #include <memory>
 
-#include <folly/portability/Sched.h>
-#include <folly/portability/Time.h>
-#include <folly/portability/Windows.h>
+#include "folly/portability/Sched.h"
+#include "folly/portability/Time.h"
+#include "folly/portability/Windows.h"
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 #define PTHREAD_CREATE_JOINABLE 0
 #define PTHREAD_CREATE_DETACHED 1

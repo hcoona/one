@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/fibers/EventBaseLoopController.h>
-#include <folly/fibers/FiberManagerInternal.h>
-#include <folly/io/async/VirtualEventBase.h>
+#include "folly/fibers/EventBaseLoopController.h"
+#include "folly/fibers/FiberManagerInternal.h"
+#include "folly/io/async/VirtualEventBase.h"
 
 namespace folly {
 namespace fibers {
@@ -43,4 +43,4 @@ static inline FiberManager& getFiberManager(
     folly::VirtualEventBase& evb, const FiberManager::FrozenOptions& opts);
 } // namespace fibers
 } // namespace folly
-#include <folly/fibers/FiberManagerMap-inl.h>
+#include "folly/fibers/FiberManagerMap-inl.h"

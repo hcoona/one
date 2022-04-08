@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 #include <algorithm>
 #include <iostream>
@@ -22,8 +22,8 @@
 #include <random>
 #include <vector>
 
-#include <folly/String.h>
-#include <folly/container/Foreach.h>
+#include "folly/String.h"
+#include "folly/container/Foreach.h"
 
 using namespace folly;
 using namespace std;

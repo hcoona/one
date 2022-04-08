@@ -18,9 +18,9 @@
 
 #include <queue>
 
-#include <folly/Executor.h>
-#include <folly/ThreadLocal.h>
-#include <folly/executors/InlineExecutor.h>
+#include "folly/Executor.h"
+#include "folly/ThreadLocal.h"
+#include "folly/executors/InlineExecutor.h"
 
 namespace folly {
 

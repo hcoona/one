@@ -30,16 +30,16 @@
 #include <typeinfo>
 #include <utility>
 
-#include <folly/CPortability.h>
-#include <folly/CppAttributes.h>
-#include <folly/Demangle.h>
-#include <folly/ExceptionString.h>
-#include <folly/FBString.h>
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/lang/Assume.h>
-#include <folly/lang/Exception.h>
+#include "folly/CPortability.h"
+#include "folly/CppAttributes.h"
+#include "folly/Demangle.h"
+#include "folly/ExceptionString.h"
+#include "folly/FBString.h"
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/lang/Assume.h"
+#include "folly/lang/Exception.h"
 
 #define FOLLY_EXCEPTION_WRAPPER_H_INCLUDED
 
@@ -593,7 +593,7 @@ exception_wrapper try_and_catch(F&& fn) noexcept {
 }
 } // namespace folly
 
-#include <folly/ExceptionWrapper-inl.h>
+#include "folly/ExceptionWrapper-inl.h"
 
 #undef FOLLY_REQUIRES
 #undef FOLLY_REQUIRES_DEF

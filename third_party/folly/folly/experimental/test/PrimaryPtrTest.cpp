@@ -16,11 +16,11 @@
 
 #include <future>
 
-#include <folly/executors/CPUThreadPoolExecutor.h>
-#include <folly/executors/ManualExecutor.h>
-#include <folly/experimental/PrimaryPtr.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/executors/ManualExecutor.h"
+#include "folly/experimental/PrimaryPtr.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace std::literals::chrono_literals;
 

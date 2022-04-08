@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/DelayedInit.h>
+#include "folly/synchronization/DelayedInit.h"
 
 #include <ostream>
 #include <stdexcept>
 #include <thread>
 #include <vector>
 
-#include <fmt/ostream.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/test/Barrier.h>
+#include "fmt/ostream.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/test/Barrier.h"
 
 namespace folly {
 

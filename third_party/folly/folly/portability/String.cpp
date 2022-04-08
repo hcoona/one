@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/portability/String.h>
+#include "folly/portability/String.h"
 
 #if defined(_WIN32) || defined(__FreeBSD__)
 extern "C" char* strndup(const char* a, size_t len) {

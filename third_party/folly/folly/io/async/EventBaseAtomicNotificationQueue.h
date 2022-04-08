@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <folly/io/async/AtomicNotificationQueue.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/io/async/EventHandler.h>
-#include <folly/portability/Fcntl.h>
-#include <folly/portability/Sockets.h>
-#include <folly/portability/Unistd.h>
+#include "folly/io/async/AtomicNotificationQueue.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/io/async/EventHandler.h"
+#include "folly/portability/Fcntl.h"
+#include "folly/portability/Sockets.h"
+#include "folly/portability/Unistd.h"
 
 #if __has_include(<sys/eventfd.h>)
 #include <sys/eventfd.h>
@@ -193,4 +193,4 @@ class EventBaseAtomicNotificationQueue : private EventBase::LoopCallback,
 
 } // namespace folly
 
-#include <folly/io/async/EventBaseAtomicNotificationQueue-inl.h>
+#include "folly/io/async/EventBaseAtomicNotificationQueue-inl.h"

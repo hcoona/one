@@ -16,11 +16,11 @@
 
 #include <thread>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <folly/compression/CompressionContextPool.h>
-#include <folly/compression/CompressionContextPoolSingletons.h>
-#include <folly/compression/CompressionCoreLocalContextPool.h>
+#include "folly/compression/CompressionContextPool.h"
+#include "folly/compression/CompressionContextPoolSingletons.h"
+#include "folly/compression/CompressionCoreLocalContextPool.h"
 
 namespace folly {
 namespace compression {

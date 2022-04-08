@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/logging/Init.h>
+#include "folly/logging/Init.h"
 
-#include <folly/logging/LogConfigParser.h>
-#include <folly/logging/LoggerDB.h>
-#include <folly/logging/test/ConfigHelpers.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/TestUtils.h>
+#include "folly/logging/LogConfigParser.h"
+#include "folly/logging/LoggerDB.h"
+#include "folly/logging/test/ConfigHelpers.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/TestUtils.h"
 
 using folly::initLogging;
 using folly::LoggerDB;

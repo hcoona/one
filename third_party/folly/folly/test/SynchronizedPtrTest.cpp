@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/SynchronizedPtr.h>
+#include "folly/SynchronizedPtr.h"
 
-#include <folly/Optional.h>
-#include <folly/Replaceable.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/RWSpinLock.h>
+#include "folly/Optional.h"
+#include "folly/Replaceable.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/RWSpinLock.h"
 
 template <typename SPtr>
 void basics(SPtr& sptr) {

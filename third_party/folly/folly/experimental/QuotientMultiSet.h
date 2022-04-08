@@ -19,11 +19,11 @@
 #include <deque>
 #include <utility>
 
-#include <folly/Portability.h>
-#include <folly/Range.h>
-#include <folly/experimental/Instructions.h>
-#include <folly/io/IOBuf.h>
-#include <folly/io/IOBufQueue.h>
+#include "folly/Portability.h"
+#include "folly/Range.h"
+#include "folly/experimental/Instructions.h"
+#include "folly/io/IOBuf.h"
+#include "folly/io/IOBufQueue.h"
 
 // A 128-bit integer type is needed for fast division.
 #define FOLLY_QUOTIENT_MULTI_SET_SUPPORTED FOLLY_HAVE_INT128_T
@@ -336,6 +336,6 @@ class QuotientMultiSetBuilder final {
 
 } // namespace folly
 
-#include <folly/experimental/QuotientMultiSet-inl.h>
+#include "folly/experimental/QuotientMultiSet-inl.h"
 
 #endif // FOLLY_QUOTIENT_MULTI_SET_SUPPORTED

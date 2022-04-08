@@ -25,12 +25,12 @@
 #include <utility>
 #include <vector>
 
-#include <folly/Conv.h>
-#include <folly/Optional.h>
-#include <folly/Range.h>
-#include <folly/Utility.h>
-#include <folly/container/Access.h>
-#include <folly/gen/Core.h>
+#include "folly/Conv.h"
+#include "folly/Optional.h"
+#include "folly/Range.h"
+#include "folly/Utility.h"
+#include "folly/container/Access.h"
+#include "folly/gen/Core.h"
 
 /**
  * Generator-based Sequence Comprehensions in C++, akin to C#'s LINQ
@@ -836,4 +836,4 @@ UnwrapOr unwrapOr(Fallback&& fallback) {
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/Base-inl.h>
+#include "folly/gen/Base-inl.h"

@@ -18,8 +18,8 @@
 
 #include <atomic>
 
-#include <folly/concurrency/CacheLocality.h>
-#include <folly/synchronization/Hazptr-fwd.h>
+#include "folly/concurrency/CacheLocality.h"
+#include "folly/synchronization/Hazptr-fwd.h"
 
 namespace folly {
 

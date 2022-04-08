@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <folly/lang/Exception.h>
+#include "folly/lang/Exception.h"
 
 namespace folly {
 

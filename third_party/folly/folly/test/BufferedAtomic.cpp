@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/test/BufferedAtomic.h>
+#include "folly/test/BufferedAtomic.h"
 
 namespace folly {
 namespace test {

@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/CppAttributes.h>
-#include <folly/Function.h>
+#include "folly/CppAttributes.h"
+#include "folly/Function.h"
 
 #include <atomic>
 #include <memory>
@@ -305,4 +305,4 @@ class CancellationCallback {
 
 } // namespace folly
 
-#include <folly/CancellationToken-inl.h>
+#include "folly/CancellationToken-inl.h"

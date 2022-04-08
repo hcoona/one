@@ -16,14 +16,14 @@
 
 // @author Nicholas Ormrod <njormrod@fb.com>
 
-#include <folly/DynamicConverter.h>
+#include "folly/DynamicConverter.h"
 
 #include <algorithm>
 #include <map>
 #include <vector>
 
-#include <folly/FBVector.h>
-#include <folly/portability/GTest.h>
+#include "folly/FBVector.h"
+#include "folly/portability/GTest.h"
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AtomicNotification.h>
+#include "folly/synchronization/AtomicNotification.h"
 
 #include <thread>
 
-#include <folly/Optional.h>
-#include <folly/portability/GTest.h>
+#include "folly/Optional.h"
+#include "folly/portability/GTest.h"
 
 using namespace std::literals;
 

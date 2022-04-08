@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/symbolizer/test/SignalHandlerTest.h>
+#include "folly/experimental/symbolizer/test/SignalHandlerTest.h"
 
-#include <folly/experimental/symbolizer/SignalHandler.h>
+#include "folly/experimental/symbolizer/SignalHandler.h"
 
-#include <folly/CPortability.h>
-#include <folly/FileUtil.h>
-#include <folly/Range.h>
-#include <folly/experimental/coro/BlockingWait.h>
-#include <folly/experimental/coro/Task.h>
-#include <folly/portability/GTest.h>
+#include "folly/CPortability.h"
+#include "folly/FileUtil.h"
+#include "folly/Range.h"
+#include "folly/experimental/coro/BlockingWait.h"
+#include "folly/experimental/coro/Task.h"
+#include "folly/portability/GTest.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 namespace symbolizer {

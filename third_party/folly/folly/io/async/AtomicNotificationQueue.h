@@ -18,8 +18,8 @@
 
 #include <type_traits>
 
-#include <folly/io/async/Request.h>
-#include <folly/lang/Align.h>
+#include "folly/io/async/Request.h"
+#include "folly/lang/Align.h"
 
 namespace folly {
 
@@ -258,4 +258,4 @@ enum class AtomicNotificationQueueTaskStatus : bool {
 
 } // namespace folly
 
-#include <folly/io/async/AtomicNotificationQueue-inl.h>
+#include "folly/io/async/AtomicNotificationQueue-inl.h"

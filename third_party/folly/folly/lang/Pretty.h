@@ -19,8 +19,8 @@
 #include <cstddef>
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/lang/CArray.h>
+#include "folly/Portability.h"
+#include "folly/lang/CArray.h"
 
 namespace folly {
 

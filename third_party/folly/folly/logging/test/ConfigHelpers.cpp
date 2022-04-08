@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/logging/test/ConfigHelpers.h>
+#include "folly/logging/test/ConfigHelpers.h"
 
 #include <ostream>
 
-#include <folly/String.h>
-#include <folly/logging/LogConfig.h>
-#include <folly/logging/LogConfigParser.h>
-#include <folly/logging/LogHandler.h>
+#include "folly/String.h"
+#include "folly/logging/LogConfig.h"
+#include "folly/logging/LogConfigParser.h"
+#include "folly/logging/LogHandler.h"
 
 namespace folly {
 

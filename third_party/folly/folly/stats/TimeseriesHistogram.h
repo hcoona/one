@@ -18,8 +18,8 @@
 
 #include <string>
 
-#include <folly/stats/Histogram.h>
-#include <folly/stats/MultiLevelTimeSeries.h>
+#include "folly/stats/Histogram.h"
+#include "folly/stats/MultiLevelTimeSeries.h"
 
 namespace folly {
 
@@ -376,4 +376,4 @@ class TimeseriesHistogram {
 };
 } // namespace folly
 
-#include <folly/stats/TimeseriesHistogram-inl.h>
+#include "folly/stats/TimeseriesHistogram-inl.h"

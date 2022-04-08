@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/logging/test/TestLogHandler.h>
+#include "folly/logging/test/TestLogHandler.h"
 
-#include <folly/MapUtil.h>
+#include "folly/MapUtil.h"
 
 namespace folly {
 

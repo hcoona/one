@@ -21,8 +21,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/Traits.h>
-#include <folly/functional/ApplyTuple.h>
+#include "folly/Traits.h"
+#include "folly/functional/ApplyTuple.h"
 
 // Utility functions for container implementors
 

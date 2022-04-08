@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/net/NetOps.h>
+#include "folly/net/NetOps.h"
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 namespace folly {
 namespace portability {

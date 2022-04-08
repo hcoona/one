@@ -21,9 +21,9 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/CPortability.h>
-#include <folly/Portability.h>
-#include <folly/Traits.h>
+#include "folly/CPortability.h"
+#include "folly/Portability.h"
+#include "folly/Traits.h"
 
 namespace folly {
 

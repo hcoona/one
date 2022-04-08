@@ -18,9 +18,9 @@
 
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/lang/SafeAssert.h>
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/lang/SafeAssert.h"
 
 namespace folly {
 
@@ -96,4 +96,4 @@ FOLLY_INLINE_VARIABLE constexpr compiler_must_not_predict_fn
 
 } // namespace folly
 
-#include <folly/lang/Hint-inl.h>
+#include "folly/lang/Hint-inl.h"

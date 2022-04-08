@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/UncaughtExceptions.h>
+#include "folly/lang/UncaughtExceptions.h"
 
-#include <folly/functional/Invoke.h>
+#include "folly/functional/Invoke.h"
 
 #if defined(__GLIBCXX__) || defined(_LIBCPP_VERSION)
 

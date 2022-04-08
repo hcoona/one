@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/detail/IPAddress.h>
+#include "folly/detail/IPAddress.h"
 
 #include <stdexcept>
 
-#include <folly/portability/FmtCompile.h>
+#include "folly/portability/FmtCompile.h"
 
 namespace folly {
 namespace detail {

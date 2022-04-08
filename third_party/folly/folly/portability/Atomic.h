@@ -21,7 +21,7 @@
 #include <intrin.h>
 #include <stdint.h>
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 FOLLY_ALWAYS_INLINE
 int64_t __sync_fetch_and_add(volatile int64_t* ptr, int64_t value) {

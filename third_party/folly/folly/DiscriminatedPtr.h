@@ -29,11 +29,11 @@
 #include <limits>
 #include <stdexcept>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Likely.h>
-#include <folly/Portability.h>
-#include <folly/detail/DiscriminatedPtrDetail.h>
+#include "folly/Likely.h"
+#include "folly/Portability.h"
+#include "folly/detail/DiscriminatedPtrDetail.h"
 
 #if !FOLLY_X64 && !FOLLY_AARCH64 && !FOLLY_PPC64
 #error "DiscriminatedPtr is x64, arm64 and ppc64 specific code."

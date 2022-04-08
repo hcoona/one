@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/AtomicUnorderedMap.h>
+#include "folly/AtomicUnorderedMap.h"
 
 #include <memory>
 #include <thread>
 #include <unordered_map>
 
-#include <folly/Benchmark.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/Benchmark.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly;
 using namespace folly::test;

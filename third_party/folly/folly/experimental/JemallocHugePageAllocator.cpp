@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/JemallocHugePageAllocator.h>
+#include "folly/experimental/JemallocHugePageAllocator.h"
 
 #include <sstream>
 
-#include <folly/portability/Malloc.h>
-#include <folly/portability/String.h>
-#include <folly/portability/SysMman.h>
+#include "folly/portability/Malloc.h"
+#include "folly/portability/String.h"
+#include "folly/portability/SysMman.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #if (defined(MADV_HUGEPAGE) || defined(MAP_ALIGNED_SUPER)) && \
     defined(FOLLY_USE_JEMALLOC) && !FOLLY_SANITIZE

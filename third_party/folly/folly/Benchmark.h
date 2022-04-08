@@ -16,15 +16,15 @@
 
 #pragma once
 
-#include <folly/BenchmarkUtil.h>
-#include <folly/Portability.h>
-#include <folly/Preprocessor.h> // for FB_ANONYMOUS_VARIABLE
-#include <folly/Range.h>
-#include <folly/ScopeGuard.h>
-#include <folly/Traits.h>
-#include <folly/functional/Invoke.h>
-#include <folly/lang/Hint.h>
-#include <folly/portability/GFlags.h>
+#include "folly/BenchmarkUtil.h"
+#include "folly/Portability.h"
+#include "folly/Preprocessor.h" // for FB_ANONYMOUS_VARIABLE
+#include "folly/Range.h"
+#include "folly/ScopeGuard.h"
+#include "folly/Traits.h"
+#include "folly/functional/Invoke.h"
+#include "folly/lang/Hint.h"
+#include "folly/portability/GFlags.h"
 
 #include <cassert>
 #include <chrono>
@@ -33,8 +33,8 @@
 #include <type_traits>
 #include <unordered_map>
 
-#include <boost/function_types/function_arity.hpp>
-#include <glog/logging.h>
+#include "boost/function_types/function_arity.hpp"
+#include "glog/logging.h"
 
 DECLARE_bool(benchmark);
 DECLARE_uint32(bm_result_width_chars);

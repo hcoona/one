@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <Python.h>
-#include <folly/ExceptionString.h>
-#include <folly/Function.h>
-#include <folly/executors/DrivableExecutor.h>
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/io/async/NotificationQueue.h>
+#include "Python.h"
+#include "folly/ExceptionString.h"
+#include "folly/Function.h"
+#include "folly/executors/DrivableExecutor.h"
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/io/async/NotificationQueue.h"
 
 #if PY_VERSION_HEX <= 0x03070000
 #define FOLLY_DETAIL_PY_ISFINALIZING() false

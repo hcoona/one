@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/detail/AsyncTrace.h>
+#include "folly/detail/AsyncTrace.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(FollyCountersTest, Trivial) {
   folly::Executor* exec = nullptr;

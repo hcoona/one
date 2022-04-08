@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <folly/Portability.h>
-#include <folly/hash/SpookyHashV2.h>
-#include <folly/lang/CString.h>
-#include <folly/lang/Exception.h>
-#include <folly/portability/Constexpr.h>
+#include "folly/Portability.h"
+#include "folly/hash/SpookyHashV2.h"
+#include "folly/lang/CString.h"
+#include "folly/lang/Exception.h"
+#include "folly/portability/Constexpr.h"
 
 #include <algorithm>
 #include <array>
@@ -42,14 +42,14 @@
 #endif
 
 #if __has_include(<fmt/format.h>)
-#include <fmt/format.h>
+#include "fmt/format.h"
 #endif
 
-#include <folly/CpuId.h>
-#include <folly/Likely.h>
-#include <folly/Traits.h>
-#include <folly/detail/RangeCommon.h>
-#include <folly/detail/RangeSse42.h>
+#include "folly/CpuId.h"
+#include "folly/Likely.h"
+#include "folly/Traits.h"
+#include "folly/detail/RangeCommon.h"
+#include "folly/detail/RangeSse42.h"
 
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.
 FOLLY_PUSH_WARNING

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/lang/New.h>
+#include "folly/lang/New.h"
 
-#include <folly/lang/Align.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Align.h"
+#include "folly/portability/GTest.h"
 
 class NewTest : public testing::Test {};
 

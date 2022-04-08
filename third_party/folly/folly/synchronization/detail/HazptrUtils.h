@@ -19,10 +19,10 @@
 #include <atomic>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/synchronization/detail/Sleeper.h>
+#include "folly/Portability.h"
+#include "folly/synchronization/detail/Sleeper.h"
 
 /// Linked list class templates used in the hazard pointer library:
 /// - linked_list: Sequential linked list that uses pre-existing

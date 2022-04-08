@@ -22,9 +22,9 @@
 #include <string>
 #include <vector>
 
-#include <folly/Optional.h>
-#include <folly/Range.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Optional.h"
+#include "folly/Range.h"
+#include "folly/io/IOBuf.h"
 
 /**
  * Compression / decompression over IOBufs

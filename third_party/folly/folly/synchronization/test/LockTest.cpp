@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Lock.h>
+#include "folly/synchronization/Lock.h"
 
 #include <functional>
 #include <tuple>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace std::literals::chrono_literals;
 

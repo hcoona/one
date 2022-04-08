@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Rcu.h>
+#include "folly/synchronization/Rcu.h"
 
-#include <folly/detail/StaticSingletonManager.h>
+#include "folly/detail/StaticSingletonManager.h"
 
 namespace folly {
 

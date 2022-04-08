@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <vector>
 
-#include <folly/Function.h>
+#include "folly/Function.h"
 
 namespace folly {
 namespace detail {
@@ -57,4 +57,4 @@ class SlidingWindow {
 } // namespace detail
 } // namespace folly
 
-#include <folly/stats/detail/SlidingWindow-inl.h>
+#include "folly/stats/detail/SlidingWindow-inl.h"

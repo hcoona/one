@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/experimental/channels/Channel.h>
-#include <folly/experimental/channels/OnClosedException.h>
-#include <folly/experimental/channels/RateLimiter.h>
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/experimental/channels/Channel.h"
+#include "folly/experimental/channels/OnClosedException.h"
+#include "folly/experimental/channels/RateLimiter.h"
 
 namespace folly {
 namespace channels {
@@ -234,4 +234,4 @@ struct ReinitializeException : public std::exception {
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/Transform-inl.h>
+#include "folly/experimental/channels/Transform-inl.h"

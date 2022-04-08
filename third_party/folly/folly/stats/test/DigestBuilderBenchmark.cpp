@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/stats/DigestBuilder.h>
+#include "folly/stats/DigestBuilder.h"
 
 #include <chrono>
 #include <condition_variable>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
-#include <folly/Benchmark.h>
-#include <folly/Range.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/Range.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_int32(digest_merge_time_ns, 5500, "Time to merge into the digest");
 

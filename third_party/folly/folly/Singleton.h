@@ -122,19 +122,19 @@
 
 #pragma once
 
-#include <folly/Exception.h>
-#include <folly/Executor.h>
-#include <folly/Memory.h>
-#include <folly/Synchronized.h>
-#include <folly/concurrency/CoreCachedSharedPtr.h>
-#include <folly/detail/Singleton.h>
-#include <folly/detail/StaticSingletonManager.h>
-#include <folly/experimental/ReadMostlySharedPtr.h>
-#include <folly/hash/Hash.h>
-#include <folly/lang/Exception.h>
-#include <folly/memory/SanitizeLeak.h>
-#include <folly/synchronization/Baton.h>
-#include <folly/synchronization/RWSpinLock.h>
+#include "folly/Exception.h"
+#include "folly/Executor.h"
+#include "folly/Memory.h"
+#include "folly/Synchronized.h"
+#include "folly/concurrency/CoreCachedSharedPtr.h"
+#include "folly/detail/Singleton.h"
+#include "folly/detail/StaticSingletonManager.h"
+#include "folly/experimental/ReadMostlySharedPtr.h"
+#include "folly/hash/Hash.h"
+#include "folly/lang/Exception.h"
+#include "folly/memory/SanitizeLeak.h"
+#include "folly/synchronization/Baton.h"
+#include "folly/synchronization/RWSpinLock.h"
 
 #include <algorithm>
 #include <atomic>
@@ -151,7 +151,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 // use this guard to handleSingleton breaking change in 3rd party code
 #ifndef FOLLY_SINGLETON_TRY_GET
@@ -802,4 +802,4 @@ class LeakySingleton {
 };
 } // namespace folly
 
-#include <folly/Singleton-inl.h>
+#include "folly/Singleton-inl.h"

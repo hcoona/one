@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/ThreadCachedSynchronized.h>
+#include "folly/concurrency/ThreadCachedSynchronized.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Synchronized.h>
-#include <folly/lang/Keep.h>
+#include "folly/Benchmark.h"
+#include "folly/Synchronized.h"
+#include "folly/lang/Keep.h"
 
 extern "C" FOLLY_KEEP int check_thread_cached_synchronized_int_get(
     folly::thread_cached_synchronized<int> const& ptr) {

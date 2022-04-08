@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Dirent.h>
+#include "folly/portability/Dirent.h"
 
 #ifdef _WIN32
 #include <stdlib.h>
 #include <string>
 
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 struct DIR {
   dirent dir{};

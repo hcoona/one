@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/detail/StaticSingletonManager.h>
+#include "folly/detail/StaticSingletonManager.h"
 
 #include <mutex>
 #include <typeindex>

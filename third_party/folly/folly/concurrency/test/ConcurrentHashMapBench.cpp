@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/ConcurrentHashMap.h>
+#include "folly/concurrency/ConcurrentHashMap.h"
 
 #include <iomanip>
 #include <iostream>
 #include <thread>
 
-#include <folly/synchronization/test/Barrier.h>
+#include "folly/synchronization/test/Barrier.h"
 
 DEFINE_int32(reps, 10, "number of reps");
 DEFINE_int32(ops, 1000 * 1000, "number of operations per rep");

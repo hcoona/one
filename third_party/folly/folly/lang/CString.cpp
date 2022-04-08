@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/lang/CString.h>
+#include "folly/lang/CString.h"
 
 #include <algorithm>
 #include <cstring>
 #include <type_traits>
 
-#include <folly/CppAttributes.h>
-#include <folly/functional/Invoke.h>
+#include "folly/CppAttributes.h"
+#include "folly/functional/Invoke.h"
 
 namespace {
 

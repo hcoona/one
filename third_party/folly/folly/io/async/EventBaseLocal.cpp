@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/io/async/EventBaseLocal.h>
+#include "folly/io/async/EventBaseLocal.h"
 
 #include <atomic>
 #include <thread>
 
-#include <folly/MapUtil.h>
-#include <folly/Memory.h>
+#include "folly/MapUtil.h"
+#include "folly/Memory.h"
 
 namespace folly {
 namespace detail {

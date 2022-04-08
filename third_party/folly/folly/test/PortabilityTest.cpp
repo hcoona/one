@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 #if FOLLY_HAS_STRING_VIEW
 #include <string_view> // @manual
@@ -22,7 +22,7 @@
 
 #include <memory>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class Base {
  public:

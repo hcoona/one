@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/logging/StandardLogHandlerFactory.h>
+#include "folly/logging/StandardLogHandlerFactory.h"
 
-#include <folly/MapUtil.h>
-#include <folly/String.h>
-#include <folly/logging/CustomLogFormatter.h>
-#include <folly/logging/GlogStyleFormatter.h>
-#include <folly/logging/LogLevel.h>
-#include <folly/logging/LogWriter.h>
-#include <folly/logging/StandardLogHandler.h>
+#include "folly/MapUtil.h"
+#include "folly/String.h"
+#include "folly/logging/CustomLogFormatter.h"
+#include "folly/logging/GlogStyleFormatter.h"
+#include "folly/logging/LogLevel.h"
+#include "folly/logging/LogWriter.h"
+#include "folly/logging/StandardLogHandler.h"
 
 using std::string;
 

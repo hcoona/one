@@ -16,10 +16,10 @@
 
 #include <vector>
 
-#include <folly/concurrency/PriorityUnboundedQueueSet.h>
-#include <folly/container/Enumerate.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/concurrency/PriorityUnboundedQueueSet.h"
+#include "folly/container/Enumerate.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 

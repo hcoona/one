@@ -19,13 +19,13 @@
 #include <cstdint>
 #include <limits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/Range.h>
-#include <folly/detail/GroupVarintDetail.h>
-#include <folly/lang/Bits.h>
-#include <folly/portability/Builtins.h>
+#include "folly/Portability.h"
+#include "folly/Range.h"
+#include "folly/detail/GroupVarintDetail.h"
+#include "folly/lang/Bits.h"
+#include "folly/portability/Builtins.h"
 
 #if !defined(__GNUC__) && !defined(_MSC_VER)
 #error GroupVarint.h requires GCC or MSVC

@@ -22,9 +22,9 @@
 #include <list>
 #include <random>
 
-#include <folly/FBString.h>
-#include <folly/Random.h>
-#include <folly/portability/GTest.h>
+#include "folly/FBString.h"
+#include "folly/Random.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/json.h>
+#include "folly/json.h"
 
 #include <cstdint>
 #include <iterator>
 #include <limits>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::dynamic;
 using folly::parseJson;

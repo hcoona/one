@@ -24,14 +24,14 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include <folly/Likely.h>
-#include <folly/Memory.h>
-#include <folly/Portability.h>
-#include <folly/Range.h>
-#include <folly/io/IOBuf.h>
-#include <folly/io/IOBufQueue.h>
-#include <folly/lang/Bits.h>
-#include <folly/lang/Exception.h>
+#include "folly/Likely.h"
+#include "folly/Memory.h"
+#include "folly/Portability.h"
+#include "folly/Range.h"
+#include "folly/io/IOBuf.h"
+#include "folly/io/IOBufQueue.h"
+#include "folly/lang/Bits.h"
+#include "folly/lang/Exception.h"
 
 /**
  * Cursor class for fast iteration over IOBuf chains.
@@ -1279,4 +1279,4 @@ class QueueAppender : public detail::Writable<QueueAppender> {
 } // namespace io
 } // namespace folly
 
-#include <folly/io/Cursor-inl.h>
+#include "folly/io/Cursor-inl.h"

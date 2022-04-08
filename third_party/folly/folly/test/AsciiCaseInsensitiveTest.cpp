@@ -16,9 +16,9 @@
 
 #include <algorithm>
 
-#include <folly/Range.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/Range.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 using namespace std;
 using namespace folly;

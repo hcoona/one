@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/detail/RangeSse42.h>
+#include "folly/detail/RangeSse42.h"
 
 #include <cassert>
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 //  Essentially, two versions of this file: one with an SSE42 implementation
 //  and one with a fallback implementation. We determine which version to use by
@@ -43,8 +43,8 @@ size_t qfind_first_byte_of_sse42(
 #include <limits>
 #include <string>
 
-#include <folly/Likely.h>
-#include <folly/detail/Sse.h>
+#include "folly/Likely.h"
+#include "folly/detail/Sse.h"
 
 namespace folly {
 namespace detail {

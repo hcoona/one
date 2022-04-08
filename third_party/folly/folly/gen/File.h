@@ -17,9 +17,9 @@
 #pragma once
 #define FOLLY_GEN_FILE_H_
 
-#include <folly/File.h>
-#include <folly/gen/Base.h>
-#include <folly/io/IOBuf.h>
+#include "folly/File.h"
+#include "folly/gen/Base.h"
+#include "folly/io/IOBuf.h"
 
 namespace folly {
 namespace gen {
@@ -67,4 +67,4 @@ S toFile(File file, std::unique_ptr<IOBuf> buffer) {
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/File-inl.h>
+#include "folly/gen/File-inl.h"

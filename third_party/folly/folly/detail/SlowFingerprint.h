@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/Fingerprint.h>
-#include <folly/Range.h>
-#include <folly/detail/FingerprintPolynomial.h>
+#include "folly/Fingerprint.h"
+#include "folly/Range.h"
+#include "folly/detail/FingerprintPolynomial.h"
 
 namespace folly {
 namespace detail {

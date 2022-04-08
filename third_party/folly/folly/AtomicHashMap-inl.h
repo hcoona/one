@@ -18,8 +18,8 @@
 #error "This should only be included by AtomicHashMap.h"
 #endif
 
-#include <folly/detail/AtomicHashUtils.h>
-#include <folly/detail/Iterators.h>
+#include "folly/detail/AtomicHashUtils.h"
+#include "folly/detail/Iterators.h"
 
 #include <type_traits>
 

@@ -18,10 +18,10 @@
 #include <mutex>
 #include <thread>
 
-#include <folly/AtomicHashMap.h>
-#include <folly/Memory.h>
-#include <folly/ScopeGuard.h>
-#include <folly/portability/GTest.h>
+#include "folly/AtomicHashMap.h"
+#include "folly/Memory.h"
+#include "folly/ScopeGuard.h"
+#include "folly/portability/GTest.h"
 
 namespace {
 

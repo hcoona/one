@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/ssl/SSLSessionManager.h>
+#include "folly/ssl/SSLSessionManager.h"
 
-#include <folly/portability/GTest.h>
-#include <folly/portability/OpenSSL.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
-#include <folly/ssl/detail/OpenSSLSession.h>
+#include "folly/portability/GTest.h"
+#include "folly/portability/OpenSSL.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
+#include "folly/ssl/detail/OpenSSLSession.h"
 
 using folly::ssl::SSLSessionManager;
 using folly::ssl::SSLSessionUniquePtr;

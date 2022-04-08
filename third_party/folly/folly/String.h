@@ -24,12 +24,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include <folly/Conv.h>
-#include <folly/ExceptionString.h>
-#include <folly/Portability.h>
-#include <folly/Range.h>
-#include <folly/ScopeGuard.h>
-#include <folly/Traits.h>
+#include "folly/Conv.h"
+#include "folly/ExceptionString.h"
+#include "folly/Portability.h"
+#include "folly/Range.h"
+#include "folly/ScopeGuard.h"
+#include "folly/Traits.h"
 
 namespace folly {
 
@@ -619,4 +619,4 @@ inline void toLowerAscii(std::string& str) {
 
 } // namespace folly
 
-#include <folly/String-inl.h>
+#include "folly/String-inl.h"

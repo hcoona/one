@@ -18,11 +18,11 @@
 
 #include <future>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Executor.h>
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/Executor.h"
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/synchronization/Baton.h"
 
 namespace folly {
 

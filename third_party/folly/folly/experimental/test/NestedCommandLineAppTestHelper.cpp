@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/NestedCommandLineApp.h>
-#include <folly/portability/GFlags.h>
+#include "folly/experimental/NestedCommandLineApp.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_int32(global_foo, 42, "Global foo");
 DEFINE_int32(conflict_global, 42, "Global conflict");

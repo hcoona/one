@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/GroupVarint.h>
+#include "folly/GroupVarint.h"
 
 #include <algorithm>
 #include <cstdarg>
@@ -22,7 +22,7 @@
 // On platforms where it's not supported, GroupVarint will be compiled out.
 #if FOLLY_HAVE_GROUP_VARINT
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

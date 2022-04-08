@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-#include <folly/logging/xlog.h>
+#include "folly/logging/xlog.h"
 
 #include <cstddef>
 #include <thread>
 
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/thread/barrier.hpp>
+#include "boost/preprocessor/repetition/repeat.hpp"
+#include "boost/thread/barrier.hpp"
 
-#include <folly/Benchmark.h>
-#include <folly/init/Init.h>
-#include <folly/logging/Init.h>
-#include <folly/logging/LogConfig.h>
-#include <folly/logging/LogConfigParser.h>
-#include <folly/logging/LogHandler.h>
-#include <folly/logging/LogHandlerConfig.h>
-#include <folly/logging/LogHandlerFactory.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/init/Init.h"
+#include "folly/logging/Init.h"
+#include "folly/logging/LogConfig.h"
+#include "folly/logging/LogConfigParser.h"
+#include "folly/logging/LogHandler.h"
+#include "folly/logging/LogHandlerConfig.h"
+#include "folly/logging/LogHandlerFactory.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_int32(num_threads, 4, "Number of threads performing logging");
 DEFINE_int32(every_n, 1 << 10, "Inverse frequency for every-n logging");

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/AtomicNotification.h>
+#include "folly/synchronization/AtomicNotification.h"
 
 #include <cstdint>
 

@@ -23,11 +23,11 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/SingletonThreadLocal.h>
-#include <folly/Synchronized.h>
-#include <folly/container/F14Map.h>
-#include <folly/detail/Iterators.h>
-#include <folly/synchronization/Hazptr.h>
+#include "folly/SingletonThreadLocal.h"
+#include "folly/Synchronized.h"
+#include "folly/container/F14Map.h"
+#include "folly/detail/Iterators.h"
+#include "folly/synchronization/Hazptr.h"
 
 namespace folly {
 

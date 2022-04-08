@@ -22,12 +22,12 @@
 #include <utility>
 #include <vector>
 
-#include <folly/CPortability.h>
-#include <folly/Function.h>
-#include <folly/Optional.h>
-#include <folly/fibers/detail/AtomicBatchDispatcher.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/Promise.h>
+#include "folly/CPortability.h"
+#include "folly/Function.h"
+#include "folly/Optional.h"
+#include "folly/fibers/detail/AtomicBatchDispatcher.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/Promise.h"
 
 namespace folly {
 namespace fibers {
@@ -235,4 +235,4 @@ AtomicBatchDispatcher<InputT, ResultT> createAtomicBatchDispatcher(
 } // namespace fibers
 } // namespace folly
 
-#include <folly/fibers/AtomicBatchDispatcher-inl.h>
+#include "folly/fibers/AtomicBatchDispatcher-inl.h"

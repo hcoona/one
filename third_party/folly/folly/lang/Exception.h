@@ -20,12 +20,12 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/CPortability.h>
-#include <folly/CppAttributes.h>
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/lang/TypeInfo.h>
+#include "folly/CPortability.h"
+#include "folly/CppAttributes.h"
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/lang/TypeInfo.h"
 
 namespace folly {
 

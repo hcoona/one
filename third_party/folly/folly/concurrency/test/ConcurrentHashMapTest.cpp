@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/ConcurrentHashMap.h>
+#include "folly/concurrency/ConcurrentHashMap.h"
 
 #include <atomic>
 #include <memory>
 #include <thread>
 
-#include <folly/Traits.h>
-#include <folly/container/test/TrackingTypes.h>
-#include <folly/hash/Hash.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/Traits.h"
+#include "folly/container/test/TrackingTypes.h"
+#include "folly/hash/Hash.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly::test;
 using namespace folly;

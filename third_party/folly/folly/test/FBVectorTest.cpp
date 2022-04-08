@@ -17,19 +17,19 @@
 //
 // Author: andrei.alexandrescu@fb.com
 
-#include <folly/FBVector.h>
+#include "folly/FBVector.h"
 
 #include <list>
 #include <map>
 #include <memory>
 #include <numeric>
 
-#include <folly/FBString.h>
-#include <folly/Random.h>
-#include <folly/Traits.h>
-#include <folly/container/Foreach.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/FBVectorTestUtil.h>
+#include "folly/FBString.h"
+#include "folly/Random.h"
+#include "folly/Traits.h"
+#include "folly/container/Foreach.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/FBVectorTestUtil.h"
 
 using namespace std;
 using namespace folly;
@@ -39,10 +39,10 @@ using IntFBVector = fbvector<int>;
 using FBStringFBVector = fbvector<fbstring>;
 
 #define VECTOR IntFBVector
-#include <folly/test/FBVectorTests.cpp.h> // nolint
+#include "folly/test/FBVectorTests.cpp.h" // nolint
 #undef VECTOR
 #define VECTOR FBStringFBVector
-#include <folly/test/FBVectorTests.cpp.h> // nolint
+#include "folly/test/FBVectorTests.cpp.h" // nolint
 #undef VECTOR
 
 TEST(fbvector, clause_23_3_6_1_3_ambiguity) {

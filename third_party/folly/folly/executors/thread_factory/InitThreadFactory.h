@@ -19,8 +19,8 @@
 #include <memory>
 #include <thread>
 
-#include <folly/ScopeGuard.h>
-#include <folly/executors/thread_factory/ThreadFactory.h>
+#include "folly/ScopeGuard.h"
+#include "folly/executors/thread_factory/ThreadFactory.h"
 
 namespace folly {
 

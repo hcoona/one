@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/SingletonRelaxedCounter.h>
+#include "folly/experimental/SingletonRelaxedCounter.h"
 
 #include <cstddef>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
-#include <folly/ThreadLocal.h>
-#include <folly/portability/GTest.h>
+#include "folly/ThreadLocal.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

@@ -19,7 +19,7 @@
 #include <chrono>
 #include <vector>
 
-#include <folly/stats/detail/Bucket.h>
+#include "folly/stats/detail/Bucket.h"
 
 namespace folly {
 
@@ -468,4 +468,4 @@ class BucketedTimeSeries {
 
 } // namespace folly
 
-#include <folly/stats/BucketedTimeSeries-inl.h>
+#include "folly/stats/BucketedTimeSeries-inl.h"

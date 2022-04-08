@@ -19,7 +19,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/functional/Invoke.h>
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 namespace dptr_detail {

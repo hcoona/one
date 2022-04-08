@@ -19,7 +19,7 @@
 #include <exception>
 #include <typeinfo>
 
-#include <folly/CPortability.h>
+#include "folly/CPortability.h"
 
 namespace folly {
 

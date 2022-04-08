@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-#include <folly/io/ShutdownSocketSet.h>
+#include "folly/io/ShutdownSocketSet.h"
 
 #include <atomic>
 #include <chrono>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/net/NetOps.h>
-#include <folly/net/NetworkSocket.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/net/NetOps.h"
+#include "folly/net/NetworkSocket.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 namespace folly {
 namespace test {

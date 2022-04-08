@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Sockets.h>
+#include "folly/portability/Sockets.h"
 
 #ifdef _MSC_VER
 
@@ -23,9 +23,9 @@
 
 #include <MSWSock.h> // @manual
 
-#include <folly/ScopeGuard.h>
-#include <folly/net/NetworkSocket.h>
-#include <folly/net/detail/SocketFileDescriptorMap.h>
+#include "folly/ScopeGuard.h"
+#include "folly/net/NetworkSocket.h"
+#include "folly/net/detail/SocketFileDescriptorMap.h"
 
 namespace folly {
 namespace portability {

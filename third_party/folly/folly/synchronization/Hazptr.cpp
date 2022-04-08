@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Hazptr.h>
+#include "folly/synchronization/Hazptr.h"
 
 #include <atomic>
 
-#include <folly/portability/GFlags.h>
+#include "folly/portability/GFlags.h"
 
 DEFINE_bool(
     folly_hazptr_use_executor,

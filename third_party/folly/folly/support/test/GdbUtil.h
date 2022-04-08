@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/CPortability.h>
+#include "folly/CPortability.h"
 
 #ifdef _MSC_VER
 #include <intrin.h>

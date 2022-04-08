@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include <folly/ConstexprMath.h>
+#include "folly/ConstexprMath.h"
 
 namespace folly {
 namespace detail {

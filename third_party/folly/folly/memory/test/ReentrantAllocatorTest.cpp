@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/memory/ReentrantAllocator.h>
+#include "folly/memory/ReentrantAllocator.h"
 
 #include <memory>
 #include <thread>
 #include <tuple>
 #include <vector>
 
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
-#include <folly/portability/GTest.h>
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
+#include "folly/portability/GTest.h"
 
 class ReentrantAllocatorTest : public testing::Test {};
 

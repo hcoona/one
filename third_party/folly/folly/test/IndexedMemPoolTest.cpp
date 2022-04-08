@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/IndexedMemPool.h>
+#include "folly/IndexedMemPool.h"
 
 #include <string>
 #include <thread>
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Unistd.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Unistd.h"
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly;
 using namespace folly::test;

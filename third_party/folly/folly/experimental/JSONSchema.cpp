@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/JSONSchema.h>
+#include "folly/experimental/JSONSchema.h"
 
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
+#include "boost/algorithm/string/replace.hpp"
+#include "boost/regex.hpp"
 
-#include <folly/CPortability.h>
-#include <folly/Conv.h>
-#include <folly/Memory.h>
-#include <folly/Optional.h>
-#include <folly/Singleton.h>
-#include <folly/String.h>
-#include <folly/json.h>
-#include <folly/portability/Math.h>
+#include "folly/CPortability.h"
+#include "folly/Conv.h"
+#include "folly/Memory.h"
+#include "folly/Optional.h"
+#include "folly/Singleton.h"
+#include "folly/String.h"
+#include "folly/json.h"
+#include "folly/portability/Math.h"
 
 namespace folly {
 namespace jsonschema {

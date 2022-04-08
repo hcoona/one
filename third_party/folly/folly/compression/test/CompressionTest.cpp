@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/compression/Compression.h>
+#include "folly/compression/Compression.h"
 
 #include <algorithm>
 #include <random>
@@ -23,22 +23,22 @@
 #include <unordered_map>
 #include <utility>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Random.h>
-#include <folly/Varint.h>
-#include <folly/hash/Hash.h>
-#include <folly/io/IOBufQueue.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/Varint.h"
+#include "folly/hash/Hash.h"
+#include "folly/io/IOBufQueue.h"
+#include "folly/portability/GTest.h"
 
 #if FOLLY_HAVE_LIBZSTD
-#include <zstd.h>
+#include "zstd.h"
 
-#include <folly/compression/Zstd.h>
+#include "folly/compression/Zstd.h"
 #endif
 
 #if FOLLY_HAVE_LIBZ
-#include <folly/compression/Zlib.h>
+#include "folly/compression/Zlib.h"
 
 namespace zlib = folly::io::zlib;
 #endif

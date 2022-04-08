@@ -28,8 +28,8 @@
 
 #include <sys/locking.h> // @manual
 
-#include <folly/Portability.h>
-#include <folly/portability/SysTypes.h>
+#include "folly/Portability.h"
+#include "folly/portability/SysTypes.h"
 
 // This is different from the normal headers because there are a few cases,
 // such as close(), where we need to override the definition of an existing

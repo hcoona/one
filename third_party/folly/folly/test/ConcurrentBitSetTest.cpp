@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/ConcurrentBitSet.h>
+#include "folly/ConcurrentBitSet.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

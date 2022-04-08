@@ -17,7 +17,7 @@
 #pragma once
 #include <bitset>
 
-#include <folly/CPortability.h>
+#include "folly/CPortability.h"
 
 namespace folly {
 class InitOptions {

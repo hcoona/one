@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/detail/RangeCommon.h>
+#include "folly/detail/RangeCommon.h"
 
 #include <bitset>
 
-#include <folly/container/SparseByteSet.h>
+#include "folly/container/SparseByteSet.h"
 
 namespace folly {
 

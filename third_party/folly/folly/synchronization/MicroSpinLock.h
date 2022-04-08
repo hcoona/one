@@ -44,10 +44,10 @@
 #include <mutex>
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/lang/Align.h>
-#include <folly/synchronization/SanitizeThread.h>
-#include <folly/synchronization/detail/Sleeper.h>
+#include "folly/Portability.h"
+#include "folly/lang/Align.h"
+#include "folly/synchronization/SanitizeThread.h"
+#include "folly/synchronization/detail/Sleeper.h"
 
 namespace folly {
 

@@ -18,8 +18,8 @@
 
 #include <ostream>
 
-#include <folly/logging/LogCategory.h>
-#include <folly/logging/LogMessage.h>
+#include "folly/logging/LogCategory.h"
+#include "folly/logging/LogMessage.h"
 
 namespace folly {
 

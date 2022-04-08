@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/executors/EDFThreadPoolExecutor.h>
+#include "folly/executors/EDFThreadPoolExecutor.h"
 
 #include <algorithm>
 #include <array>
@@ -28,7 +28,7 @@
 #include <utility>
 #include <vector>
 
-#include <folly/ScopeGuard.h>
+#include "folly/ScopeGuard.h"
 
 namespace folly {
 

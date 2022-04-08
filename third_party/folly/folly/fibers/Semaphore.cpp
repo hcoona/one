@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/fibers/Semaphore.h>
+#include "folly/fibers/Semaphore.h"
 
 namespace folly {
 namespace fibers {

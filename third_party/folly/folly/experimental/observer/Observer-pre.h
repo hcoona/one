@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/functional/Invoke.h>
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 namespace observer {

@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 #ifndef __has_attribute
 #define FOLLY_HAS_ATTRIBUTE(x) 0

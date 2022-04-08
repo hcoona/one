@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/ExceptionWrapper.h>
+#include "folly/ExceptionWrapper.h"
 
 #include <atomic>
 #include <exception>
@@ -22,8 +22,8 @@
 #include <thread>
 #include <vector>
 
-#include <folly/Benchmark.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_int32(
     num_threads,

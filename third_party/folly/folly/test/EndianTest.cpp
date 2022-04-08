@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Bits.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Bits.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

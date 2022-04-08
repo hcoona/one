@@ -20,10 +20,10 @@
 #include <atomic>
 #include <chrono>
 
-#include <folly/detail/Futex.h>
-#include <folly/hash/Hash.h>
-#include <folly/synchronization/AtomicStruct.h>
-#include <folly/system/ThreadId.h>
+#include "folly/detail/Futex.h"
+#include "folly/hash/Hash.h"
+#include "folly/synchronization/AtomicStruct.h"
+#include "folly/system/ThreadId.h"
 
 namespace folly {
 namespace detail {

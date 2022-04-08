@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Function.h>
-#include <folly/detail/TurnSequencer.h>
-#include <folly/system/AtFork.h>
+#include "folly/Function.h"
+#include "folly/detail/TurnSequencer.h"
+#include "folly/system/AtFork.h"
 
 namespace folly {
 

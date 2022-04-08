@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Replaceable.h>
+#include "folly/Replaceable.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace ::testing;
 using namespace ::folly;

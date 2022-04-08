@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/stats/TDigest.h>
+#include "folly/stats/TDigest.h"
 
 #include <chrono>
 #include <random>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

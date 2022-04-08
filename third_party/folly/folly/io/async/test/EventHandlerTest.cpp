@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/io/async/EventHandler.h>
+#include "folly/io/async/EventHandler.h"
 
 #include <sys/eventfd.h>
 
@@ -22,12 +22,12 @@
 #include <future>
 #include <thread>
 
-#include <folly/MPMCQueue.h>
-#include <folly/ScopeGuard.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Sockets.h>
+#include "folly/MPMCQueue.h"
+#include "folly/ScopeGuard.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Sockets.h"
 
 using namespace std;
 using namespace folly;

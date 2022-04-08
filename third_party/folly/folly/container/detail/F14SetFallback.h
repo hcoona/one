@@ -20,8 +20,8 @@
 #include <type_traits>
 #include <unordered_set>
 
-#include <folly/container/detail/F14Table.h>
-#include <folly/container/detail/Util.h>
+#include "folly/container/detail/F14Table.h"
+#include "folly/container/detail/Util.h"
 
 /**
  * This file is intended to be included only by F14Set.h. It contains fallback

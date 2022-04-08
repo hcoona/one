@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-#include <folly/Singleton.h>
+#include "folly/Singleton.h"
 
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
-#include <glog/logging.h>
+#include "boost/thread/barrier.hpp"
+#include "glog/logging.h"
 
-#include <folly/experimental/io/FsUtil.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/SingletonTestStructs.h>
+#include "folly/experimental/io/FsUtil.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/SingletonTestStructs.h"
 
 #ifndef _MSC_VER
-#include <folly/Subprocess.h>
+#include "folly/Subprocess.h"
 #endif
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")

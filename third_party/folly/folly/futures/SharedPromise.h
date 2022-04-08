@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <folly/Portability.h>
-#include <folly/executors/InlineExecutor.h>
-#include <folly/futures/Promise.h>
-#include <folly/lang/Exception.h>
+#include "folly/Portability.h"
+#include "folly/executors/InlineExecutor.h"
+#include "folly/futures/Promise.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 
@@ -136,5 +136,5 @@ class SharedPromise {
 
 } // namespace folly
 
-#include <folly/futures/Future.h>
-#include <folly/futures/SharedPromise-inl.h>
+#include "folly/futures/Future.h"
+#include "folly/futures/SharedPromise-inl.h"

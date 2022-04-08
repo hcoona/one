@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/FBString.h>
-#include <folly/portability/Config.h>
+#include "folly/FBString.h"
+#include "folly/portability/Config.h"
 
 namespace folly {
 

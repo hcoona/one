@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/executors/ExecutorWithPriority.h>
+#include "folly/executors/ExecutorWithPriority.h"
 
-#include <folly/executors/CPUThreadPoolExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/portability/GTest.h>
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

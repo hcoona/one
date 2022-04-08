@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Traits.h>
+#include "folly/Traits.h"
 
 #include <cstring>
 #include <string>
@@ -22,8 +22,8 @@
 #include <utility>
 #include <vector>
 
-#include <folly/ScopeGuard.h>
-#include <folly/portability/GTest.h>
+#include "folly/ScopeGuard.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace std;

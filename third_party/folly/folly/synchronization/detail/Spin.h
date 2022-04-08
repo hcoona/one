@@ -20,8 +20,8 @@
 #include <chrono>
 #include <thread>
 
-#include <folly/portability/Asm.h>
-#include <folly/synchronization/WaitOptions.h>
+#include "folly/portability/Asm.h"
+#include "folly/synchronization/WaitOptions.h"
 
 namespace folly {
 namespace detail {

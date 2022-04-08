@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/CallOnce.h>
+#include "folly/synchronization/CallOnce.h"
 
 #include <deque>
 #include <mutex>
 #include <thread>
 #include <utility>
 
-#include <folly/Traits.h>
-#include <folly/portability/GTest.h>
+#include "folly/Traits.h"
+#include "folly/portability/GTest.h"
 
 static size_t const kNumThreads = 16;
 

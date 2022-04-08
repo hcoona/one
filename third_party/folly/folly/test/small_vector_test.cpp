@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/small_vector.h>
+#include "folly/small_vector.h"
 
 #include <iostream>
 #include <iterator>
@@ -25,13 +25,13 @@
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string.hpp>
-#include <fmt/format.h>
+#include "boost/algorithm/string.hpp"
+#include "fmt/format.h"
 
-#include <folly/Conv.h>
-#include <folly/Traits.h>
-#include <folly/portability/GTest.h>
-#include <folly/sorted_vector_types.h>
+#include "folly/Conv.h"
+#include "folly/Traits.h"
+#include "folly/portability/GTest.h"
+#include "folly/sorted_vector_types.h"
 
 using folly::small_vector;
 using namespace folly::small_vector_policy;

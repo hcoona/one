@@ -21,9 +21,9 @@
 #ifdef _WIN32
 #include <sys/types.h>
 
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 // I have no idea what the normal values for these are,
 // and really don't care what they are. They're only used

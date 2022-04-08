@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/AtomicReadMostlyMainPtr.h>
+#include "folly/experimental/AtomicReadMostlyMainPtr.h"
 
-#include <folly/executors/InlineExecutor.h>
+#include "folly/executors/InlineExecutor.h"
 
 namespace folly {
 namespace detail {

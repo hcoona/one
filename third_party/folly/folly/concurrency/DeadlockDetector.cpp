@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/DeadlockDetector.h>
+#include "folly/concurrency/DeadlockDetector.h"
 
 namespace folly {
 /* static */ DeadlockDetectorFactory* DeadlockDetectorFactory::instance() {

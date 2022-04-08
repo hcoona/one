@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/tracing/AsyncStack.h>
+#include "folly/tracing/AsyncStack.h"
 
 #include <atomic>
 #include <cassert>
 #include <mutex>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Likely.h>
-#include <folly/lang/Hint.h>
+#include "folly/Likely.h"
+#include "folly/lang/Hint.h"
 
 #if defined(__linux__)
 #define FOLLY_ASYNC_STACK_ROOT_USE_PTHREAD 1
@@ -33,7 +33,7 @@
 
 #if FOLLY_ASYNC_STACK_ROOT_USE_PTHREAD
 
-#include <folly/portability/PThread.h>
+#include "folly/portability/PThread.h"
 
 // Use a global TLS key variable to make it easier for profilers/debuggers
 // to lookup the current thread's AsyncStackRoot by walking the pthread

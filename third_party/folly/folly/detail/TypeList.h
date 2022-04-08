@@ -19,8 +19,8 @@
 #include <cstddef>
 #include <utility>
 
-#include <folly/Traits.h>
-#include <folly/Utility.h>
+#include "folly/Traits.h"
+#include "folly/Utility.h"
 
 /**
  * \file TypeList.h

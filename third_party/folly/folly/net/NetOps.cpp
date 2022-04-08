@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/net/NetOps.h>
+#include "folly/net/NetOps.h"
 
 #include <fcntl.h>
 #include <cerrno>
@@ -22,8 +22,8 @@
 #include <cstddef>
 #include <stdexcept>
 
-#include <folly/ScopeGuard.h>
-#include <folly/net/detail/SocketFileDescriptorMap.h>
+#include "folly/ScopeGuard.h"
+#include "folly/net/detail/SocketFileDescriptorMap.h"
 
 #ifdef _WIN32
 #include <MSWSock.h> // @manual

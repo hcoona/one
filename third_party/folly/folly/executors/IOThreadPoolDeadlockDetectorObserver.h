@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <folly/Singleton.h>
-#include <folly/concurrency/DeadlockDetector.h>
-#include <folly/executors/IOThreadPoolExecutor.h>
-#include <folly/executors/ThreadPoolExecutor.h>
+#include "folly/Singleton.h"
+#include "folly/concurrency/DeadlockDetector.h"
+#include "folly/executors/IOThreadPoolExecutor.h"
+#include "folly/executors/ThreadPoolExecutor.h"
 
 namespace folly {
 

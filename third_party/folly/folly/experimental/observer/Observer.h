@@ -19,12 +19,12 @@
 #include <atomic>
 #include <memory>
 
-#include <folly/SharedMutex.h>
-#include <folly/ThreadLocal.h>
-#include <folly/experimental/ReadMostlySharedPtr.h>
-#include <folly/experimental/observer/Observer-pre.h>
-#include <folly/experimental/observer/detail/Core.h>
-#include <folly/synchronization/Hazptr.h>
+#include "folly/SharedMutex.h"
+#include "folly/ThreadLocal.h"
+#include "folly/experimental/ReadMostlySharedPtr.h"
+#include "folly/experimental/observer/Observer-pre.h"
+#include "folly/experimental/observer/detail/Core.h"
+#include "folly/synchronization/Hazptr.h"
 
 namespace folly {
 namespace observer {
@@ -558,4 +558,4 @@ using ObserverT = typename ObserverTraits<T, CacheInThreadLocal>::type;
 } // namespace observer
 } // namespace folly
 
-#include <folly/experimental/observer/Observer-inl.h>
+#include "folly/experimental/observer/Observer-inl.h"

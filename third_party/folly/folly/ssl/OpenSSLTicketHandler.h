@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/portability/OpenSSL.h>
+#include "folly/portability/OpenSSL.h"
 
 namespace folly {
 

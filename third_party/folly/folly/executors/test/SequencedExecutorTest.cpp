@@ -16,10 +16,10 @@
 
 #include <future>
 
-#include <folly/executors/CPUThreadPoolExecutor.h>
-#include <folly/executors/SerialExecutor.h>
-#include <folly/io/async/ScopedEventBaseThread.h>
-#include <folly/portability/GTest.h>
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/executors/SerialExecutor.h"
+#include "folly/io/async/ScopedEventBaseThread.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

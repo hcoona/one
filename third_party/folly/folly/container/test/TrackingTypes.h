@@ -21,10 +21,10 @@
 #include <memory>
 #include <ostream>
 
-#include <folly/Function.h>
-#include <folly/hash/Hash.h>
-#include <folly/lang/SafeAssert.h>
-#include <folly/portability/Asm.h>
+#include "folly/Function.h"
+#include "folly/hash/Hash.h"
+#include "folly/lang/SafeAssert.h"
+#include "folly/portability/Asm.h"
 
 namespace folly {
 namespace test {

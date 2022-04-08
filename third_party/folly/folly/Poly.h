@@ -31,11 +31,11 @@
 #include <typeinfo>
 #include <utility>
 
-#include <folly/CPortability.h>
-#include <folly/CppAttributes.h>
-#include <folly/Traits.h>
-#include <folly/detail/TypeList.h>
-#include <folly/lang/Assume.h>
+#include "folly/CPortability.h"
+#include "folly/CppAttributes.h"
+#include "folly/Traits.h"
+#include "folly/detail/TypeList.h"
+#include "folly/lang/Assume.h"
 
 #if !defined(__cpp_inline_variables)
 #define FOLLY_INLINE_CONSTEXPR constexpr
@@ -43,8 +43,8 @@
 #define FOLLY_INLINE_CONSTEXPR inline constexpr
 #endif
 
-#include <folly/PolyException.h>
-#include <folly/detail/PolyDetail.h>
+#include "folly/PolyException.h"
+#include "folly/detail/PolyDetail.h"
 
 namespace folly {
 template <class I>
@@ -1150,6 +1150,6 @@ FOLLY_INLINE_CONSTEXPR detail::Sig<Sig> const sig = {};
 
 } // namespace folly
 
-#include <folly/Poly-inl.h>
+#include "folly/Poly-inl.h"
 
 #undef FOLLY_INLINE_CONSTEXPR

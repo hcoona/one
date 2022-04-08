@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Indestructible.h>
+#include "folly/Indestructible.h"
 
 #include <functional>
 #include <map>
@@ -22,8 +22,8 @@
 #include <string>
 #include <tuple>
 
-#include <folly/Memory.h>
-#include <folly/portability/GTest.h>
+#include "folly/Memory.h"
+#include "folly/portability/GTest.h"
 
 using namespace std;
 using namespace folly;

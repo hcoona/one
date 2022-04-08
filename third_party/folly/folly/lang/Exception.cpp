@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Exception.h>
+#include "folly/lang/Exception.h"
 
 #include <atomic>
 #include <cassert>
 #include <cstring>
 
-#include <folly/lang/New.h>
+#include "folly/lang/New.h"
 
 //  Accesses std::type_info and std::exception_ptr internals. Since these vary
 //  by platform and library, import or copy the structure and function

@@ -41,4 +41,4 @@ class Chain;
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/Core-inl.h>
+#include "folly/gen/Core-inl.h"

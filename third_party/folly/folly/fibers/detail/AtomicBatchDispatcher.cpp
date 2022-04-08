@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/fibers/detail/AtomicBatchDispatcher.h>
+#include "folly/fibers/detail/AtomicBatchDispatcher.h"
 
 #include <cassert>
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
 namespace folly {
 namespace fibers {

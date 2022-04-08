@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/logging/ObjectToString.h>
+#include "folly/logging/ObjectToString.h"
 
-#include <folly/Demangle.h>
+#include "folly/Demangle.h"
 
 namespace {
 

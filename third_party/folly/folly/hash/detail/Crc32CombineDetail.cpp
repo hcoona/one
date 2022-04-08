@@ -17,8 +17,8 @@
 #include <array>
 #include <utility>
 
-#include <folly/Bits.h>
-#include <folly/hash/detail/ChecksumDetail.h>
+#include "folly/Bits.h"
+#include "folly/hash/detail/ChecksumDetail.h"
 
 namespace folly {
 

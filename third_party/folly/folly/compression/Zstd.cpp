@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/compression/Zstd.h>
+#include "folly/compression/Zstd.h"
 
 #if FOLLY_HAVE_LIBZSTD
 
 #include <stdexcept>
 #include <string>
 
-#include <zstd.h>
+#include "zstd.h"
 
-#include <folly/Conv.h>
-#include <folly/Range.h>
-#include <folly/ScopeGuard.h>
-#include <folly/compression/CompressionContextPoolSingletons.h>
-#include <folly/compression/Utils.h>
+#include "folly/Conv.h"
+#include "folly/Range.h"
+#include "folly/ScopeGuard.h"
+#include "folly/compression/CompressionContextPoolSingletons.h"
+#include "folly/compression/Utils.h"
 
 static_assert(
     ZSTD_VERSION_NUMBER >= 10400,

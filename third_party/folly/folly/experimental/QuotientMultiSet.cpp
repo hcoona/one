@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/QuotientMultiSet.h>
+#include "folly/experimental/QuotientMultiSet.h"
 
 #include <cmath>
 
-#include <folly/Math.h>
+#include "folly/Math.h"
 
 #if FOLLY_QUOTIENT_MULTI_SET_SUPPORTED
 

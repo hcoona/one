@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include <folly/AtomicHashArray.h>
+#include "folly/AtomicHashArray.h"
 
 #include <cstddef>
 #include <map>
 #include <memory>
 #include <stdexcept>
 
-#include <folly/Conv.h>
-#include <folly/Memory.h>
-#include <folly/hash/Hash.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/String.h>
-#include <folly/portability/SysMman.h>
+#include "folly/Conv.h"
+#include "folly/Memory.h"
+#include "folly/hash/Hash.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/String.h"
+#include "folly/portability/SysMman.h"
 
 using namespace std;
 using namespace folly;

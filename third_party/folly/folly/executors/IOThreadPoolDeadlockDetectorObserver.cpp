@@ -15,9 +15,9 @@
  */
 
 #include <memory>
-#include <folly/concurrency/DeadlockDetector.h>
-#include <folly/executors/IOThreadPoolDeadlockDetectorObserver.h>
-#include <folly/system/ThreadId.h>
+#include "folly/concurrency/DeadlockDetector.h"
+#include "folly/executors/IOThreadPoolDeadlockDetectorObserver.h"
+#include "folly/system/ThreadId.h"
 
 namespace folly {
 

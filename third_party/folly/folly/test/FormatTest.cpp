@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/Format.h>
+#include "folly/Format.h"
 
 #include <string>
 
-#include <folly/Utility.h>
-#include <folly/portability/GTest.h>
+#include "folly/Utility.h"
+#include "folly/portability/GTest.h"
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated")
 

@@ -20,11 +20,11 @@
 #include <iterator>
 #include <memory>
 #include <stdexcept>
-#include <folly/detail/StaticSingletonManager.h>
+#include "folly/detail/StaticSingletonManager.h"
 
-#include <folly/Format.h>
-#include <folly/Function.h>
-#include <folly/SharedMutex.h>
+#include "folly/Format.h"
+#include "folly/Function.h"
+#include "folly/SharedMutex.h"
 
 namespace folly {
 
@@ -32,7 +32,7 @@ namespace folly {
 // invoked
 //
 // For example:
-// #include <folly/ConstructorCallback>
+// #include "folly/ConstructorCallback"
 //
 // class Foo {
 //    ...

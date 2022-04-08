@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/container/BitIterator.h>
+#include "folly/container/BitIterator.h"
 
 #include <forward_list>
 #include <limits>
@@ -22,7 +22,7 @@
 #include <type_traits>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

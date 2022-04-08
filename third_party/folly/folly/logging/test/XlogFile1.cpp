@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/logging/test/XlogHeader1.h>
-#include <folly/logging/xlog.h>
+#include "folly/logging/test/XlogHeader1.h"
+#include "folly/logging/xlog.h"
 
 namespace logging_test {
 void testXlogFile1Dbg1(folly::StringPiece msg) {

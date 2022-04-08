@@ -22,12 +22,12 @@
 #include <type_traits>
 #include <utility>
 
-#include <boost/operators.hpp>
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/detail/TurnSequencer.h>
-#include <folly/portability/Unistd.h>
-#include <folly/synchronization/SanitizeThread.h>
+#include "boost/operators.hpp"
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/detail/TurnSequencer.h"
+#include "folly/portability/Unistd.h"
+#include "folly/synchronization/SanitizeThread.h"
 
 namespace folly {
 namespace detail {

@@ -16,8 +16,8 @@
 
 #include <string>
 
-#include <folly/portability/GTest.h>
-#include <folly/portability/Libgen.h>
+#include "folly/portability/GTest.h"
+#include "folly/portability/Libgen.h"
 
 TEST(Libgen, dirname) {
   auto doDirname = [](const char* str) -> std::string {

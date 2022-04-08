@@ -19,10 +19,10 @@
 #include <mutex>
 #include <thread>
 
-#include <folly/Memory.h>
-#include <folly/experimental/ReadMostlySharedPtr.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/Memory.h"
+#include "folly/experimental/ReadMostlySharedPtr.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using folly::ReadMostlyMainPtr;
 using folly::ReadMostlyMainPtrDeleter;

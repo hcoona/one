@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
-#include <folly/synchronization/detail/ThreadCachedInts.h>
-#include <folly/synchronization/test/ThreadCachedEpochBench.h>
+#include "folly/Benchmark.h"
+#include "folly/synchronization/detail/ThreadCachedInts.h"
+#include "folly/synchronization/test/ThreadCachedEpochBench.h"
 
 using TCI = folly::detail::ThreadCachedInts<void>;
 

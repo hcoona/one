@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Aligned.h>
+#include "folly/lang/Aligned.h"
 
-#include <folly/lang/Align.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Align.h"
+#include "folly/portability/GTest.h"
 
 template <typename T>
 using A = folly::aligned<T, folly::max_align_v>;

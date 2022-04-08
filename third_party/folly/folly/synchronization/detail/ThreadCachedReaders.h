@@ -19,9 +19,9 @@
 #include <atomic>
 #include <cstdint>
 #include <limits>
-#include <folly/Function.h>
-#include <folly/ThreadLocal.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include "folly/Function.h"
+#include "folly/ThreadLocal.h"
+#include "folly/synchronization/AsymmetricMemoryBarrier.h"
 
 namespace folly {
 

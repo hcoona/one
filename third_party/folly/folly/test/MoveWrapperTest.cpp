@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/MoveWrapper.h>
+#include "folly/MoveWrapper.h"
 
 #include <memory>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

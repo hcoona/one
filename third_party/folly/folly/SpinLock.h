@@ -34,8 +34,8 @@
 
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/synchronization/SmallLocks.h>
+#include "folly/Portability.h"
+#include "folly/synchronization/SmallLocks.h"
 
 namespace folly {
 

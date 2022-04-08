@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/executors/ExecutorWithPriority.h>
+#include "folly/executors/ExecutorWithPriority.h"
 
 namespace folly {
 Executor::KeepAlive<> ExecutorWithPriority::create(

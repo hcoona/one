@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 #if FOLLY_SSE_PREREQ(4, 2)
 #include <immintrin.h>

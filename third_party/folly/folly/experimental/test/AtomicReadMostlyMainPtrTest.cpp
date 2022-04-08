@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/AtomicReadMostlyMainPtr.h>
+#include "folly/experimental/AtomicReadMostlyMainPtr.h"
 
 #include <array>
 #include <functional>
@@ -22,7 +22,7 @@
 #include <thread>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::AtomicReadMostlyMainPtr;
 using folly::ReadMostlySharedPtr;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/detail/Sleeper.h>
+#include "folly/synchronization/detail/Sleeper.h"
 
 namespace folly {
 namespace detail {

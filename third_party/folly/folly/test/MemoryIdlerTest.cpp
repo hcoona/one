@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/detail/MemoryIdler.h>
+#include "folly/detail/MemoryIdler.h"
 
 #include <memory>
 #include <thread>
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 using namespace folly::detail;

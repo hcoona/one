@@ -18,8 +18,8 @@
 
 #include <typeinfo>
 
-#include <folly/CppAttributes.h>
-#include <folly/Portability.h>
+#include "folly/CppAttributes.h"
+#include "folly/Portability.h"
 
 //  FOLLY_TYPE_INFO_OF
 //

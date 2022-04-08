@@ -15,8 +15,8 @@
  */
 
 #include <stdexcept>
-#include <folly/ConstructorCallback.h>
-#include <folly/portability/GTest.h>
+#include "folly/ConstructorCallback.h"
+#include "folly/portability/GTest.h"
 
 using namespace ::testing;
 

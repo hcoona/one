@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 // AtomicSharedPtr-detail.h only works with libstdc++, so skip these tests for
 // other vendors
 #if defined(__GLIBCXX__)
 
-#include <folly/concurrency/AtomicSharedPtr.h>
+#include "folly/concurrency/AtomicSharedPtr.h"
 
 #include <sys/time.h>
 #include <atomic>

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
-#include <folly/synchronization/detail/ThreadCachedInts.h>
-#include <folly/synchronization/detail/ThreadCachedReaders.h>
+#include "folly/Benchmark.h"
+#include "folly/synchronization/detail/ThreadCachedInts.h"
+#include "folly/synchronization/detail/ThreadCachedReaders.h"
 
 template <typename Tag>
 void decrement_cached_epoch(folly::detail::ThreadCachedInts<Tag>& ints) {

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include <folly/AtomicHashMap.h>
+#include "folly/AtomicHashMap.h"
 
 #include <atomic>
 #include <memory>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Conv.h>
-#include <folly/portability/Atomic.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/SysTime.h>
+#include "folly/Benchmark.h"
+#include "folly/Conv.h"
+#include "folly/portability/Atomic.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/SysTime.h"
 
 using folly::AtomicHashArray;
 using folly::AtomicHashMap;

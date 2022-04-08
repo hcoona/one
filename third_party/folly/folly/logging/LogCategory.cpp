@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogCategory.h>
+#include "folly/logging/LogCategory.h"
 
 #include <cstdio>
 #include <cstdlib>
 
-#include <folly/ConstexprMath.h>
-#include <folly/ExceptionString.h>
-#include <folly/FileUtil.h>
-#include <folly/MapUtil.h>
-#include <folly/logging/LogHandler.h>
-#include <folly/logging/LogMessage.h>
-#include <folly/logging/LogName.h>
-#include <folly/logging/LoggerDB.h>
+#include "folly/ConstexprMath.h"
+#include "folly/ExceptionString.h"
+#include "folly/FileUtil.h"
+#include "folly/MapUtil.h"
+#include "folly/logging/LogHandler.h"
+#include "folly/logging/LogMessage.h"
+#include "folly/logging/LogName.h"
+#include "folly/logging/LoggerDB.h"
 
 namespace folly {
 

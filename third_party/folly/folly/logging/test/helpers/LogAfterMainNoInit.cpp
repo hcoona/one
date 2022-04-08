@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/logging/test/helpers/helpers.h>
+#include "folly/logging/test/helpers/helpers.h"
 
 LogOnDestruction d1("1");
 LogOnDestruction d2("2");

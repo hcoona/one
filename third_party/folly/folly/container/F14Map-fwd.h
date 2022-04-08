@@ -18,8 +18,8 @@
 
 #include <utility>
 
-#include <folly/container/detail/F14Defaults.h>
-#include <folly/memory/MemoryResource.h>
+#include "folly/container/detail/F14Defaults.h"
+#include "folly/memory/MemoryResource.h"
 
 namespace folly {
 template <

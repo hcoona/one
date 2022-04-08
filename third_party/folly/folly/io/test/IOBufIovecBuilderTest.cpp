@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/io/IOBufIovecBuilder.h>
+#include "folly/io/IOBufIovecBuilder.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace {
 struct TestData {

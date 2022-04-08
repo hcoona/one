@@ -20,10 +20,10 @@
 #include <cassert>
 #include <cstdint>
 
-#include <folly/CPortability.h>
-#include <folly/CppAttributes.h>
-#include <folly/Portability.h>
-#include <folly/experimental/coro/Coroutine.h>
+#include "folly/CPortability.h"
+#include "folly/CppAttributes.h"
+#include "folly/Portability.h"
+#include "folly/experimental/coro/Coroutine.h"
 
 namespace folly {
 
@@ -465,4 +465,4 @@ class ScopedAsyncStackRoot {
 } // namespace detail
 } // namespace folly
 
-#include <folly/tracing/AsyncStack-inl.h>
+#include "folly/tracing/AsyncStack-inl.h"

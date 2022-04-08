@@ -16,17 +16,17 @@
 
 #pragma once
 
-#include <folly/synchronization/Hazptr-fwd.h>
+#include "folly/synchronization/Hazptr-fwd.h"
 
 #if FOLLY_HAZPTR_THR_LOCAL
 
 #include <atomic>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/SingletonThreadLocal.h>
-#include <folly/synchronization/HazptrObj.h>
-#include <folly/synchronization/HazptrRec.h>
+#include "folly/SingletonThreadLocal.h"
+#include "folly/synchronization/HazptrObj.h"
+#include "folly/synchronization/HazptrRec.h"
 
 /**
  *  Thread local classes and singletons

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/symbolizer/DwarfImpl.h>
+#include "folly/experimental/symbolizer/DwarfImpl.h"
 
 #include <array>
 #include <type_traits>
 
-#include <folly/Optional.h>
-#include <folly/portability/Config.h>
+#include "folly/Optional.h"
+#include "folly/portability/Config.h"
 
 #if FOLLY_HAVE_DWARF && FOLLY_HAVE_ELF
 

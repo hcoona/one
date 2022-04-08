@@ -18,8 +18,8 @@
 
 #include <chrono>
 
-#include <folly/io/async/TimeoutManager.h>
-#include <folly/portability/GMock.h>
+#include "folly/io/async/TimeoutManager.h"
+#include "folly/portability/GMock.h"
 
 namespace folly {
 namespace test {

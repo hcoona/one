@@ -18,7 +18,7 @@
 
 #include <exception>
 
-#include <folly/CppAttributes.h>
+#include "folly/CppAttributes.h"
 
 namespace folly {
 

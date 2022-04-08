@@ -19,11 +19,11 @@
 #include <iostream>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/gen/Base.h>
-#include <folly/gen/Parallel.h>
-#include <folly/gen/test/Bench.h>
+#include "folly/gen/Base.h"
+#include "folly/gen/Parallel.h"
+#include "folly/gen/test/Bench.h"
 
 DEFINE_int32(
     threads,

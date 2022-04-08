@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/ObserverContainer.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/ObserverContainer.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace ::testing;

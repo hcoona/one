@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/MicroLock.h>
+#include "folly/MicroLock.h"
 
 #include <thread>
 
-#include <folly/portability/Asm.h>
+#include "folly/portability/Asm.h"
 
 namespace folly {
 

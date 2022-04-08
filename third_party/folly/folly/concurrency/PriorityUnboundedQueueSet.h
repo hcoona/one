@@ -19,9 +19,9 @@
 #include <atomic>
 #include <vector>
 
-#include <folly/Memory.h>
-#include <folly/concurrency/UnboundedQueue.h>
-#include <folly/lang/Align.h>
+#include "folly/Memory.h"
+#include "folly/concurrency/UnboundedQueue.h"
+#include "folly/lang/Align.h"
 
 namespace folly {
 

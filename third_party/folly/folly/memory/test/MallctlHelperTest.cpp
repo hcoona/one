@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/memory/MallctlHelper.h>
+#include "folly/memory/MallctlHelper.h"
 
-#include <folly/CPortability.h>
-#include <folly/init/Init.h>
-#include <folly/memory/Malloc.h>
-#include <folly/portability/GTest.h>
+#include "folly/CPortability.h"
+#include "folly/init/Init.h"
+#include "folly/memory/Malloc.h"
+#include "folly/portability/GTest.h"
 
 #if defined(FOLLY_USE_JEMALLOC) && !FOLLY_SANITIZE
 #include <jemalloc/jemalloc.h>

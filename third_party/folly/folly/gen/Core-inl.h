@@ -21,7 +21,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.
 FOLLY_PUSH_WARNING

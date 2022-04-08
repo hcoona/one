@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/logging/xlog.h>
+#include "folly/logging/xlog.h"
 
 #include <type_traits>
 #include <unordered_map>
 
-#include <folly/Synchronized.h>
-#include <folly/portability/PThread.h>
+#include "folly/Synchronized.h"
+#include "folly/portability/PThread.h"
 
 namespace folly {
 

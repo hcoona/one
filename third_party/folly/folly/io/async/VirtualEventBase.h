@@ -18,12 +18,12 @@
 
 #include <future>
 
-#include <folly/Executor.h>
-#include <folly/Function.h>
-#include <folly/Synchronized.h>
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/Executor.h"
+#include "folly/Function.h"
+#include "folly/Synchronized.h"
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/synchronization/Baton.h"
 
 namespace folly {
 

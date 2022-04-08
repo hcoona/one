@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/experimental/channels/detail/FunctionTraits.h>
+#include "folly/experimental/channels/detail/FunctionTraits.h"
 
 namespace folly {
 namespace channels {

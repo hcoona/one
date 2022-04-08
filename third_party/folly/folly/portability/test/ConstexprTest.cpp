@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Constexpr.h>
+#include "folly/portability/Constexpr.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::constexpr_strcmp;
 using folly::constexpr_strlen;

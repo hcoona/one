@@ -19,13 +19,13 @@
 #include <atomic>
 #include <typeinfo>
 
-#include <folly/CPortability.h>
-#include <folly/Indestructible.h>
-#include <folly/Likely.h>
-#include <folly/Utility.h>
-#include <folly/detail/Singleton.h>
-#include <folly/lang/Thunk.h>
-#include <folly/lang/TypeInfo.h>
+#include "folly/CPortability.h"
+#include "folly/Indestructible.h"
+#include "folly/Likely.h"
+#include "folly/Utility.h"
+#include "folly/detail/Singleton.h"
+#include "folly/lang/Thunk.h"
+#include "folly/lang/TypeInfo.h"
 
 namespace folly {
 namespace detail {

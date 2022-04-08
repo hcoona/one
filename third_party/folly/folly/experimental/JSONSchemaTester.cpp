@@ -18,8 +18,8 @@
 #include <sstream>
 #include <string>
 
-#include <folly/experimental/JSONSchema.h>
-#include <folly/json.h>
+#include "folly/experimental/JSONSchema.h"
+#include "folly/json.h"
 
 /**
  * A binary that supports testing against the official tests from:

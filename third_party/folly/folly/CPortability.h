@@ -19,7 +19,7 @@
 /* These definitions are in a separate file so that they
  * may be included from C- as well as C++-based projects. */
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 /**
  * Portable version check.

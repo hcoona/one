@@ -16,7 +16,7 @@
 
 // @author Andrei Alexandrescu (andrei.alexandrescu@fb.com)
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 #include <algorithm>
 #include <cmath>
@@ -29,13 +29,13 @@
 #include <utility>
 #include <vector>
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
-#include <folly/FileUtil.h>
-#include <folly/MapUtil.h>
-#include <folly/String.h>
-#include <folly/container/Foreach.h>
-#include <folly/json.h>
+#include "folly/FileUtil.h"
+#include "folly/MapUtil.h"
+#include "folly/String.h"
+#include "folly/container/Foreach.h"
+#include "folly/json.h"
 
 using namespace std;
 

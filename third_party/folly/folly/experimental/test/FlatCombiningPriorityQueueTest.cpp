@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/FlatCombiningPriorityQueue.h>
+#include "folly/experimental/FlatCombiningPriorityQueue.h"
 
 #include <condition_variable>
 #include <mutex>
 #include <queue>
 
-#include <folly/Benchmark.h>
-#include <folly/portability/GTest.h>
+#include "folly/Benchmark.h"
+#include "folly/portability/GTest.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 DEFINE_bool(bench, false, "run benchmark");
 DEFINE_int32(reps, 10, "number of reps");

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/gen/Base.h>
+#include "folly/gen/Base.h"
 
 #include <iosfwd>
 #include <memory>
@@ -22,16 +22,16 @@
 #include <set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/FBVector.h>
-#include <folly/MapUtil.h>
-#include <folly/Memory.h>
-#include <folly/String.h>
-#include <folly/dynamic.h>
-#include <folly/experimental/TestUtil.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/FBVector.h"
+#include "folly/MapUtil.h"
+#include "folly/Memory.h"
+#include "folly/String.h"
+#include "folly/dynamic.h"
+#include "folly/experimental/TestUtil.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::gen;
 using namespace folly;

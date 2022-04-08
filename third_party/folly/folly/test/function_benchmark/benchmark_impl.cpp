@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/test/function_benchmark/benchmark_impl.h>
+#include "folly/test/function_benchmark/benchmark_impl.h"
 
-#include <folly/test/function_benchmark/test_functions.h>
+#include "folly/test/function_benchmark/test_functions.h"
 
 /*
  * These functions are defined in a separate file so that gcc won't be able to

@@ -28,15 +28,15 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/ScopeGuard.h>
-#include <folly/concurrency/CacheLocality.h>
-#include <folly/detail/Futex.h>
-#include <folly/lang/CustomizationPoint.h>
-#include <folly/synchronization/AtomicNotification.h>
-#include <folly/synchronization/detail/AtomicUtils.h>
-#include <folly/synchronization/test/Semaphore.h>
+#include "folly/ScopeGuard.h"
+#include "folly/concurrency/CacheLocality.h"
+#include "folly/detail/Futex.h"
+#include "folly/lang/CustomizationPoint.h"
+#include "folly/synchronization/AtomicNotification.h"
+#include "folly/synchronization/detail/AtomicUtils.h"
+#include "folly/synchronization/test/Semaphore.h"
 
 namespace folly {
 namespace test {

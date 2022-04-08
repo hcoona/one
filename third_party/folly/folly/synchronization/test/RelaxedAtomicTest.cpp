@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/RelaxedAtomic.h>
+#include "folly/synchronization/RelaxedAtomic.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class RelaxedAtomicTest : public testing::Test {};
 

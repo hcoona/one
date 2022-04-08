@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/portability/SysMembarrier.h>
+#include "folly/portability/SysMembarrier.h"
 
 #include <mutex>
 
-#include <folly/Portability.h>
-#include <folly/portability/SysSyscall.h>
-#include <folly/portability/Unistd.h>
+#include "folly/Portability.h"
+#include "folly/portability/SysSyscall.h"
+#include "folly/portability/Unistd.h"
 
 #if FOLLY_X64 && !FOLLY_MOBILE && defined(__linux__)
 #define FOLLY_USE_SYS_MEMBARRIER 1

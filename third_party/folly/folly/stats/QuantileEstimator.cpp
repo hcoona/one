@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/stats/QuantileEstimator.h>
+#include "folly/stats/QuantileEstimator.h"
 
 namespace folly {
 namespace detail {

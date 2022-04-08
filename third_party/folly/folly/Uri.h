@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include <folly/String.h>
+#include "folly/String.h"
 
 namespace folly {
 
@@ -120,4 +120,4 @@ class Uri {
 
 } // namespace folly
 
-#include <folly/Uri-inl.h>
+#include "folly/Uri-inl.h"

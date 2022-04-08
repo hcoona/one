@@ -20,7 +20,7 @@
 #include <limits>
 #include <type_traits>
 
-#include <folly/Likely.h>
+#include "folly/Likely.h"
 
 namespace folly {
 template <typename T, typename = std::enable_if_t<std::is_unsigned<T>::value>>

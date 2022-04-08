@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/system/Pid.h>
+#include "folly/system/Pid.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(PidTest, basic) {
   pid_t mypid = getpid();

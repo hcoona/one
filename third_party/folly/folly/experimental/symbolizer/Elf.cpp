@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/symbolizer/Elf.h>
+#include "folly/experimental/symbolizer/Elf.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -22,14 +22,14 @@
 #include <cstring>
 #include <string>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Conv.h>
-#include <folly/Exception.h>
-#include <folly/ScopeGuard.h>
-#include <folly/lang/CString.h>
-#include <folly/portability/Config.h>
-#include <folly/portability/SysMman.h>
+#include "folly/Conv.h"
+#include "folly/Exception.h"
+#include "folly/ScopeGuard.h"
+#include "folly/lang/CString.h"
+#include "folly/portability/Config.h"
+#include "folly/portability/SysMman.h"
 
 #if FOLLY_HAVE_ELF
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/container/Foreach.h>
+#include "folly/container/Foreach.h"
 
 #include <array>
 #include <initializer_list>
@@ -25,7 +25,7 @@
 #include <tuple>
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

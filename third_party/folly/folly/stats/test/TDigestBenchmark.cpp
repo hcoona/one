@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/stats/TDigest.h>
+#include "folly/stats/TDigest.h"
 
 #include <algorithm>
 #include <chrono>
 #include <random>
 
-#include <folly/Benchmark.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/portability/GFlags.h"
 
 using folly::TDigest;
 

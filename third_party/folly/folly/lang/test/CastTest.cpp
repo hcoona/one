@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Cast.h>
+#include "folly/lang/Cast.h"
 
-#include <folly/Utility.h>
-#include <folly/portability/GTest.h>
+#include "folly/Utility.h"
+#include "folly/portability/GTest.h"
 
 using folly::as_const;
 using folly::down_cast;

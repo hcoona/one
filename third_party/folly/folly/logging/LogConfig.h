@@ -19,8 +19,8 @@
 #include <string>
 #include <unordered_map>
 
-#include <folly/logging/LogCategoryConfig.h>
-#include <folly/logging/LogHandlerConfig.h>
+#include "folly/logging/LogCategoryConfig.h"
+#include "folly/logging/LogHandlerConfig.h"
 
 namespace folly {
 

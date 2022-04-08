@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/exception_tracer/ExceptionTracerLib.h>
-#include <folly/experimental/exception_tracer/SmartExceptionTracerSingleton.h>
-#include <folly/experimental/symbolizer/Symbolizer.h>
+#include "folly/experimental/exception_tracer/ExceptionTracerLib.h"
+#include "folly/experimental/exception_tracer/SmartExceptionTracerSingleton.h"
+#include "folly/experimental/symbolizer/Symbolizer.h"
 
 #if FOLLY_HAVE_ELF && FOLLY_HAVE_DWARF
 

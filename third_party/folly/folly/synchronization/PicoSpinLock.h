@@ -44,13 +44,13 @@
 #include <mutex>
 #include <type_traits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/synchronization/AtomicRef.h>
-#include <folly/synchronization/AtomicUtil.h>
-#include <folly/synchronization/SanitizeThread.h>
-#include <folly/synchronization/detail/Sleeper.h>
+#include "folly/Portability.h"
+#include "folly/synchronization/AtomicRef.h"
+#include "folly/synchronization/AtomicUtil.h"
+#include "folly/synchronization/SanitizeThread.h"
+#include "folly/synchronization/detail/Sleeper.h"
 
 namespace folly {
 

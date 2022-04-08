@@ -20,8 +20,8 @@
 #include <memory>
 #include <stdexcept>
 
-#include <folly/Executor.h>
-#include <folly/lang/Exception.h>
+#include "folly/Executor.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 // An executor that supports timed scheduling. Like RxScheduler.

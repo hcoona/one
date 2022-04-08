@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/stats/detail/BufferedStat.h>
+#include "folly/stats/detail/BufferedStat.h"
 
-#include <folly/Range.h>
-#include <folly/portability/GTest.h>
+#include "folly/Range.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace folly::detail;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/executors/CPUThreadPoolExecutor.h>
-#include <folly/experimental/channels/ConsumeChannel.h>
-#include <folly/experimental/coro/DetachOnCancel.h>
-#include <folly/experimental/coro/Sleep.h>
-#include <folly/futures/SharedPromise.h>
-#include <folly/portability/GMock.h>
+#include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/experimental/channels/ConsumeChannel.h"
+#include "folly/experimental/coro/DetachOnCancel.h"
+#include "folly/experimental/coro/Sleep.h"
+#include "folly/futures/SharedPromise.h"
+#include "folly/portability/GMock.h"
 
 namespace folly {
 namespace channels {

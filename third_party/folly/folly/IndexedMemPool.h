@@ -22,11 +22,11 @@
 
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/concurrency/CacheLocality.h>
-#include <folly/portability/SysMman.h>
-#include <folly/portability/Unistd.h>
-#include <folly/synchronization/AtomicStruct.h>
+#include "folly/Portability.h"
+#include "folly/concurrency/CacheLocality.h"
+#include "folly/portability/SysMman.h"
+#include "folly/portability/Unistd.h"
+#include "folly/synchronization/AtomicStruct.h"
 
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.
 FOLLY_PUSH_WARNING

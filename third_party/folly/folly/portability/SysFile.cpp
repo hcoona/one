@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/portability/SysFile.h>
+#include "folly/portability/SysFile.h"
 
 #ifdef _WIN32
 #include <limits>
 
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 extern "C" int flock(int fd, int operation) {
   HANDLE h = (HANDLE)_get_osfhandle(fd);

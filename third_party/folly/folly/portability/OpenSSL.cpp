@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/portability/OpenSSL.h>
-#include <folly/ssl/detail/OpenSSLThreading.h>
+#include "folly/portability/OpenSSL.h"
+#include "folly/ssl/detail/OpenSSLThreading.h"
 
 #include <stdexcept>
 

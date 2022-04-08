@@ -19,7 +19,7 @@
 #include <istream>
 #include <string>
 
-#include <folly/gen/Core.h>
+#include "folly/gen/Core.h"
 
 namespace folly {
 namespace gen {

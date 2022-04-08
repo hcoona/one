@@ -16,9 +16,9 @@
 
 #include <thread>
 
-#include <folly/futures/Future.h>
-#include <folly/futures/test/TestExecutor.h>
-#include <folly/portability/GTest.h>
+#include "folly/futures/Future.h"
+#include "folly/futures/test/TestExecutor.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

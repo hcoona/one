@@ -18,7 +18,7 @@
 
 #include <functional>
 #include <sstream>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

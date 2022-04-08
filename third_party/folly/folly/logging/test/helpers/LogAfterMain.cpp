@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/init/Init.h>
-#include <folly/logging/test/helpers/LogOnShutdownLib.h>
-#include <folly/logging/test/helpers/helpers.h>
-#include <folly/logging/xlog.h>
+#include "folly/init/Init.h"
+#include "folly/logging/test/helpers/LogOnShutdownLib.h"
+#include "folly/logging/test/helpers/helpers.h"
+#include "folly/logging/xlog.h"
 
 // Logging after main() returns is safe, but there isn't any guarantee the
 // messages will actually be visible: order of destruction is undefined, and the

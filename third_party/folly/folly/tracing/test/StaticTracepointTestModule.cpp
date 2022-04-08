@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/tracing/StaticTracepoint.h>
+#include "folly/tracing/StaticTracepoint.h"
 
 namespace folly {
 namespace test {

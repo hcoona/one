@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Exception.h>
+#include "folly/lang/Exception.h"
 
 #include <algorithm>
 #include <cstring>
 #include <functional>
 #include <string>
 
-#include <folly/Portability.h>
-#include <folly/lang/Keep.h>
-#include <folly/lang/Pretty.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/lang/Keep.h"
+#include "folly/lang/Pretty.h"
+#include "folly/portability/GTest.h"
 
 extern "C" FOLLY_KEEP void check_cond_std_terminate(bool c) {
   if (c) {

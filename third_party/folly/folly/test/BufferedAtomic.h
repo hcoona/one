@@ -18,8 +18,8 @@
 
 #include <sstream>
 
-#include <folly/synchronization/detail/AtomicUtils.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/synchronization/detail/AtomicUtils.h"
+#include "folly/test/DeterministicSchedule.h"
 
 namespace folly {
 namespace test {

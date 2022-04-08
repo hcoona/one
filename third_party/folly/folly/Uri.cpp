@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/Uri.h>
+#include "folly/Uri.h"
 
 #include <algorithm>
 #include <cctype>
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
 namespace folly {
 

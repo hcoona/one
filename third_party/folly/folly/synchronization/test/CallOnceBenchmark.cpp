@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/CallOnce.h>
+#include "folly/synchronization/CallOnce.h"
 
 #include <deque>
 #include <mutex>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 DEFINE_int32(threads, 16, "benchmark concurrency");
 

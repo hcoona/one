@@ -25,11 +25,11 @@
 #include <stdexcept>
 #include <system_error>
 
-#include <folly/Conv.h>
-#include <folly/Likely.h>
-#include <folly/Range.h>
-#include <folly/lang/SafeAssert.h>
-#include <folly/portability/Config.h>
+#include "folly/Conv.h"
+#include "folly/Likely.h"
+#include "folly/Range.h"
+#include "folly/lang/SafeAssert.h"
+#include "folly/portability/Config.h"
 
 #if FOLLY_HAVE_ELF
 
@@ -332,6 +332,6 @@ class ElfFile {
 } // namespace symbolizer
 } // namespace folly
 
-#include <folly/experimental/symbolizer/Elf-inl.h>
+#include "folly/experimental/symbolizer/Elf-inl.h"
 
 #endif // FOLLY_HAVE_ELF

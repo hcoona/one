@@ -19,8 +19,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <folly/CPortability.h>
-#include <folly/Range.h>
+#include "folly/CPortability.h"
+#include "folly/Range.h"
 
 namespace folly {
 

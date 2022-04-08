@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/Try.h>
-#include <folly/fibers/traits.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Try.h"
+#include "folly/fibers/traits.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 namespace fibers {
@@ -111,4 +111,4 @@ class Promise {
 } // namespace fibers
 } // namespace folly
 
-#include <folly/fibers/Promise-inl.h>
+#include "folly/fibers/Promise-inl.h"

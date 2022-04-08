@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/AtomicIntrusiveLinkedList.h>
-#include <folly/Memory.h>
+#include "folly/AtomicIntrusiveLinkedList.h"
+#include "folly/Memory.h"
 
 namespace folly {
 

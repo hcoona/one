@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/system/AtFork.h>
+#include "folly/system/AtFork.h"
 
 #include <atomic>
 #include <mutex>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
 class AtForkTest : public testing::Test {};
 

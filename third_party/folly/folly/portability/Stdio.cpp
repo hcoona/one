@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Stdio.h>
+#include "folly/portability/Stdio.h"
 
 #ifdef _WIN32
 
 #include <cstdlib>
 
-#include <folly/ScopeGuard.h>
-#include <folly/portability/Unistd.h>
+#include "folly/ScopeGuard.h"
+#include "folly/portability/Unistd.h"
 
 extern "C" {
 int dprintf(int fd, const char* fmt, ...) {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/ConcurrentLazy.h>
+#include "folly/ConcurrentLazy.h"
 
 #include <functional>
 #include <mutex>
 #include <thread>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(ConcurrentLazy, Simple) {
   int computeCount = 0;

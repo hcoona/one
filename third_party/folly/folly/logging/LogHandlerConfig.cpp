@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogHandlerConfig.h>
+#include "folly/logging/LogHandlerConfig.h"
 
-#include <folly/lang/SafeAssert.h>
+#include "folly/lang/SafeAssert.h"
 
 using std::string;
 

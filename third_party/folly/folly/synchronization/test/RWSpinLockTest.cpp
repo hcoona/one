@@ -18,18 +18,18 @@
 // @author xliu (xliux@fb.com)
 //
 
-#include <folly/synchronization/RWSpinLock.h>
+#include "folly/synchronization/RWSpinLock.h"
 
 #include <stdlib.h>
 
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Unistd.h>
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Unistd.h"
 
 DEFINE_int32(num_threads, 8, "num threads");
 

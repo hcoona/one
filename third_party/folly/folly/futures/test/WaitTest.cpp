@@ -16,12 +16,12 @@
 
 #include <queue>
 
-#include <folly/executors/InlineExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/test/TestExecutor.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/executors/InlineExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/test/TestExecutor.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 using std::vector;

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/detail/SocketFastOpen.h>
+#include "folly/detail/SocketFastOpen.h"
 
 #include <cerrno>
 #include <cstdio>
 #include <fstream>
 
-#include <folly/portability/Sockets.h>
+#include "folly/portability/Sockets.h"
 
 namespace folly {
 namespace detail {

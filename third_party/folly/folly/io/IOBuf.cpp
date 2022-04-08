@@ -18,7 +18,7 @@
 #define __STDC_LIMIT_MACROS
 #endif
 
-#include <folly/io/IOBuf.h>
+#include "folly/io/IOBuf.h"
 
 #include <cassert>
 #include <cstdint>
@@ -27,17 +27,17 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include <folly/Conv.h>
-#include <folly/Likely.h>
-#include <folly/Memory.h>
-#include <folly/ScopeGuard.h>
-#include <folly/hash/SpookyHashV2.h>
-#include <folly/io/Cursor.h>
-#include <folly/lang/Align.h>
-#include <folly/lang/CheckedMath.h>
-#include <folly/lang/Exception.h>
-#include <folly/memory/Malloc.h>
-#include <folly/memory/SanitizeAddress.h>
+#include "folly/Conv.h"
+#include "folly/Likely.h"
+#include "folly/Memory.h"
+#include "folly/ScopeGuard.h"
+#include "folly/hash/SpookyHashV2.h"
+#include "folly/io/Cursor.h"
+#include "folly/lang/Align.h"
+#include "folly/lang/CheckedMath.h"
+#include "folly/lang/Exception.h"
+#include "folly/memory/Malloc.h"
+#include "folly/memory/SanitizeAddress.h"
 
 /*
  * Callbacks that will be invoked when IOBuf allocates or frees memory.

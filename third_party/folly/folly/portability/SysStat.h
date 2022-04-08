@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 
 #ifdef _WIN32
-#include <folly/portability/SysTypes.h>
+#include "folly/portability/SysTypes.h"
 
 // Windows gives weird names to these.
 #define S_IXUSR 0

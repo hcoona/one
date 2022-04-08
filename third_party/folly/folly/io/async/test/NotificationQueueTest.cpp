@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/io/async/NotificationQueue.h>
+#include "folly/io/async/NotificationQueue.h"
 
 #include <sys/types.h>
 
@@ -22,9 +22,9 @@
 #include <list>
 #include <thread>
 
-#include <folly/io/async/ScopedEventBaseThread.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/io/async/ScopedEventBaseThread.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 #ifndef _WIN32
 #include <sys/wait.h>

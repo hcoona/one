@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/NativeSemaphore.h>
+#include "folly/synchronization/NativeSemaphore.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::NativeSemaphore;
 

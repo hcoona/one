@@ -19,8 +19,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/Optional.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Optional.h"
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 

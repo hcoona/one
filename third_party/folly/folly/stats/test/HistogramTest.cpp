@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/stats/Histogram.h>
+#include "folly/stats/Histogram.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::Histogram;
 

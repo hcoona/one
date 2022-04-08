@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/tracing/StaticTracepoint.h>
+#include "folly/tracing/StaticTracepoint.h"
 
 #include <algorithm>
 #include <array>
@@ -23,17 +23,17 @@
 #include <string>
 #include <vector>
 
-#include <folly/Conv.h>
-#include <folly/Format.h>
-#include <folly/Random.h>
-#include <folly/String.h>
-#include <folly/Subprocess.h>
-#include <folly/experimental/symbolizer/detail/Debug.h>
-#include <folly/lang/Bits.h>
-#include <folly/portability/Filesystem.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Unistd.h>
-#include <folly/tracing/test/StaticTracepointTestModule.h>
+#include "folly/Conv.h"
+#include "folly/Format.h"
+#include "folly/Random.h"
+#include "folly/String.h"
+#include "folly/Subprocess.h"
+#include "folly/experimental/symbolizer/detail/Debug.h"
+#include "folly/lang/Bits.h"
+#include "folly/portability/Filesystem.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Unistd.h"
+#include "folly/tracing/test/StaticTracepointTestModule.h"
 
 #if FOLLY_HAVE_SDT
 

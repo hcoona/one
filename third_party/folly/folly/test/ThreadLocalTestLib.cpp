@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/ThreadLocal.h>
+#include "folly/ThreadLocal.h"
 
 class A {
  public:

@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <folly/Function.h>
-#include <folly/Synchronized.h>
-#include <folly/experimental/observer/Observer.h>
-#include <folly/synchronization/DelayedInit.h>
+#include "folly/Function.h"
+#include "folly/Synchronized.h"
+#include "folly/experimental/observer/Observer.h"
+#include "folly/synchronization/DelayedInit.h"
 
 namespace folly {
 namespace observer {
@@ -58,4 +58,4 @@ class SimpleObservable {
 } // namespace observer
 } // namespace folly
 
-#include <folly/experimental/observer/SimpleObservable-inl.h>
+#include "folly/experimental/observer/SimpleObservable-inl.h"

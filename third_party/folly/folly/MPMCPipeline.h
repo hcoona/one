@@ -18,10 +18,10 @@
 
 #include <utility>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/detail/MPMCPipelineDetail.h>
+#include "folly/Portability.h"
+#include "folly/detail/MPMCPipelineDetail.h"
 
 namespace folly {
 

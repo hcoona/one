@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/logging/CustomLogFormatter.h>
+#include "folly/logging/CustomLogFormatter.h"
 
 #include <cstdlib>
 
-#include <folly/Format.h>
-#include <folly/init/Init.h>
-#include <folly/logging/LogMessage.h>
-#include <folly/logging/Logger.h>
-#include <folly/logging/LoggerDB.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Stdlib.h>
+#include "folly/Format.h"
+#include "folly/init/Init.h"
+#include "folly/logging/LogMessage.h"
+#include "folly/logging/Logger.h"
+#include "folly/logging/LoggerDB.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Stdlib.h"
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 

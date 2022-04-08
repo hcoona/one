@@ -21,14 +21,14 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/ExceptionWrapper.h>
-#include <folly/Likely.h>
-#include <folly/Memory.h>
-#include <folly/Portability.h>
-#include <folly/Unit.h>
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
-#include <folly/lang/Exception.h>
+#include "folly/ExceptionWrapper.h"
+#include "folly/Likely.h"
+#include "folly/Memory.h"
+#include "folly/Portability.h"
+#include "folly/Unit.h"
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 
@@ -721,4 +721,4 @@ Try(T&&) -> Try<std::decay_t<T>>;
 
 } // namespace folly
 
-#include <folly/Try-inl.h>
+#include "folly/Try-inl.h"

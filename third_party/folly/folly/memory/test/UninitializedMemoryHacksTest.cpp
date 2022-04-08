@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/memory/UninitializedMemoryHacks.h>
+#include "folly/memory/UninitializedMemoryHacks.h"
 
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <folly/Random.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/portability/GTest.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 void describePlatform() {
   LOG(INFO) << "sizeof(void*) = " << sizeof(void*);

@@ -17,9 +17,9 @@
 #pragma once
 #define FOLLY_GEN_STRING_H_
 
-#include <folly/Range.h>
-#include <folly/gen/Base.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Range.h"
+#include "folly/gen/Base.h"
+#include "folly/io/IOBuf.h"
 
 namespace folly {
 namespace gen {
@@ -244,4 +244,4 @@ StreamSplitter<Callback> streamSplitter(
 } // namespace gen
 } // namespace folly
 
-#include <folly/gen/String-inl.h>
+#include "folly/gen/String-inl.h"

@@ -21,9 +21,9 @@
 #include <cstdint>
 #include <utility>
 
-#include <folly/Optional.h>
-#include <folly/Portability.h>
-#include <folly/detail/Futex.h>
+#include "folly/Optional.h"
+#include "folly/Portability.h"
+#include "folly/detail/Futex.h"
 
 namespace folly {
 

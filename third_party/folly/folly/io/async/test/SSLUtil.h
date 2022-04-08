@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace folly {
 namespace test {

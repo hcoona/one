@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/Uri.h>
+#include "folly/Uri.h"
 
 #include <map>
 
-#include <boost/algorithm/string.hpp>
-#include <glog/logging.h>
+#include "boost/algorithm/string.hpp"
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

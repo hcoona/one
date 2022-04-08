@@ -20,9 +20,9 @@
 #include <thread>
 #include <utility>
 
-#include <folly/executors/InlineExecutor.h>
-#include <folly/futures/detail/Core.h>
-#include <folly/lang/Pretty.h>
+#include "folly/executors/InlineExecutor.h"
+#include "folly/futures/detail/Core.h"
+#include "folly/lang/Pretty.h"
 
 namespace folly {
 

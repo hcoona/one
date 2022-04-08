@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include <folly/Function.h>
+#include "folly/Function.h"
 
 #include <array>
 #include <cstdarg>
 #include <functional>
 
-#include <folly/Memory.h>
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/Memory.h"
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 using folly::Function;
 

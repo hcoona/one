@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/hash/Hash.h>
+#include "folly/hash/Hash.h"
 
 #include <stdint.h>
 
@@ -23,12 +23,12 @@
 #include <string>
 #include <vector>
 
-#include <fmt/core.h>
-#include <glog/logging.h>
+#include "fmt/core.h"
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Preprocessor.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/Preprocessor.h"
+#include "folly/portability/GFlags.h"
 
 namespace detail {
 

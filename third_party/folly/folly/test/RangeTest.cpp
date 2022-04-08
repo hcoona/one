@@ -17,7 +17,7 @@
 // @author Kristina Holst (kholst@fb.com)
 // @author Andrei Alexandrescu (andrei.alexandrescu@fb.com)
 
-#include <folly/Range.h>
+#include "folly/Range.h"
 
 #include <array>
 #include <deque>
@@ -28,14 +28,14 @@
 #include <type_traits>
 #include <vector>
 
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/range/concepts.hpp>
+#include "boost/algorithm/string/trim.hpp"
+#include "boost/range/concepts.hpp"
 
-#include <folly/CppAttributes.h>
-#include <folly/Memory.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/SysMman.h>
+#include "folly/CppAttributes.h"
+#include "folly/Memory.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/SysMman.h"
 
 #if __has_include(<range/v3/range/concepts.hpp>)
 #include <range/v3/range/concepts.hpp>

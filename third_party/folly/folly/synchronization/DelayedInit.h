@@ -21,8 +21,8 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include <folly/lang/SafeAssert.h>
-#include <folly/synchronization/CallOnce.h>
+#include "folly/lang/SafeAssert.h"
+#include "folly/synchronization/CallOnce.h"
 
 namespace folly {
 

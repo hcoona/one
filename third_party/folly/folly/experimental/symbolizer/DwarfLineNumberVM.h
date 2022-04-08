@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/Range.h>
-#include <folly/experimental/symbolizer/DwarfUtil.h>
-#include <folly/experimental/symbolizer/SymbolizedFrame.h>
+#include "folly/Range.h"
+#include "folly/experimental/symbolizer/DwarfUtil.h"
+#include "folly/experimental/symbolizer/SymbolizedFrame.h"
 
 namespace folly {
 namespace symbolizer {

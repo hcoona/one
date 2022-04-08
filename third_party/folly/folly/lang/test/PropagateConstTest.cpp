@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/lang/PropagateConst.h>
+#include "folly/lang/PropagateConst.h"
 
 #include <memory>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

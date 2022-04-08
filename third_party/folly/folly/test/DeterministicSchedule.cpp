@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/test/DeterministicSchedule.h"
 
 #include <algorithm>
 #include <cassert>
@@ -24,8 +24,8 @@
 #include <unordered_map>
 #include <utility>
 
-#include <folly/Random.h>
-#include <folly/SingletonThreadLocal.h>
+#include "folly/Random.h"
+#include "folly/SingletonThreadLocal.h"
 
 namespace folly {
 namespace test {

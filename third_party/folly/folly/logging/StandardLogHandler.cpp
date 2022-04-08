@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/logging/StandardLogHandler.h>
+#include "folly/logging/StandardLogHandler.h"
 
 #include <utility>
 
-#include <folly/logging/LogFormatter.h>
-#include <folly/logging/LogMessage.h>
-#include <folly/logging/LogWriter.h>
+#include "folly/logging/LogFormatter.h"
+#include "folly/logging/LogMessage.h"
+#include "folly/logging/LogWriter.h"
 
 namespace folly {
 

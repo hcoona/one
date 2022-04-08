@@ -17,7 +17,7 @@
 #include <signal.h>
 #include <array>
 
-#include <folly/experimental/symbolizer/SignalHandler.h>
+#include "folly/experimental/symbolizer/SignalHandler.h"
 
 namespace {
 std::array<char, 8192> stack;

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/MPMCPipeline.h>
+#include "folly/MPMCPipeline.h"
 
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Conv.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/Conv.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

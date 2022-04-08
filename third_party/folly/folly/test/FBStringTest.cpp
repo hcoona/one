@@ -17,7 +17,7 @@
 //
 // Author: andrei.alexandrescu@fb.com
 
-#include <folly/FBString.h>
+#include "folly/FBString.h"
 
 #include <atomic>
 #include <cstdlib>
@@ -26,16 +26,16 @@
 #include <random>
 #include <sstream>
 
-#include <boost/algorithm/string.hpp>
-#include <glog/logging.h>
+#include "boost/algorithm/string.hpp"
+#include "glog/logging.h"
 
-#include <folly/Conv.h>
-#include <folly/Portability.h>
-#include <folly/Random.h>
-#include <folly/Utility.h>
-#include <folly/container/Foreach.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/TestUtils.h>
+#include "folly/Conv.h"
+#include "folly/Portability.h"
+#include "folly/Random.h"
+#include "folly/Utility.h"
+#include "folly/container/Foreach.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/TestUtils.h"
 
 using namespace std;
 using namespace folly;

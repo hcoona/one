@@ -18,9 +18,9 @@
 
 #include <atomic>
 
-#include <folly/lang/Bits.h>
+#include "folly/lang/Bits.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 

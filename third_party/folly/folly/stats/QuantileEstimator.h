@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/stats/TDigest.h>
-#include <folly/stats/detail/BufferedStat.h>
+#include "folly/stats/TDigest.h"
+#include "folly/stats/detail/BufferedStat.h"
 
 namespace folly {
 
@@ -88,4 +88,4 @@ class SlidingWindowQuantileEstimator {
 
 } // namespace folly
 
-#include <folly/stats/QuantileEstimator-inl.h>
+#include "folly/stats/QuantileEstimator-inl.h"

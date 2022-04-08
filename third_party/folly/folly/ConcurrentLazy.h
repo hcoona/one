@@ -19,8 +19,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/functional/Invoke.h>
-#include <folly/synchronization/DelayedInit.h>
+#include "folly/functional/Invoke.h"
+#include "folly/synchronization/DelayedInit.h"
 
 namespace folly {
 

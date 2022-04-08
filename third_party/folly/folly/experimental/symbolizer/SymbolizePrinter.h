@@ -18,9 +18,9 @@
 
 #include <cstdint>
 
-#include <folly/FBString.h>
-#include <folly/Range.h>
-#include <folly/experimental/symbolizer/SymbolizedFrame.h>
+#include "folly/FBString.h"
+#include "folly/Range.h"
+#include "folly/experimental/symbolizer/SymbolizedFrame.h"
 
 namespace folly {
 class IOBuf;

@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <Python.h>
+#include "Python.h"
 
-#include <folly/Executor.h>
-#include <folly/Function.h>
-#include <folly/ScopeGuard.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Executor.h"
+#include "folly/Function.h"
+#include "folly/ScopeGuard.h"
+#include "folly/io/IOBuf.h"
 
 #if PY_VERSION_HEX < 0x03040000
 #define PyGILState_Check() (true)

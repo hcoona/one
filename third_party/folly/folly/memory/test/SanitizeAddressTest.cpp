@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/memory/SanitizeAddress.h>
+#include "folly/memory/SanitizeAddress.h"
 
 #include <new>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class SanitizeAddressTest : public testing::Test {};
 

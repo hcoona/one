@@ -73,11 +73,11 @@
 #include <utility>
 #include <vector>
 
-#include <folly/ScopeGuard.h>
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/lang/Exception.h>
-#include <folly/memory/MemoryResource.h>
+#include "folly/ScopeGuard.h"
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/lang/Exception.h"
+#include "folly/memory/MemoryResource.h"
 
 namespace folly {
 

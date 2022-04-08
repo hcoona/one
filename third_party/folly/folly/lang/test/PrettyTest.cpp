@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Pretty.h>
+#include "folly/lang/Pretty.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly {
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/lang/SafeAssert.h>
+#include "folly/lang/SafeAssert.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Conv.h>
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/Benchmark.h"
+#include "folly/Conv.h"
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 extern "C" FOLLY_KEEP void check_folly_safe_check(bool cond) {
   FOLLY_SAFE_CHECK(cond, "the condition failed");

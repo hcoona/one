@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/fibers/FiberManagerMap.h>
-#include <folly/init/Init.h>
+#include "folly/fibers/FiberManagerMap.h"
+#include "folly/init/Init.h"
 
 void f(int* p) {
   LOG(INFO) << "f()";

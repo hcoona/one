@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 #if !defined(_WIN32)
 #include <strings.h>

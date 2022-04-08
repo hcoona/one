@@ -24,11 +24,11 @@
 //   July 12 2012: was passing out variables in final to in/out in short
 //   July 30 2012: I reintroduced the buffer overflow
 
-#include <folly/hash/SpookyHashV1.h>
+#include "folly/hash/SpookyHashV1.h"
 
 #include <cstring>
 
-#include <folly/CppAttributes.h>
+#include "folly/CppAttributes.h"
 
 #define ALLOW_UNALIGNED_READS 1
 

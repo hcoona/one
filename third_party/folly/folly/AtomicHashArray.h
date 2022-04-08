@@ -34,9 +34,9 @@
 
 #include <atomic>
 
-#include <folly/ThreadCachedInt.h>
-#include <folly/Utility.h>
-#include <folly/hash/Hash.h>
+#include "folly/ThreadCachedInt.h"
+#include "folly/Utility.h"
+#include "folly/hash/Hash.h"
 
 namespace folly {
 
@@ -430,4 +430,4 @@ class AtomicHashArray {
 
 } // namespace folly
 
-#include <folly/AtomicHashArray-inl.h>
+#include "folly/AtomicHashArray-inl.h"

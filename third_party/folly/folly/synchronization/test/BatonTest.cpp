@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Baton.h>
+#include "folly/synchronization/Baton.h"
 
 #include <thread>
 
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/test/BatonTestHelpers.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/test/BatonTestHelpers.h"
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly::test;
 using folly::detail::EmulatedFutexAtomic;

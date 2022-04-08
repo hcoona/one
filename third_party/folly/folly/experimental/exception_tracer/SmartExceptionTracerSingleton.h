@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/Synchronized.h>
-#include <folly/container/F14Map.h>
-#include <folly/experimental/exception_tracer/StackTrace.h>
+#include "folly/Synchronized.h"
+#include "folly/container/F14Map.h"
+#include "folly/experimental/exception_tracer/StackTrace.h"
 
 namespace folly::exception_tracer::detail {
 

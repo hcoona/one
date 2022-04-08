@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/external/farmhash/farmhash.h>
+#include "folly/external/farmhash/farmhash.h"
 
 namespace folly {
 namespace hash {

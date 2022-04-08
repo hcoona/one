@@ -25,7 +25,7 @@
 #include <cstdint>
 #include <thread>
 
-#include <folly/portability/Asm.h>
+#include "folly/portability/Asm.h"
 
 namespace folly {
 

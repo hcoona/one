@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/logging/test/helpers/LogOnShutdownLib.h>
+#include "folly/logging/test/helpers/LogOnShutdownLib.h"
 
-#include <folly/logging/test/helpers/helpers.h>
+#include "folly/logging/test/helpers/helpers.h"
 
 void use_log_on_shutdown() {
   // This function doesn't do anything.

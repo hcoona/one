@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/Synchronized.h>
+#include "folly/Synchronized.h"
 
 /* `SynchronizedPtr` is a variation on the `Synchronized` idea that's useful for
  * some cases where you want to protect a pointed-to object (or an object within

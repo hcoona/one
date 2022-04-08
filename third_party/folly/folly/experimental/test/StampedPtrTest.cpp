@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/StampedPtr.h>
+#include "folly/experimental/StampedPtr.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(StampedPtr, Basic) {
   folly::StampedPtr<char> sp;

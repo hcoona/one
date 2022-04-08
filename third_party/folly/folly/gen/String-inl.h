@@ -18,9 +18,9 @@
 #error This file may only be included from folly/gen/String.h
 #endif
 
-#include <folly/Conv.h>
-#include <folly/Portability.h>
-#include <folly/String.h>
+#include "folly/Conv.h"
+#include "folly/Portability.h"
+#include "folly/String.h"
 
 namespace folly {
 namespace gen {

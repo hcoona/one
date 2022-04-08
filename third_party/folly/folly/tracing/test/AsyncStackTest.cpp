@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/tracing/AsyncStack.h>
+#include "folly/tracing/AsyncStack.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 TEST(AsyncStack, ScopedAsyncStackRoot) {
   void* const stackFramePtr = FOLLY_ASYNC_STACK_FRAME_POINTER();

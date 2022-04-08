@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/python/GILAwareManualExecutor.h>
+#include "folly/python/GILAwareManualExecutor.h"
 
-#include <Python.h>
+#include "Python.h"
 
-#include <folly/ScopeGuard.h>
+#include "folly/ScopeGuard.h"
 
 namespace folly {
 namespace python {

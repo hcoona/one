@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/executors/Codel.h>
+#include "folly/executors/Codel.h"
 
 #include <chrono>
 #include <thread>
 
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 DECLARE_int32(codel_target_delay);
 

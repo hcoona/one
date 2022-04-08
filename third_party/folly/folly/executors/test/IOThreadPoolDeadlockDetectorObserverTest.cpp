@@ -16,12 +16,12 @@
 
 #include <memory>
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
-#include <folly/concurrency/DeadlockDetector.h>
-#include <folly/executors/IOThreadPoolDeadlockDetectorObserver.h>
-#include <folly/executors/IOThreadPoolExecutor.h>
-#include <folly/portability/GTest.h>
+#include "folly/concurrency/DeadlockDetector.h"
+#include "folly/executors/IOThreadPoolDeadlockDetectorObserver.h"
+#include "folly/executors/IOThreadPoolExecutor.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

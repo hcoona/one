@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/test/DeterministicSchedule.h"
 
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::test;
 

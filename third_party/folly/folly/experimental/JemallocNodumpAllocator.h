@@ -18,13 +18,13 @@
 
 #pragma once
 
-#include <folly/CPortability.h>
-#include <folly/portability/Config.h>
-#include <folly/portability/Malloc.h>
+#include "folly/CPortability.h"
+#include "folly/portability/Config.h"
+#include "folly/portability/Malloc.h"
 
 #if defined(FOLLY_USE_JEMALLOC) && !FOLLY_SANITIZE
 
-#include <folly/portability/SysMman.h>
+#include "folly/portability/SysMman.h"
 
 #if (JEMALLOC_VERSION_MAJOR > 3) && defined(MADV_DONTDUMP)
 #define FOLLY_JEMALLOC_NODUMP_ALLOCATOR_SUPPORTED 1

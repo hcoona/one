@@ -20,7 +20,7 @@
 #include <atomic>
 #include <memory>
 
-#include <folly/lang/SafeAssert.h>
+#include "folly/lang/SafeAssert.h"
 
 namespace folly {
 namespace detail {

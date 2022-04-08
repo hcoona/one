@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/FileUtil.h>
+#include "folly/FileUtil.h"
 
 #if defined(__linux__)
 #include <dlfcn.h>
@@ -22,16 +22,16 @@
 
 #include <deque>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Exception.h>
-#include <folly/File.h>
-#include <folly/Range.h>
-#include <folly/String.h>
-#include <folly/detail/FileUtilDetail.h>
-#include <folly/detail/FileUtilVectorDetail.h>
-#include <folly/experimental/TestUtil.h>
-#include <folly/portability/GTest.h>
+#include "folly/Exception.h"
+#include "folly/File.h"
+#include "folly/Range.h"
+#include "folly/String.h"
+#include "folly/detail/FileUtilDetail.h"
+#include "folly/detail/FileUtilVectorDetail.h"
+#include "folly/experimental/TestUtil.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

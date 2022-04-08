@@ -19,10 +19,10 @@
 #include <cstdint>
 #include <utility>
 
-#include <folly/CppAttributes.h>
-#include <folly/Portability.h>
-#include <folly/Preprocessor.h>
-#include <folly/lang/CArray.h>
+#include "folly/CppAttributes.h"
+#include "folly/Portability.h"
+#include "folly/Preprocessor.h"
+#include "folly/lang/CArray.h"
 
 #if __GNUC__ && !__clang__ && FOLLY_SANITIZE_ADDRESS
 //  gcc+asan has a bug that discards sections when using `static` below

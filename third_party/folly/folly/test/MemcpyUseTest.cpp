@@ -16,8 +16,8 @@
 
 #include <cstring>
 
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 extern "C" {
 void* __folly_memcpy(

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/Instructions.h>
+#include "folly/experimental/Instructions.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace folly::compression::instructions;

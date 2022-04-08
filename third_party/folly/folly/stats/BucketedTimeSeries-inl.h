@@ -19,9 +19,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Likely.h>
+#include "folly/Likely.h"
 
 namespace folly {
 

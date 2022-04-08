@@ -18,7 +18,7 @@
 // otherwise they will conflict with what we're getting from ntstatus.h
 #define UMDF_USING_NTSTATUS
 
-#include <folly/portability/Unistd.h>
+#include "folly/portability/Unistd.h"
 
 #ifdef _WIN32
 
@@ -26,9 +26,9 @@
 
 #include <fcntl.h>
 
-#include <folly/net/detail/SocketFileDescriptorMap.h>
-#include <folly/portability/Sockets.h>
-#include <folly/portability/Windows.h>
+#include "folly/net/detail/SocketFileDescriptorMap.h"
+#include "folly/portability/Sockets.h"
+#include "folly/portability/Windows.h"
 
 // Generic wrapper for the p* family of functions.
 template <class F, class... Args>

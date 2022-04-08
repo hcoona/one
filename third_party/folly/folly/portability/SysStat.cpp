@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/portability/SysStat.h>
+#include "folly/portability/SysStat.h"
 
 #ifdef _WIN32
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 extern "C" {
 int chmod(char const* fn, int am) {

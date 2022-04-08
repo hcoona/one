@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/AutoTimer.h>
+#include "folly/experimental/AutoTimer.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace std;

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/system/ThreadName.h>
+#include "folly/system/ThreadName.h"
 
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/portability/PThread.h>
-#include <folly/portability/Windows.h>
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/portability/PThread.h"
+#include "folly/portability/Windows.h"
 
 // Android only, prctl is only used when pthread_setname_np
 // and pthread_getname_np are not avilable.

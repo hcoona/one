@@ -20,8 +20,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include <folly/Chrono.h>
-#include <folly/portability/Time.h>
+#include "folly/Chrono.h"
+#include "folly/portability/Time.h"
 
 namespace folly {
 

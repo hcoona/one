@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/ExceptionString.h>
+#include "folly/ExceptionString.h"
 
-#include <folly/Portability.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/portability/GTest.h"
 
 class ExceptionStringTest : public testing::Test {};
 

@@ -18,8 +18,8 @@
 
 #include <sys/types.h>
 
-#include <folly/net/NetworkSocket.h>
-#include <folly/portability/Sockets.h>
+#include "folly/net/NetworkSocket.h"
+#include "folly/portability/Sockets.h"
 
 #if !defined(FOLLY_ALLOW_TFO)
 #if defined(__linux__) || defined(__APPLE__)

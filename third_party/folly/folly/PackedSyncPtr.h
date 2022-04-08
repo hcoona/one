@@ -18,10 +18,10 @@
 
 #include <type_traits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/synchronization/SmallLocks.h>
+#include "folly/Portability.h"
+#include "folly/synchronization/SmallLocks.h"
 
 #if !FOLLY_X64 && !FOLLY_PPC64 && !FOLLY_AARCH64
 #error "PackedSyncPtr is x64, ppc64 or aarch64 specific code."

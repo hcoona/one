@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/DistributedMutex.h>
+#include "folly/synchronization/DistributedMutex.h"
 
 namespace folly {
 namespace detail {

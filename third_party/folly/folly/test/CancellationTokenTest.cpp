@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/CancellationToken.h>
+#include "folly/CancellationToken.h"
 
 #include <chrono>
 #include <thread>
 
-#include <folly/Optional.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/Optional.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 using namespace std::literals::chrono_literals;

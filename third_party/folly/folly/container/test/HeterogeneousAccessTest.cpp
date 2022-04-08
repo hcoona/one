@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <folly/container/HeterogeneousAccess.h>
+#include "folly/container/HeterogeneousAccess.h"
 
 #include <set>
 #include <vector>
 
-#include <folly/FBString.h>
-#include <folly/Portability.h>
-#include <folly/Range.h>
-#include <folly/Traits.h>
-#include <folly/portability/GTest.h>
-#include <folly/small_vector.h>
+#include "folly/FBString.h"
+#include "folly/Portability.h"
+#include "folly/Range.h"
+#include "folly/Traits.h"
+#include "folly/portability/GTest.h"
+#include "folly/small_vector.h"
 
 #if FOLLY_HAS_STRING_VIEW
 #include <string_view> // @manual

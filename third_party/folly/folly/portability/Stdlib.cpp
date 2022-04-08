@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Stdlib.h>
+#include "folly/portability/Stdlib.h"
 
 #ifdef _WIN32
 
@@ -22,9 +22,9 @@
 
 #include <errno.h>
 
-#include <folly/portability/Fcntl.h>
-#include <folly/portability/SysStat.h>
-#include <folly/portability/Windows.h>
+#include "folly/portability/Fcntl.h"
+#include "folly/portability/SysStat.h"
+#include "folly/portability/Windows.h"
 
 extern "C" {
 char* mktemp(char* tn) {

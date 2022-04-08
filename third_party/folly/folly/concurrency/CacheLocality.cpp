@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/CacheLocality.h>
+#include "folly/concurrency/CacheLocality.h"
 
 #ifndef _MSC_VER
 #define _GNU_SOURCE 1 // for RTLD_NOLOAD
@@ -22,14 +22,14 @@
 #endif
 #include <fstream>
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
-#include <folly/Conv.h>
-#include <folly/Exception.h>
-#include <folly/ScopeGuard.h>
-#include <folly/hash/Hash.h>
-#include <folly/portability/Unistd.h>
-#include <folly/system/ThreadId.h>
+#include "folly/Conv.h"
+#include "folly/Exception.h"
+#include "folly/ScopeGuard.h"
+#include "folly/hash/Hash.h"
+#include "folly/portability/Unistd.h"
+#include "folly/system/ThreadId.h"
 
 namespace folly {
 

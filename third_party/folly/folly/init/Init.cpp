@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/init/Init.h>
+#include "folly/init/Init.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Singleton.h>
-#include <folly/init/Phase.h>
-#include <folly/logging/Init.h>
-#include <folly/portability/Config.h>
-#include <folly/synchronization/HazptrThreadPoolExecutor.h>
+#include "folly/Singleton.h"
+#include "folly/init/Phase.h"
+#include "folly/logging/Init.h"
+#include "folly/portability/Config.h"
+#include "folly/synchronization/HazptrThreadPoolExecutor.h"
 
 #if !defined(_WIN32) && !defined(__XROS__)
-#include <folly/experimental/symbolizer/SignalHandler.h> // @manual
+#include "folly/experimental/symbolizer/SignalHandler.h" // @manual
 #endif
-#include <folly/portability/GFlags.h>
+#include "folly/portability/GFlags.h"
 
 DEFINE_string(logging, "", "Logging configuration");
 

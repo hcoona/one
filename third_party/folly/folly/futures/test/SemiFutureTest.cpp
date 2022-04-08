@@ -23,15 +23,15 @@
 #include <thread>
 #include <type_traits>
 
-#include <folly/Executor.h>
-#include <folly/Memory.h>
-#include <folly/Unit.h>
-#include <folly/dynamic.h>
-#include <folly/executors/ManualExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/Baton.h>
+#include "folly/Executor.h"
+#include "folly/Memory.h"
+#include "folly/Unit.h"
+#include "folly/dynamic.h"
+#include "folly/executors/ManualExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/Baton.h"
 
 using namespace folly;
 

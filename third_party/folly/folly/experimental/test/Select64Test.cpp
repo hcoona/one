@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/Select64.h>
+#include "folly/experimental/Select64.h"
 
 #include <cstddef>
 #include <cstdint>
 
-#include <folly/experimental/Instructions.h>
-#include <folly/portability/GTest.h>
+#include "folly/experimental/Instructions.h"
+#include "folly/portability/GTest.h"
 
 // for disassembling
 extern "C" uint64_t check_select64_default(uint64_t x, uint64_t k) {

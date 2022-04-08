@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#include <folly/concurrency/CacheLocality.h>
+#include "folly/concurrency/CacheLocality.h"
 
 namespace folly {
 

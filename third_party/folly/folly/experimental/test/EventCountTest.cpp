@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/experimental/EventCount.h>
+#include "folly/experimental/EventCount.h"
 
 #include <algorithm>
 #include <atomic>
@@ -22,10 +22,10 @@
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Random.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

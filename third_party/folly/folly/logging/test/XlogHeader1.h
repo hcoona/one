@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Range.h>
-#include <folly/logging/xlog.h>
+#include "folly/Range.h"
+#include "folly/logging/xlog.h"
 
 namespace logging_test {
 

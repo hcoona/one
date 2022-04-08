@@ -19,8 +19,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include <folly/Portability.h>
-#include <folly/Traits.h>
+#include "folly/Portability.h"
+#include "folly/Traits.h"
 
 namespace folly {
 

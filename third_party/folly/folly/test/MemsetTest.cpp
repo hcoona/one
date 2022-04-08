@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <cstddef>
 
-#include <folly/FollyMemset.h>
+#include "folly/FollyMemset.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 constexpr size_t kPageSize = 4096;
 constexpr size_t kMaxSize = 2 * kPageSize;

@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/CPortability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/dynamic.h>
+#include "folly/CPortability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/dynamic.h"
 
 namespace folly {
 
@@ -391,4 +391,4 @@ class DynamicParser {
 
 } // namespace folly
 
-#include <folly/experimental/DynamicParser-inl.h>
+#include "folly/experimental/DynamicParser-inl.h"

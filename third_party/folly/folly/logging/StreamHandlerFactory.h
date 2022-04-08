@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/logging/FileWriterFactory.h>
-#include <folly/logging/LogHandlerFactory.h>
-#include <folly/logging/StandardLogHandlerFactory.h>
+#include "folly/logging/FileWriterFactory.h"
+#include "folly/logging/LogHandlerFactory.h"
+#include "folly/logging/StandardLogHandlerFactory.h"
 
 namespace folly {
 

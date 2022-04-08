@@ -32,16 +32,16 @@
 #include <stdexcept>
 #include <tuple>
 
-#include <folly/Range.h>
-#include <folly/Traits.h>
-#include <folly/container/View.h>
-#include <folly/lang/Exception.h>
-#include <folly/lang/SafeAssert.h>
+#include "folly/Range.h"
+#include "folly/Traits.h"
+#include "folly/container/View.h"
+#include "folly/lang/Exception.h"
+#include "folly/lang/SafeAssert.h"
 
-#include <folly/container/F14Map-fwd.h>
-#include <folly/container/detail/F14Policy.h>
-#include <folly/container/detail/F14Table.h>
-#include <folly/container/detail/Util.h>
+#include "folly/container/F14Map-fwd.h"
+#include "folly/container/detail/F14Policy.h"
+#include "folly/container/detail/F14Table.h"
+#include "folly/container/detail/Util.h"
 
 #if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
 
@@ -1294,7 +1294,7 @@ class F14FastMap : public std::conditional_t<
 #endif // if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
 
 //////// Compatibility for unsupported platforms (not x86_64 and not aarch64)
-#include <folly/container/detail/F14MapFallback.h>
+#include "folly/container/detail/F14MapFallback.h"
 
 namespace folly {
 namespace f14 {

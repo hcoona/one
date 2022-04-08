@@ -20,8 +20,8 @@
 
 #include <array>
 
-#include <folly/executors/QueueObserver.h>
-#include <folly/executors/ThreadPoolExecutor.h>
+#include "folly/executors/QueueObserver.h"
+#include "folly/executors/ThreadPoolExecutor.h"
 
 DECLARE_bool(dynamic_cputhreadpoolexecutor);
 

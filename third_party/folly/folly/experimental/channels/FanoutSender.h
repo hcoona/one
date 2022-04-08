@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/container/F14Set.h>
-#include <folly/experimental/channels/Channel.h>
-#include <folly/experimental/channels/detail/PointerVariant.h>
+#include "folly/container/F14Set.h"
+#include "folly/experimental/channels/Channel.h"
+#include "folly/experimental/channels/detail/PointerVariant.h"
 
 namespace folly {
 namespace channels {
@@ -101,4 +101,4 @@ class FanoutSender {
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/FanoutSender-inl.h>
+#include "folly/experimental/channels/FanoutSender-inl.h"

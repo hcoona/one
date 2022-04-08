@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/SharedMutex.h>
-#include <folly/stats/DigestBuilder.h>
-#include <folly/stats/detail/SlidingWindow.h>
+#include "folly/SharedMutex.h"
+#include "folly/stats/DigestBuilder.h"
+#include "folly/stats/detail/SlidingWindow.h"
 
 namespace folly {
 namespace detail {
@@ -148,4 +148,4 @@ class BufferedSlidingWindow : public BufferedStat<DigestT, ClockT> {
 } // namespace detail
 } // namespace folly
 
-#include <folly/stats/detail/BufferedStat-inl.h>
+#include "folly/stats/detail/BufferedStat-inl.h"

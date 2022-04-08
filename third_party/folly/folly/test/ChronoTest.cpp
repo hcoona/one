@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Chrono.h>
+#include "folly/Chrono.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace std::chrono;
 using namespace folly::chrono;

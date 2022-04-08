@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/init/Init.h>
-#include <folly/io/async/test/EventBaseTestLib.h>
-#include <folly/portability/GTest.h>
+#include "folly/init/Init.h"
+#include "folly/io/async/test/EventBaseTestLib.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace test {

@@ -18,17 +18,17 @@
 
 #ifdef _MSC_VER
 // This needs to be before the libevent include.
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 #endif
 
-#include <event.h>
+#include "event.h"
 
 #ifdef _MSC_VER
-#include <event2/event_compat.h> // @manual
+#include "event2/event_compat.h" // @manual
 // The signal_set macro from libevent 2 compat conflicts with the
 // boost::asio::signal_set function
 #undef signal_set
-#include <folly/portability/Fcntl.h>
+#include "folly/portability/Fcntl.h"
 #endif
 
 // The signal_set macro from libevent 1.4.14b-stable conflicts with the
@@ -37,7 +37,7 @@
 #undef signal_set
 #endif
 
-#include <folly/net/detail/SocketFileDescriptorMap.h>
+#include "folly/net/detail/SocketFileDescriptorMap.h"
 
 namespace folly {
 using libevent_fd_t = decltype(event::ev_fd);

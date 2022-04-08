@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/io/Cursor.h>
+#include "folly/io/Cursor.h"
 
 #include <cstdio>
 
-#include <folly/ScopeGuard.h>
+#include "folly/ScopeGuard.h"
 
 namespace folly {
 namespace io {

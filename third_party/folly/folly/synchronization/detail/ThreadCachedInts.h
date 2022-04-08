@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/Function.h>
-#include <folly/ThreadLocal.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include "folly/Function.h"
+#include "folly/ThreadLocal.h"
+#include "folly/synchronization/AsymmetricMemoryBarrier.h"
 
 // This is unlike folly::ThreadCachedInt in that the full value
 // is never rounded up globally and cached, it only supports readFull.

@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include <folly/synchronization/Hazptr-fwd.h>
-#include <folly/synchronization/HazptrDomain.h>
-#include <folly/synchronization/HazptrHolder.h>
-#include <folly/synchronization/HazptrObj.h>
-#include <folly/synchronization/HazptrObjLinked.h>
-#include <folly/synchronization/HazptrRec.h>
-#include <folly/synchronization/HazptrThrLocal.h>
+#include "folly/synchronization/Hazptr-fwd.h"
+#include "folly/synchronization/HazptrDomain.h"
+#include "folly/synchronization/HazptrHolder.h"
+#include "folly/synchronization/HazptrObj.h"
+#include "folly/synchronization/HazptrObjLinked.h"
+#include "folly/synchronization/HazptrRec.h"
+#include "folly/synchronization/HazptrThrLocal.h"
 
 /// Hazard pointers is a safe reclamation method. It protects objects
 /// from being reclaimed while being accessed by one or more threads, but

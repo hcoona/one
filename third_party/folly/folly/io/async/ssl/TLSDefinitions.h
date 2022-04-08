@@ -19,8 +19,8 @@
 #include <map>
 #include <vector>
 
-#include <folly/io/Cursor.h>
-#include <folly/io/IOBuf.h>
+#include "folly/io/Cursor.h"
+#include "folly/io/IOBuf.h"
 
 namespace folly {
 namespace ssl {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Extern.h>
+#include "folly/lang/Extern.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly::extern_test {
 extern int foobar(int);

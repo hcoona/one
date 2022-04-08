@@ -20,7 +20,7 @@
 #include <chrono>
 #include <cstdint>
 
-#include <folly/Chrono.h>
+#include "folly/Chrono.h"
 
 namespace folly {
 namespace logging {

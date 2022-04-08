@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/stats/TimeseriesHistogram.h>
+#include "folly/stats/TimeseriesHistogram.h"
 
 #include <random>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using std::chrono::seconds;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogName.h>
+#include "folly/logging/LogName.h"
 
 namespace {
 constexpr bool isSeparator(char c) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/executors/QueueObserver.h>
+#include "folly/executors/QueueObserver.h"
 
 namespace {
 

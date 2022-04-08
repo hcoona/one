@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Conv.h>
-#include <folly/portability/OpenSSL.h>
+#include "folly/Conv.h"
+#include "folly/portability/OpenSSL.h"
 
 // This is used to find the OpenSSL version at runtime. Just returning
 // OPENSSL_VERSION_NUMBER is insufficient as runtime version may be different

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/hash/Hash.h>
+#include "folly/hash/Hash.h"
 
 #include <stdint.h>
 
@@ -23,11 +23,11 @@
 #include <unordered_set>
 #include <utility>
 
-#include <folly/Conv.h>
-#include <folly/MapUtil.h>
-#include <folly/Random.h>
-#include <folly/Range.h>
-#include <folly/portability/GTest.h>
+#include "folly/Conv.h"
+#include "folly/MapUtil.h"
+#include "folly/Random.h"
+#include "folly/Range.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::hash;
 

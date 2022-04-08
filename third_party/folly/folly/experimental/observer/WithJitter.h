@@ -18,7 +18,7 @@
 
 #include <chrono>
 
-#include <folly/experimental/observer/Observer.h>
+#include "folly/experimental/observer/Observer.h"
 
 namespace folly {
 namespace observer {
@@ -39,4 +39,4 @@ Observer<T> withJitter(
 } // namespace observer
 } // namespace folly
 
-#include <folly/experimental/observer/WithJitter-inl.h>
+#include "folly/experimental/observer/WithJitter-inl.h"

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/Traits.h>
+#include "folly/Traits.h"
 
 namespace folly {
 namespace coro {

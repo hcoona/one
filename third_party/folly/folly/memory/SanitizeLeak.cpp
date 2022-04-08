@@ -17,7 +17,7 @@
 #include <mutex>
 #include <unordered_set>
 
-#include <folly/memory/SanitizeLeak.h>
+#include "folly/memory/SanitizeLeak.h"
 
 namespace folly {
 namespace detail {

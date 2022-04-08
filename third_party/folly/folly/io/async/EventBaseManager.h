@@ -19,8 +19,8 @@
 #include <list>
 #include <set>
 
-#include <folly/ThreadLocal.h>
-#include <folly/io/async/EventBase.h>
+#include "folly/ThreadLocal.h"
+#include "folly/io/async/EventBase.h"
 
 namespace folly {
 

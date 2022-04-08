@@ -20,7 +20,7 @@
 #include <iterator>
 #include <type_traits>
 
-#include <folly/portability/SysTypes.h>
+#include "folly/portability/SysTypes.h"
 
 /*
  * This contains stripped-down workalikes of some Boost classes:

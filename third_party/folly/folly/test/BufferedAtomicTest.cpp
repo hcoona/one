@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/test/BufferedAtomic.h>
+#include "folly/test/BufferedAtomic.h"
 
 #include <random>
 
-#include <folly/SingletonThreadLocal.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/SingletonThreadLocal.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::test;
 using DSched = DeterministicSchedule;

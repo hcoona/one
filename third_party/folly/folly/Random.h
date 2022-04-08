@@ -22,9 +22,9 @@
 #include <random>
 #include <type_traits>
 
-#include <folly/Portability.h>
-#include <folly/Traits.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Portability.h"
+#include "folly/Traits.h"
+#include "folly/functional/Invoke.h"
 
 #if FOLLY_HAVE_EXTRANDOM_SFMT19937
 #include <ext/random>
@@ -359,4 +359,4 @@ inline uint32_t randomNumberSeed() {
 
 } // namespace folly
 
-#include <folly/Random-inl.h>
+#include "folly/Random-inl.h"

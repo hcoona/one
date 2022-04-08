@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/memory/MemoryResource.h>
+#include "folly/memory/MemoryResource.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 #if FOLLY_HAS_MEMORY_RESOURCE
 

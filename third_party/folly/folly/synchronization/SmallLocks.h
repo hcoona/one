@@ -33,7 +33,7 @@
  * @author Jordan DeLong <delong.j@fb.com>
  */
 
-#include <folly/MicroLock.h>
-#include <folly/Portability.h>
-#include <folly/synchronization/MicroSpinLock.h>
-#include <folly/synchronization/PicoSpinLock.h>
+#include "folly/MicroLock.h"
+#include "folly/Portability.h"
+#include "folly/synchronization/MicroSpinLock.h"
+#include "folly/synchronization/PicoSpinLock.h"

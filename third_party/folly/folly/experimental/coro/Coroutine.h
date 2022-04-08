@@ -22,8 +22,8 @@
 #include <variant>
 #endif
 
-#include <folly/Portability.h>
-#include <folly/Utility.h>
+#include "folly/Portability.h"
+#include "folly/Utility.h"
 
 #if FOLLY_HAS_COROUTINES
 

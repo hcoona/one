@@ -20,10 +20,10 @@
 
 #include <type_traits>
 
-#include <folly/detail/AtomicHashUtils.h>
-#include <folly/detail/Iterators.h>
-#include <folly/lang/Bits.h>
-#include <folly/lang/Exception.h>
+#include "folly/detail/AtomicHashUtils.h"
+#include "folly/detail/Iterators.h"
+#include "folly/lang/Bits.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 

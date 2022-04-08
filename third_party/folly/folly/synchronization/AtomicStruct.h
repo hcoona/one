@@ -22,9 +22,9 @@
 #include <cstring>
 #include <type_traits>
 
-#include <folly/ConstexprMath.h>
-#include <folly/Traits.h>
-#include <folly/synchronization/detail/AtomicUtils.h>
+#include "folly/ConstexprMath.h"
+#include "folly/Traits.h"
+#include "folly/synchronization/detail/AtomicUtils.h"
 
 namespace folly {
 

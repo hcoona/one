@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/ProducerConsumerQueue.h>
+#include "folly/ProducerConsumerQueue.h"
 
 #include <atomic>
 #include <chrono>
@@ -22,9 +22,9 @@
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 //////////////////////////////////////////////////////////////////////
 

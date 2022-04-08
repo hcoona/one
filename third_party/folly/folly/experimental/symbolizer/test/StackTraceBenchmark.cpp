@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/Benchmark.h>
-#include <folly/experimental/symbolizer/StackTrace.h>
-#include <folly/init/Init.h>
+#include "folly/Benchmark.h"
+#include "folly/experimental/symbolizer/StackTrace.h"
+#include "folly/init/Init.h"
 
 using namespace folly;
 using namespace folly::symbolizer;

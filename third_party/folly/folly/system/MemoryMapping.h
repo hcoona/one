@@ -18,8 +18,8 @@
 
 #include <cassert>
 
-#include <folly/File.h>
-#include <folly/Range.h>
+#include "folly/File.h"
+#include "folly/Range.h"
 
 namespace folly {
 

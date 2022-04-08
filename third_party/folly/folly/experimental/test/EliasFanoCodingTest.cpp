@@ -20,12 +20,12 @@
 #include <random>
 #include <vector>
 
-#include <folly/Benchmark.h>
-#include <folly/Random.h>
-#include <folly/experimental/EliasFanoCoding.h>
-#include <folly/experimental/Select64.h>
-#include <folly/experimental/test/CodingTestUtils.h>
-#include <folly/init/Init.h>
+#include "folly/Benchmark.h"
+#include "folly/Random.h"
+#include "folly/experimental/EliasFanoCoding.h"
+#include "folly/experimental/Select64.h"
+#include "folly/experimental/test/CodingTestUtils.h"
+#include "folly/init/Init.h"
 
 using namespace folly::compression;
 

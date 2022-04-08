@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/experimental/channels/Channel.h>
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/experimental/channels/Channel.h"
 
 namespace folly {
 namespace channels {
@@ -50,4 +50,4 @@ Receiver<TValue> merge(
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/Merge-inl.h>
+#include "folly/experimental/channels/Merge-inl.h"

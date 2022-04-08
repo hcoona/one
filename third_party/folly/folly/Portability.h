@@ -18,8 +18,8 @@
 
 #include <cstddef>
 
-#include <folly/CPortability.h>
-#include <folly/portability/Config.h>
+#include "folly/CPortability.h"
+#include "folly/portability/Config.h"
 
 #if defined(_MSC_VER)
 #define FOLLY_CPLUSPLUS _MSVC_LANG
@@ -248,7 +248,7 @@ constexpr bool kIsSanitize = false;
 // MSVC specific defines
 // mainly for posix compat
 #ifdef _MSC_VER
-#include <folly/portability/SysTypes.h>
+#include "folly/portability/SysTypes.h"
 
 // Hide a GCC specific thing that breaks MSVC if left alone.
 #define __extension__

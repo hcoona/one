@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 // AtomicSharedPtr-detail.h only works with libstdc++, so skip these tests for
 // other vendors
@@ -22,17 +22,17 @@
 // other arches
 #if defined(__GLIBCXX__) && (FOLLY_X64 || FOLLY_PPC64 || FOLLY_AARCH64)
 
-#include <folly/concurrency/test/AtomicSharedPtrCounted.h>
+#include "folly/concurrency/test/AtomicSharedPtrCounted.h"
 
 #include <atomic>
 #include <memory>
 #include <thread>
 
-#include <folly/concurrency/AtomicSharedPtr.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/concurrency/AtomicSharedPtr.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly;
 using namespace folly::test;

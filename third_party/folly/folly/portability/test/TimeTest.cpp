@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Time.h>
+#include "folly/portability/Time.h"
 
-#include <folly/portability/GTest.h>
-#include <folly/test/TestUtils.h>
+#include "folly/portability/GTest.h"
+#include "folly/test/TestUtils.h"
 
 #include <chrono>
 

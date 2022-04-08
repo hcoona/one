@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include <folly/Function.h>
-#include <folly/Traits.h>
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
-#include <folly/lang/Launder.h>
+#include "folly/Function.h"
+#include "folly/Traits.h"
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
+#include "folly/lang/Launder.h"
 
 namespace folly {
 namespace detail {

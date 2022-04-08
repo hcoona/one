@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/ssl/detail/OpenSSLSession.h>
+#include "folly/ssl/detail/OpenSSLSession.h"
 
-#include <folly/SharedMutex.h>
-#include <folly/Synchronized.h>
-#include <folly/portability/OpenSSL.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "folly/SharedMutex.h"
+#include "folly/Synchronized.h"
+#include "folly/portability/OpenSSL.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace folly {
 namespace ssl {

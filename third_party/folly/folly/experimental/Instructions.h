@@ -16,16 +16,16 @@
 
 #pragma once
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #ifdef _MSC_VER
 #include <immintrin.h>
 #endif
 
-#include <folly/CpuId.h>
-#include <folly/Portability.h>
-#include <folly/lang/Assume.h>
-#include <folly/portability/Builtins.h>
+#include "folly/CpuId.h"
+#include "folly/Portability.h"
+#include "folly/lang/Assume.h"
+#include "folly/portability/Builtins.h"
 
 namespace folly {
 namespace compression {

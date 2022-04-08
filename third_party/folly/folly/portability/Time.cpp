@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/portability/Time.h>
+#include "folly/portability/Time.h"
 
-#include <folly/CPortability.h>
-#include <folly/Likely.h>
-#include <folly/Utility.h>
+#include "folly/CPortability.h"
+#include "folly/Likely.h"
+#include "folly/Utility.h"
 
 #include <cassert>
 
@@ -144,7 +144,7 @@ int clock_getres(clockid_t clk_id, struct timespec* ts) {
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 using unsigned_nanos = std::chrono::duration<uint64_t, std::nano>;
 
@@ -283,7 +283,7 @@ extern "C" int clock_gettime(clockid_t clock_id, struct timespec* tp) {
 #include <iomanip>
 #include <sstream>
 
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 extern "C" {
 char* asctime_r(const tm* tm, char* buf) {

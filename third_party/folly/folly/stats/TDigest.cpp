@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/stats/TDigest.h>
+#include "folly/stats/TDigest.h"
 
 #include <algorithm>
 #include <limits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/stats/detail/DoubleRadixSort.h>
+#include "folly/stats/detail/DoubleRadixSort.h"
 
 namespace folly {
 

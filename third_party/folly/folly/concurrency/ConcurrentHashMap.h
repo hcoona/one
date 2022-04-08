@@ -19,9 +19,9 @@
 #include <atomic>
 #include <mutex>
 
-#include <folly/Optional.h>
-#include <folly/concurrency/detail/ConcurrentHashMap-detail.h>
-#include <folly/synchronization/Hazptr.h>
+#include "folly/Optional.h"
+#include "folly/concurrency/detail/ConcurrentHashMap-detail.h"
+#include "folly/synchronization/Hazptr.h"
 
 namespace folly {
 

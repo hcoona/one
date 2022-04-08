@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LogStreamProcessor.h>
+#include "folly/logging/LogStreamProcessor.h"
 
-#include <folly/logging/LogStream.h>
-#include <folly/logging/xlog.h>
+#include "folly/logging/LogStream.h"
+#include "folly/logging/xlog.h"
 
 namespace folly {
 

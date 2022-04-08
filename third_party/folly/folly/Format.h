@@ -23,12 +23,12 @@
 #include <tuple>
 #include <type_traits>
 
-#include <folly/CPortability.h>
-#include <folly/Conv.h>
-#include <folly/FormatArg.h>
-#include <folly/Range.h>
-#include <folly/String.h>
-#include <folly/Traits.h>
+#include "folly/CPortability.h"
+#include "folly/Conv.h"
+#include "folly/FormatArg.h"
+#include "folly/Range.h"
+#include "folly/String.h"
+#include "folly/Traits.h"
 
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.
 FOLLY_PUSH_WARNING
@@ -454,6 +454,6 @@ struct IsFormatter<
 
 } // namespace folly
 
-#include <folly/Format-inl.h>
+#include "folly/Format-inl.h"
 
 FOLLY_POP_WARNING

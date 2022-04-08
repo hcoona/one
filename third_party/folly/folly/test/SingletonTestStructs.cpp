@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/test/SingletonTestStructs.h>
+#include "folly/test/SingletonTestStructs.h"
 
 #include <atomic>
 

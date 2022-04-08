@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/executors/ManualExecutor.h>
+#include "folly/executors/ManualExecutor.h"
 
 #include <cstring>
 #include <string>

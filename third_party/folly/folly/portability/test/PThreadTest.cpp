@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/portability/PThread.h>
+#include "folly/portability/PThread.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 #include <atomic>
 

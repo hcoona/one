@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/stats/StreamingStats.h>
+#include "folly/stats/StreamingStats.h"
 
 #include <vector>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::StreamingStats;
 

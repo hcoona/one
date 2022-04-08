@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/gen/String.h>
+#include "folly/gen/String.h"
 
 #include <iosfwd>
 #include <map>
 #include <vector>
 
-#include <folly/functional/ApplyTuple.h>
-#include <folly/portability/GTest.h>
+#include "folly/functional/ApplyTuple.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly::gen;
 using namespace folly;

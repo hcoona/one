@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <folly/concurrency/CacheLocality.h>
+#include "folly/concurrency/CacheLocality.h"
 
 namespace folly {
 

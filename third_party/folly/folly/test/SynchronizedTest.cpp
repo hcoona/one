@@ -18,17 +18,17 @@
 
 // Test bed for folly/Synchronized.h
 
-#include <folly/Synchronized.h>
+#include "folly/Synchronized.h"
 
-#include <folly/Function.h>
-#include <folly/Portability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/SharedMutex.h>
-#include <folly/SpinLock.h>
-#include <folly/portability/GTest.h>
-#include <folly/synchronization/DistributedMutex.h>
-#include <folly/synchronization/RWSpinLock.h>
-#include <folly/test/SynchronizedTestLib.h>
+#include "folly/Function.h"
+#include "folly/Portability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/SharedMutex.h"
+#include "folly/SpinLock.h"
+#include "folly/portability/GTest.h"
+#include "folly/synchronization/DistributedMutex.h"
+#include "folly/synchronization/RWSpinLock.h"
+#include "folly/test/SynchronizedTestLib.h"
 
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 

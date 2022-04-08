@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/detail/UniqueInstance.h>
+#include "folly/detail/UniqueInstance.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -22,8 +22,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <folly/Demangle.h>
-#include <folly/lang/Exception.h>
+#include "folly/Demangle.h"
+#include "folly/lang/Exception.h"
 
 namespace folly {
 namespace detail {

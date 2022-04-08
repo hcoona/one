@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include <folly/ThreadCachedInt.h>
+#include "folly/ThreadCachedInt.h"
 
 #include <atomic>
 #include <condition_variable>
 #include <memory>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/hash/Hash.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
-#include <folly/system/ThreadId.h>
+#include "folly/Benchmark.h"
+#include "folly/hash/Hash.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
+#include "folly/system/ThreadId.h"
 
 using namespace folly;
 

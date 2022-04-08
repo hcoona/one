@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/FollyMemset.h>
+#include "folly/FollyMemset.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <deque>
 #include <string>
-#include <fmt/core.h>
-#include <folly/Benchmark.h>
-#include <folly/Preprocessor.h>
-#include <folly/portability/GFlags.h>
+#include "fmt/core.h"
+#include "folly/Benchmark.h"
+#include "folly/Preprocessor.h"
+#include "folly/portability/GFlags.h"
 
 DEFINE_uint32(min_size, 1, "Minimum size to benchmark");
 DEFINE_uint32(max_size, 32768, "Maximum size to benchmark");

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/SmallLocks.h>
+#include "folly/synchronization/SmallLocks.h"
 
 #include <cassert>
 #include <condition_variable>
@@ -26,16 +26,16 @@
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Random.h>
-#include <folly/portability/Asm.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/PThread.h>
-#include <folly/portability/Unistd.h>
-#include <folly/test/TestUtils.h>
+#include "folly/Random.h"
+#include "folly/portability/Asm.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/PThread.h"
+#include "folly/portability/Unistd.h"
+#include "folly/test/TestUtils.h"
 
 using folly::MicroLock;
 using folly::MicroSpinLock;

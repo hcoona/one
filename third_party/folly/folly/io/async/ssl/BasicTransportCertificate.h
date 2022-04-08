@@ -18,7 +18,7 @@
 
 #include <memory>
 
-#include <folly/io/async/ssl/OpenSSLTransportCertificate.h>
+#include "folly/io/async/ssl/OpenSSLTransportCertificate.h"
 
 namespace folly {
 namespace ssl {

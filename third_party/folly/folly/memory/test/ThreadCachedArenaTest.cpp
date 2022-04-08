@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/memory/ThreadCachedArena.h>
+#include "folly/memory/ThreadCachedArena.h"
 
 #include <algorithm>
 #include <iterator>
@@ -24,13 +24,13 @@
 #include <thread>
 #include <unordered_map>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Memory.h>
-#include <folly/Range.h>
-#include <folly/lang/Align.h>
-#include <folly/portability/GTest.h>
+#include "folly/Benchmark.h"
+#include "folly/Memory.h"
+#include "folly/Range.h"
+#include "folly/lang/Align.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

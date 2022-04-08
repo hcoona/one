@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include <folly/portability/SysTypes.h>
+#include "folly/portability/SysTypes.h"
 
 namespace folly {
 namespace symbolizer {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/detail/Futex.h>
+#include "folly/detail/Futex.h"
 
 #include <chrono>
 #include <condition_variable>
@@ -22,12 +22,12 @@
 #include <ratio>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Chrono.h>
-#include <folly/portability/GTest.h>
-#include <folly/portability/Time.h>
-#include <folly/test/DeterministicSchedule.h>
+#include "folly/Chrono.h"
+#include "folly/portability/GTest.h"
+#include "folly/portability/Time.h"
+#include "folly/test/DeterministicSchedule.h"
 
 using namespace folly::detail;
 using namespace folly::test;

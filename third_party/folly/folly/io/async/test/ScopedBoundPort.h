@@ -19,9 +19,9 @@
 #include <memory>
 #include <utility>
 
-#include <folly/IPAddress.h>
-#include <folly/IPAddressV6.h>
-#include <folly/SocketAddress.h>
+#include "folly/IPAddress.h"
+#include "folly/IPAddressV6.h"
+#include "folly/SocketAddress.h"
 
 namespace folly {
 

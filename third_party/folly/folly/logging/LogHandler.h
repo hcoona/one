@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include <folly/logging/LogLevel.h>
+#include "folly/logging/LogLevel.h"
 
 namespace folly {
 

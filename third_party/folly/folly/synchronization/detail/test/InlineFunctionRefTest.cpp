@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/detail/InlineFunctionRef.h>
+#include "folly/synchronization/detail/InlineFunctionRef.h"
 
 #include <array>
 #include <cstring>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace detail {

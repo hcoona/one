@@ -23,7 +23,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <folly/lang/Exception.h>
+#include "folly/lang/Exception.h"
 
 namespace folly {
 

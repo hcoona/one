@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/executors/SequencedExecutor.h>
-#include <folly/experimental/channels/ChannelCallbackHandle.h>
-#include <folly/experimental/coro/Task.h>
+#include "folly/executors/SequencedExecutor.h"
+#include "folly/experimental/channels/ChannelCallbackHandle.h"
+#include "folly/experimental/coro/Task.h"
 
 namespace folly {
 namespace channels {
@@ -178,4 +178,4 @@ Receiver<typename TProducer::ValueType> makeProducer(
 } // namespace channels
 } // namespace folly
 
-#include <folly/experimental/channels/Producer-inl.h>
+#include "folly/experimental/channels/Producer-inl.h"

@@ -21,10 +21,10 @@
 #include <thread>
 #include <vector>
 
-#include <folly/container/Array.h>
-#include <folly/io/async/test/RequestContextHelper.h>
-#include <folly/portability/GFlags.h>
-#include <folly/synchronization/test/Barrier.h>
+#include "folly/container/Array.h"
+#include "folly/io/async/test/RequestContextHelper.h"
+#include "folly/portability/GFlags.h"
+#include "folly/synchronization/test/Barrier.h"
 
 DEFINE_int32(reps, 10, "number of reps");
 DEFINE_int32(ops, 1000000, "number of operations per rep");

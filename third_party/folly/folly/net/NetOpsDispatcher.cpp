@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/net/NetOps.h>
-#include <folly/net/NetOpsDispatcher.h>
+#include "folly/net/NetOps.h"
+#include "folly/net/NetOpsDispatcher.h"
 
 namespace folly {
 namespace netops {

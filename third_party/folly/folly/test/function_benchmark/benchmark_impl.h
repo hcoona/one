@@ -18,7 +18,7 @@
 
 #include <functional>
 
-#include <folly/Function.h>
+#include "folly/Function.h"
 
 class TestClass;
 class VirtualClass;

@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <time.h>
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 // OSX is a pain. The XCode 8 SDK always declares clock_gettime
 // even if the target OS version doesn't support it, so you get

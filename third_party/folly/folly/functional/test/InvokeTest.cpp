@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/functional/Invoke.h>
+#include "folly/functional/Invoke.h"
 
-#include <folly/CppAttributes.h>
-#include <folly/portability/GTest.h>
+#include "folly/CppAttributes.h"
+#include "folly/portability/GTest.h"
 
 class InvokeTest : public testing::Test {};
 

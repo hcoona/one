@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/net/NetworkSocket.h>
+#include "folly/net/NetworkSocket.h"
 
 namespace folly {
 

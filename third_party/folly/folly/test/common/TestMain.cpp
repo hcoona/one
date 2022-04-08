@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/init/Init.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/init/Init.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 /*
  * This is the recommended main function for all tests.

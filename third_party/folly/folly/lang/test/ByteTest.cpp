@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/Byte.h>
+#include "folly/lang/Byte.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class ByteTest : public testing::Test {};
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/AtomicLinkedList.h>
+#include "folly/AtomicLinkedList.h"
 
 #include <algorithm>
 #include <thread>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class TestIntrusiveObject {
  public:

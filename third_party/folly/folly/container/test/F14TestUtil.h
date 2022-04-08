@@ -21,8 +21,8 @@
 #include <type_traits>
 #include <vector>
 
-#include <folly/container/detail/F14Policy.h>
-#include <folly/container/detail/F14Table.h>
+#include "folly/container/detail/F14Policy.h"
+#include "folly/container/detail/F14Table.h"
 
 namespace folly {
 namespace f14 {

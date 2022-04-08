@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Expected.h>
+#include "folly/Expected.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -23,10 +23,10 @@
 #include <type_traits>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/portability/GTest.h"
 
 using std::shared_ptr;
 using std::unique_ptr;

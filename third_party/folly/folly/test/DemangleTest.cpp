@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/Demangle.h>
+#include "folly/Demangle.h"
 
-#include <folly/lang/Pretty.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Pretty.h"
+#include "folly/portability/GTest.h"
 
 using folly::demangle;
 using folly::demangle_build_has_cxxabi;

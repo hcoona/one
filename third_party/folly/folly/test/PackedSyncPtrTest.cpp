@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/PackedSyncPtr.h>
+#include "folly/PackedSyncPtr.h"
 
 #include <cinttypes>
 #include <thread>
 #include <unordered_map>
 #include <utility>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using folly::PackedSyncPtr;
 

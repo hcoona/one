@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/String.h>
+#include "folly/String.h"
 
 #include <cctype>
 #include <cerrno>
@@ -24,11 +24,11 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/container/Array.h>
+#include "folly/Portability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/container/Array.h"
 
 namespace folly {
 

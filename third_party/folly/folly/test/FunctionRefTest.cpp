@@ -16,8 +16,8 @@
 
 #include <list>
 
-#include <folly/Function.h>
-#include <folly/portability/GTest.h>
+#include "folly/Function.h"
+#include "folly/portability/GTest.h"
 
 namespace {
 int func_int_int_add_25(int x) {

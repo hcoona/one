@@ -18,8 +18,8 @@
 #include <thread>
 #include <vector>
 
-#include <folly/experimental/ReadMostlySharedPtr.h>
-#include <folly/portability/GTest.h>
+#include "folly/experimental/ReadMostlySharedPtr.h"
+#include "folly/portability/GTest.h"
 
 using folly::ReadMostlyMainPtr;
 

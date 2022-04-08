@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Math.h>
+#include "folly/Math.h"
 
 #include <algorithm>
 #include <array>
@@ -22,11 +22,11 @@
 #include <utility>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Portability.h>
-#include <folly/functional/Invoke.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/functional/Invoke.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using namespace folly::detail;

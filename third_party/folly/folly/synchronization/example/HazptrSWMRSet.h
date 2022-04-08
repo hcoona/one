@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include <folly/synchronization/Hazptr.h>
+#include "folly/synchronization/Hazptr.h"
 
 namespace folly {
 

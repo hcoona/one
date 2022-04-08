@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/DefaultKeepAliveExecutor.h>
-#include <folly/Singleton.h>
-#include <folly/executors/ManualExecutor.h>
-#include <folly/futures/Future.h>
-#include <folly/futures/ThreadWheelTimekeeper.h>
-#include <folly/portability/GTest.h>
+#include "folly/DefaultKeepAliveExecutor.h"
+#include "folly/Singleton.h"
+#include "folly/executors/ManualExecutor.h"
+#include "folly/futures/Future.h"
+#include "folly/futures/ThreadWheelTimekeeper.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 using std::chrono::milliseconds;

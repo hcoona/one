@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <folly/Benchmark.h>
+#include "folly/Benchmark.h"
 
 #define BENCH_GEN_IMPL(gen, prefix)             \
   static bool FB_ANONYMOUS_VARIABLE(benchGen) = \

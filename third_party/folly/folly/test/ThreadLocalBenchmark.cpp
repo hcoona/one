@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/ThreadLocal.h>
+#include "folly/ThreadLocal.h"
 
 #include <sys/types.h>
 
@@ -26,12 +26,12 @@
 #include <set>
 #include <thread>
 
-#include <boost/thread/tss.hpp>
-#include <glog/logging.h>
+#include "boost/thread/tss.hpp"
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/experimental/io/FsUtil.h>
-#include <folly/portability/GFlags.h>
+#include "folly/Benchmark.h"
+#include "folly/experimental/io/FsUtil.h"
+#include "folly/portability/GFlags.h"
 
 using namespace folly;
 

@@ -17,7 +17,7 @@
 #pragma once
 
 #ifndef FOLLY_NO_CONFIG
-#include <folly/folly-config.h>
+#include "folly/folly-config.h"
 #endif
 
 #if __has_include(<features.h>)

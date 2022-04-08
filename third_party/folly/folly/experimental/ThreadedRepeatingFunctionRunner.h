@@ -20,7 +20,7 @@
 #include <thread>
 #include <vector>
 
-#include <folly/Function.h>
+#include "folly/Function.h"
 
 namespace folly {
 

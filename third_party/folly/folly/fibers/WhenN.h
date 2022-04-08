@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-#include <folly/functional/Invoke.h>
+#include "folly/functional/Invoke.h"
 
 namespace folly {
 namespace fibers {
@@ -145,4 +145,4 @@ typename std::enable_if<
 } // namespace fibers
 } // namespace folly
 
-#include <folly/fibers/WhenN-inl.h>
+#include "folly/fibers/WhenN-inl.h"

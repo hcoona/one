@@ -18,7 +18,7 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
-#include <folly/io/async/test/TimeUtil.h>
+#include "folly/io/async/test/TimeUtil.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -33,14 +33,14 @@
 #include <ostream>
 #include <stdexcept>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Conv.h>
-#include <folly/Portability.h>
-#include <folly/ScopeGuard.h>
-#include <folly/String.h>
-#include <folly/portability/Unistd.h>
-#include <folly/system/ThreadId.h>
+#include "folly/Conv.h"
+#include "folly/Portability.h"
+#include "folly/ScopeGuard.h"
+#include "folly/String.h"
+#include "folly/portability/Unistd.h"
+#include "folly/system/ThreadId.h"
 
 using std::string;
 using namespace std::chrono;

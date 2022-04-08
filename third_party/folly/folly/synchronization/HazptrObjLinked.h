@@ -19,10 +19,10 @@
 #include <atomic>
 #include <stack>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/synchronization/Hazptr-fwd.h>
-#include <folly/synchronization/HazptrObj.h>
+#include "folly/synchronization/Hazptr-fwd.h"
+#include "folly/synchronization/HazptrObj.h"
 
 ///
 /// Classes related to link counted objects and automatic retirement.

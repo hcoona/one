@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/io/IOBuf.h>
+#include "folly/io/IOBuf.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 std::atomic<size_t> gIOBufAlloc{};
 

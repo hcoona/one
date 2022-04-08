@@ -21,8 +21,8 @@
 #include <mutex>
 #include <queue>
 
-#include <folly/executors/DrivableExecutor.h>
-#include <folly/executors/SequencedExecutor.h>
+#include "folly/executors/DrivableExecutor.h"
+#include "folly/executors/SequencedExecutor.h"
 
 namespace folly {
 namespace python {

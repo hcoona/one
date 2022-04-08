@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/futures/Promise.h>
+#include "folly/futures/Promise.h"
 
 namespace folly {
 

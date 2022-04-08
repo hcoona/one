@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Utility.h>
-#include <folly/functional/Invoke.h>
+#include "folly/Utility.h"
+#include "folly/functional/Invoke.h"
 
 #include <stdexcept>
 #include <tuple>

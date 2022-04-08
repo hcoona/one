@@ -18,8 +18,8 @@
 #error This file may only be included from folly/io/RecordIO.h
 #endif
 
-#include <folly/detail/Iterators.h>
-#include <folly/hash/SpookyHashV2.h>
+#include "folly/detail/Iterators.h"
+#include "folly/hash/SpookyHashV2.h"
 
 namespace folly {
 

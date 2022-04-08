@@ -18,7 +18,7 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
-#include <folly/SocketAddress.h>
+#include "folly/SocketAddress.h"
 
 #include <cassert>
 #include <cerrno>
@@ -29,15 +29,15 @@
 #include <system_error>
 #include <type_traits>
 
-#include <boost/functional/hash.hpp>
+#include "boost/functional/hash.hpp"
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
-#include <folly/CppAttributes.h>
-#include <folly/Exception.h>
-#include <folly/hash/Hash.h>
-#include <folly/net/NetOps.h>
-#include <folly/net/NetworkSocket.h>
+#include "folly/CppAttributes.h"
+#include "folly/Exception.h"
+#include "folly/hash/Hash.h"
+#include "folly/net/NetOps.h"
+#include "folly/net/NetworkSocket.h"
 
 namespace {
 

@@ -15,9 +15,9 @@
  */
 
 #include <random>
-#include <glog/logging.h>
-#include <folly/Benchmark.h>
-#include <folly/hash/Checksum.h>
+#include "glog/logging.h"
+#include "folly/Benchmark.h"
+#include "folly/hash/Checksum.h"
 
 constexpr size_t kBufSize = 32 * 1024;
 uint8_t* buf;

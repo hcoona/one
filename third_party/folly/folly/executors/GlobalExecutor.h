@@ -18,8 +18,8 @@
 
 #include <memory>
 
-#include <folly/Executor.h>
-#include <folly/executors/IOExecutor.h>
+#include "folly/Executor.h"
+#include "folly/executors/IOExecutor.h"
 
 namespace folly {
 

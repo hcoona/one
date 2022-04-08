@@ -20,11 +20,11 @@
 #include <type_traits>
 #include <unordered_map>
 
-#include <folly/Optional.h>
-#include <folly/lang/Assume.h>
+#include "folly/Optional.h"
+#include "folly/lang/Assume.h"
 
-#include <folly/container/detail/F14Table.h>
-#include <folly/container/detail/Util.h>
+#include "folly/container/detail/F14Table.h"
+#include "folly/container/detail/Util.h"
 
 /**
  * This file is intended to be included only by F14Map.h. It contains fallback

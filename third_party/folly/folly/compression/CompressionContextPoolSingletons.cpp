@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/compression/CompressionContextPoolSingletons.h>
+#include "folly/compression/CompressionContextPoolSingletons.h"
 
 #include <stdlib.h>
 
-#include <folly/Portability.h>
-#include <folly/memory/Malloc.h>
+#include "folly/Portability.h"
+#include "folly/memory/Malloc.h"
 
 #ifndef FOLLY_COMPRESSION_USE_HUGEPAGES
 #if defined(__linux__) && !defined(__ANDROID__)
@@ -30,14 +30,14 @@
 #endif
 
 #if FOLLY_COMPRESSION_USE_HUGEPAGES
-#include <folly/experimental/JemallocHugePageAllocator.h>
+#include "folly/experimental/JemallocHugePageAllocator.h"
 #endif
 
 #if FOLLY_HAVE_LIBZSTD
 #ifndef ZSTD_STATIC_LINKING_ONLY
 #define ZSTD_STATIC_LINKING_ONLY
 #endif
-#include <zstd.h>
+#include "zstd.h"
 #endif
 
 namespace folly {

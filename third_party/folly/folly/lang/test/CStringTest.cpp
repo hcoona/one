@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <folly/lang/CString.h>
+#include "folly/lang/CString.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 class CStringTest : public testing::Test {};
 

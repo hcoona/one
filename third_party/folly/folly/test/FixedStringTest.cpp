@@ -17,9 +17,9 @@
 //
 // Author: eniebler@fb.com
 
-#include <folly/FixedString.h>
+#include "folly/FixedString.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 #define FS(x) ::folly::makeFixedString(x)
 using namespace folly::string_literals;
@@ -660,7 +660,7 @@ TEST(FixedStringReverseIteratorTest, ConstexprReverseIteration) {
   static_assert((alpha.rend() - 2) == (alpha.rbegin() + 24), "");
 }
 
-#include <folly/Range.h>
+#include "folly/Range.h"
 
 TEST(FixedStringConversionTest, ConversionToFollyRange) {
   // The following declaration is static for compilers that haven't implemented

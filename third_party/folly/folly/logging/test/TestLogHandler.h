@@ -21,10 +21,10 @@
 #include <utility>
 #include <vector>
 
-#include <folly/logging/LogHandler.h>
-#include <folly/logging/LogHandlerConfig.h>
-#include <folly/logging/LogHandlerFactory.h>
-#include <folly/logging/LogMessage.h>
+#include "folly/logging/LogHandler.h"
+#include "folly/logging/LogHandlerConfig.h"
+#include "folly/logging/LogHandlerFactory.h"
+#include "folly/logging/LogMessage.h"
 
 namespace folly {
 

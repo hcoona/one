@@ -16,9 +16,9 @@
 
 #include <iostream>
 
-#include <folly/init/Init.h>
-#include <folly/logging/xlog.h>
-#include <folly/portability/Stdlib.h>
+#include "folly/init/Init.h"
+#include "folly/logging/xlog.h"
+#include "folly/portability/Stdlib.h"
 
 DEFINE_string(
     category,

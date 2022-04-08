@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/HazptrThreadPoolExecutor.h>
+#include "folly/synchronization/HazptrThreadPoolExecutor.h"
 
-#include <folly/Singleton.h>
-#include <folly/executors/CPUThreadPoolExecutor.h>
+#include "folly/Singleton.h"
+#include "folly/executors/CPUThreadPoolExecutor.h"
 
 namespace {
 

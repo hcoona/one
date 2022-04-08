@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include <folly/gen/IStream.h>
+#include "folly/gen/IStream.h"
 
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <folly/gen/Base.h>
-#include <folly/gen/String.h>
-#include <folly/portability/GTest.h>
+#include "folly/gen/Base.h"
+#include "folly/gen/String.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace gen {

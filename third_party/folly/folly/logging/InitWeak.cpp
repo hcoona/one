@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/CPortability.h>
+#include "folly/CPortability.h"
 
 namespace folly {
 

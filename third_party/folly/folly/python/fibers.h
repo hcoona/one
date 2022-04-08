@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include <Python.h>
-#include <folly/Function.h>
-#include <folly/fibers/FiberManagerInternal.h>
+#include "Python.h"
+#include "folly/Function.h"
+#include "folly/fibers/FiberManagerInternal.h"
 
 namespace folly {
 namespace python {

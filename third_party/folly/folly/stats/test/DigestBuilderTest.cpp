@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <folly/stats/DigestBuilder.h>
+#include "folly/stats/DigestBuilder.h"
 
 #include <chrono>
 #include <random>
 #include <thread>
 
-#include <folly/Range.h>
-#include <folly/portability/GTest.h>
+#include "folly/Range.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

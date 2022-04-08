@@ -19,7 +19,7 @@
 #include <iterator>
 #include <stdexcept>
 
-#include <folly/CppAttributes.h>
+#include "folly/CppAttributes.h"
 
 #ifndef FOLLY_STRING_H_
 #error This file may only be included from String.h

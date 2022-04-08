@@ -18,7 +18,7 @@
 
 #include <map>
 
-#include <folly/ssl/OpenSSLLockTypes.h>
+#include "folly/ssl/OpenSSLLockTypes.h"
 
 namespace folly {
 namespace ssl {

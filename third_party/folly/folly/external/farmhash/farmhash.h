@@ -50,7 +50,7 @@
 #include <string.h>   // for memcpy and memset
 #include <utility>
 
-#include <folly/portability/Config.h>
+#include "folly/portability/Config.h"
 
 namespace folly {
 namespace external {

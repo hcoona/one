@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <folly/Demangle.h>
+#include "folly/Demangle.h"
 
 #include <algorithm>
 #include <cstring>
 
-#include <folly/lang/CString.h>
+#include "folly/lang/CString.h"
 
 #if __has_include(<cxxabi.h>)
 #include <cxxabi.h>

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <folly/logging/LoggerDB.h>
+#include "folly/logging/LoggerDB.h"
 
-#include <folly/logging/Logger.h>
-#include <folly/logging/test/TestLogHandler.h>
-#include <folly/portability/GTest.h>
+#include "folly/logging/Logger.h"
+#include "folly/logging/test/TestLogHandler.h"
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 

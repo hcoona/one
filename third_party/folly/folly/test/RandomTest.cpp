@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Random.h>
+#include "folly/Random.h"
 
 #include <algorithm>
 #include <random>
@@ -22,9 +22,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 #ifndef _WIN32
 #include <sys/wait.h>

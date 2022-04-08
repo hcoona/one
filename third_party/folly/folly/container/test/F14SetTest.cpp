@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <folly/Portability.h>
+#include "folly/Portability.h"
 
 // Allow tests for keys that throw in copy/move constructors. This
 // warning has to be disabled before the templates are defined in the
@@ -22,7 +22,7 @@
 FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 
 // clang-format off:
-#include <folly/container/F14Set.h>
+#include "folly/container/F14Set.h"
 // clang-format on
 
 #include <chrono>
@@ -31,15 +31,15 @@ FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 #include <unordered_map>
 #include <unordered_set>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
-#include <folly/Benchmark.h>
-#include <folly/Conv.h>
-#include <folly/FBString.h>
-#include <folly/container/test/F14TestUtil.h>
-#include <folly/container/test/TrackingTypes.h>
-#include <folly/portability/GTest.h>
-#include <folly/test/TestUtils.h>
+#include "folly/Benchmark.h"
+#include "folly/Conv.h"
+#include "folly/FBString.h"
+#include "folly/container/test/F14TestUtil.h"
+#include "folly/container/test/TrackingTypes.h"
+#include "folly/portability/GTest.h"
+#include "folly/test/TestUtils.h"
 
 using namespace folly;
 using namespace folly::f14;

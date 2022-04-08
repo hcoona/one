@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/portability/SysResource.h>
+#include "folly/portability/SysResource.h"
 
 #include <cerrno>
 #include <cstring>
 
 #ifdef _WIN32
-#include <folly/portability/Windows.h>
+#include "folly/portability/Windows.h"
 
 extern "C" {
 int getrlimit(int type, rlimit* dst) {

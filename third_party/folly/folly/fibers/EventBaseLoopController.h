@@ -19,10 +19,10 @@
 #include <atomic>
 #include <memory>
 
-#include <folly/CancellationToken.h>
-#include <folly/fibers/ExecutorBasedLoopController.h>
-#include <folly/fibers/FiberManagerInternal.h>
-#include <folly/io/async/VirtualEventBase.h>
+#include "folly/CancellationToken.h"
+#include "folly/fibers/ExecutorBasedLoopController.h"
+#include "folly/fibers/FiberManagerInternal.h"
+#include "folly/io/async/VirtualEventBase.h"
 
 namespace folly {
 namespace fibers {
@@ -82,4 +82,4 @@ class EventBaseLoopController : public ExecutorBasedLoopController {
 } // namespace fibers
 } // namespace folly
 
-#include <folly/fibers/EventBaseLoopController-inl.h>
+#include "folly/fibers/EventBaseLoopController-inl.h"

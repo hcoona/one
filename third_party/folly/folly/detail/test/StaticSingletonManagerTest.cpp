@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/detail/StaticSingletonManager.h>
+#include "folly/detail/StaticSingletonManager.h"
 
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 namespace folly {
 namespace detail {

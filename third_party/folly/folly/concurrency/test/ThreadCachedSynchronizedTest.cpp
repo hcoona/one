@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/concurrency/ThreadCachedSynchronized.h>
+#include "folly/concurrency/ThreadCachedSynchronized.h"
 
-#include <folly/lang/Keep.h>
-#include <folly/portability/GTest.h>
+#include "folly/lang/Keep.h"
+#include "folly/portability/GTest.h"
 
 class ThreadCachedSynchronizedTest : public testing::Test {};
 
