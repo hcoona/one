@@ -59,7 +59,7 @@ build --copt=-fPIC
 
 build --fission=dbg,opt
 build --features=per_object_debug_info
-build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a
+build --action_env=BAZEL_LINKLIBS=-lstdc++
 build --action_env=BAZEL_LINKOPTS=-lm
 
 # We already have absl in the build, define absl=1 to tell googletest to use absl for backtrace.
