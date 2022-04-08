@@ -93,7 +93,10 @@ _LOCAL_DEFINES = [
     "//conditions:default": [],
 }) + select({
     "@//bazel/config:with_sanitizer": [],
-    "//conditions:default": ["-D_FORTIFY_SOURCE=2"],
+    "//conditions:default": [
+        "-U_FORTIFY_SOURCE",
+        "-D_FORTIFY_SOURCE=2",
+    ],
 })
 
 genrule(
