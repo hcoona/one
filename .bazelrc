@@ -126,6 +126,16 @@ build:asan --test_env=ASAN_SYMBOLIZER_PATH
 # ASAN needs -O1 to get reasonable performance.
 build:asan --copt -O1
 build:asan --copt -fno-optimize-sibling-calls
+# _FORTIFY_SOURCE=1 is always defined in `-c opt` mode.
+#
+# ASAN need to disable _FORTIFY_SOURCE.
+# https://github.com/google/sanitizers/wiki/AddressSanitizer
+# A3: If _FORTIFY_SOURCE is enabled, ASan may have false positives, see next question.
+# https://github.com/google/sanitizers/issues/247
+#
+# We define _FORTIFY_SOURCE=0 here as a workaround & ignore macro redefined warnings.
+build:asan --copt -D_FORTIFY_SOURCE=0
+build:asan --copt -Wno-macro-redefined
 
 # Clang ASAN/UBSAN
 build:clang-asan --config=clang
