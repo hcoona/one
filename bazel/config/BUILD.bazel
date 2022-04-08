@@ -181,3 +181,33 @@ config_setting(
         ":rdrand": "true",
     },
 )
+
+config_setting(
+    name = "with_asan",
+    define_values = {
+        "ONE_CONFIG_ASAN": "1",
+    },
+)
+
+config_setting(
+    name = "with_tsan",
+    define_values = {
+        "ONE_CONFIG_TSAN": "1",
+    },
+)
+
+config_setting(
+    name = "with_msan",
+    define_values = {
+        "ONE_CONFIG_MSAN": "1",
+    },
+)
+
+selects.config_setting_group(
+    name = "with_sanitizer",
+    match_any = [
+        ":with_asan",
+        ":with_tsan",
+        ":with_msan",
+    ],
+)
