@@ -59,7 +59,7 @@ build --copt=-fPIC
 
 build --fission=dbg,opt
 build --features=per_object_debug_info
-build --action_env=BAZEL_LINKLIBS=-lstdc++
+build --action_env=BAZEL_LINKLIBS=-l%:libstdc++.a
 build --action_env=BAZEL_LINKOPTS=-lm
 
 # We already have absl in the build, define absl=1 to tell googletest to use absl for backtrace.
@@ -105,6 +105,16 @@ build:sanitizer --define tcmalloc=disabled
 build:sanitizer --linkopt -ldl
 build:sanitizer --build_tag_filters=-no_san
 build:sanitizer --test_tag_filters=-no_san
+# _FORTIFY_SOURCE=1 is always defined in `-c opt` mode.
+#
+# ASAN need to disable _FORTIFY_SOURCE.
+# https://github.com/google/sanitizers/wiki/AddressSanitizer
+# A3: If _FORTIFY_SOURCE is enabled, ASan may have false positives, see next question.
+# https://github.com/google/sanitizers/issues/247
+#
+# We define _FORTIFY_SOURCE=0 here as a workaround.
+build:sanitizer --copt -U_FORTIFY_SOURCE
+build:sanitizer --copt -D_FORTIFY_SOURCE=0
 
 # Basic ASAN/UBSAN that works for gcc
 build:asan --action_env=ONE_ASAN=1
@@ -126,16 +136,6 @@ build:asan --test_env=ASAN_SYMBOLIZER_PATH
 # ASAN needs -O1 to get reasonable performance.
 build:asan --copt -O1
 build:asan --copt -fno-optimize-sibling-calls
-# _FORTIFY_SOURCE=1 is always defined in `-c opt` mode.
-#
-# ASAN need to disable _FORTIFY_SOURCE.
-# https://github.com/google/sanitizers/wiki/AddressSanitizer
-# A3: If _FORTIFY_SOURCE is enabled, ASan may have false positives, see next question.
-# https://github.com/google/sanitizers/issues/247
-#
-# We define _FORTIFY_SOURCE=0 here as a workaround & ignore macro redefined warnings.
-build:asan --copt -D_FORTIFY_SOURCE=0
-build:asan --copt -Wno-macro-redefined
 
 # Clang ASAN/UBSAN
 build:clang-asan --config=clang
