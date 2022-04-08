@@ -339,11 +339,13 @@ cc_library(
         "-fstack-protector",
         "-ftls-model=local-dynamic",
         "-Wl,-export-dynamic",
-        "-Wl,-no-undefined",
         "-Wl,-z,relro",
         "-Wl,-z,now",
         "-Wl,-z,noexecstack",
-    ],
+    ] + select({
+        "@//bazel/config:with_sanitizer": [],
+        "//conditions:default": ["-Wl,-no-undefined"],
+    }),
     strip_include_prefix = "src/libsodium/include",
     textual_hdrs = [
         "src/libsodium/crypto_scalarmult/curve25519/sandy2x/consts.S",
