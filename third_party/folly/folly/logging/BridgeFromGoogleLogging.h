@@ -46,7 +46,7 @@ struct BridgeFromGoogleLogging : ::google::LogSink {
       const struct ::tm* pTime,
       const char* message,
       size_t message_len,
-      int32_t usecs);
+      int32_t usecs) override;
 
   void send(
       ::google::LogSeverity severity,
