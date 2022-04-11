@@ -66,7 +66,10 @@ cc_library(
             "folly/python/fibers.cpp",
             "folly/python/GILAwareManualExecutor.cpp",
             "folly/experimental/symbolizer/Addr2Line.cpp",
-        ],
+        ] + select({
+            "@//bazel/config:with_sanitizer": [],
+            "//conditions:default": ["folly/experimental/exception_tracer/*.cpp"],
+        }),
     ),
     # `hfiles`
     hdrs = glob(
@@ -80,7 +83,10 @@ cc_library(
             "folly/tools/**",
             "folly/python/fibers.h",
             "folly/python/GILAwareManualExecutor.h",
-        ],
+        ] + select({
+            "@//bazel/config:with_sanitizer": [],
+            "//conditions:default": ["folly/experimental/exception_tracer/*.h"],
+        }),
     ) + ["folly/folly-config.h"],
     copts = [
         "-Wno-nullability-completeness",
