@@ -48,46 +48,77 @@ cc_library(
     name = "folly",
     # `folly_base_files` in `CMakeLists.txt`
     # `files`
-    srcs = glob(
-        [
-            "folly/**/*.cpp",
-        ],
-        exclude = [
-            "folly/build/**",
-            "folly/logging/example/**",
-            "folly/**/*test/**",
-            "folly/tools/**",
-            "folly/**/*Benchmark.cpp",
-            "folly/**/*Test.cpp",
-            "folly/experimental/JSONSchemaTester.cpp",
-            "folly/experimental/io/HugePageUtil.cpp",
-            "folly/python/error.cpp",
-            "folly/python/executor.cpp",
-            "folly/python/fibers.cpp",
-            "folly/python/GILAwareManualExecutor.cpp",
-            "folly/experimental/symbolizer/Addr2Line.cpp",
-        ] + select({
-            "@//bazel/config:with_sanitizer": [],
-            "//conditions:default": ["folly/experimental/exception_tracer/*.cpp"],
-        }),
-    ),
+    srcs = select({
+        "@//bazel/config:with_sanitizer": glob(
+            [
+                "folly/**/*.cpp",
+            ],
+            exclude = [
+                "folly/build/**",
+                "folly/logging/example/**",
+                "folly/**/*test/**",
+                "folly/tools/**",
+                "folly/**/*Benchmark.cpp",
+                "folly/**/*Test.cpp",
+                "folly/experimental/JSONSchemaTester.cpp",
+                "folly/experimental/io/HugePageUtil.cpp",
+                "folly/python/error.cpp",
+                "folly/python/executor.cpp",
+                "folly/python/fibers.cpp",
+                "folly/python/GILAwareManualExecutor.cpp",
+                "folly/experimental/symbolizer/Addr2Line.cpp",
+            ] + ["folly/experimental/exception_tracer/*.cpp"],
+        ),
+        "//conditions:default": glob(
+            [
+                "folly/**/*.cpp",
+            ],
+            exclude = [
+                "folly/build/**",
+                "folly/logging/example/**",
+                "folly/**/*test/**",
+                "folly/tools/**",
+                "folly/**/*Benchmark.cpp",
+                "folly/**/*Test.cpp",
+                "folly/experimental/JSONSchemaTester.cpp",
+                "folly/experimental/io/HugePageUtil.cpp",
+                "folly/python/error.cpp",
+                "folly/python/executor.cpp",
+                "folly/python/fibers.cpp",
+                "folly/python/GILAwareManualExecutor.cpp",
+                "folly/experimental/symbolizer/Addr2Line.cpp",
+            ],
+        ),
+    }),
     # `hfiles`
-    hdrs = glob(
-        [
-            "folly/**/*.h",
-        ],
-        exclude = [
-            "folly/build/**",
-            "folly/logging/example/**",
-            "folly/**/*test/**",
-            "folly/tools/**",
-            "folly/python/fibers.h",
-            "folly/python/GILAwareManualExecutor.h",
-        ] + select({
-            "@//bazel/config:with_sanitizer": [],
-            "//conditions:default": ["folly/experimental/exception_tracer/*.h"],
-        }),
-    ) + ["folly/folly-config.h"],
+    hdrs = select({
+        "@//bazel/config:with_sanitizer": glob(
+            [
+                "folly/**/*.h",
+            ],
+            exclude = [
+                "folly/build/**",
+                "folly/logging/example/**",
+                "folly/**/*test/**",
+                "folly/tools/**",
+                "folly/python/fibers.h",
+                "folly/python/GILAwareManualExecutor.h",
+            ] + ["folly/experimental/exception_tracer/*.h"],
+        ),
+        "//conditions:default": glob(
+            [
+                "folly/**/*.h",
+            ],
+            exclude = [
+                "folly/build/**",
+                "folly/logging/example/**",
+                "folly/**/*test/**",
+                "folly/tools/**",
+                "folly/python/fibers.h",
+                "folly/python/GILAwareManualExecutor.h",
+            ],
+        ),
+    }) + ["folly/folly-config.h"],
     copts = [
         "-Wno-nullability-completeness",
     ],
