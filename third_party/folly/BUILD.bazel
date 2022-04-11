@@ -31,7 +31,8 @@ genrule(
            "-e 's/#cmakedefine FOLLY_HAVE_LIBUNWIND 1/#undef FOLLY_HAVE_LIBUNWIND/' " +
            "-e 's/#cmakedefine FOLLY_HAVE_DWARF 1/#undef FOLLY_HAVE_DWARF/' " +
            "-e 's/#cmakedefine FOLLY_HAVE_ELF 1/#undef FOLLY_HAVE_ELF/' " +
-           "-e 's/#cmakedefine01 FOLLY_HAVE_GETRANDOM/#define FOLLY_HAVE_GETRANDOM 1/' " +
+           # TODO(zhangshuai.ds): detect glibc version.
+           "-e 's/#cmakedefine01 FOLLY_HAVE_GETRANDOM/#define FOLLY_HAVE_GETRANDOM 0/' " +
            # TODO(zhangshuai.ds): set sanitizer options according to config settings.
            "-e 's/#cmakedefine01 FOLLY_LIBRARY_SANITIZE_ADDRESS/#define FOLLY_LIBRARY_SANITIZE_ADDRESS 0/' " +
            "-e 's/#cmakedefine01 FOLLY_HAVE_LIBRT/#define FOLLY_HAVE_LIBRT 1/' " +

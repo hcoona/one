@@ -128,7 +128,7 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_facebook_folly//:folly",
+        "@//third_party/folly",
         "@com_github_jedisct1_libsodium//:sodium",
         "@openssl//:crypto",
         "@openssl//:ssl",

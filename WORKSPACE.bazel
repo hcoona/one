@@ -230,23 +230,6 @@ http_archive(
 )
 
 http_archive(
-    name = "com_github_facebook_folly",  # 2022-03-28T07:14:25Z
-    build_file = "//bazel/third_party/folly:folly.BUILD",
-    patch_args = ["-p1"],
-    patch_cmds = [
-        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <boost\\([^>]*\\)>/#include "boost\\1"/g\' {} \\;',
-        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <double-conversion\\([^>]*\\)>/#include "double-conversion\\1"/g\' {} \\;',
-        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <folly\\([^>]*\\)>/#include "folly\\1"/g\' {} \\;',
-        'find . -type f \\( -name "*.h" -or -name "*.cpp" \\) -exec sed -i \'s/#include <glog\\([^>]*\\)>/#include "glog\\1"/g\' {} \\;',
-    ],
-    patches = [
-        "//bazel/third_party/folly:0002-fix-override-warning.patch",
-    ],
-    sha256 = "e4ff1467598f8a7bedf175489eb7dd270ab023e128f0aeef770eb5b087c4b4dd",
-    urls = ["https://github.com/facebook/folly/releases/download/v2022.03.28.00/folly-v2022.03.28.00.tar.gz"],
-)
-
-http_archive(
     name = "com_github_facebookincubator_fizz",  # 2022-03-28T07:14:25Z
     build_file = "//bazel/third_party/fizz:fizz.BUILD",
     patch_args = ["-p1"],

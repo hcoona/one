@@ -29,7 +29,7 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_facebook_folly//:folly",
+        "@//third_party/folly",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/functional:bind_front",
