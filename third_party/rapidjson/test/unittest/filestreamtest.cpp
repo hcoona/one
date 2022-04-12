@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,15 +7,16 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #include "unittest.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/encodedstream.h"
+#include "tools/cpp/runfiles/runfiles.h"
 
 using namespace rapidjson;
 
@@ -25,21 +26,15 @@ public:
     virtual ~FileStreamTest();
 
     virtual void SetUp() {
-        const char *paths[] = {
-            "data/sample.json",
-            "bin/data/sample.json",
-            "../bin/data/sample.json",
-            "../../bin/data/sample.json",
-            "../../../bin/data/sample.json"
-        };
-        FILE* fp = 0;
-        for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-            fp = fopen(paths[i], "rb");
-            if (fp) {
-                filename_ = paths[i];
-                break;
-            }
-        }
+        using bazel::tools::cpp::runfiles::Runfiles;
+        std::string error;
+        std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+        ASSERT_TRUE(runfiles) << error;
+        static constexpr char kPath[] =
+            "com_github_hcoona_one/third_party/rapidjson/bin/data/"
+            "sample.json";
+        filename_storage_ = runfiles->Rlocation(kPath);
+        FILE *fp = fopen(filename_ = filename_storage_.c_str(), "rb");
         ASSERT_TRUE(fp != 0);
 
         fseek(fp, 0, SEEK_END);
@@ -50,21 +45,11 @@ public:
         json_[readLength] = '\0';
         fclose(fp);
 
-        const char *abcde_paths[] = {
-            "data/abcde.txt",
-            "bin/data/abcde.txt",
-            "../bin/data/abcde.txt",
-            "../../bin/data/abcde.txt",
-            "../../../bin/data/abcde.txt"
-        };
-        fp = 0;
-        for (size_t i = 0; i < sizeof(abcde_paths) / sizeof(abcde_paths[0]); i++) {
-            fp = fopen(abcde_paths[i], "rb");
-            if (fp) {
-                abcde_ = abcde_paths[i];
-                break;
-            }
-        }
+        static constexpr char kPath2[] =
+            "com_github_hcoona_one/third_party/rapidjson/bin/data/"
+            "abcde.txt";
+        abcde_filename_storage_ = runfiles->Rlocation(kPath2);
+        fp = fopen(abcde_ = abcde_filename_storage_.c_str(), "rb");
         ASSERT_TRUE(fp != 0);
         fclose(fp);
     }
@@ -77,12 +62,14 @@ public:
 private:
     FileStreamTest(const FileStreamTest&);
     FileStreamTest& operator=(const FileStreamTest&);
-    
+
 protected:
     const char* filename_;
+    std::string filename_storage_;
     char *json_;
     size_t length_;
     const char* abcde_;
+    std::string abcde_filename_storage_;
 };
 
 FileStreamTest::~FileStreamTest() {}

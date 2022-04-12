@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,41 +7,36 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #include "unittest.h"
 
 #include "rapidjson/document.h"
+#include "tools/cpp/runfiles/runfiles.h"
 
 using namespace rapidjson;
 
 static char* ReadFile(const char* filename, size_t& length) {
-    const char *paths[] = {
-        "jsonchecker",
-        "bin/jsonchecker",
-        "../bin/jsonchecker",
-        "../../bin/jsonchecker",
-        "../../../bin/jsonchecker"
-    };
-    char buffer[1024];
-    FILE *fp = 0;
-    for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-        sprintf(buffer, "%s/%s", paths[i], filename);
-        fp = fopen(buffer, "rb");
-        if (fp)
-            break;
-    }
+    using bazel::tools::cpp::runfiles::Runfiles;
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    assert(runfiles);
+    static constexpr char kPathPrefix[] =
+        "com_github_hcoona_one/third_party/rapidjson/bin/jsonchecker/";
+    std::string rfilename =
+        runfiles->Rlocation(std::string(kPathPrefix) + filename);
 
+    FILE *fp = fopen(rfilename.c_str(), "rb");
     if (!fp)
         return 0;
 
     fseek(fp, 0, SEEK_END);
     length = static_cast<size_t>(ftell(fp));
     fseek(fp, 0, SEEK_SET);
-    char* json = static_cast<char*>(malloc(length + 1));
+    char* json = static_cast<char*>(malloc(details::fixAlign16(length + 1)));
     size_t readLength = fread(json, 1, length, fp);
     json[readLength] = '\0';
     fclose(fp);
@@ -104,7 +99,7 @@ TEST(JsonChecker, Reader) {
                 break;
         }
         EXPECT_TRUE(reader.HasParseError()) << filename;
-        
+
         free(json);
     }
 
@@ -126,7 +121,7 @@ TEST(JsonChecker, Reader) {
         // Test iterative parsing.
         document.Parse<kParseIterativeFlag>(json);
         EXPECT_FALSE(document.HasParseError()) << filename;
-        
+
         // Test iterative pull-parsing.
         Reader reader;
         StringStream ss(json);

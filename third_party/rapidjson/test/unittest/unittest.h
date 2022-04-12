@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #ifndef UNITTEST_H_
@@ -69,10 +69,19 @@ inline int StrCmp(const Ch* s1, const Ch* s2) {
     return static_cast<unsigned>(*s1) < static_cast<unsigned>(*s2) ? -1 : static_cast<unsigned>(*s1) > static_cast<unsigned>(*s2);
 }
 
+namespace details {
+
+inline size_t fixAlign16(size_t v) {
+  static constexpr size_t kAlignment = 16U;
+  return (v + kAlignment - 1) & ~(kAlignment - 1);
+}
+
+}  // namespace details
+
 template <typename Ch>
 inline Ch* StrDup(const Ch* str) {
     size_t bufferSize = sizeof(Ch) * (StrLen(str) + 1);
-    Ch* buffer = static_cast<Ch*>(malloc(bufferSize));
+    Ch* buffer = static_cast<Ch*>(malloc(details::fixAlign16(bufferSize)));
     memcpy(buffer, str, bufferSize);
     return buffer;
 }
@@ -85,7 +94,7 @@ inline FILE* TempFile(char *filename) {
     if (filename[0] == '\\')
         for (int i = 0; filename[i] != '\0'; i++)
             filename[i] = filename[i + 1];
-        
+
     return fopen(filename, "wb");
 #else
     strcpy(filename, "/tmp/fileXXXXXX");

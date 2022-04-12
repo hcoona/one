@@ -3,6 +3,7 @@
 #if TEST_RAPIDJSON
 
 #include "rapidjson/schema.h"
+#include "tools/cpp/runfiles/runfiles.h"
 #include <ctime>
 #include <string>
 #include <vector>
@@ -18,22 +19,16 @@ RAPIDJSON_DIAG_OFF(format-overflow)
 
 template <typename Allocator>
 static char* ReadFile(const char* filename, Allocator& allocator) {
-    const char *paths[] = {
-        "",
-        "bin/",
-        "../bin/",
-        "../../bin/",
-        "../../../bin/"
-    };
-    char buffer[1024];
-    FILE *fp = 0;
-    for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-        sprintf(buffer, "%s%s", paths[i], filename);
-        fp = fopen(buffer, "rb");
-        if (fp)
-            break;
-    }
+    using bazel::tools::cpp::runfiles::Runfiles;
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    assert(runfiles);
+    static constexpr char kPathPrefix[] =
+        "com_github_hcoona_one/third_party/rapidjson/bin/";
+    std::string rfilename =
+        runfiles->Rlocation(std::string(kPathPrefix) + filename);
 
+    FILE *fp = fopen(rfilename.c_str(), "rb");
     if (!fp)
         return 0;
 
