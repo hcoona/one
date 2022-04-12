@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #include "unittest.h"
@@ -18,6 +18,7 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/encodedstream.h"
 #include "rapidjson/stringbuffer.h"
+#include "tools/cpp/runfiles/runfiles.h"
 #include <sstream>
 #include <algorithm>
 
@@ -80,7 +81,7 @@ void ParseTest() {
     typedef GenericDocument<UTF8<>, Allocator, StackAllocator> DocumentType;
     DocumentType doc;
 
-    const char* json = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+    const char json[128] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
 
     doc.Parse(json);
     ParseCheck(doc);
@@ -91,18 +92,21 @@ void ParseTest() {
     ParseCheck(doc);
 
     doc.SetNull();
-    char *buffer = strdup(json);
+    size_t length = strlen(json);
+    char *buffer = reinterpret_cast<char*>(malloc(sizeof(json) * 2));
+    memcpy(buffer, json, length);
     doc.ParseInsitu(buffer);
     ParseCheck(doc);
     free(buffer);
 
     // Parse(const Ch*, size_t)
-    size_t length = strlen(json);
-    buffer = reinterpret_cast<char*>(malloc(length * 2));
+    buffer = reinterpret_cast<char*>(malloc(sizeof(json) * 2));
     memcpy(buffer, json, length);
     memset(buffer + length, 'X', length);
 #if RAPIDJSON_HAS_STDSTRING
-    std::string s2(buffer, length); // backup buffer
+    std::string s2;
+    s2.reserve(sizeof(json) * 2);
+    s2.assign(buffer, length); // backup buffer
 #endif
     doc.SetNull();
     doc.Parse(buffer, length);
@@ -154,29 +158,23 @@ TEST(Document, UnchangedOnParseError) {
 }
 
 static FILE* OpenEncodedFile(const char* filename) {
-    const char *paths[] = {
-        "encodings",
-        "bin/encodings",
-        "../bin/encodings",
-        "../../bin/encodings",
-        "../../../bin/encodings"
-    };
-    char buffer[1024];
-    for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-        sprintf(buffer, "%s/%s", paths[i], filename);
-        FILE *fp = fopen(buffer, "rb");
-        if (fp)
-            return fp;
-    }
-    return 0;
+    using bazel::tools::cpp::runfiles::Runfiles;
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    assert(runfiles);
+    static constexpr char kPathPrefix[] =
+        "com_github_hcoona_one/third_party/rapidjson/bin/encodings/";
+    std::string rfilename =
+        runfiles->Rlocation(std::string(kPathPrefix) + filename);
+    return fopen(rfilename.c_str(), "rb");
 }
 
 TEST(Document, Parse_Encoding) {
-    const char* json = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+    const char json[128] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
 
     typedef GenericDocument<UTF16<> > DocumentType;
     DocumentType doc;
-    
+
     // Parse<unsigned, SourceEncoding>(const SourceEncoding::Ch*)
     // doc.Parse<kParseDefaultFlags, UTF8<> >(json);
     // EXPECT_FALSE(doc.HasParseError());
@@ -359,8 +357,9 @@ struct OutputStringStream : public std::ostringstream {
 OutputStringStream::~OutputStringStream() {}
 
 TEST(Document, AcceptWriter) {
+    static const char kStr[128] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
     Document doc;
-    doc.Parse(" { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ");
+    doc.Parse(kStr);
 
     OutputStringStream os;
     Writer<OutputStringStream> writer(os);
@@ -376,7 +375,8 @@ TEST(Document, UserBuffer) {
     MemoryPoolAllocator<> valueAllocator(valueBuffer, sizeof(valueBuffer));
     MemoryPoolAllocator<> parseAllocator(parseBuffer, sizeof(parseBuffer));
     DocumentType doc(&valueAllocator, sizeof(parseBuffer) / 2, &parseAllocator);
-    doc.Parse(" { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ");
+    static const char kStr[128] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+    doc.Parse(kStr);
     EXPECT_FALSE(doc.HasParseError());
     EXPECT_LE(valueAllocator.Size(), sizeof(valueBuffer));
     EXPECT_LE(parseAllocator.Size(), sizeof(parseBuffer));
@@ -469,7 +469,8 @@ TYPED_TEST(DocumentMove, MoveConstructor) {
     Allocator allocator;
 
     D a(&allocator);
-    a.Parse("[\"one\", \"two\", \"three\"]");
+    static const char kStr1[64] = "[\"one\", \"two\", \"three\"]";
+    a.Parse(kStr1);
     EXPECT_FALSE(a.HasParseError());
     EXPECT_TRUE(a.IsArray());
     EXPECT_EQ(3u, a.Size());
@@ -483,7 +484,8 @@ TYPED_TEST(DocumentMove, MoveConstructor) {
     EXPECT_THROW(a.GetAllocator(), AssertException);
     EXPECT_EQ(&b.GetAllocator(), &allocator);
 
-    b.Parse("{\"Foo\": \"Bar\", \"Baz\": 42}");
+    static const char kStr2[64] = "{\"Foo\": \"Bar\", \"Baz\": 42}";
+    b.Parse(kStr2);
     EXPECT_FALSE(b.HasParseError());
     EXPECT_TRUE(b.IsObject());
     EXPECT_EQ(2u, b.MemberCount());
@@ -566,7 +568,8 @@ TYPED_TEST(DocumentMove, MoveAssignment) {
     Allocator allocator;
 
     D a(&allocator);
-    a.Parse("[\"one\", \"two\", \"three\"]");
+    static const char kStr1[64] = "[\"one\", \"two\", \"three\"]";
+    a.Parse(kStr1);
     EXPECT_FALSE(a.HasParseError());
     EXPECT_TRUE(a.IsArray());
     EXPECT_EQ(3u, a.Size());
@@ -581,7 +584,8 @@ TYPED_TEST(DocumentMove, MoveAssignment) {
     EXPECT_THROW(a.GetAllocator(), AssertException);
     EXPECT_EQ(&b.GetAllocator(), &allocator);
 
-    b.Parse("{\"Foo\": \"Bar\", \"Baz\": 42}");
+    static const char kStr2[64] = "{\"Foo\": \"Bar\", \"Baz\": 42}";
+    b.Parse(kStr2);
     EXPECT_FALSE(b.HasParseError());
     EXPECT_TRUE(b.IsObject());
     EXPECT_EQ(2u, b.MemberCount());

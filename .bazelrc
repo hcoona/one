@@ -103,8 +103,6 @@ build:libc++ --define force_libcpp=enabled
 # Common flags for sanitizers
 build:sanitizer --define tcmalloc=disabled
 build:sanitizer --linkopt -ldl
-build:sanitizer --build_tag_filters=-no_san
-build:sanitizer --test_tag_filters=-no_san
 # _FORTIFY_SOURCE=1 is always defined in `-c opt` mode.
 #
 # ASAN need to disable _FORTIFY_SOURCE.
@@ -136,6 +134,8 @@ build:asan --test_env=ASAN_SYMBOLIZER_PATH
 # ASAN needs -O1 to get reasonable performance.
 build:asan --copt -O1
 build:asan --copt -fno-optimize-sibling-calls
+build:asan --build_tag_filters=-no_san,-no_asan
+build:asan --test_tag_filters=-no_san,-no_asan
 
 # Clang ASAN/UBSAN
 build:clang-asan --config=clang

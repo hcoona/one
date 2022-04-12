@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #include "unittest.h"
@@ -17,6 +17,7 @@
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/encodedstream.h"
 #include "rapidjson/document.h"
+#include "tools/cpp/runfiles/runfiles.h"
 #include <sstream>
 #include <fstream>
 
@@ -104,21 +105,16 @@ TEST(IStreamWrapper, wstringstream) {
 
 template <typename FileStreamType>
 static bool Open(FileStreamType& fs, const char* filename) {
-    const char *paths[] = {
-        "encodings",
-        "bin/encodings",
-        "../bin/encodings",
-        "../../bin/encodings",
-        "../../../bin/encodings"
-    };
-    char buffer[1024];
-    for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-        sprintf(buffer, "%s/%s", paths[i], filename);
-        fs.open(buffer, ios_base::in | ios_base::binary);
-        if (fs.is_open())
-            return true;
-    }
-    return false;
+    using bazel::tools::cpp::runfiles::Runfiles;
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    assert(runfiles);
+    static constexpr char kPathPrefix[] =
+        "com_github_hcoona_one/third_party/rapidjson/bin/encodings/";
+    std::string rfilename =
+        runfiles->Rlocation(std::string(kPathPrefix) + filename);
+    fs.open(rfilename.c_str(), ios_base::in | ios_base::binary);
+    return fs.is_open();
 }
 
 TEST(IStreamWrapper, ifstream) {

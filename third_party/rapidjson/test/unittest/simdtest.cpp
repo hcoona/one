@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 // Since Travis CI installs old Valgrind 3.7.0, which fails with some SSE4.2
@@ -17,11 +17,11 @@
 
 // __SSE2__ and __SSE4_2__ are recognized by gcc, clang, and the Intel compiler.
 // We use -march=native with gmake to enable -msse2 and -msse4.2, if supported.
-#if defined(__SSE4_2__)
+#if defined(__SSE4_2__) && !defined(RAPIDJSON_SSE42)
 #  define RAPIDJSON_SSE42
-#elif defined(__SSE2__)
+#elif defined(__SSE2__) && !defined(RAPIDJSON_SSE2)
 #  define RAPIDJSON_SSE2
-#elif defined(__ARM_NEON)
+#elif defined(__ARM_NEON) && !defined(RAPIDJSON_NEON)
 #  define RAPIDJSON_NEON
 #endif
 
@@ -52,7 +52,7 @@ using namespace rapidjson_simd;
 template <typename StreamType>
 void TestSkipWhitespace() {
     for (size_t step = 1; step < 32; step++) {
-        char buffer[1025];
+        char buffer[1024 + 16];
         for (size_t i = 0; i < 1024; i++)
             buffer[i] = " \t\r\n"[i % 4];
         for (size_t i = 0; i < 1024; i += step)

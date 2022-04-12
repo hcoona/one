@@ -764,7 +764,7 @@ struct ParseStringHandler : BaseReaderHandler<Encoding, ParseStringHandler<Encod
     bool String(const typename Encoding::Ch* str, size_t length, bool copy) {
         EXPECT_EQ(0, str_);
         if (copy) {
-            str_ = static_cast<typename Encoding::Ch*>(malloc((length + 1) * sizeof(typename Encoding::Ch)));
+            str_ = static_cast<typename Encoding::Ch*>(malloc(details::fixAlign16((length + 1) * sizeof(typename Encoding::Ch))));
             memcpy(const_cast<typename Encoding::Ch*>(str_), str, (length + 1) * sizeof(typename Encoding::Ch));
         }
         else
@@ -1549,7 +1549,8 @@ struct IterativeParsingReaderHandler {
 
 TEST(Reader, IterativeParsing_General) {
     {
-        StringStream is("[1, {\"k\": [1, 2]}, null, false, true, \"string\", 1.2]");
+        static const char kStr[64] = "[1, {\"k\": [1, 2]}, null, false, true, \"string\", 1.2]";
+        StringStream is(kStr);
         Reader reader;
         IterativeParsingReaderHandler<> handler;
 
@@ -1586,7 +1587,8 @@ TEST(Reader, IterativeParsing_General) {
 
 TEST(Reader, IterativeParsing_Count) {
     {
-        StringStream is("[{}, {\"k\": 1}, [1], []]");
+        static const char kStr[64] = "[{}, {\"k\": 1}, [1], []]";
+        StringStream is(kStr);
         Reader reader;
         IterativeParsingReaderHandler<> handler;
 
@@ -1640,7 +1642,8 @@ TEST(Reader, IterativePullParsing_General) {
             handler.LOG_ENDARRAY | 7
         };
 
-        StringStream is("[1, {\"k\": [1, 2]}, null, false, true, \"string\", 1.2]");
+        static const char kStr[64] = "[1, {\"k\": [1, 2]}, null, false, true, \"string\", 1.2]";
+        StringStream is(kStr);
         Reader reader;
 
         reader.IterativeParseInit();
@@ -1685,7 +1688,8 @@ TEST(Reader, IterativeParsing_ShortCircuit) {
     {
         HandlerTerminateAtStartObject handler;
         Reader reader;
-        StringStream is("[1, {}]");
+        static const char kStr[64] = "[1, {}]";
+        StringStream is(kStr);
 
         ParseResult r = reader.Parse<kParseIterativeFlag>(is, handler);
 
@@ -1697,7 +1701,8 @@ TEST(Reader, IterativeParsing_ShortCircuit) {
     {
         HandlerTerminateAtStartArray handler;
         Reader reader;
-        StringStream is("{\"a\": []}");
+        static const char kStr[64] = "{\"a\": []}";
+        StringStream is(kStr);
 
         ParseResult r = reader.Parse<kParseIterativeFlag>(is, handler);
 
@@ -1709,7 +1714,8 @@ TEST(Reader, IterativeParsing_ShortCircuit) {
     {
         HandlerTerminateAtEndObject handler;
         Reader reader;
-        StringStream is("[1, {}]");
+        static const char kStr[64] = "[1, {}]";
+        StringStream is(kStr);
 
         ParseResult r = reader.Parse<kParseIterativeFlag>(is, handler);
 
@@ -1721,7 +1727,8 @@ TEST(Reader, IterativeParsing_ShortCircuit) {
     {
         HandlerTerminateAtEndArray handler;
         Reader reader;
-        StringStream is("{\"a\": []}");
+        static const char kStr[64] = "{\"a\": []}";
+        StringStream is(kStr);
 
         ParseResult r = reader.Parse<kParseIterativeFlag>(is, handler);
 
@@ -1735,7 +1742,8 @@ TEST(Reader, IterativeParsing_ShortCircuit) {
 TEST(Reader, BaseReaderHandler_Default) {
     BaseReaderHandler<> h;
     Reader reader;
-    StringStream is("[null, true, -1, 1, -1234567890123456789, 1234567890123456789, 3.14, \"s\", { \"a\" : 1 }]");
+    static const char kStr[128] = "[null, true, -1, 1, -1234567890123456789, 1234567890123456789, 3.14, \"s\", { \"a\" : 1 }]";
+    StringStream is(kStr);
     EXPECT_TRUE(reader.Parse(is, h));
 }
 
@@ -1761,8 +1769,10 @@ struct TerminateHandler {
 {\
     Reader reader;\
     TerminateHandler<e> h;\
-    StringStream is(json);\
+    char* buffer = StrDup(json);\
+    StringStream is(buffer);\
     EXPECT_FALSE(reader.Parse(is, h));\
+    free(buffer);\
     EXPECT_EQ(kParseErrorTermination, reader.GetParseErrorCode());\
 }
 
@@ -1787,7 +1797,7 @@ TEST(Reader, ParseTerminationByHandler) {
 }
 
 TEST(Reader, ParseComments) {
-    const char* json =
+    const char json[512] =
     "// Here is a one-line comment.\n"
     "{// And here's another one\n"
     "   /*And here's an in-line one.*/\"hello\" : \"world\","
@@ -1805,7 +1815,7 @@ TEST(Reader, ParseComments) {
 }
 
 TEST(Reader, ParseEmptyInlineComment) {
-    const char* json = "{/**/\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
+    const char json[512] = "{/**/\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1815,7 +1825,7 @@ TEST(Reader, ParseEmptyInlineComment) {
 }
 
 TEST(Reader, ParseEmptyOnelineComment) {
-    const char* json = "{//\n\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
+    const char json[512] = "{//\n\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1825,7 +1835,7 @@ TEST(Reader, ParseEmptyOnelineComment) {
 }
 
 TEST(Reader, ParseMultipleCommentsInARow) {
-    const char* json =
+    const char json[512] =
     "{/* first comment *//* second */\n"
     "/* third */ /*fourth*/// last one\n"
     "\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
@@ -1839,7 +1849,7 @@ TEST(Reader, ParseMultipleCommentsInARow) {
 
 TEST(Reader, InlineCommentsAreDisabledByDefault) {
     {
-        const char* json = "{/* Inline comment. */\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
+        const char json[512] = "{/* Inline comment. */\"hello\" : \"world\", \"t\" : true, \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
 
         StringStream s(json);
         ParseObjectHandler h;
@@ -1848,7 +1858,7 @@ TEST(Reader, InlineCommentsAreDisabledByDefault) {
     }
 
     {
-        const char* json =
+        const char json[512] =
         "{\"hello\" : /* Multiline comment starts here\n"
         " continues here\n"
         " and ends here */\"world\", \"t\" :true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
@@ -1861,7 +1871,7 @@ TEST(Reader, InlineCommentsAreDisabledByDefault) {
 }
 
 TEST(Reader, OnelineCommentsAreDisabledByDefault) {
-    const char* json = "{// One-line comment\n\"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
+    const char json[512] = "{// One-line comment\n\"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3] }";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1870,7 +1880,7 @@ TEST(Reader, OnelineCommentsAreDisabledByDefault) {
 }
 
 TEST(Reader, EofAfterOneLineComment) {
-    const char* json = "{\"hello\" : \"world\" // EOF is here -->\0 \n}";
+    const char json[64] = "{\"hello\" : \"world\" // EOF is here -->\0 \n}";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1880,7 +1890,7 @@ TEST(Reader, EofAfterOneLineComment) {
 }
 
 TEST(Reader, IncompleteMultilineComment) {
-    const char* json = "{\"hello\" : \"world\" /* EOF is here -->\0 */}";
+    const char json[64] = "{\"hello\" : \"world\" /* EOF is here -->\0 */}";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1890,7 +1900,7 @@ TEST(Reader, IncompleteMultilineComment) {
 }
 
 TEST(Reader, IncompleteMultilineComment2) {
-    const char* json = "{\"hello\" : \"world\" /* *\0 */}";
+    const char json[64] = "{\"hello\" : \"world\" /* *\0 */}";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1900,7 +1910,7 @@ TEST(Reader, IncompleteMultilineComment2) {
 }
 
 TEST(Reader, UnrecognizedComment) {
-    const char* json = "{\"hello\" : \"world\" /! }";
+    const char json[64] = "{\"hello\" : \"world\" /! }";
 
     StringStream s(json);
     ParseObjectHandler h;
@@ -1941,7 +1951,7 @@ struct NumbersAsStringsHandler {
 
 TEST(Reader, NumbersAsStrings) {
     {
-        const char* json = "{ \"pi\": 3.1416 } ";
+        const char json[64] = "{ \"pi\": 3.1416 } ";
         StringStream s(json);
         NumbersAsStringsHandler h("3.1416");
         Reader reader;
@@ -1956,7 +1966,7 @@ TEST(Reader, NumbersAsStrings) {
         free(json);
     }
     {
-        const char* json = "{ \"gigabyte\": 1.0e9 } ";
+        const char json[64] = "{ \"gigabyte\": 1.0e9 } ";
         StringStream s(json);
         NumbersAsStringsHandler h("1.0e9");
         Reader reader;
@@ -1971,7 +1981,7 @@ TEST(Reader, NumbersAsStrings) {
         free(json);
     }
     {
-        const char* json = "{ \"pi\": 314.159e-2 } ";
+        const char json[64] = "{ \"pi\": 314.159e-2 } ";
         StringStream s(json);
         NumbersAsStringsHandler h("314.159e-2");
         Reader reader;
@@ -1986,7 +1996,7 @@ TEST(Reader, NumbersAsStrings) {
         free(json);
     }
     {
-        const char* json = "{ \"negative\": -1.54321 } ";
+        const char json[64] = "{ \"negative\": -1.54321 } ";
         StringStream s(json);
         NumbersAsStringsHandler h("-1.54321");
         Reader reader;
@@ -2001,7 +2011,7 @@ TEST(Reader, NumbersAsStrings) {
         free(json);
     }
     {
-        const char* json = "{ \"pi\": 314.159e-2 } ";
+        const char json[64] = "{ \"pi\": 314.159e-2 } ";
         std::stringstream ss(json);
         IStreamWrapper s(ss);
         NumbersAsStringsHandler h("314.159e-2");
@@ -2053,7 +2063,7 @@ struct NumbersAsStringsHandlerWChar_t {
 
 TEST(Reader, NumbersAsStringsWChar_t) {
   {
-    const wchar_t* json = L"{ \"pi\": 3.1416 } ";
+    const wchar_t json[64] = L"{ \"pi\": 3.1416 } ";
     GenericStringStream<UTF16<> > s(json);
     NumbersAsStringsHandlerWChar_t h(L"3.1416");
     GenericReader<UTF16<>, UTF16<> > reader;
@@ -2068,7 +2078,7 @@ TEST(Reader, NumbersAsStringsWChar_t) {
     free(json);
   }
   {
-    const wchar_t* json = L"{ \"gigabyte\": 1.0e9 } ";
+    const wchar_t json[64] = L"{ \"gigabyte\": 1.0e9 } ";
     GenericStringStream<UTF16<> > s(json);
     NumbersAsStringsHandlerWChar_t h(L"1.0e9");
     GenericReader<UTF16<>, UTF16<> > reader;
@@ -2083,7 +2093,7 @@ TEST(Reader, NumbersAsStringsWChar_t) {
     free(json);
   }
   {
-    const wchar_t* json = L"{ \"pi\": 314.159e-2 } ";
+    const wchar_t json[64] = L"{ \"pi\": 314.159e-2 } ";
     GenericStringStream<UTF16<> > s(json);
     NumbersAsStringsHandlerWChar_t h(L"314.159e-2");
     GenericReader<UTF16<>, UTF16<> > reader;
@@ -2098,7 +2108,7 @@ TEST(Reader, NumbersAsStringsWChar_t) {
     free(json);
   }
   {
-    const wchar_t* json = L"{ \"negative\": -1.54321 } ";
+    const wchar_t json[64] = L"{ \"negative\": -1.54321 } ";
     GenericStringStream<UTF16<> > s(json);
     NumbersAsStringsHandlerWChar_t h(L"-1.54321");
     GenericReader<UTF16<>, UTF16<> > reader;
@@ -2113,7 +2123,7 @@ TEST(Reader, NumbersAsStringsWChar_t) {
     free(json);
   }
   {
-    const wchar_t* json = L"{ \"pi\": 314.159e-2 } ";
+    const wchar_t json[64] = L"{ \"pi\": 314.159e-2 } ";
     std::wstringstream ss(json);
     WIStreamWrapper s(ss);
     NumbersAsStringsHandlerWChar_t h(L"314.159e-2");
@@ -2136,14 +2146,15 @@ TEST(Reader, NumbersAsStringsWChar_t) {
 template <unsigned extraFlags>
 void TestTrailingCommas() {
     {
-        StringStream s("[1,2,3,]");
+        static const char kStr[64] = "[1,2,3,]";
+        StringStream s(kStr);
         ParseArrayHandler<3> h;
         Reader reader;
         EXPECT_TRUE(reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h));
         EXPECT_EQ(5u, h.step_);
     }
     {
-        const char* json = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
+        const char json[128] = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
                 "\"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3],}";
         StringStream s(json);
         ParseObjectHandler h;
@@ -2153,7 +2164,7 @@ void TestTrailingCommas() {
     }
     {
         // whitespace around trailing commas
-        const char* json = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
+        const char json[128] = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
                 "\"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3\n,\n]\n,\n} ";
         StringStream s(json);
         ParseObjectHandler h;
@@ -2163,7 +2174,7 @@ void TestTrailingCommas() {
     }
     {
         // comments around trailing commas
-        const char* json = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null,"
+        const char json[256] = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null,"
                 "\"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3/*test*/,/*test*/]/*test*/,/*test*/}";
         StringStream s(json);
         ParseObjectHandler h;
@@ -2185,7 +2196,8 @@ template <unsigned extraFlags>
 void TestMultipleTrailingCommaErrors() {
     // only a single trailing comma is allowed.
     {
-        StringStream s("[1,2,3,,]");
+        static const char kStr[64] = "[1,2,3,,]";
+        StringStream s(kStr);
         ParseArrayHandler<3> h;
         Reader reader;
         ParseResult r = reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h);
@@ -2194,7 +2206,7 @@ void TestMultipleTrailingCommaErrors() {
         EXPECT_EQ(7u, r.Offset());
     }
     {
-        const char* json = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
+        const char json[128] = "{ \"hello\" : \"world\", \"t\" : true , \"f\" : false,"
                 "\"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3,],,}";
         StringStream s(json);
         ParseObjectHandler h;
@@ -2219,7 +2231,8 @@ void TestEmptyExceptForCommaErrors() {
     // not allowed even with trailing commas enabled; the
     // trailing comma must follow a value.
     {
-        StringStream s("[,]");
+        static const char kStr[64] = "[,]";
+        StringStream s(kStr);
         ParseArrayHandler<3> h;
         Reader reader;
         ParseResult r = reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h);
@@ -2228,7 +2241,8 @@ void TestEmptyExceptForCommaErrors() {
         EXPECT_EQ(1u, r.Offset());
     }
     {
-        StringStream s("{,}");
+        static const char kStr[64] = "{,}";
+        StringStream s(kStr);
         ParseObjectHandler h;
         Reader reader;
         ParseResult r = reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h);
@@ -2251,7 +2265,8 @@ void TestTrailingCommaHandlerTermination() {
     {
         HandlerTerminateAtEndArray h;
         Reader reader;
-        StringStream s("[1,2,3,]");
+        static const char kStr[64] = "[1,2,3,]";
+        StringStream s(kStr);
         ParseResult r = reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h);
         EXPECT_TRUE(reader.HasParseError());
         EXPECT_EQ(kParseErrorTermination, r.Code());
@@ -2260,7 +2275,8 @@ void TestTrailingCommaHandlerTermination() {
     {
         HandlerTerminateAtEndObject h;
         Reader reader;
-        StringStream s("{\"t\": true, \"f\": false,}");
+        static const char kStr[64] = "{\"t\": true, \"f\": false,}";
+        StringStream s(kStr);
         ParseResult r = reader.Parse<extraFlags|kParseTrailingCommasFlag>(s, h);
         EXPECT_TRUE(reader.HasParseError());
         EXPECT_EQ(kParseErrorTermination, r.Code());
@@ -2280,10 +2296,12 @@ TEST(Reader, ParseNanAndInfinity) {
 #define TEST_NAN_INF(str, x) \
     { \
         { \
+            char* buffer = StrDup(str); \
             StringStream s(str); \
             ParseDoubleHandler h; \
             Reader reader; \
             ASSERT_EQ(kParseErrorNone, reader.Parse<kParseNanAndInfFlag>(s, h).Code()); \
+            free(buffer); \
             EXPECT_EQ(1u, h.step_); \
             internal::Double e(x), a(h.actual_); \
             EXPECT_EQ(e.IsNan(), a.IsNan()); \
@@ -2292,7 +2310,7 @@ TEST(Reader, ParseNanAndInfinity) {
                 EXPECT_EQ(e.Sign(), a.Sign()); \
         } \
         { \
-            const char* json = "{ \"naninfdouble\": " str " } "; \
+            const char json[128] = "{ \"naninfdouble\": " str " } "; \
             StringStream s(json); \
             NumbersAsStringsHandler h(str); \
             Reader reader; \
@@ -2310,7 +2328,7 @@ TEST(Reader, ParseNanAndInfinity) {
 #define TEST_NAN_INF_ERROR(errorCode, str, errorOffset) \
     { \
         unsigned streamPos = errorOffset; \
-        char buffer[1001]; \
+        char buffer[1024]; \
         strncpy(buffer, str, 1000); \
         InsituStringStream s(buffer); \
         BaseReaderHandler<> h; \
@@ -2344,7 +2362,7 @@ TEST(Reader, ParseNanAndInfinity) {
 }
 
 TEST(Reader, EscapedApostrophe) {
-    const char json[] = " { \"foo\": \"bar\\'buzz\" } ";
+    const char json[64] = " { \"foo\": \"bar\\'buzz\" } ";
 
     BaseReaderHandler<> h;
 

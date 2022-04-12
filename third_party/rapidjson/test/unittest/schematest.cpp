@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #define RAPIDJSON_SCHEMA_VERBOSE 0
@@ -21,6 +21,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/error/error.h"
 #include "rapidjson/error/en.h"
+#include "tools/cpp/runfiles/runfiles.h"
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH
@@ -192,7 +193,7 @@ TEST(SchemaValidator, Typeless) {
     Document sd;
     sd.Parse("{}");
     SchemaDocument s(sd);
-    
+
     VALIDATE(s, "42", true);
     VALIDATE(s, "\"I'm a string\"", true);
     VALIDATE(s, "{ \"an\": [ \"arbitrarily\", \"nested\" ], \"data\": \"structure\" }", true);
@@ -200,7 +201,8 @@ TEST(SchemaValidator, Typeless) {
 
 TEST(SchemaValidator, MultiType) {
     Document sd;
-    sd.Parse("{ \"type\": [\"number\", \"string\"] }");
+    static const char kStr[64] = "{ \"type\": [\"number\", \"string\"] }";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "42", true);
@@ -225,7 +227,8 @@ TEST(SchemaValidator, Enum_Typed) {
 
 TEST(SchemaValidator, Enum_Typless) {
     Document sd;
-    sd.Parse("{  \"enum\": [\"red\", \"amber\", \"green\", null, 42] }");
+    static const char kStr[64] = "{  \"enum\": [\"red\", \"amber\", \"green\", null, 42] }";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"red\"", true);
@@ -237,7 +240,8 @@ TEST(SchemaValidator, Enum_Typless) {
 
 TEST(SchemaValidator, Enum_InvalidType) {
     Document sd;
-    sd.Parse("{ \"type\": \"string\", \"enum\": [\"red\", \"amber\", \"green\", null] }");
+    static const char kStr[64] = "{ \"type\": \"string\", \"enum\": [\"red\", \"amber\", \"green\", null] }";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"red\"", true);
@@ -252,7 +256,8 @@ TEST(SchemaValidator, Enum_InvalidType) {
 TEST(SchemaValidator, AllOf) {
     {
         Document sd;
-        sd.Parse("{\"allOf\": [{ \"type\": \"string\" }, { \"type\": \"string\", \"maxLength\": 5 }]}");
+        static const char kStr[128] = "{\"allOf\": [{ \"type\": \"string\" }, { \"type\": \"string\", \"maxLength\": 5 }]}";
+        sd.Parse(kStr);
         SchemaDocument s(sd);
 
         VALIDATE(s, "\"ok\"", true);
@@ -267,7 +272,8 @@ TEST(SchemaValidator, AllOf) {
     }
     {
         Document sd;
-        sd.Parse("{\"allOf\": [{ \"type\": \"string\" }, { \"type\": \"number\" } ] }");
+        static const char kStr[64] = "{\"allOf\": [{ \"type\": \"string\" }, { \"type\": \"number\" } ] }";
+        sd.Parse(kStr);
         SchemaDocument s(sd);
 
         VALIDATE(s, "\"No way\"", false);
@@ -284,7 +290,8 @@ TEST(SchemaValidator, AllOf) {
 
 TEST(SchemaValidator, AnyOf) {
     Document sd;
-    sd.Parse("{\"anyOf\": [{ \"type\": \"string\" }, { \"type\": \"number\" } ] }");
+    static const char kStr[64] = "{\"anyOf\": [{ \"type\": \"string\" }, { \"type\": \"number\" } ] }";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"Yes\"", true);
@@ -310,7 +317,8 @@ TEST(SchemaValidator, AnyOf) {
 
 TEST(SchemaValidator, OneOf) {
     Document sd;
-    sd.Parse("{\"oneOf\": [{ \"type\": \"number\", \"multipleOf\": 5 }, { \"type\": \"number\", \"multipleOf\": 3 } ] }");
+    static const char kStr[128] = "{\"oneOf\": [{ \"type\": \"number\", \"multipleOf\": 5 }, { \"type\": \"number\", \"multipleOf\": 3 } ] }";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "10", true);
@@ -338,7 +346,8 @@ TEST(SchemaValidator, OneOf) {
 
 TEST(SchemaValidator, Not) {
     Document sd;
-    sd.Parse("{\"not\":{ \"type\": \"string\"}}");
+    static const char kStr[64] = "{\"not\":{ \"type\": \"string\"}}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "42", true);
@@ -349,8 +358,7 @@ TEST(SchemaValidator, Not) {
 
 TEST(SchemaValidator, Ref) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[2048] = "{"
         "  \"$schema\": \"http://json-schema.org/draft-04/schema#\","
         ""
         "  \"definitions\": {"
@@ -369,7 +377,8 @@ TEST(SchemaValidator, Ref) {
         "    \"billing_address\": { \"$ref\": \"#/definitions/address\" },"
         "    \"shipping_address\": { \"$ref\": \"#/definitions/address\" }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{\"shipping_address\": {\"street_address\": \"1600 Pennsylvania Avenue NW\", \"city\": \"Washington\", \"state\": \"DC\"}, \"billing_address\": {\"street_address\": \"1st Street SE\", \"city\": \"Washington\", \"state\": \"DC\"} }", true);
@@ -377,8 +386,7 @@ TEST(SchemaValidator, Ref) {
 
 TEST(SchemaValidator, Ref_AllOf) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[2048] = "{"
         "  \"$schema\": \"http://json-schema.org/draft-04/schema#\","
         ""
         "  \"definitions\": {"
@@ -405,7 +413,8 @@ TEST(SchemaValidator, Ref_AllOf) {
         "      ]"
         "    }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "{\"shipping_address\": {\"street_address\": \"1600 Pennsylvania Avenue NW\", \"city\": \"Washington\", \"state\": \"DC\"} }", "/properties/shipping_address", "allOf", "/shipping_address",
@@ -421,7 +430,8 @@ TEST(SchemaValidator, Ref_AllOf) {
 
 TEST(SchemaValidator, String) {
     Document sd;
-    sd.Parse("{\"type\":\"string\"}");
+    static const char kStr[64] = "{\"type\":\"string\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"I'm a string\"", true);
@@ -459,7 +469,8 @@ TEST(SchemaValidator, String) {
 
 TEST(SchemaValidator, String_LengthRange) {
     Document sd;
-    sd.Parse("{\"type\":\"string\",\"minLength\":2,\"maxLength\":3}");
+    static const char kStr[64] = "{\"type\":\"string\",\"minLength\":2,\"maxLength\":3}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "\"A\"", "", "minLength", "",
@@ -481,7 +492,8 @@ TEST(SchemaValidator, String_LengthRange) {
 #if RAPIDJSON_SCHEMA_HAS_REGEX
 TEST(SchemaValidator, String_Pattern) {
     Document sd;
-    sd.Parse("{\"type\":\"string\",\"pattern\":\"^(\\\\([0-9]{3}\\\\))?[0-9]{3}-[0-9]{4}$\"}");
+    static const char kStr[128] = "{\"type\":\"string\",\"pattern\":\"^(\\\\([0-9]{3}\\\\))?[0-9]{3}-[0-9]{4}$\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"555-1212\"", true);
@@ -502,7 +514,8 @@ TEST(SchemaValidator, String_Pattern) {
 
 TEST(SchemaValidator, String_Pattern_Invalid) {
     Document sd;
-    sd.Parse("{\"type\":\"string\",\"pattern\":\"a{0}\"}"); // TODO: report regex is invalid somehow
+    static const char kStr[128] = "{\"type\":\"string\",\"pattern\":\"a{0}\"}";
+    sd.Parse(kStr); // TODO: report regex is invalid somehow
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"\"", true);
@@ -513,7 +526,8 @@ TEST(SchemaValidator, String_Pattern_Invalid) {
 
 TEST(SchemaValidator, Integer) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\"}");
+    static const char kStr[64] = "{\"type\":\"integer\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "42", true);
@@ -538,7 +552,8 @@ TEST(SchemaValidator, Integer) {
 
 TEST(SchemaValidator, Integer_Range) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"minimum\":0,\"maximum\":100,\"exclusiveMaximum\":true}");
+    static const char kStr[128] = "{\"type\":\"integer\",\"minimum\":0,\"maximum\":100,\"exclusiveMaximum\":true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-1", "", "minimum", "",
@@ -566,7 +581,8 @@ TEST(SchemaValidator, Integer_Range) {
 
 TEST(SchemaValidator, Integer_Range64Boundary) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"minimum\":-9223372036854775807,\"maximum\":9223372036854775806}");
+    static const char kStr[128] = "{\"type\":\"integer\",\"minimum\":-9223372036854775807,\"maximum\":9223372036854775806}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-9223372036854775808", "", "minimum", "",
@@ -598,7 +614,8 @@ TEST(SchemaValidator, Integer_Range64Boundary) {
 
 TEST(SchemaValidator, Integer_RangeU64Boundary) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"minimum\":9223372036854775808,\"maximum\":18446744073709551614}");
+    static const char kStr[128] = "{\"type\":\"integer\",\"minimum\":9223372036854775808,\"maximum\":18446744073709551614}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-9223372036854775808", "", "minimum", "",
@@ -655,7 +672,8 @@ TEST(SchemaValidator, Integer_RangeU64Boundary) {
 
 TEST(SchemaValidator, Integer_Range64BoundaryExclusive) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"minimum\":-9223372036854775808,\"maximum\":18446744073709551615,\"exclusiveMinimum\":true,\"exclusiveMaximum\":true}");
+    static const char kStr[256] = "{\"type\":\"integer\",\"minimum\":-9223372036854775808,\"maximum\":18446744073709551615,\"exclusiveMinimum\":true,\"exclusiveMaximum\":true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-9223372036854775808", "", "minimum", "",
@@ -678,7 +696,8 @@ TEST(SchemaValidator, Integer_Range64BoundaryExclusive) {
 
 TEST(SchemaValidator, Integer_MultipleOf) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"multipleOf\":10}");
+    static const char kStr[64] = "{\"type\":\"integer\",\"multipleOf\":10}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "0", true);
@@ -701,7 +720,8 @@ TEST(SchemaValidator, Integer_MultipleOf) {
 
 TEST(SchemaValidator, Integer_MultipleOf64Boundary) {
     Document sd;
-    sd.Parse("{\"type\":\"integer\",\"multipleOf\":18446744073709551615}");
+    static const char kStr[64] = "{\"type\":\"integer\",\"multipleOf\":18446744073709551615}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "0", true);
@@ -716,7 +736,8 @@ TEST(SchemaValidator, Integer_MultipleOf64Boundary) {
 
 TEST(SchemaValidator, Number_Range) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"minimum\":0,\"maximum\":100,\"exclusiveMaximum\":true}");
+    static const char kStr[128] = "{\"type\":\"number\",\"minimum\":0,\"maximum\":100,\"exclusiveMaximum\":true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-1", "", "minimum", "",
@@ -752,7 +773,8 @@ TEST(SchemaValidator, Number_Range) {
 
 TEST(SchemaValidator, Number_RangeInt) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"minimum\":-100,\"maximum\":-1,\"exclusiveMaximum\":true}");
+    static const char kStr[128] = "{\"type\":\"number\",\"minimum\":-100,\"maximum\":-1,\"exclusiveMaximum\":true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-101", "", "minimum", "",
@@ -827,7 +849,8 @@ TEST(SchemaValidator, Number_RangeInt) {
 
 TEST(SchemaValidator, Number_RangeDouble) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"minimum\":0.1,\"maximum\":100.1,\"exclusiveMaximum\":true}");
+    static const char kStr[128] = "{\"type\":\"number\",\"minimum\":0.1,\"maximum\":100.1,\"exclusiveMaximum\":true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-9223372036854775808", "", "minimum", "",
@@ -916,7 +939,8 @@ TEST(SchemaValidator, Number_RangeDouble) {
 
 TEST(SchemaValidator, Number_RangeDoubleU64Boundary) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"minimum\":9223372036854775808.0,\"maximum\":18446744073709550000.0}");
+    static const char kStr[128] = "{\"type\":\"number\",\"minimum\":9223372036854775808.0,\"maximum\":18446744073709550000.0}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "-9223372036854775808", "", "minimum", "",
@@ -967,7 +991,8 @@ TEST(SchemaValidator, Number_RangeDoubleU64Boundary) {
 
 TEST(SchemaValidator, Number_MultipleOf) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"multipleOf\":10.0}");
+    static const char kStr[64] = "{\"type\":\"number\",\"multipleOf\":10.0}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "0", true);
@@ -1011,7 +1036,8 @@ TEST(SchemaValidator, Number_MultipleOf) {
 
 TEST(SchemaValidator, Number_MultipleOfOne) {
     Document sd;
-    sd.Parse("{\"type\":\"number\",\"multipleOf\":1}");
+    static const char kStr[64] = "{\"type\":\"number\",\"multipleOf\":1}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "42", true);
@@ -1026,11 +1052,12 @@ TEST(SchemaValidator, Number_MultipleOfOne) {
 
 TEST(SchemaValidator, Object) {
     Document sd;
-    sd.Parse("{\"type\":\"object\"}");
+    static const char kStr[64] = "{\"type\":\"object\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{\"key\":\"value\",\"another_key\":\"another_value\"}", true);
-    VALIDATE(s, "{\"Sun\":1.9891e30,\"Jupiter\":1.8986e27,\"Saturn\":5.6846e26,\"Neptune\":10.243e25,\"Uranus\":8.6810e25,\"Earth\":5.9736e24,\"Venus\":4.8685e24,\"Mars\":6.4185e23,\"Mercury\":3.3022e23,\"Moon\":7.349e22,\"Pluto\":1.25e22}", true);    
+    VALIDATE(s, "{\"Sun\":1.9891e30,\"Jupiter\":1.8986e27,\"Saturn\":5.6846e26,\"Neptune\":10.243e25,\"Uranus\":8.6810e25,\"Earth\":5.9736e24,\"Venus\":4.8685e24,\"Mars\":6.4185e23,\"Mercury\":3.3022e23,\"Moon\":7.349e22,\"Pluto\":1.25e22}", true);
     INVALIDATE(s, "[\"An\", \"array\", \"not\", \"an\", \"object\"]", "", "type", "",
         "{ \"type\": {"
         "    \"errorCode\": 20,"
@@ -1047,15 +1074,15 @@ TEST(SchemaValidator, Object) {
 
 TEST(SchemaValidator, Object_Properties) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "    \"properties\" : {"
         "        \"number\": { \"type\": \"number\" },"
         "        \"street_name\" : { \"type\": \"string\" },"
         "        \"street_type\" : { \"type\": \"string\", \"enum\" : [\"Street\", \"Avenue\", \"Boulevard\"] }"
         "    }"
-        "}");
+        "}";
+    sd.Parse(kStr);
 
     SchemaDocument s(sd);
 
@@ -1080,8 +1107,7 @@ TEST(SchemaValidator, Object_Properties) {
 
 TEST(SchemaValidator, Object_AdditionalPropertiesBoolean) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "        \"properties\" : {"
         "        \"number\": { \"type\": \"number\" },"
@@ -1091,7 +1117,8 @@ TEST(SchemaValidator, Object_AdditionalPropertiesBoolean) {
         "        }"
         "    },"
         "    \"additionalProperties\": false"
-        "}");
+        "}";
+    sd.Parse(kStr);
 
     SchemaDocument s(sd);
 
@@ -1106,8 +1133,7 @@ TEST(SchemaValidator, Object_AdditionalPropertiesBoolean) {
 
 TEST(SchemaValidator, Object_AdditionalPropertiesObject) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "    \"properties\" : {"
         "        \"number\": { \"type\": \"number\" },"
@@ -1117,7 +1143,8 @@ TEST(SchemaValidator, Object_AdditionalPropertiesObject) {
         "        }"
         "    },"
         "    \"additionalProperties\": { \"type\": \"string\" }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"number\": 1600, \"street_name\": \"Pennsylvania\", \"street_type\": \"Avenue\" }", true);
@@ -1132,8 +1159,7 @@ TEST(SchemaValidator, Object_AdditionalPropertiesObject) {
 
 TEST(SchemaValidator, Object_Required) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "    \"properties\" : {"
         "        \"name\":      { \"type\": \"string\" },"
@@ -1142,7 +1168,8 @@ TEST(SchemaValidator, Object_Required) {
         "        \"telephone\" : { \"type\": \"string\" }"
         "    },"
         "    \"required\":[\"name\", \"email\"]"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"name\": \"William Shakespeare\", \"email\" : \"bill@stratford-upon-avon.co.uk\" }", true);
@@ -1163,8 +1190,7 @@ TEST(SchemaValidator, Object_Required) {
 
 TEST(SchemaValidator, Object_Required_PassWithDefault) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "    \"properties\" : {"
         "        \"name\":      { \"type\": \"string\", \"default\": \"William Shakespeare\" },"
@@ -1173,7 +1199,8 @@ TEST(SchemaValidator, Object_Required_PassWithDefault) {
         "        \"telephone\" : { \"type\": \"string\" }"
         "    },"
         "    \"required\":[\"name\", \"email\"]"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"email\" : \"bill@stratford-upon-avon.co.uk\", \"address\" : \"Henley Street, Stratford-upon-Avon, Warwickshire, England\", \"authorship\" : \"in question\"}", true);
@@ -1193,7 +1220,8 @@ TEST(SchemaValidator, Object_Required_PassWithDefault) {
 
 TEST(SchemaValidator, Object_PropertiesRange) {
     Document sd;
-    sd.Parse("{\"type\":\"object\", \"minProperties\":2, \"maxProperties\":3}");
+    static const char kStr[64] = "{\"type\":\"object\", \"minProperties\":2, \"maxProperties\":3}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "{}", "", "minProperties", "",
@@ -1220,8 +1248,7 @@ TEST(SchemaValidator, Object_PropertiesRange) {
 
 TEST(SchemaValidator, Object_PropertyDependencies) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"properties\": {"
         "    \"name\": { \"type\": \"string\" },"
@@ -1233,7 +1260,8 @@ TEST(SchemaValidator, Object_PropertyDependencies) {
         "  \"dependencies\": {"
         "    \"credit_card\": [\"cvv_code\", \"billing_address\"]"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"name\": \"John Doe\", \"credit_card\": 5555555555555555, \"cvv_code\": 777, "
@@ -1256,8 +1284,7 @@ TEST(SchemaValidator, Object_PropertyDependencies) {
 
 TEST(SchemaValidator, Object_SchemaDependencies) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "    \"type\": \"object\","
         "    \"properties\" : {"
         "        \"name\": { \"type\": \"string\" },"
@@ -1272,7 +1299,8 @@ TEST(SchemaValidator, Object_SchemaDependencies) {
         "            \"required\" : [\"billing_address\"]"
         "        }"
         "    }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{\"name\": \"John Doe\", \"credit_card\" : 5555555555555555,\"billing_address\" : \"555 Debtor's Lane\"}", true);
@@ -1294,14 +1322,14 @@ TEST(SchemaValidator, Object_SchemaDependencies) {
 #if RAPIDJSON_SCHEMA_HAS_REGEX
 TEST(SchemaValidator, Object_PatternProperties) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"patternProperties\": {"
         "    \"^S_\": { \"type\": \"string\" },"
         "    \"^I_\": { \"type\": \"integer\" }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"S_25\": \"This is a string\" }", true);
@@ -1323,14 +1351,14 @@ TEST(SchemaValidator, Object_PatternProperties) {
 
 TEST(SchemaValidator, Object_PatternProperties_ErrorConflict) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"patternProperties\": {"
         "    \"^I_\": { \"multipleOf\": 5 },"
         "    \"30$\": { \"multipleOf\": 6 }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"I_30\": 30 }", true);
@@ -1350,8 +1378,7 @@ TEST(SchemaValidator, Object_PatternProperties_ErrorConflict) {
 
 TEST(SchemaValidator, Object_Properties_PatternProperties) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"properties\": {"
         "    \"I_42\": { \"type\": \"integer\", \"minimum\": 73 }"
@@ -1359,7 +1386,8 @@ TEST(SchemaValidator, Object_Properties_PatternProperties) {
         "  \"patternProperties\": {"
         "    \"^I_\": { \"type\": \"integer\", \"multipleOf\": 6 }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"I_6\": 6 }", true);
@@ -1386,8 +1414,7 @@ TEST(SchemaValidator, Object_Properties_PatternProperties) {
 
 TEST(SchemaValidator, Object_PatternProperties_AdditionalPropertiesObject) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"properties\": {"
         "    \"builtin\": { \"type\": \"number\" }"
@@ -1397,7 +1424,8 @@ TEST(SchemaValidator, Object_PatternProperties_AdditionalPropertiesObject) {
         "    \"^I_\": { \"type\": \"integer\" }"
         "  },"
         "  \"additionalProperties\": { \"type\": \"string\" }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"builtin\": 42 }", true);
@@ -1413,15 +1441,15 @@ TEST(SchemaValidator, Object_PatternProperties_AdditionalPropertiesObject) {
 // Replaces test Issue285 and tests failure as well as success
 TEST(SchemaValidator, Object_PatternProperties_AdditionalPropertiesBoolean) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[512] = "{"
         "  \"type\": \"object\","
         "  \"patternProperties\": {"
         "    \"^S_\": { \"type\": \"string\" },"
         "    \"^I_\": { \"type\": \"integer\" }"
         "  },"
         "  \"additionalProperties\": false"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"S_25\": \"This is a string\" }", true);
@@ -1437,7 +1465,8 @@ TEST(SchemaValidator, Object_PatternProperties_AdditionalPropertiesBoolean) {
 
 TEST(SchemaValidator, Array) {
     Document sd;
-    sd.Parse("{\"type\":\"array\"}");
+    static const char kStr[64] = "{\"type\":\"array\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[1, 2, 3, 4, 5]", true);
@@ -1452,13 +1481,13 @@ TEST(SchemaValidator, Array) {
 
 TEST(SchemaValidator, Array_ItemsList) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[128] = "{"
         "    \"type\": \"array\","
         "    \"items\" : {"
         "        \"type\": \"number\""
         "    }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[1, 2, 3, 4, 5]", true);
@@ -1473,8 +1502,7 @@ TEST(SchemaValidator, Array_ItemsList) {
 
 TEST(SchemaValidator, Array_ItemsTuple) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[1024] = "{"
         "  \"type\": \"array\","
         "  \"items\": ["
         "    {"
@@ -1492,7 +1520,8 @@ TEST(SchemaValidator, Array_ItemsTuple) {
         "      \"enum\": [\"NW\", \"NE\", \"SW\", \"SE\"]"
         "    }"
         "  ]"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[1600, \"Pennsylvania\", \"Avenue\", \"NW\"]", true);
@@ -1516,8 +1545,7 @@ TEST(SchemaValidator, Array_ItemsTuple) {
 
 TEST(SchemaValidator, Array_AdditionalItems) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[1024] = "{"
         "  \"type\": \"array\","
         "  \"items\": ["
         "    {"
@@ -1536,7 +1564,8 @@ TEST(SchemaValidator, Array_AdditionalItems) {
         "    }"
         "  ],"
         "  \"additionalItems\": false"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[1600, \"Pennsylvania\", \"Avenue\", \"NW\"]", true);
@@ -1551,7 +1580,8 @@ TEST(SchemaValidator, Array_AdditionalItems) {
 
 TEST(SchemaValidator, Array_ItemsRange) {
     Document sd;
-    sd.Parse("{\"type\": \"array\",\"minItems\": 2,\"maxItems\" : 3}");
+    static const char kStr[64] = "{\"type\": \"array\",\"minItems\": 2,\"maxItems\" : 3}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     INVALIDATE(s, "[]", "", "minItems", "",
@@ -1578,7 +1608,8 @@ TEST(SchemaValidator, Array_ItemsRange) {
 
 TEST(SchemaValidator, Array_UniqueItems) {
     Document sd;
-    sd.Parse("{\"type\": \"array\", \"uniqueItems\": true}");
+    static const char kStr[64] = "{\"type\": \"array\", \"uniqueItems\": true}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[1, 2, 3, 4, 5]", true);
@@ -1599,7 +1630,8 @@ TEST(SchemaValidator, Array_UniqueItems) {
 
 TEST(SchemaValidator, Boolean) {
     Document sd;
-    sd.Parse("{\"type\":\"boolean\"}");
+    static const char kStr[64] = "{\"type\":\"boolean\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "true", true);
@@ -1620,7 +1652,8 @@ TEST(SchemaValidator, Boolean) {
 
 TEST(SchemaValidator, Null) {
     Document sd;
-    sd.Parse("{\"type\":\"null\"}");
+    static const char kStr[64] = "{\"type\":\"null\"}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "null", true);
@@ -1648,7 +1681,8 @@ TEST(SchemaValidator, Null) {
 
 TEST(SchemaValidator, ObjectInArray) {
     Document sd;
-    sd.Parse("{\"type\":\"array\", \"items\": { \"type\":\"string\" }}");
+    static const char kStr[64] = "{\"type\":\"array\", \"items\": { \"type\":\"string\" }}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "[\"a\"]", true);
@@ -1668,15 +1702,15 @@ TEST(SchemaValidator, ObjectInArray) {
 
 TEST(SchemaValidator, MultiTypeInObject) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[128] = "{"
         "    \"type\":\"object\","
         "    \"properties\": {"
         "        \"tel\" : {"
         "            \"type\":[\"integer\", \"string\"]"
         "        }"
         "    }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "{ \"tel\": 999 }", true);
@@ -1691,15 +1725,15 @@ TEST(SchemaValidator, MultiTypeInObject) {
 
 TEST(SchemaValidator, MultiTypeWithObject) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[128] = "{"
         "    \"type\": [\"object\",\"string\"],"
         "    \"properties\": {"
         "        \"tel\" : {"
         "            \"type\": \"integer\""
         "        }"
         "    }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"Hello\"", true);
@@ -1714,14 +1748,14 @@ TEST(SchemaValidator, MultiTypeWithObject) {
 
 TEST(SchemaValidator, AllOf_Nested) {
     Document sd;
-    sd.Parse(
-    "{"
+    static const char kStr[256] = "{"
     "    \"allOf\": ["
     "        { \"type\": \"string\", \"minLength\": 2 },"
     "        { \"type\": \"string\", \"maxLength\": 5 },"
     "        { \"allOf\": [ { \"enum\" : [\"ok\", \"okay\", \"OK\", \"o\"] }, { \"enum\" : [\"ok\", \"OK\", \"o\"]} ] }"
     "    ]"
-    "}");
+    "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
 
     VALIDATE(s, "\"ok\"", true);
@@ -1796,13 +1830,13 @@ TEST(SchemaValidator, AllOf_Nested) {
 
 TEST(SchemaValidator, EscapedPointer) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[128] = "{"
         "  \"type\": \"object\","
         "  \"properties\": {"
         "    \"~/\": { \"type\": \"number\" }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s(sd);
     INVALIDATE(s, "{\"~/\":true}", "/properties/~0~1", "type", "/~0~1",
         "{ \"type\": {"
@@ -1814,8 +1848,7 @@ TEST(SchemaValidator, EscapedPointer) {
 
 TEST(SchemaValidator, SchemaPointer) {
     Document sd;
-    sd.Parse(
-        "{"
+    static const char kStr[2048] = "{"
         "  \"swagger\": \"2.0\","
         "  \"paths\": {"
         "    \"/some/path\": {"
@@ -1897,7 +1930,8 @@ TEST(SchemaValidator, SchemaPointer) {
         "      \"type\": \"object\""
         "    }"
         "  }"
-        "}");
+        "}";
+    sd.Parse(kStr);
     SchemaDocument s1(sd, NULL, 0, NULL, NULL, Pointer("#/paths/~1some~1path/post/parameters/0/schema"));
     VALIDATE(s1,
         "{"
@@ -1997,22 +2031,17 @@ TEST(SchemaValidator, SchemaPointer) {
 
 template <typename Allocator>
 static char* ReadFile(const char* filename, Allocator& allocator) {
-    const char *paths[] = {
-        "",
-        "bin/",
-        "../bin/",
-        "../../bin/",
-        "../../../bin/"
-    };
-    char buffer[1024];
-    FILE *fp = 0;
-    for (size_t i = 0; i < sizeof(paths) / sizeof(paths[0]); i++) {
-        sprintf(buffer, "%s%s", paths[i], filename);
-        fp = fopen(buffer, "rb");
-        if (fp)
-            break;
-    }
+    using bazel::tools::cpp::runfiles::Runfiles;
+    std::string error;
+    std::unique_ptr<Runfiles> runfiles(Runfiles::CreateForTest(&error));
+    assert(runfiles);
+    static constexpr char kPathPrefix[] =
+        "com_github_hcoona_one/third_party/rapidjson/bin/";
+    std::string rfilename =
+        runfiles->Rlocation(std::string(kPathPrefix) + filename);
 
+    FILE *fp = fopen(rfilename.c_str(), "rb");
+    assert(fp != 0);
     if (!fp)
         return 0;
 
@@ -2089,9 +2118,9 @@ TEST(SchemaValidator, ValidateMetaSchema_UTF16) {
 template <typename SchemaDocumentType = SchemaDocument>
 class RemoteSchemaDocumentProvider : public IGenericRemoteSchemaDocumentProvider<SchemaDocumentType> {
 public:
-    RemoteSchemaDocumentProvider() : 
-        documentAllocator_(documentBuffer_, sizeof(documentBuffer_)), 
-        schemaAllocator_(schemaBuffer_, sizeof(schemaBuffer_)) 
+    RemoteSchemaDocumentProvider() :
+        documentAllocator_(documentBuffer_, sizeof(documentBuffer_)),
+        schemaAllocator_(schemaBuffer_, sizeof(schemaBuffer_))
     {
         const char* filenames[kCount] = {
             "jsonschema/remotes/integer.json",
@@ -2402,11 +2431,11 @@ TEST(SchemaValidator, Issue1017_allOfHandler) {
     GenericSchemaValidator<SchemaDocument, Writer<StringBuffer> > validator(s, writer);
     EXPECT_TRUE(validator.StartObject());
     EXPECT_TRUE(validator.Key("cyanArray2", 10, false));
-    EXPECT_TRUE(validator.StartArray());    
-    EXPECT_TRUE(validator.EndArray(0));    
+    EXPECT_TRUE(validator.StartArray());
+    EXPECT_TRUE(validator.EndArray(0));
     EXPECT_TRUE(validator.Key("blackArray", 10, false));
-    EXPECT_TRUE(validator.StartArray());    
-    EXPECT_TRUE(validator.EndArray(0));    
+    EXPECT_TRUE(validator.StartArray());
+    EXPECT_TRUE(validator.EndArray(0));
     EXPECT_TRUE(validator.EndObject(0));
     EXPECT_TRUE(validator.IsValid());
     EXPECT_STREQ("{\"cyanArray2\":[],\"blackArray\":[]}", sb.GetString());
