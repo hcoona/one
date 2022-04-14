@@ -289,5 +289,7 @@ CheckOptions:
     value:           '1'
   - key:             readability-uppercase-literal-suffix.NewSuffixes
     value:           ''
+  - key:             readability-identifier-length.IgnoredVariableNames
+    value:           's'
 ...
 
