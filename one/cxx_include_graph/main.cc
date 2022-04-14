@@ -71,6 +71,8 @@ int main(int argc, char* argv[]) {
   // TODO(zhangshuai.ds): Generate including results via -E -MM -MF
   // <output_file>.
   //
+  // TODO(zhangshuai.ds): Consider -H option for printing direct includes.
+  //
   // TODO(zhangshuai.ds): consider about modify from
   // https://github.com/llvm/llvm-project/blob/llvmorg-14.0.1/clang/tools/clang-scan-deps/ClangScanDeps.cpp
   //
