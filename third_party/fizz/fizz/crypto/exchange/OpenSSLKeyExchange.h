@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/crypto/exchange/KeyExchange.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "fizz/crypto/exchange/KeyExchange.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace fizz {
 
@@ -45,4 +45,4 @@ class OpenSSLECKeyExchange : public KeyExchange {
 };
 } // namespace fizz
 
-#include <fizz/crypto/exchange/OpenSSLKeyExchange-inl.h>
+#include "fizz/crypto/exchange/OpenSSLKeyExchange-inl.h"

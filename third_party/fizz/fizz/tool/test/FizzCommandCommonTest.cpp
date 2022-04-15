@@ -6,11 +6,11 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
-#include <fizz/tool/FizzCommandCommon.h>
-#include <folly/container/Array.h>
+#include "fizz/tool/FizzCommandCommon.h"
+#include "folly/container/Array.h"
 
 namespace fizz {
 namespace tool {

@@ -35,7 +35,7 @@
  *    3) Only supported AES-128-GCM
  */
 
-#include <folly/CPortability.h>
+#include "folly/CPortability.h"
 
 #if defined(__linux__) && !FOLLY_MOBILE
 #include <linux/version.h>

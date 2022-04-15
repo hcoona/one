@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
-#include <folly/io/IOBufQueue.h>
+#include "fizz/record/Types.h"
+#include "folly/io/IOBufQueue.h"
 #include <algorithm>
 #include <utility>
 

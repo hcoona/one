@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/server/MultiServerExtensions.h>
+#include "fizz/server/MultiServerExtensions.h"
 
 using fizz::server::MultiServerExtensions;
 

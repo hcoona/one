@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/client/SynchronizedLruPskCache.h>
+#include "fizz/client/SynchronizedLruPskCache.h"
 
 namespace fizz {
 namespace client {

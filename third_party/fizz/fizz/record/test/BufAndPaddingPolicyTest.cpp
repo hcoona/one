@@ -6,9 +6,9 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/record/BufAndPaddingPolicy.h>
+#include "fizz/record/BufAndPaddingPolicy.h"
 
 using namespace folly;
 

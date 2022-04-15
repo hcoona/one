@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/Params.h>
+#include "fizz/protocol/Params.h"
 
 namespace fizz {
 Event EventVisitor::operator()(const Param& param) const {

@@ -6,8 +6,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/extensions/javacrypto/JavaCryptoCertificateVerifier.h>
-#include <folly/ssl/OpenSSLCertUtils.h>
+#include "fizz/extensions/javacrypto/JavaCryptoCertificateVerifier.h"
+#include "folly/ssl/OpenSSLCertUtils.h"
 
 namespace fizz {
 

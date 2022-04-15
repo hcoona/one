@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/protocol/ech/Encryption.h>
-#include <fizz/protocol/ech/Types.h>
+#include "fizz/protocol/ech/Encryption.h"
+#include "fizz/protocol/ech/Types.h"
 
 namespace fizz {
 namespace ech {

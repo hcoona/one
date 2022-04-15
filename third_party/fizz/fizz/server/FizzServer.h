@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/protocol/FizzBase.h>
-#include <fizz/server/FizzServerContext.h>
-#include <fizz/server/ServerProtocol.h>
+#include "fizz/protocol/FizzBase.h"
+#include "fizz/server/FizzServerContext.h"
+#include "fizz/server/ServerProtocol.h"
 
 namespace fizz {
 namespace server {
@@ -59,4 +59,4 @@ class FizzServer : public FizzBase<
 } // namespace server
 } // namespace fizz
 
-#include <fizz/server/FizzServer-inl.h>
+#include "fizz/server/FizzServer-inl.h"

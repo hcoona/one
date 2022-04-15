@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
-#include <folly/Range.h>
+#include "fizz/record/Types.h"
+#include "folly/Range.h"
 #include <jni.h>
 
 namespace fizz {

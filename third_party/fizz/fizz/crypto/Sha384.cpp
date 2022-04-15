@@ -6,6 +6,6 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/Sha384.h>
+#include "fizz/crypto/Sha384.h"
 
 constexpr folly::StringPiece fizz::Sha384::BlankHash;

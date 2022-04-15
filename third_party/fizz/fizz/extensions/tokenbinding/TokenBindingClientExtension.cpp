@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/extensions/tokenbinding/TokenBindingClientExtension.h>
+#include "fizz/extensions/tokenbinding/TokenBindingClientExtension.h"
 
 namespace fizz {
 namespace extensions {

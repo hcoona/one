@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/crypto/Sha256.h>
-#include <fizz/record/Types.h>
+#include "fizz/crypto/Sha256.h"
+#include "fizz/record/Types.h"
 
 namespace fizz {
 

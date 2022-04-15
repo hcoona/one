@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/extensions/tokenbinding/Types.h>
+#include "fizz/extensions/tokenbinding/Types.h"
 
 namespace fizz {
 namespace extensions {

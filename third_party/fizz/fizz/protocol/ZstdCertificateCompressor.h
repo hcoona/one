@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/protocol/CertificateCompressor.h>
+#include "fizz/protocol/CertificateCompressor.h"
 
 namespace fizz {
 class ZstdCertificateCompressor : public CertificateCompressor {

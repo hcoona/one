@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/client/MultiClientExtensions.h>
+#include "fizz/client/MultiClientExtensions.h"
 
 namespace fizz {
 namespace client {

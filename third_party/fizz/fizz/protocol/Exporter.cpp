@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/Exporter.h>
+#include "fizz/protocol/Exporter.h"
 
 namespace fizz {
 

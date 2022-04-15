@@ -6,9 +6,9 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/experimental/protocol/BatchSignatureTypes.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "fizz/experimental/protocol/BatchSignatureTypes.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
 namespace fizz {
 namespace test {

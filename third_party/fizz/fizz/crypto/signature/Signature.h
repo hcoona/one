@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <fizz/crypto/openssl/OpenSSL.h>
-#include <fizz/record/Types.h>
-#include <folly/Range.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "fizz/crypto/openssl/OpenSSL.h"
+#include "fizz/record/Types.h"
+#include "folly/Range.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace fizz {
 
@@ -65,4 +65,4 @@ class OpenSSLSignature<KeyType::ED25519> {
 
 } // namespace fizz
 
-#include <fizz/crypto/signature/Signature-inl.h>
+#include "fizz/crypto/signature/Signature-inl.h"

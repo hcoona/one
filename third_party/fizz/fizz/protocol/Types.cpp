@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/Types.h>
+#include "fizz/protocol/Types.h"
 
 namespace fizz {
 

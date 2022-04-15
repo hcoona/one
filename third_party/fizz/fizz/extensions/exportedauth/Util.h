@@ -8,9 +8,9 @@
 
 #include <tuple>
 
-#include <fizz/crypto/KeyDerivation.h>
-#include <fizz/protocol/Certificate.h>
-#include <fizz/record/Types.h>
+#include "fizz/crypto/KeyDerivation.h"
+#include "fizz/protocol/Certificate.h"
+#include "fizz/record/Types.h"
 
 namespace fizz {
 namespace detail {

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/protocol/clock/Clock.h>
+#include "fizz/protocol/clock/Clock.h"
 
 namespace fizz {
 

@@ -6,9 +6,9 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/extensions/exportedauth/ExportedAuthenticator.h>
-#include <fizz/extensions/exportedauth/Util.h>
-#include <fizz/protocol/OpenSSLFactory.h>
+#include "fizz/extensions/exportedauth/ExportedAuthenticator.h"
+#include "fizz/extensions/exportedauth/Util.h"
+#include "fizz/protocol/OpenSSLFactory.h"
 
 namespace fizz {
 

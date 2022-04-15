@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <openssl/evp.h>
+#include "openssl/evp.h"
 
 namespace fizz {
 

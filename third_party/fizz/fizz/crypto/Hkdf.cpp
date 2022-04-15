@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/Hkdf.h>
+#include "fizz/crypto/Hkdf.h"
 
 namespace fizz {
 

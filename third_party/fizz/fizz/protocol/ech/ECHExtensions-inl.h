@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
+#include "fizz/record/Types.h"
 #include <vector>
 
 namespace fizz {

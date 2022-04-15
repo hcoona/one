@@ -7,8 +7,8 @@
  */
 #pragma once
 
-#include <fizz/client/ClientExtensions.h>
-#include <fizz/extensions/delegatedcred/Types.h>
+#include "fizz/client/ClientExtensions.h"
+#include "fizz/extensions/delegatedcred/Types.h"
 
 namespace fizz {
 namespace extensions {

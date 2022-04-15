@@ -6,10 +6,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/extensions/delegatedcred/DelegatedCredentialUtils.h>
-#include <fizz/tool/FizzCommandCommon.h>
-#include <fizz/util/Parse.h>
-#include <folly/FileUtil.h>
+#include "fizz/extensions/delegatedcred/DelegatedCredentialUtils.h"
+#include "fizz/tool/FizzCommandCommon.h"
+#include "fizz/util/Parse.h"
+#include "folly/FileUtil.h"
 
 using namespace fizz::extensions;
 using namespace folly;

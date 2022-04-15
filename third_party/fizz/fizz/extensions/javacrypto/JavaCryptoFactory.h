@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/extensions/javacrypto/JavaCryptoPeerCert.h>
-#include <fizz/protocol/OpenSSLFactory.h>
+#include "fizz/extensions/javacrypto/JavaCryptoPeerCert.h"
+#include "fizz/protocol/OpenSSLFactory.h"
 
 namespace fizz {
 

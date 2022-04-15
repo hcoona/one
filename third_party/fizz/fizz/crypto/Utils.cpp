@@ -6,11 +6,11 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/Utils.h>
+#include "fizz/crypto/Utils.h"
 
 #include <sodium.h>
 
-#include <folly/ssl/Init.h>
+#include "folly/ssl/Init.h"
 
 namespace {
 

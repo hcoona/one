@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <folly/Range.h>
-#include <folly/io/IOBuf.h>
-#include <folly/ssl/OpenSSLHash.h>
+#include "folly/Range.h"
+#include "folly/io/IOBuf.h"
+#include "folly/ssl/OpenSSLHash.h"
 
 namespace fizz {
 
@@ -50,4 +50,4 @@ class Sha {
   folly::ssl::OpenSSLHash::Digest digest_;
 };
 } // namespace fizz
-#include <fizz/crypto/Sha-inl.h>
+#include "fizz/crypto/Sha-inl.h"

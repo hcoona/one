@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
-#include <folly/Optional.h>
+#include "fizz/record/Types.h"
+#include "folly/Optional.h"
 
 namespace fizz {
 
@@ -167,4 +167,4 @@ std::vector<Extension>::const_iterator findExtension(
 size_t getBinderLength(const ClientHello& chlo);
 } // namespace fizz
 
-#include <fizz/record/Extensions-inl.h>
+#include "fizz/record/Extensions-inl.h"

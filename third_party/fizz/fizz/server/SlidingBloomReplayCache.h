@@ -12,11 +12,11 @@
 #include <memory>
 #include <vector>
 
-#include <fizz/server/ReplayCache.h>
+#include "fizz/server/ReplayCache.h"
 
-#include <folly/io/async/AsyncTimeout.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/io/async/ScopedEventBaseThread.h>
+#include "folly/io/async/AsyncTimeout.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/io/async/ScopedEventBaseThread.h"
 
 namespace fizz {
 namespace server {

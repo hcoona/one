@@ -6,9 +6,9 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/crypto/signature/Signature.h>
+#include "fizz/crypto/signature/Signature.h"
 
 using namespace folly;
 using namespace folly::ssl;

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/server/TicketCipher.h>
+#include "fizz/server/TicketCipher.h"
 
 namespace fizz {
 namespace server {

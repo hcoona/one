@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/protocol/Certificate.h>
-#include <folly/futures/Future.h>
+#include "fizz/protocol/Certificate.h"
+#include "folly/futures/Future.h"
 
 namespace fizz {
 namespace server {

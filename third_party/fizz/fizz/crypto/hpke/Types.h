@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <folly/io/IOBuf.h>
+#include "folly/io/IOBuf.h"
 
 namespace fizz {
 namespace hpke {

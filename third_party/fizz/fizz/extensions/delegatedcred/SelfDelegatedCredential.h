@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include <fizz/extensions/delegatedcred/Types.h>
-#include <fizz/protocol/Certificate.h>
+#include "fizz/extensions/delegatedcred/Types.h"
+#include "fizz/protocol/Certificate.h"
 
 namespace fizz {
 namespace extensions {
@@ -81,4 +81,4 @@ class SelfDelegatedCredentialImpl : public SelfDelegatedCredential {
 } // namespace extensions
 } // namespace fizz
 
-#include <fizz/extensions/delegatedcred/SelfDelegatedCredential-inl.h>
+#include "fizz/extensions/delegatedcred/SelfDelegatedCredential-inl.h"

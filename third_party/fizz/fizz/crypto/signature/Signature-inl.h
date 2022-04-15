@@ -6,9 +6,9 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/openssl/OpenSSLKeyUtils.h>
-#include <folly/io/IOBuf.h>
-#include <folly/lang/Assume.h>
+#include "fizz/crypto/openssl/OpenSSLKeyUtils.h"
+#include "folly/io/IOBuf.h"
+#include "folly/lang/Assume.h"
 
 namespace fizz {
 

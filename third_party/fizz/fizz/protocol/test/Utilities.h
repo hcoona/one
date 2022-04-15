@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/protocol/Certificate.h>
+#include "fizz/protocol/Certificate.h"
 
 namespace fizz {
 namespace test {

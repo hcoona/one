@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/protocol/Factory.h>
-#include <fizz/protocol/Params.h>
-#include <fizz/util/Variant.h>
+#include "fizz/protocol/Factory.h"
+#include "fizz/protocol/Params.h"
+#include "fizz/util/Variant.h"
 
 namespace fizz {
 
@@ -172,4 +172,4 @@ class FizzBase {
 };
 } // namespace fizz
 
-#include <fizz/protocol/FizzBase-inl.h>
+#include "fizz/protocol/FizzBase-inl.h"

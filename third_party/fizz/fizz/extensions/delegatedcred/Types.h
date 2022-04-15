@@ -7,9 +7,9 @@
  */
 #pragma once
 
-#include <fizz/record/Extensions.h>
-#include <fizz/record/Types.h>
-#include <folly/Optional.h>
+#include "fizz/record/Extensions.h"
+#include "fizz/record/Types.h"
+#include "folly/Optional.h"
 
 namespace fizz {
 namespace extensions {

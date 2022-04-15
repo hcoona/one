@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/ech/Decrypter.h>
+#include "fizz/protocol/ech/Decrypter.h"
 
 namespace fizz {
 namespace ech {

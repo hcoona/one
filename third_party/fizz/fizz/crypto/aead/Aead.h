@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <folly/Optional.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Optional.h"
+#include "folly/io/IOBuf.h"
 
 namespace fizz {
 

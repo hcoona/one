@@ -6,12 +6,12 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
-#include <fizz/client/FizzClient.h>
-#include <fizz/client/PskCache.h>
-#include <fizz/client/test/Mocks.h>
+#include "fizz/client/FizzClient.h"
+#include "fizz/client/PskCache.h"
+#include "fizz/client/test/Mocks.h"
 
 using namespace folly;
 using namespace testing;

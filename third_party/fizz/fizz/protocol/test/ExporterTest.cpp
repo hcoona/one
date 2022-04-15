@@ -6,10 +6,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/protocol/Exporter.h>
-#include <fizz/protocol/OpenSSLFactory.h>
+#include "fizz/protocol/Exporter.h"
+#include "fizz/protocol/OpenSSLFactory.h"
 
 using namespace folly;
 

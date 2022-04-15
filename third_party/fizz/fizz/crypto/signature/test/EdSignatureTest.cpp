@@ -6,12 +6,12 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/crypto/signature/Signature.h>
-#include <fizz/crypto/signature/test/EdSignatureTest.h>
-#include <fizz/crypto/test/TestUtil.h>
-#include <folly/String.h>
+#include "fizz/crypto/signature/Signature.h"
+#include "fizz/crypto/signature/test/EdSignatureTest.h"
+#include "fizz/crypto/test/TestUtil.h"
+#include "folly/String.h"
 
 #define ED25519_FIXTURE(num)                                               \
   Params {                                                                 \

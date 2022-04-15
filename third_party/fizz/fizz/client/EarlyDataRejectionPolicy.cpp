@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/client/EarlyDataRejectionPolicy.h>
+#include "fizz/client/EarlyDataRejectionPolicy.h"
 
 namespace fizz {
 namespace client {

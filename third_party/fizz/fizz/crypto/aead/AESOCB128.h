@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <folly/portability/OpenSSL.h>
-#include <openssl/evp.h>
+#include "folly/portability/OpenSSL.h"
+#include "openssl/evp.h"
 #include <stdexcept>
 
 namespace fizz {

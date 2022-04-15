@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <fizz/crypto/signature/Signature.h>
-#include <fizz/protocol/CertificateCompressor.h>
-#include <fizz/record/Types.h>
-#include <folly/io/async/AsyncTransportCertificate.h>
-#include <folly/io/async/ssl/OpenSSLTransportCertificate.h>
+#include "fizz/crypto/signature/Signature.h"
+#include "fizz/protocol/CertificateCompressor.h"
+#include "fizz/record/Types.h"
+#include "folly/io/async/AsyncTransportCertificate.h"
+#include "folly/io/async/ssl/OpenSSLTransportCertificate.h"
 
 #include <map>
 
@@ -222,4 +222,4 @@ class PeerCertImpl : public PeerCert {
 
 } // namespace fizz
 
-#include <fizz/protocol/Certificate-inl.h>
+#include "fizz/protocol/Certificate-inl.h"

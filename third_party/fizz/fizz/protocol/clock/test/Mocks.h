@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/protocol/clock/Clock.h>
-#include <folly/portability/GMock.h>
+#include "fizz/protocol/clock/Clock.h"
+#include "folly/portability/GMock.h"
 
 namespace fizz {
 namespace test {

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/crypto/Hkdf.h>
+#include "fizz/crypto/Hkdf.h"
 
 namespace fizz {
 namespace hpke {

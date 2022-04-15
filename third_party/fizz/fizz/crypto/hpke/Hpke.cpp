@@ -6,8 +6,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/hpke/Hpke.h>
-#include <fizz/crypto/hpke/Types.h>
+#include "fizz/crypto/hpke/Hpke.h"
+#include "fizz/crypto/hpke/Types.h"
 
 namespace fizz {
 namespace hpke {

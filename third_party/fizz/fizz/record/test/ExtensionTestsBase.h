@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
-#include <fizz/record/Types.h>
-#include <folly/String.h>
+#include "fizz/record/Types.h"
+#include "folly/String.h"
 
 namespace fizz {
 namespace test {

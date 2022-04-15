@@ -6,14 +6,14 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
-#include <fizz/server/TicketCodec.h>
+#include "fizz/server/TicketCodec.h"
 
-#include <fizz/crypto/test/TestUtil.h>
-#include <fizz/protocol/test/Mocks.h>
-#include <fizz/server/test/Mocks.h>
+#include "fizz/crypto/test/TestUtil.h"
+#include "fizz/protocol/test/Mocks.h"
+#include "fizz/server/test/Mocks.h"
 
 static constexpr folly::StringPiece ticket{
     "03041301000673656372657400056964656e74004444444400000000000000190268320000000000000000000f"};

@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include <fizz/protocol/AsyncFizzBase.h>
-#include <fizz/protocol/ech/Types.h>
-#include <fizz/util/Parse.h>
-#include <folly/FileUtil.h>
-#include <folly/io/IOBuf.h>
-#include <folly/io/async/EventBase.h>
-#include <folly/io/async/EventHandler.h>
-#include <folly/json.h>
+#include "fizz/protocol/AsyncFizzBase.h"
+#include "fizz/protocol/ech/Types.h"
+#include "fizz/util/Parse.h"
+#include "folly/FileUtil.h"
+#include "folly/io/IOBuf.h"
+#include "folly/io/async/EventBase.h"
+#include "folly/io/async/EventHandler.h"
+#include "folly/json.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -28,7 +28,7 @@
 #include <vector>
 
 #ifdef FIZZ_TOOL_ENABLE_IO_URING
-#include <folly/experimental/io/IoUringBackend.h>
+#include "folly/experimental/io/IoUringBackend.h"
 #endif
 
 namespace fizz {

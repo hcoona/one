@@ -11,8 +11,8 @@
 #include <cstdint>
 #include <vector>
 
-#include <fizz/protocol/ech/Types.h>
-#include <fizz/record/Types.h>
+#include "fizz/protocol/ech/Types.h"
+#include "fizz/record/Types.h"
 
 namespace fizz {
 namespace ech {
@@ -52,4 +52,4 @@ struct OuterExtensions {
 } // namespace ech
 } // namespace fizz
 
-#include <fizz/protocol/ech/ECHExtensions-inl.h>
+#include "fizz/protocol/ech/ECHExtensions-inl.h"

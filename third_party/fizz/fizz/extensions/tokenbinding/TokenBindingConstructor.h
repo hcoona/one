@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/extensions/tokenbinding/Types.h>
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "fizz/extensions/tokenbinding/Types.h"
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace fizz {
 namespace extensions {

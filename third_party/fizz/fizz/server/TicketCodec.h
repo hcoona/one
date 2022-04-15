@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
-#include <fizz/server/FizzServerContext.h>
-#include <fizz/server/ResumptionState.h>
+#include "fizz/record/Types.h"
+#include "fizz/server/FizzServerContext.h"
+#include "fizz/server/ResumptionState.h"
 
 namespace fizz {
 namespace server {
@@ -50,4 +50,4 @@ struct TicketCodec {
 } // namespace server
 } // namespace fizz
 
-#include <fizz/server/TicketCodec-inl.h>
+#include "fizz/server/TicketCodec-inl.h"

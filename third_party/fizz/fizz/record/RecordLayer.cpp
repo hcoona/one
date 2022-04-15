@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/record/RecordLayer.h>
+#include "fizz/record/RecordLayer.h"
 
 namespace fizz {
 

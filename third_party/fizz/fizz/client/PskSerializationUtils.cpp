@@ -2,7 +2,7 @@
 
 #include "fizz/client/PskSerializationUtils.h"
 
-#include <fizz/record/Types.h>
+#include "fizz/record/Types.h"
 
 using namespace folly;
 

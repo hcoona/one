@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/extensions/delegatedcred/SelfDelegatedCredential.h>
+#include "fizz/extensions/delegatedcred/SelfDelegatedCredential.h"
 
-#include <folly/io/async/test/MockAsyncTransport.h>
+#include "folly/io/async/test/MockAsyncTransport.h"
 
 namespace fizz {
 namespace extensions {

@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/Events.h>
+#include "fizz/protocol/Events.h"
 
 namespace fizz {
 folly::StringPiece toString(Event event) {

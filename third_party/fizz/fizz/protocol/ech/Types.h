@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/crypto/hpke/Types.h>
-#include <fizz/record/Extensions.h>
+#include "fizz/crypto/hpke/Types.h"
+#include "fizz/record/Extensions.h"
 #include <cstdint>
 #include <vector>
 
@@ -77,4 +77,4 @@ struct ECHConfig {
 } // namespace ech
 } // namespace fizz
 
-#include <fizz/protocol/ech/Types-inl.h>
+#include "fizz/protocol/ech/Types-inl.h"

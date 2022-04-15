@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <folly/io/IOBufQueue.h>
-#include <folly/io/async/AsyncTransport.h>
+#include "folly/io/IOBufQueue.h"
+#include "folly/io/async/AsyncTransport.h"
 
 namespace fizz {
 namespace test {

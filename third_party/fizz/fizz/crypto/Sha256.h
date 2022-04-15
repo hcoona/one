@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/crypto/Sha.h>
-#include <openssl/evp.h>
+#include "fizz/crypto/Sha.h"
+#include "openssl/evp.h"
 #include <array>
 
 namespace fizz {

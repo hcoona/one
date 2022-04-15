@@ -7,9 +7,9 @@
  */
 #pragma once
 
-#include <fizz/protocol/Types.h>
-#include <fizz/protocol/clock/SystemClock.h>
-#include <fizz/server/ResumptionState.h>
+#include "fizz/protocol/Types.h"
+#include "fizz/protocol/clock/SystemClock.h"
+#include "fizz/server/ResumptionState.h"
 
 namespace fizz {
 namespace server {

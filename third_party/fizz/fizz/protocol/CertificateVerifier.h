@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/protocol/Certificate.h>
-#include <fizz/record/Extensions.h>
+#include "fizz/protocol/Certificate.h"
+#include "fizz/record/Extensions.h"
 
 namespace fizz {
 

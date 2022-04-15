@@ -6,8 +6,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/Certificate.h>
-#include <openssl/bio.h>
+#include "fizz/protocol/Certificate.h"
+#include "openssl/bio.h"
 
 namespace {
 int getCurveName(EVP_PKEY* key) {

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/extensions/delegatedcred/Types.h>
-#include <fizz/protocol/OpenSSLFactory.h>
-#include <fizz/protocol/clock/SystemClock.h>
+#include "fizz/extensions/delegatedcred/Types.h"
+#include "fizz/protocol/OpenSSLFactory.h"
+#include "fizz/protocol/clock/SystemClock.h"
 
 namespace fizz {
 namespace extensions {

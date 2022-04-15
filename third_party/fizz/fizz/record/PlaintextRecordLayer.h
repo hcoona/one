@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/record/RecordLayer.h>
+#include "fizz/record/RecordLayer.h"
 
 namespace fizz {
 

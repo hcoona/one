@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <fizz/crypto/signature/Signature.h>
-#include <fizz/protocol/Certificate.h>
-#include <fizz/record/Types.h>
-#include <folly/io/async/AsyncTransportCertificate.h>
+#include "fizz/crypto/signature/Signature.h"
+#include "fizz/protocol/Certificate.h"
+#include "fizz/record/Types.h"
+#include "folly/io/async/AsyncTransportCertificate.h"
 #include <jni.h>
 
 namespace fizz {

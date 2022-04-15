@@ -41,4 +41,4 @@ class StateMachine {
 } // namespace sm
 } // namespace fizz
 
-#include <fizz/protocol/StateMachine-inl.h>
+#include "fizz/protocol/StateMachine-inl.h"

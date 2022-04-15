@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/server/TicketCodec.h>
+#include "fizz/server/TicketCodec.h"
 
 namespace fizz {
 std::string toString(fizz::server::CertificateStorage storage) {

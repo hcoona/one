@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/openssl/OpenSSLKeyUtils.h>
+#include "fizz/crypto/openssl/OpenSSLKeyUtils.h"
 
 namespace fizz {
 namespace detail {

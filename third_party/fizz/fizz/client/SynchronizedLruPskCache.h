@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <fizz/client/PskCache.h>
-#include <folly/Synchronized.h>
-#include <folly/container/EvictingCacheMap.h>
+#include "fizz/client/PskCache.h"
+#include "folly/Synchronized.h"
+#include "folly/container/EvictingCacheMap.h"
 
 namespace fizz {
 namespace client {

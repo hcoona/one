@@ -6,11 +6,11 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/protocol/KeyScheduler.h>
+#include "fizz/protocol/KeyScheduler.h"
 
-#include <fizz/crypto/test/Mocks.h>
+#include "fizz/crypto/test/Mocks.h"
 
 using namespace folly;
 using namespace testing;

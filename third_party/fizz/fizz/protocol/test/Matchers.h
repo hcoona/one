@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <folly/io/IOBuf.h>
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/io/IOBuf.h"
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 
 namespace fizz {
 namespace test {

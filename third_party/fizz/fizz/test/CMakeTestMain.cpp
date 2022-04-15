@@ -6,8 +6,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/init/Init.h>
-#include <folly/portability/GTest.h>
+#include "folly/init/Init.h"
+#include "folly/portability/GTest.h"
 
 /*
  * This is the recommended main function for all tests.

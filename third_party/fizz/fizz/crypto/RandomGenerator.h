@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <sodium/randombytes.h>
+#include "sodium/randombytes.h"
 #include <array>
 
 namespace fizz {

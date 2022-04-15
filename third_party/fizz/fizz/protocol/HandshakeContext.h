@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/record/Types.h>
+#include "fizz/record/Types.h"
 
 namespace fizz {
 
@@ -71,4 +71,4 @@ class HandshakeContextImpl : public HandshakeContext {
 };
 } // namespace fizz
 
-#include <fizz/protocol/HandshakeContext-inl.h>
+#include "fizz/protocol/HandshakeContext-inl.h"

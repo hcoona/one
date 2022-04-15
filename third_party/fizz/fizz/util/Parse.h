@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include <folly/Range.h>
+#include "folly/Range.h"
 
 namespace fizz {
 
@@ -16,4 +16,4 @@ T parse(folly::StringPiece s);
 
 } // namespace fizz
 
-#include <fizz/util/Parse-inl.h>
+#include "fizz/util/Parse-inl.h"

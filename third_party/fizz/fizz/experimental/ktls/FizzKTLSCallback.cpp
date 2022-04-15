@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <fizz/experimental/ktls/FizzKTLSCallback.h>
+#include "fizz/experimental/ktls/FizzKTLSCallback.h"
 
 namespace fizz {
 

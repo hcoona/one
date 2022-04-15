@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/crypto/aead/IOBufUtil.h>
+#include "fizz/crypto/aead/IOBufUtil.h"
 
 using namespace folly;
 

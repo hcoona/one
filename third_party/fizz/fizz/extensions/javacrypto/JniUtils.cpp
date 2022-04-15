@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/extensions/javacrypto/JniUtils.h>
+#include "fizz/extensions/javacrypto/JniUtils.h"
 #include <glog/logging.h>
 
 namespace fizz {

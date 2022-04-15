@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <folly/Optional.h>
-#include <folly/io/Cursor.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Optional.h"
+#include "folly/io/Cursor.h"
+#include "folly/io/IOBuf.h"
 
-#include <fizz/protocol/Events.h>
+#include "fizz/protocol/Events.h"
 
 namespace fizz {
 
@@ -408,4 +408,4 @@ struct fmt::formatter<fizz::ExtensionType> : formatter<unsigned> {
   }
 };
 
-#include <fizz/record/Types-inl.h>
+#include "fizz/record/Types-inl.h"

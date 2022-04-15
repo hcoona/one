@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <fizz/server/ServerExtensions.h>
+#include "fizz/server/ServerExtensions.h"
 
 namespace fizz {
 namespace server {

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <folly/Memory.h>
-#include <folly/String.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Memory.h"
+#include "folly/String.h"
+#include "folly/io/IOBuf.h"
 #include <functional>
 
 namespace fizz {

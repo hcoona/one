@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/client/PskCache.h>
+#include "fizz/client/PskCache.h"
 
 namespace fizz {
 namespace client {

@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/clock/SystemClock.h>
+#include "fizz/protocol/clock/SystemClock.h"
 
 namespace fizz {
 

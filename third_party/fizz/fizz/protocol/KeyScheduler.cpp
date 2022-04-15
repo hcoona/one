@@ -6,8 +6,8 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <fizz/protocol/KeyScheduler.h>
-#include <fizz/protocol/ech/Types.h>
+#include "fizz/protocol/KeyScheduler.h"
+#include "fizz/protocol/ech/Types.h"
 
 using folly::StringPiece;
 

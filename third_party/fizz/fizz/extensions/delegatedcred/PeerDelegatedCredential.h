@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/extensions/delegatedcred/Types.h>
-#include <fizz/protocol/Certificate.h>
+#include "fizz/extensions/delegatedcred/Types.h"
+#include "fizz/protocol/Certificate.h"
 
 namespace fizz {
 namespace extensions {
@@ -38,4 +38,4 @@ class PeerDelegatedCredential : public PeerCertImpl<T> {
 } // namespace extensions
 } // namespace fizz
 
-#include <fizz/extensions/delegatedcred/PeerDelegatedCredential-inl.h>
+#include "fizz/extensions/delegatedcred/PeerDelegatedCredential-inl.h"

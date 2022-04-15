@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <fizz/crypto/aead/Aead.h>
-#include <folly/portability/GMock.h>
+#include "fizz/crypto/aead/Aead.h"
+#include "folly/portability/GMock.h"
 
 namespace fizz {
 namespace test {

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
+#include "folly/portability/GMock.h"
 
-#include <fizz/crypto/exchange/KeyExchange.h>
+#include "fizz/crypto/exchange/KeyExchange.h"
 
 namespace fizz {
 

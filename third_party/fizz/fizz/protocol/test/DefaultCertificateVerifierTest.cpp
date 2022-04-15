@@ -6,10 +6,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <fizz/protocol/DefaultCertificateVerifier.h>
-#include <fizz/protocol/test/Utilities.h>
+#include "fizz/protocol/DefaultCertificateVerifier.h"
+#include "fizz/protocol/test/Utilities.h"
 
 namespace fizz {
 namespace test {

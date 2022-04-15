@@ -11,7 +11,7 @@
 #include <map>
 #include <unordered_map>
 
-#include <fizz/protocol/Certificate.h>
+#include "fizz/protocol/Certificate.h"
 
 namespace fizz {
 namespace server {
