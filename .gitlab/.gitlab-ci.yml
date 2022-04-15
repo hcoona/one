@@ -1,0 +1,42 @@
+default:
+  image:
+    name: ubuntu:focal
+    entrypoint: [""]
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get update
+    - apt-get install -yq apt-transport-https ca-certificates wget lsb-release software-properties-common build-essential python3-distutils
+    - |
+      wget https://apt.llvm.org/llvm.sh
+      chmod +x llvm.sh
+      ./llvm.sh 13
+      apt-get install -y lld-13 libfuzzer-13-dev libc++-13-dev libc++abi-13-dev libunwind-13-dev
+    - mkdir -p $CI_PROJECT_DIR/.cache/bazelisk/bin
+    - test \! -x $CI_PROJECT_DIR/.cache/bazelisk/bin/bazel && wget https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64 -O $CI_PROJECT_DIR/.cache/bazelisk/bin/bazel
+    - chmod +x $CI_PROJECT_DIR/.cache/bazelisk/bin/bazel
+    - export PATH=$CI_PROJECT_DIR/.cache/bazelisk/bin:$PATH
+    - mkdir -p $CI_PROJECT_DIR/.cache/bazel/disk_cache
+    - mkdir -p $CI_PROJECT_DIR/.cache/bazel/repository_cache
+    - echo "build --disk_cache=$CI_PROJECT_DIR/.cache/bazel/disk_cache" >> .bazelrc
+    - echo "build --repository_cache=$CI_PROJECT_DIR/.cache/bazel/repository_cache" >> .bazelrc
+    - echo "startup --batch_cpu_scheduling" >> .bazelrc
+    - tools/setup_clang.sh /usr/lib/llvm-13
+
+cache:
+  key: bazel_cache
+  paths:
+    - .cache/
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - bazel build --config=libc++ //...
+
+test:
+  stage: test
+  script:
+    - bazel test -c opt --config=clang-asan //...
