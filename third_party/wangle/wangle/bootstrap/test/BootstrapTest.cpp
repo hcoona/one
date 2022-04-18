@@ -18,7 +18,7 @@
 #include "wangle/bootstrap/ServerBootstrap.h"
 #include "wangle/channel/Handler.h"
 
-#include <boost/thread.hpp>
+#include "boost/thread.hpp"
 #include "folly/String.h"
 #include "folly/experimental/TestUtil.h"
 #include "folly/portability/GTest.h"

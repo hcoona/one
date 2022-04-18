@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 #include "folly/portability/GMock.h"
 #include "folly/portability/GTest.h"
 #include "wangle/channel/AsyncSocketHandler.h"

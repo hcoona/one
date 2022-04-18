@@ -7,7 +7,7 @@
  */
 
 #include "fizz/protocol/ZstdCertificateDecompressor.h"
-#include <zstd.h>
+#include "zstd.h"
 
 using namespace folly;
 

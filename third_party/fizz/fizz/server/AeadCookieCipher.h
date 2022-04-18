@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <boost/variant.hpp>
+#include "boost/variant.hpp"
 
 #include "fizz/server/AeadTokenCipher.h"
 #include "fizz/server/CookieCipher.h"
