@@ -33,7 +33,7 @@ cc_library(
         "ZSTD_LEGACY_SUPPORT=4",
         "ZSTD_MULTITHREAD",
         "XXH_NAMESPACE=ZSTD_",
-        "ZSTD_NO_UNUSED_FUNCTIONS",
+        # "ZSTD_NO_UNUSED_FUNCTIONS", for folly use HUF_buildCTable
     ] + select({
         "@//bazel/config:enable_bmi2": ["STATIC_BMI2=1"],
         "//conditions:default": [],

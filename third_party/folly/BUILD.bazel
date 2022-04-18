@@ -161,7 +161,7 @@ cc_library(
 )
 
 cc_library(
-    name = "folly_test_common",
+    name = "test_utility",
     testonly = True,
     srcs = [
         "folly/io/async/test/ScopedBoundPort.cpp",
@@ -192,8 +192,23 @@ cc_library(
         "folly/test/JsonTestUtil.h",
         "folly/test/TestUtils.h",
     ],
+    features = [
+        "layering_check",
+    ],
     strip_include_prefix = ".",
+    visibility = ["//visibility:public"],
     deps = [
         ":folly",
+        "@com_github_google_glog//:glog",
     ],
+)
+
+filegroup(
+    name = "client_chain_pem",
+    srcs = [
+        "folly/io/async/test/certs/client_cert.pem",
+        "folly/io/async/test/certs/client_chain.pem",
+        "folly/io/async/test/certs/tests-cert.pem",
+    ],
+    visibility = ["//third_party/wangle:__pkg__"],
 )

@@ -18,6 +18,7 @@
 #include "folly/io/async/SSLContext.h"
 #include "folly/portability/GTest.h"
 #include "glog/logging.h"
+#include "tools/cpp/runfiles/runfiles.h"
 #include "wangle/acceptor/SSLContextSelectionMisc.h"
 #include "wangle/ssl/SSLCacheOptions.h"
 #include "wangle/ssl/SSLContextManager.h"
@@ -506,9 +507,16 @@ TEST(SSLContextManagerTest, TestAlpnNotAllowMismatch) {
 }
 
 TEST(SSLContextManagerTest, TestSingleClientCAFileSet) {
+  std::string error;
+  auto runfiles = std::unique_ptr<bazel::tools::cpp::runfiles::Runfiles>(
+      bazel::tools::cpp::runfiles::Runfiles::CreateForTest(&error));
+  ASSERT_TRUE(runfiles != nullptr) << error;
+
   SSLContextManagerForTest sslCtxMgr(
       "vip_ssl_context_manager_test_", true, nullptr);
-  const std::string clientCAFile = "folly/io/async/test/certs/client_chain.pem";
+  const std::string clientCAFile = runfiles->Rlocation(
+      "com_github_hcoona_one/third_party/folly/folly/io/async/test/certs/"
+      "client_chain.pem");
 
   SSLContextConfig ctxConfig;
   ctxConfig.clientCAFile = clientCAFile;
@@ -545,11 +553,20 @@ TEST(SSLContextManagerTest, TestSingleClientCAFileSet) {
 }
 
 TEST(SSLContextManagerTest, TestMultipleClientCAsSet) {
+  std::string error;
+  auto runfiles = std::unique_ptr<bazel::tools::cpp::runfiles::Runfiles>(
+      bazel::tools::cpp::runfiles::Runfiles::CreateForTest(&error));
+  ASSERT_TRUE(runfiles != nullptr) << error;
+
   SSLContextManagerForTest sslCtxMgr(
       "vip_ssl_context_manager_test_", true, nullptr);
   const std::vector<std::string> clientCAFiles{
-      "folly/io/async/test/certs/client_cert.pem",
-      "folly/io/async/test/certs/tests-cert.pem"};
+      runfiles->Rlocation(
+          "com_github_hcoona_one/third_party/folly/folly/io/async/"
+          "test/certs/client_cert.pem"),
+      runfiles->Rlocation(
+          "com_github_hcoona_one/third_party/folly/folly/io/async/"
+          "test/certs/tests-cert.pem")};
 
   SSLContextConfig ctxConfig;
   ctxConfig.clientCAFiles = clientCAFiles;
