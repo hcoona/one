@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <wangle/channel/AsyncSocketHandler.h>
+#include "wangle/channel/AsyncSocketHandler.h"
 
 namespace wangle {
 
@@ -89,4 +89,4 @@ class RoutingDataHandlerFactory {
 
 } // namespace wangle
 
-#include <wangle/bootstrap/RoutingDataHandler-inl.h>
+#include "wangle/bootstrap/RoutingDataHandler-inl.h"

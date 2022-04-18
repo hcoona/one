@@ -18,7 +18,7 @@
 
 #include <type_traits>
 
-#include <wangle/channel/Pipeline.h>
+#include "wangle/channel/Pipeline.h"
 
 namespace wangle {
 

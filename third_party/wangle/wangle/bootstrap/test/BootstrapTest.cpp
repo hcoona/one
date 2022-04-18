@@ -19,10 +19,10 @@
 #include "wangle/channel/Handler.h"
 
 #include <boost/thread.hpp>
-#include <folly/String.h>
-#include <folly/experimental/TestUtil.h>
-#include <folly/portability/GTest.h>
-#include <glog/logging.h>
+#include "folly/String.h"
+#include "folly/experimental/TestUtil.h"
+#include "folly/portability/GTest.h"
+#include "glog/logging.h"
 
 using namespace wangle;
 using namespace folly;

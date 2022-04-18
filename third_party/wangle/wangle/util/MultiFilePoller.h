@@ -19,9 +19,9 @@
 #include <chrono>
 #include <unordered_map>
 
-#include <folly/Function.h>
-#include <folly/SharedMutex.h>
-#include <wangle/util/FilePoller.h>
+#include "folly/Function.h"
+#include "folly/SharedMutex.h"
+#include "wangle/util/FilePoller.h"
 
 namespace wangle {
 

@@ -16,7 +16,7 @@
 
 #include "fizz/experimental/ktls/AsyncKTLSSocket.h"
 #include "fizz/record/RecordLayer.h"
-#include <glog/logging.h>
+#include "glog/logging.h"
 #include <system_error>
 
 namespace fizz {

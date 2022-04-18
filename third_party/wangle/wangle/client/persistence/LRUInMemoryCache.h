@@ -18,10 +18,10 @@
 
 #include <utility>
 
-#include <folly/Optional.h>
-#include <folly/container/EvictingCacheMap.h>
-#include <folly/dynamic.h>
-#include <wangle/client/persistence/PersistentCacheCommon.h>
+#include "folly/Optional.h"
+#include "folly/container/EvictingCacheMap.h"
+#include "folly/dynamic.h"
+#include "wangle/client/persistence/PersistentCacheCommon.h"
 
 namespace wangle {
 
@@ -82,4 +82,4 @@ class LRUInMemoryCache {
 
 } // namespace wangle
 
-#include <wangle/client/persistence/LRUInMemoryCache-inl.h>
+#include "wangle/client/persistence/LRUInMemoryCache-inl.h"

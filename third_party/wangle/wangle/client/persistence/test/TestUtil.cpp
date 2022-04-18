@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <wangle/client/persistence/test/TestUtil.h>
+#include "wangle/client/persistence/test/TestUtil.h"
 
-#include <folly/experimental/TestUtil.h>
+#include "folly/experimental/TestUtil.h"
 
 namespace wangle {
 

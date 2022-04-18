@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <wangle/client/ssl/ThreadSafeSSLSessionCache.h>
+#include "wangle/client/ssl/ThreadSafeSSLSessionCache.h"
 
 using folly::SharedMutex;
 

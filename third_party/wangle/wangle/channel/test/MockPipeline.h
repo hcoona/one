@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <wangle/channel/Pipeline.h>
+#include "folly/portability/GMock.h"
+#include "wangle/channel/Pipeline.h"
 
 namespace wangle {
 

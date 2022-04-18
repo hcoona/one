@@ -8,7 +8,7 @@
 
 #include <cstdlib>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace fizz {
 namespace sm {

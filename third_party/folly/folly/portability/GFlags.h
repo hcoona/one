@@ -67,5 +67,5 @@ class FlagSaver {};
 } // namespace google
 
 #else
-#include <gflags/gflags.h>
+#include "gflags/gflags.h"
 #endif

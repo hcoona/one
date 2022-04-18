@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <folly/MoveWrapper.h>
-#include <folly/portability/GMock.h>
-#include <wangle/channel/Handler.h>
+#include "folly/MoveWrapper.h"
+#include "folly/portability/GMock.h"
+#include "wangle/channel/Handler.h"
 
 namespace wangle {
 

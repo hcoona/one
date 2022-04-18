@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/ssl/OpenSSLPtrTypes.h>
-#include <glog/logging.h>
+#include "folly/ssl/OpenSSLPtrTypes.h"
+#include "glog/logging.h"
 #include <string>
 
 namespace wangle {

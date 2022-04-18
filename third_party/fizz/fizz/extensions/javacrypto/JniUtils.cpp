@@ -7,7 +7,7 @@
  */
 
 #include "fizz/extensions/javacrypto/JniUtils.h"
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace fizz {
 namespace jni {

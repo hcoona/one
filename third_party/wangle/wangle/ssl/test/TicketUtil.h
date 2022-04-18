@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/Range.h>
-#include <folly/container/Array.h>
+#include "folly/Range.h"
+#include "folly/container/Array.h"
 
 constexpr folly::StringPiece validTicketData =
     R"JSON({

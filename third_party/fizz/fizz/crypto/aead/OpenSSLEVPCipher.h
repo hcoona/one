@@ -17,7 +17,7 @@
 #include "folly/String.h"
 #include "folly/lang/Bits.h"
 #include "folly/ssl/OpenSSLPtrTypes.h"
-#include <glog/logging.h>
+#include "glog/logging.h"
 #include "openssl/evp.h"
 
 namespace fizz {

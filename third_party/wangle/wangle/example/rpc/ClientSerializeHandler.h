@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <wangle/channel/Handler.h>
+#include "wangle/channel/Handler.h"
 
 #include <thrift/lib/cpp2/protocol/Serializer.h>
 #include <thrift/test/gen-cpp2/ThriftTest.h>

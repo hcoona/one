@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <wangle/channel/Handler.h>
-#include <wangle/service/Service.h>
+#include "wangle/channel/Handler.h"
+#include "wangle/service/Service.h"
 
 namespace wangle {
 

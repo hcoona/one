@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <wangle/acceptor/ManagedConnection.h>
+#include "wangle/acceptor/ManagedConnection.h"
 
-#include <wangle/acceptor/ConnectionManager.h>
+#include "wangle/acceptor/ConnectionManager.h"
 
 namespace wangle {
 

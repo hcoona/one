@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
-#include <wangle/codec/FixedLengthFrameDecoder.h>
-#include <wangle/codec/LengthFieldBasedFrameDecoder.h>
-#include <wangle/codec/LengthFieldPrepender.h>
-#include <wangle/codec/LineBasedFrameDecoder.h>
-#include <wangle/codec/test/CodecTestUtils.h>
+#include "wangle/codec/FixedLengthFrameDecoder.h"
+#include "wangle/codec/LengthFieldBasedFrameDecoder.h"
+#include "wangle/codec/LengthFieldPrepender.h"
+#include "wangle/codec/LineBasedFrameDecoder.h"
+#include "wangle/codec/test/CodecTestUtils.h"
 
 using namespace folly;
 using namespace wangle;

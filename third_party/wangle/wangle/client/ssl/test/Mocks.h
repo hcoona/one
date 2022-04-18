@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <wangle/client/ssl/SSLSessionCallbacks.h>
+#include "folly/portability/GMock.h"
+#include "wangle/client/ssl/SSLSessionCallbacks.h"
 
 namespace wangle {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <wangle/ssl/PasswordInFileFactory.h>
+#include "wangle/ssl/PasswordInFileFactory.h"
 
 namespace wangle {
 std::shared_ptr<folly::PasswordInFile>

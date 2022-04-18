@@ -19,8 +19,8 @@
 #include "wangle/channel/Handler.h"
 #include "wangle/channel/broadcast/ObservingHandler.h"
 
-#include <folly/portability/GTest.h>
-#include <glog/logging.h>
+#include "folly/portability/GTest.h"
+#include "glog/logging.h"
 
 using namespace wangle;
 using namespace folly;

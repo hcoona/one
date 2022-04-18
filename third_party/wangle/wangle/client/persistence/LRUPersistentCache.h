@@ -23,12 +23,12 @@
 #include <map>
 #include <thread>
 
-#include <folly/Executor.h>
-#include <folly/dynamic.h>
-#include <folly/synchronization/SaturatingSemaphore.h>
-#include <wangle/client/persistence/LRUInMemoryCache.h>
-#include <wangle/client/persistence/PersistentCache.h>
-#include <wangle/client/persistence/PersistentCacheCommon.h>
+#include "folly/Executor.h"
+#include "folly/dynamic.h"
+#include "folly/synchronization/SaturatingSemaphore.h"
+#include "wangle/client/persistence/LRUInMemoryCache.h"
+#include "wangle/client/persistence/PersistentCache.h"
+#include "wangle/client/persistence/PersistentCacheCommon.h"
 
 namespace wangle {
 
@@ -274,4 +274,4 @@ class LRUPersistentCache
 
 } // namespace wangle
 
-#include <wangle/client/persistence/LRUPersistentCache-inl.h>
+#include "wangle/client/persistence/LRUPersistentCache-inl.h"

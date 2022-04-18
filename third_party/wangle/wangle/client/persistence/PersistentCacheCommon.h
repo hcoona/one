@@ -19,8 +19,8 @@
 #include <memory>
 #include <mutex>
 
-#include <folly/Executor.h>
-#include <folly/Optional.h>
+#include "folly/Executor.h"
+#include "folly/Optional.h"
 
 namespace wangle {
 

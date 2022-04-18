@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <wangle/channel/Pipeline.h>
+#include "wangle/channel/Pipeline.h"
 
 using folly::WriteFlags;
 

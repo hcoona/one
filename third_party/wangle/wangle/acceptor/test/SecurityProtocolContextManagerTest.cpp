@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <wangle/acceptor/SecurityProtocolContextManager.h>
+#include "wangle/acceptor/SecurityProtocolContextManager.h"
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
 #include <thread>
 
 using namespace wangle;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <wangle/acceptor/LoadShedConfiguration.h>
+#include "wangle/acceptor/LoadShedConfiguration.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace wangle;
 

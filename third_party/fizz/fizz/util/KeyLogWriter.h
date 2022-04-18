@@ -8,7 +8,7 @@
 
 #pragma once
 #include "fizz/protocol/Types.h"
-#include <fmt/format.h>
+#include "fmt/format.h"
 #include "folly/Range.h"
 #include <fstream>
 

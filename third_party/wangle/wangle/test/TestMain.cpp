@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/init/Init.h>
-#include <folly/portability/GTest.h>
+#include "folly/init/Init.h"
+#include "folly/portability/GTest.h"
 
 /*
  * This is the recommended main function for all tests.

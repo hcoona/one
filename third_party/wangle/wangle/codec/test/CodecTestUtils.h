@@ -18,9 +18,9 @@
 
 #include <memory>
 
-#include <folly/Function.h>
-#include <folly/io/IOBuf.h>
-#include <wangle/channel/Handler.h>
+#include "folly/Function.h"
+#include "folly/io/IOBuf.h"
+#include "wangle/channel/Handler.h"
 
 namespace wangle {
 namespace test {
