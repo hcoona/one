@@ -192,9 +192,6 @@ cc_library(
         "folly/test/JsonTestUtil.h",
         "folly/test/TestUtils.h",
     ],
-    features = [
-        "layering_check",
-    ],
     strip_include_prefix = ".",
     visibility = ["//visibility:public"],
     deps = [

@@ -92,9 +92,6 @@ cc_library(
         name = name,
         size = "small",
         srcs = ["wangle/test/TestMain.cpp"] + [filename],
-        features = [
-            "layering_check",
-        ],
         deps = [
             ":wangle",
             "@//third_party/folly",
@@ -135,9 +132,6 @@ cc_test(
     ],
     data = [
         "@//third_party/folly:client_chain_pem",
-    ],
-    features = [
-        "layering_check",
     ],
     deps = [
         ":wangle",
