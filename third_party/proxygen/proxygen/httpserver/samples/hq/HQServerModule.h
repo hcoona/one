@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <proxygen/httpserver/samples/hq/HQCommandLine.h>
+#include "proxygen/httpserver/samples/hq/HQCommandLine.h"
 
 namespace quic::samples {
 

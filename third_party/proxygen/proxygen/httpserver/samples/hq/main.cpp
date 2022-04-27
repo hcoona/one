@@ -6,17 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GFlags.h>
+#include "folly/portability/GFlags.h"
 
-#include <folly/init/Init.h>
-#include <folly/ssl/Init.h>
+#include "folly/init/Init.h"
+#include "folly/ssl/Init.h"
 
-#include <proxygen/httpserver/samples/hq/ConnIdLogger.h>
-#include <proxygen/httpserver/samples/hq/HQClient.h>
-#include <proxygen/httpserver/samples/hq/HQCommandLine.h>
-#include <proxygen/httpserver/samples/hq/HQParams.h>
-#include <proxygen/httpserver/samples/hq/HQServerModule.h>
-#include <proxygen/lib/transport/PersistentQuicPskCache.h>
+#include "proxygen/httpserver/samples/hq/ConnIdLogger.h"
+#include "proxygen/httpserver/samples/hq/HQClient.h"
+#include "proxygen/httpserver/samples/hq/HQCommandLine.h"
+#include "proxygen/httpserver/samples/hq/HQParams.h"
+#include "proxygen/httpserver/samples/hq/HQServerModule.h"
+#include "proxygen/lib/transport/PersistentQuicPskCache.h"
 
 using namespace quic::samples;
 

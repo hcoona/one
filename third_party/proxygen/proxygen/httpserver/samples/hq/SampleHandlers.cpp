@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <proxygen/httpserver/samples/hq/SampleHandlers.h>
+#include "proxygen/httpserver/samples/hq/SampleHandlers.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "boost/algorithm/string.hpp"
+#include "boost/algorithm/string/split.hpp"
 #include <string>
 
 namespace {

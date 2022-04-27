@@ -6,18 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <proxygen/httpserver/samples/hq/HQCommandLine.h>
+#include "proxygen/httpserver/samples/hq/HQCommandLine.h"
 
-#include <folly/io/async/AsyncSocketException.h>
-#include <folly/io/async/AsyncTransport.h>
-#include <folly/io/async/EventBaseManager.h>
-#include <folly/net/NetworkSocket.h>
-#include <folly/portability/GFlags.h>
-#include <proxygen/httpclient/samples/curl/CurlClient.h>
-#include <proxygen/lib/http/SynchronizedLruQuicPskCache.h>
-#include <proxygen/lib/http/session/HTTPTransaction.h>
-#include <proxygen/lib/transport/PersistentQuicPskCache.h>
-#include <quic/QuicConstants.h>
+#include "folly/io/async/AsyncSocketException.h"
+#include "folly/io/async/AsyncTransport.h"
+#include "folly/io/async/EventBaseManager.h"
+#include "folly/net/NetworkSocket.h"
+#include "folly/portability/GFlags.h"
+#include "proxygen/httpclient/samples/curl/CurlClient.h"
+#include "proxygen/lib/http/SynchronizedLruQuicPskCache.h"
+#include "proxygen/lib/http/session/HTTPTransaction.h"
+#include "proxygen/lib/transport/PersistentQuicPskCache.h"
+#include "quic/QuicConstants.h"
 
 DEFINE_string(host, "::1", "HQ server hostname/IP");
 DEFINE_int32(port, 6666, "HQ server port");

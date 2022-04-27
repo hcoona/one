@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <proxygen/httpserver/HTTPServer.h>
-#include <proxygen/httpserver/samples/hq/HQCommandLine.h>
-#include <proxygen/httpserver/samples/hq/HQServer.h>
+#include "proxygen/httpserver/HTTPServer.h"
+#include "proxygen/httpserver/samples/hq/HQCommandLine.h"
+#include "proxygen/httpserver/samples/hq/HQServer.h"
 
 namespace quic::samples {
 

@@ -8,17 +8,17 @@
 
 #include <type_traits>
 
-#include <folly/Conv.h>
-#include <folly/ScopeGuard.h>
-#include <folly/io/IOBuf.h>
+#include "folly/Conv.h"
+#include "folly/ScopeGuard.h"
+#include "folly/io/IOBuf.h"
 
-#include <folly/portability/GMock.h>
-#include <folly/portability/GTest.h>
-#include <proxygen/httpserver/Mocks.h>
-#include <proxygen/httpserver/ResponseBuilder.h>
-#include <proxygen/httpserver/filters/CompressionFilter.h>
-#include <proxygen/lib/utils/ZlibStreamCompressor.h>
-#include <proxygen/lib/utils/ZstdStreamDecompressor.h>
+#include "folly/portability/GMock.h"
+#include "folly/portability/GTest.h"
+#include "proxygen/httpserver/Mocks.h"
+#include "proxygen/httpserver/ResponseBuilder.h"
+#include "proxygen/httpserver/filters/CompressionFilter.h"
+#include "proxygen/lib/utils/ZlibStreamCompressor.h"
+#include "proxygen/lib/utils/ZstdStreamDecompressor.h"
 
 using namespace proxygen;
 using namespace testing;

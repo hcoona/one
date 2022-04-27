@@ -6,9 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <proxygen/httpserver/HTTPTransactionHandlerAdaptor.h>
-#include <proxygen/httpserver/samples/hq/FizzContext.h>
-#include <proxygen/httpserver/samples/hq/H2Server.h>
+#include "proxygen/httpserver/HTTPTransactionHandlerAdaptor.h"
+#include "proxygen/httpserver/samples/hq/FizzContext.h"
+#include "proxygen/httpserver/samples/hq/H2Server.h"
 
 namespace quic::samples {
 

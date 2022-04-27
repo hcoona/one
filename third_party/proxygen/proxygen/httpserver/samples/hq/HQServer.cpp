@@ -6,15 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <proxygen/httpserver/samples/hq/HQServer.h>
+#include "proxygen/httpserver/samples/hq/HQServer.h"
 
 #include <ostream>
 #include <string>
 
-#include <proxygen/httpserver/samples/hq/FizzContext.h>
-#include <proxygen/httpserver/samples/hq/HQLoggerHelper.h>
-#include <proxygen/lib/http/session/HQDownstreamSession.h>
-#include <quic/server/QuicSharedUDPSocketFactory.h>
+#include "proxygen/httpserver/samples/hq/FizzContext.h"
+#include "proxygen/httpserver/samples/hq/HQLoggerHelper.h"
+#include "proxygen/lib/http/session/HQDownstreamSession.h"
+#include "quic/server/QuicSharedUDPSocketFactory.h"
 
 using fizz::server::FizzServerContext;
 using proxygen::HQDownstreamSession;

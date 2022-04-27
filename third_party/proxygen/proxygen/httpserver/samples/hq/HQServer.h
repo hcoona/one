@@ -11,10 +11,10 @@
 #include <iostream>
 #include <string>
 
-#include <proxygen/httpserver/samples/hq/HQParams.h>
-#include <proxygen/lib/http/session/HTTPTransaction.h>
-#include <quic/server/QuicCcpThreadLauncher.h>
-#include <quic/server/QuicServer.h>
+#include "proxygen/httpserver/samples/hq/HQParams.h"
+#include "proxygen/lib/http/session/HTTPTransaction.h"
+#include "quic/server/QuicCcpThreadLauncher.h"
+#include "quic/server/QuicServer.h"
 
 namespace proxygen {
 class HQSession;

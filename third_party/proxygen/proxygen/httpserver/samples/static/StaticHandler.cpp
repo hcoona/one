@@ -8,11 +8,11 @@
 
 #include "StaticHandler.h"
 
-#include <folly/FileUtil.h>
-#include <folly/executors/GlobalExecutor.h>
-#include <folly/io/async/EventBaseManager.h>
-#include <proxygen/httpserver/RequestHandler.h>
-#include <proxygen/httpserver/ResponseBuilder.h>
+#include "folly/FileUtil.h"
+#include "folly/executors/GlobalExecutor.h"
+#include "folly/io/async/EventBaseManager.h"
+#include "proxygen/httpserver/RequestHandler.h"
+#include "proxygen/httpserver/ResponseBuilder.h"
 
 using namespace proxygen;
 

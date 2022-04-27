@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <proxygen/lib/http/session/HTTPUpstreamSession.h>
+#include "proxygen/lib/http/session/HTTPUpstreamSession.h"
 
 namespace ProxyService {
 class SessionWrapper : public proxygen::HTTPSession::InfoCallback {

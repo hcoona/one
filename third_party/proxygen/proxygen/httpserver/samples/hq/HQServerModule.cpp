@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <proxygen/httpserver/samples/hq/H2Server.h>
-#include <proxygen/httpserver/samples/hq/HQServerModule.h>
-#include <proxygen/httpserver/samples/hq/SampleHandlers.h>
-#include <proxygen/lib/http/session/HQSession.h>
+#include "proxygen/httpserver/samples/hq/H2Server.h"
+#include "proxygen/httpserver/samples/hq/HQServerModule.h"
+#include "proxygen/httpserver/samples/hq/SampleHandlers.h"
+#include "proxygen/lib/http/session/HQSession.h"
 
 using namespace proxygen;
 

@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GFlags.h>
-#include <glog/logging.h>
-#include <proxygen/lib/http/codec/HTTP1xCodec.h>
-#include <proxygen/lib/http/codec/test/TestUtils.h>
+#include "folly/portability/GFlags.h"
+#include "glog/logging.h"
+#include "proxygen/lib/http/codec/HTTP1xCodec.h"
+#include "proxygen/lib/http/codec/test/TestUtils.h"
 
 using namespace proxygen;
 using namespace std;

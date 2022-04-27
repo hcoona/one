@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <folly/ScopeGuard.h>
-#include <proxygen/httpserver/ResponseHandler.h>
+#include "folly/ScopeGuard.h"
+#include "proxygen/httpserver/ResponseHandler.h"
 
 namespace proxygen {
 

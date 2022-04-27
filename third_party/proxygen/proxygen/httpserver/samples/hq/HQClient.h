@@ -10,10 +10,10 @@
 
 #include <list>
 #include <memory>
-#include <proxygen/httpclient/samples/curl/CurlClient.h>
-#include <proxygen/httpserver/samples/hq/HQCommandLine.h>
-#include <proxygen/lib/http/session/HQUpstreamSession.h>
-#include <quic/common/Timers.h>
+#include "proxygen/httpclient/samples/curl/CurlClient.h"
+#include "proxygen/httpserver/samples/hq/HQCommandLine.h"
+#include "proxygen/lib/http/session/HQUpstreamSession.h"
+#include "quic/common/Timers.h"
 
 namespace quic {
 
