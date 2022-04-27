@@ -20,7 +20,7 @@
 
 #include "folly/Portability.h"
 
-#include <gtest/gtest-death-test.h>
+#include "gtest/gtest-death-test.h"
 
 #include "folly/experimental/coro/GmockHelpers.h"
 #include "folly/experimental/coro/GtestHelpers.h"
