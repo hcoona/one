@@ -6,7 +6,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 #include "fizz/crypto/Sha256.h"
 #include "fizz/crypto/aead/test/TestUtil.h"

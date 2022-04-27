@@ -11,7 +11,7 @@
 #include "fizz/crypto/hpke/Utils.h"
 #include "fizz/crypto/hpke/test/Mocks.h"
 #include "fizz/crypto/test/TestUtil.h"
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 using namespace fizz::test;
 
