@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <quic/QuicConstants.h>
-#include <quic/handshake/TransportParameters.h>
+#include "quic/QuicConstants.h"
+#include "quic/handshake/TransportParameters.h"
 
 #include <cstdint>
 #include <memory>

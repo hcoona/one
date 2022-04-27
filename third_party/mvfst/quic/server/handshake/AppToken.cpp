@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/server/handshake/AppToken.h>
+#include "quic/server/handshake/AppToken.h"
 
 namespace quic {
 

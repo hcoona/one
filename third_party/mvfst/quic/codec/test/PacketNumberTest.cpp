@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/PacketNumber.h>
+#include "quic/codec/PacketNumber.h"
 
-#include <folly/portability/GTest.h>
-#include <quic/codec/Types.h>
+#include "folly/portability/GTest.h"
+#include "quic/codec/Types.h"
 
 using namespace testing;
 

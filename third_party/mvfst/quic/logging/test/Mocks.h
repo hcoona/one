@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <quic/logging/QLogger.h>
+#include "folly/portability/GMock.h"
+#include "quic/logging/QLogger.h"
 
 namespace quic::test {
 class MockQLogger : public QLogger {

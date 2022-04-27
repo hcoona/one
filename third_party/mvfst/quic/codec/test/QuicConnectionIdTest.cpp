@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicConnectionId.h>
+#include "quic/codec/QuicConnectionId.h"
 
 #include <iterator>
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 namespace quic {
 namespace test {

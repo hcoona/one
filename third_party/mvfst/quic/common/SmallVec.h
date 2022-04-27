@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <folly/small_vector.h>
+#include "folly/small_vector.h"
 
 namespace quic {
 

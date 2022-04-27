@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/stream/StreamSendHandlers.h>
+#include "quic/state/stream/StreamSendHandlers.h"
 
-#include <quic/flowcontrol/QuicFlowController.h>
-#include <quic/state/QuicStreamFunctions.h>
+#include "quic/flowcontrol/QuicFlowController.h"
+#include "quic/state/QuicStreamFunctions.h"
 
 namespace quic {
 

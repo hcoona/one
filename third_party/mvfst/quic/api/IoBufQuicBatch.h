@@ -6,10 +6,10 @@
  */
 
 #pragma once
-#include <quic/QuicException.h>
-#include <quic/api/QuicBatchWriter.h>
-#include <quic/client/state/ClientStateMachine.h>
-#include <quic/state/QuicTransportStatsCallback.h>
+#include "quic/QuicException.h"
+#include "quic/api/QuicBatchWriter.h"
+#include "quic/client/state/ClientStateMachine.h"
+#include "quic/state/QuicTransportStatsCallback.h"
 
 namespace quic {
 

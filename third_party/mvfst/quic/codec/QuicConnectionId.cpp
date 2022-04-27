@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicConnectionId.h>
+#include "quic/codec/QuicConnectionId.h"
 
-#include <quic/QuicConstants.h>
+#include "quic/QuicConstants.h"
 
-#include <folly/Random.h>
-#include <glog/logging.h>
+#include "folly/Random.h"
+#include "glog/logging.h"
 
 namespace quic {
 

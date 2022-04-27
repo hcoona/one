@@ -13,7 +13,7 @@
 #include <queue>
 #include <stdexcept>
 
-#include <folly/Likely.h>
+#include "folly/Likely.h"
 
 namespace quic {
 
@@ -133,4 +133,4 @@ class IntervalSet : private Container<Interval<T, Unit>> {
   uint64_t insertVersion_{kDefaultIntervalSetVersion};
 };
 } // namespace quic
-#include <quic/common/IntervalSet-inl.h>
+#include "quic/common/IntervalSet-inl.h"

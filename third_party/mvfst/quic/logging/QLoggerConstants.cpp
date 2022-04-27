@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/logging/QLoggerConstants.h>
+#include "quic/logging/QLoggerConstants.h"
 
 namespace quic {
 folly::StringPiece vantagePointString(VantagePoint vantagePoint) noexcept {

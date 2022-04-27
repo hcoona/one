@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/api/QuicBatchWriter.h>
+#include "quic/api/QuicBatchWriter.h"
 
 #if !FOLLY_MOBILE
 #define USE_THREAD_LOCAL_BATCH_WRITER 1

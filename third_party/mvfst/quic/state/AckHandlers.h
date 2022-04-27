@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/QuicConstants.h>
-#include <quic/codec/Types.h>
-#include <quic/state/StateData.h>
+#include "quic/QuicConstants.h"
+#include "quic/codec/Types.h"
+#include "quic/state/StateData.h"
 #include <functional>
 
 namespace quic {

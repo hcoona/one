@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/d6d/QuicD6DStateFunctions.h>
-#include <quic/observer/SocketObserverContainer.h>
+#include "quic/d6d/QuicD6DStateFunctions.h"
+#include "quic/observer/SocketObserverContainer.h"
 
 namespace quic {
 

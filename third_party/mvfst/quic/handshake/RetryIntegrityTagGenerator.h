@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/io/IOBuf.h>
-#include <quic/QuicConstants.h>
+#include "folly/io/IOBuf.h"
+#include "quic/QuicConstants.h"
 
 namespace quic {
 

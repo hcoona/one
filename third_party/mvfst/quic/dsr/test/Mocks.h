@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <quic/dsr/DSRPacketizationRequestSender.h>
+#include "folly/portability/GMock.h"
+#include "quic/dsr/DSRPacketizationRequestSender.h"
 
 namespace quic {
 struct SendInstruction;

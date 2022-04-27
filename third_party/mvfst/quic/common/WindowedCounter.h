@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/QuicException.h>
+#include "quic/QuicException.h"
 #include <cstddef>
 #include <type_traits>
 #include <vector>

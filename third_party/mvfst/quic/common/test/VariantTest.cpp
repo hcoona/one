@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/Variant.h>
+#include "quic/common/Variant.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 bool& destructor_called() {
   static bool destructor_called = false;

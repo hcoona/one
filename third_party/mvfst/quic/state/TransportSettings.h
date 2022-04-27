@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/QuicConstants.h>
-#include <quic/codec/QuicConnectionId.h>
-#include <quic/d6d/Types.h>
+#include "quic/QuicConstants.h"
+#include "quic/codec/QuicConnectionId.h"
+#include "quic/d6d/Types.h"
 #include <chrono>
 
 namespace quic {

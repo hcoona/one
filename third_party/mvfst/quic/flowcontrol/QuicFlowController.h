@@ -6,8 +6,8 @@
  */
 
 #pragma once
-#include <quic/codec/Types.h>
-#include <quic/state/StateData.h>
+#include "quic/codec/Types.h"
+#include "quic/state/StateData.h"
 
 namespace quic {
 

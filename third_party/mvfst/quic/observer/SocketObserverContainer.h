@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/ObserverContainer.h>
-#include <quic/observer/SocketObserverInterface.h>
+#include "folly/ObserverContainer.h"
+#include "quic/observer/SocketObserverInterface.h"
 
 namespace quic {
 class QuicSocket;

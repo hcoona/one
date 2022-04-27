@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/io/async/AsyncTransport.h>
-#include <quic/api/QuicSocket.h>
+#include "folly/io/async/AsyncTransport.h"
+#include "quic/api/QuicSocket.h"
 
 namespace quic {
 

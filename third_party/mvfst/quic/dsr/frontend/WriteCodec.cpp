@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/Optional.h>
-#include <quic/dsr/frontend/WriteCodec.h>
+#include "folly/Optional.h"
+#include "quic/dsr/frontend/WriteCodec.h"
 
 namespace quic {
 uint32_t writeDSRStreamFrame(

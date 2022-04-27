@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/DefaultConnectionIdAlgo.h>
+#include "quic/codec/DefaultConnectionIdAlgo.h"
 
-#include <folly/Random.h>
-#include <quic/QuicConstants.h>
-#include <quic/QuicException.h>
-#include <quic/codec/QuicConnectionId.h>
+#include "folly/Random.h"
+#include "quic/QuicConstants.h"
+#include "quic/QuicException.h"
+#include "quic/codec/QuicConnectionId.h"
 
 namespace {
 // mask to extract process id bit from the connectionId

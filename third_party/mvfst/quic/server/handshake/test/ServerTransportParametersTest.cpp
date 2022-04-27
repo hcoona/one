@@ -7,14 +7,14 @@
 
 #include <algorithm>
 
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
-#include <quic/QuicConstants.h>
-#include <quic/common/test/TestUtils.h>
-#include <quic/server/handshake/ServerTransportParametersExtension.h>
+#include "quic/QuicConstants.h"
+#include "quic/common/test/TestUtils.h"
+#include "quic/server/handshake/ServerTransportParametersExtension.h"
 
-#include <fizz/protocol/test/TestMessages.h>
+#include "fizz/protocol/test/TestMessages.h"
 
 using namespace fizz;
 using namespace fizz::test;

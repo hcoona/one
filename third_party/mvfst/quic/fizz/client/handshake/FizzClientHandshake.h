@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include <quic/client/handshake/ClientHandshake.h>
-#include <quic/fizz/handshake/FizzCryptoFactory.h>
+#include "quic/client/handshake/ClientHandshake.h"
+#include "quic/fizz/handshake/FizzCryptoFactory.h"
 
-#include <fizz/client/ClientProtocol.h>
+#include "fizz/client/ClientProtocol.h"
 
 namespace quic {
 

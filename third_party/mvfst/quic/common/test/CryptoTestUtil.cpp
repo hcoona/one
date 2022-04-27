@@ -7,10 +7,10 @@
 
 // Copied from
 // https://github.com/facebookincubator/fizz/blob/master/fizz/crypto/test/TestUtil.cpp
-#include <fizz/crypto/test/TestUtil.h>
+#include "fizz/crypto/test/TestUtil.h"
 
-#include <folly/String.h>
-#include <folly/ssl/OpenSSLCertUtils.h>
+#include "folly/String.h"
+#include "folly/ssl/OpenSSLCertUtils.h"
 #include <sodium/randombytes.h>
 
 using namespace folly;

@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/WindowedCounter.h>
+#include "quic/common/WindowedCounter.h"
 
-#include <quic/QuicConstants.h>
+#include "quic/QuicConstants.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 using namespace ::testing;
 
 namespace quic {

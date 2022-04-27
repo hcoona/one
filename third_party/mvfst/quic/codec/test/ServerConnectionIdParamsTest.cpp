@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
-#include <quic/codec/QuicConnectionId.h>
+#include "folly/portability/GTest.h"
+#include "quic/codec/QuicConnectionId.h"
 
 namespace quic {
 namespace test {

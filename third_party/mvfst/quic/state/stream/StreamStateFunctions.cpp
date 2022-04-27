@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/stream/StreamStateFunctions.h>
+#include "quic/state/stream/StreamStateFunctions.h"
 
-#include <quic/flowcontrol/QuicFlowController.h>
+#include "quic/flowcontrol/QuicFlowController.h"
 
 namespace quic {
 

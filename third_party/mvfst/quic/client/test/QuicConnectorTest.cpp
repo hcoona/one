@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <gtest/gtest.h>
-#include <quic/client/connector/QuicConnector.h>
-#include <quic/client/test/Mocks.h>
-#include <quic/common/test/TestClientUtils.h>
-#include <quic/fizz/client/handshake/FizzClientQuicHandshakeContext.h>
+#include "gtest/gtest.h"
+#include "quic/client/connector/QuicConnector.h"
+#include "quic/client/test/Mocks.h"
+#include "quic/common/test/TestClientUtils.h"
+#include "quic/fizz/client/handshake/FizzClientQuicHandshakeContext.h"
 
 using namespace ::testing;
 

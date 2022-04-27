@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/api/QuicPacketScheduler.h>
-#include <quic/flowcontrol/QuicFlowController.h>
+#include "quic/api/QuicPacketScheduler.h"
+#include "quic/flowcontrol/QuicFlowController.h"
 
 namespace {
 using namespace quic;

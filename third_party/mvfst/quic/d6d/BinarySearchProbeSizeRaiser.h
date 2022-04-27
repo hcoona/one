@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <glog/logging.h>
-#include <quic/d6d/ProbeSizeRaiser.h>
+#include "glog/logging.h"
+#include "quic/d6d/ProbeSizeRaiser.h"
 
 namespace quic {
 

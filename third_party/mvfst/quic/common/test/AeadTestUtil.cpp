@@ -7,9 +7,9 @@
 
 // Copied from
 // https://github.com/facebookincubator/fizz/blob/master/fizz/crypto/aead/test/TestUtil.cpp
-#include <fizz/crypto/aead/test/TestUtil.h>
+#include "fizz/crypto/aead/test/TestUtil.h"
 
-#include <fizz/crypto/aead/IOBufUtil.h>
+#include "fizz/crypto/aead/IOBufUtil.h"
 
 using namespace folly;
 

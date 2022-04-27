@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/codec/QuicPacketBuilder.h>
-#include <quic/codec/Types.h>
-#include <quic/common/IntervalSet.h>
+#include "quic/codec/QuicPacketBuilder.h"
+#include "quic/codec/Types.h"
+#include "quic/common/IntervalSet.h"
 #include <chrono>
 
 namespace quic {

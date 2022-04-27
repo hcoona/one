@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <quic/codec/Types.h>
-#include <quic/common/EnumArray.h>
+#include "quic/codec/Types.h"
+#include "quic/common/EnumArray.h"
 
 namespace quic {
 

@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include <quic/codec/PacketNumber.h>
-#include <quic/codec/QuicConnectionId.h>
-#include <quic/codec/Types.h>
-#include <quic/dsr/Types.h>
+#include "quic/codec/PacketNumber.h"
+#include "quic/codec/QuicConnectionId.h"
+#include "quic/codec/Types.h"
+#include "quic/dsr/Types.h"
 
 namespace quic {
 

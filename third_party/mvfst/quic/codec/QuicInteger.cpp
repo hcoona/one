@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicInteger.h>
+#include "quic/codec/QuicInteger.h"
 
-#include <folly/Conv.h>
+#include "folly/Conv.h"
 
 namespace quic {
 

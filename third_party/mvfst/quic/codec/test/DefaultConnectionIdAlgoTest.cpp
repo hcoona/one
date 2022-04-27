@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/DefaultConnectionIdAlgo.h>
+#include "quic/codec/DefaultConnectionIdAlgo.h"
 
-#include <folly/Random.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/portability/GTest.h"
 #include <bitset>
 
 namespace quic::test {

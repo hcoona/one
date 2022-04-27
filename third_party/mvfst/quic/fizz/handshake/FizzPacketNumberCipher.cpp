@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/fizz/handshake/FizzPacketNumberCipher.h>
+#include "quic/fizz/handshake/FizzPacketNumberCipher.h"
 
 namespace quic {
 

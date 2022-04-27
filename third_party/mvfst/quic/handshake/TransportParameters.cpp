@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/handshake/TransportParameters.h>
+#include "quic/handshake/TransportParameters.h"
 
-#include <quic/common/BufUtil.h>
+#include "quic/common/BufUtil.h"
 
 namespace quic {
 folly::Optional<uint64_t> getIntegerParameter(

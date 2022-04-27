@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <quic/server/SlidingWindowRateLimiter.h>
+#include "quic/server/SlidingWindowRateLimiter.h"
 
 using namespace quic;
 

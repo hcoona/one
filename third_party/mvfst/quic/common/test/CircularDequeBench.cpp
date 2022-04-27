@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/Benchmark.h>
-#include <quic/common/CircularDeque.h>
-#include <quic/common/test/TestUtils.h>
+#include "folly/Benchmark.h"
+#include "quic/common/CircularDeque.h"
+#include "quic/common/test/TestUtils.h"
 #include <deque>
 
 namespace {

@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/MonitoredObject.h>
+#include "quic/common/MonitoredObject.h"
 
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 #include <functional>
 
 using namespace std;

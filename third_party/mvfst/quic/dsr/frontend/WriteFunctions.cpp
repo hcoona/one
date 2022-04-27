@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/ScopeGuard.h>
-#include <quic/dsr/frontend/WriteFunctions.h>
+#include "folly/ScopeGuard.h"
+#include "quic/dsr/frontend/WriteFunctions.h"
 
 namespace quic {
 uint64_t writePacketizationRequest(

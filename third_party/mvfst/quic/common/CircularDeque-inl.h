@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <iterator>
 
-#include <folly/Likely.h>
-#include <folly/ScopeGuard.h>
+#include "folly/Likely.h"
+#include "folly/ScopeGuard.h"
 
 namespace quic {
 

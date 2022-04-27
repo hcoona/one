@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/dsr/backend/test/TestUtils.h>
-#include <quic/tools/tperf/TperfDSRSender.h>
+#include "quic/dsr/backend/test/TestUtils.h"
+#include "quic/tools/tperf/TperfDSRSender.h"
 
 namespace quic {
 

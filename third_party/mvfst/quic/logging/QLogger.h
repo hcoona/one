@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/codec/QuicConnectionId.h>
-#include <quic/codec/Types.h>
-#include <quic/logging/QLoggerConstants.h>
+#include "quic/codec/QuicConnectionId.h"
+#include "quic/codec/Types.h"
+#include "quic/logging/QLoggerConstants.h"
 
 namespace quic {
 

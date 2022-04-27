@@ -9,10 +9,10 @@
 
 #include <initializer_list>
 
-#include <boost/iterator/iterator_facade.hpp>
-#include <folly/Portability.h>
-#include <folly/memory/Malloc.h>
-#include <glog/logging.h>
+#include "boost/iterator/iterator_facade.hpp"
+#include "folly/Portability.h"
+#include "folly/memory/Malloc.h"
+#include "glog/logging.h"
 
 namespace quic {
 
@@ -383,4 +383,4 @@ struct CircularDeque {
 };
 } // namespace quic
 
-#include <quic/common/CircularDeque-inl.h>
+#include "quic/common/CircularDeque-inl.h"

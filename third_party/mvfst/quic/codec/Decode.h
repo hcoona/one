@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <folly/io/Cursor.h>
-#include <quic/codec/PacketNumber.h>
-#include <quic/codec/Types.h>
+#include "folly/io/Cursor.h"
+#include "quic/codec/PacketNumber.h"
+#include "quic/codec/Types.h"
 
 namespace quic {
 

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GMock.h>
-#include <quic/congestion_control/Bbr.h>
+#include "folly/portability/GMock.h"
+#include "quic/congestion_control/Bbr.h"
 
 namespace quic {
 namespace test {

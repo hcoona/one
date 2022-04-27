@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
-#include <quic/dsr/frontend/WriteFunctions.h>
-#include <quic/dsr/test/TestCommon.h>
-#include <quic/state/test/Mocks.h>
+#include "folly/portability/GTest.h"
+#include "quic/dsr/frontend/WriteFunctions.h"
+#include "quic/dsr/test/TestCommon.h"
+#include "quic/state/test/Mocks.h"
 
 using namespace testing;
 

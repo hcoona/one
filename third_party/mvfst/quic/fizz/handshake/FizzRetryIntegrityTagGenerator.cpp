@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/fizz/handshake/FizzRetryIntegrityTagGenerator.h>
+#include "quic/fizz/handshake/FizzRetryIntegrityTagGenerator.h"
 
-#include <fizz/crypto/aead/AESGCM128.h>
-#include <fizz/crypto/aead/Aead.h>
-#include <fizz/crypto/aead/OpenSSLEVPCipher.h>
+#include "fizz/crypto/aead/AESGCM128.h"
+#include "fizz/crypto/aead/Aead.h"
+#include "fizz/crypto/aead/OpenSSLEVPCipher.h"
 
 namespace quic {
 

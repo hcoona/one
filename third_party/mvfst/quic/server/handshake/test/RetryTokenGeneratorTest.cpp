@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/server/handshake/TokenGenerator.h>
+#include "quic/server/handshake/TokenGenerator.h"
 
-#include <folly/Random.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/portability/GTest.h"
 
 using namespace testing;
 

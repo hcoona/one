@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <quic/common/test/TestUtils.h>
-#include <quic/fizz/client/handshake/FizzClientExtensions.h>
+#include "quic/common/test/TestUtils.h"
+#include "quic/fizz/client/handshake/FizzClientExtensions.h"
 
-#include <fizz/protocol/test/TestMessages.h>
+#include "fizz/protocol/test/TestMessages.h"
 
 using namespace fizz;
 using namespace fizz::test;

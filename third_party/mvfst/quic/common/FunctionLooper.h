@@ -8,9 +8,9 @@
 #pragma once
 #include <ostream>
 
-#include <folly/Function.h>
-#include <folly/io/async/EventBase.h>
-#include <quic/common/Timers.h>
+#include "folly/Function.h"
+#include "folly/io/async/EventBase.h"
+#include "quic/common/Timers.h"
 
 namespace quic {
 enum class LooperType : uint8_t {

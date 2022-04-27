@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/PacketEvent.h>
+#include "quic/state/PacketEvent.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 namespace quic {
 namespace test {

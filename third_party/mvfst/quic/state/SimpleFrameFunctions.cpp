@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/QuicConstants.h>
-#include <quic/state/QuicStateFunctions.h>
-#include <quic/state/QuicStreamFunctions.h>
-#include <quic/state/SimpleFrameFunctions.h>
-#include <quic/state/stream/StreamSendHandlers.h>
+#include "quic/QuicConstants.h"
+#include "quic/state/QuicStateFunctions.h"
+#include "quic/state/QuicStreamFunctions.h"
+#include "quic/state/SimpleFrameFunctions.h"
+#include "quic/state/stream/StreamSendHandlers.h"
 
 namespace quic {
 void sendSimpleFrame(QuicConnectionStateBase& conn, QuicSimpleFrame frame) {

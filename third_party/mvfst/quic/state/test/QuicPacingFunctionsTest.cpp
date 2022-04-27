@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/QuicPacingFunctions.h>
+#include "quic/state/QuicPacingFunctions.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace testing;
 

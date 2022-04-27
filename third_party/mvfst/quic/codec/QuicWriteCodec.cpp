@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicWriteCodec.h>
+#include "quic/codec/QuicWriteCodec.h"
 
 #include <algorithm>
 
-#include <quic/QuicConstants.h>
-#include <quic/QuicException.h>
-#include <quic/codec/QuicInteger.h>
+#include "quic/QuicConstants.h"
+#include "quic/QuicException.h"
+#include "quic/codec/QuicInteger.h"
 
 namespace {
 

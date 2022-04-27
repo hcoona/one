@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/api/IoBufQuicBatch.h>
+#include "quic/api/IoBufQuicBatch.h"
 
-#include <quic/common/SocketUtil.h>
-#include <quic/happyeyeballs/QuicHappyEyeballsFunctions.h>
+#include "quic/common/SocketUtil.h"
+#include "quic/happyeyeballs/QuicHappyEyeballsFunctions.h"
 
 namespace quic {
 IOBufQuicBatch::IOBufQuicBatch(

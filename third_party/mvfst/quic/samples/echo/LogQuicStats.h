@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <glog/logging.h>
-#include <quic/QuicConstants.h>
-#include <quic/QuicException.h>
-#include <quic/codec/Types.h>
-#include <quic/state/QuicTransportStatsCallback.h>
+#include "glog/logging.h"
+#include "quic/QuicConstants.h"
+#include "quic/QuicException.h"
+#include "quic/codec/Types.h"
+#include "quic/state/QuicTransportStatsCallback.h"
 
 namespace quic {
 namespace samples {

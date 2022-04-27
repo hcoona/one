@@ -7,16 +7,16 @@
 
 #pragma once
 
-#include <folly/Optional.h>
+#include "folly/Optional.h"
 
-#include <folly/String.h>
-#include <folly/hash/Hash.h>
-#include <folly/io/Cursor.h>
-#include <folly/io/IOBuf.h>
+#include "folly/String.h"
+#include "folly/hash/Hash.h"
+#include "folly/io/Cursor.h"
+#include "folly/io/IOBuf.h"
 
 #include <array>
 
-#include <quic/QuicConstants.h>
+#include "quic/QuicConstants.h"
 
 namespace quic {
 constexpr uint8_t kStatelessResetTokenLength = 16;

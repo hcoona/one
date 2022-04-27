@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/codec/PacketNumberCipher.h>
+#include "quic/codec/PacketNumberCipher.h"
 
-#include <folly/ssl/OpenSSLPtrTypes.h>
+#include "folly/ssl/OpenSSLPtrTypes.h"
 
 namespace quic {
 

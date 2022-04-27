@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <quic/handshake/RetryIntegrityTagGenerator.h>
+#include "quic/handshake/RetryIntegrityTagGenerator.h"
 
 namespace quic {
 

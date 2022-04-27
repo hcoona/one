@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/fizz/server/handshake/FizzServerQuicHandshakeContext.h>
+#include "quic/fizz/server/handshake/FizzServerQuicHandshakeContext.h"
 
-#include <quic/fizz/server/handshake/FizzServerHandshake.h>
+#include "quic/fizz/server/handshake/FizzServerHandshake.h"
 
 namespace quic {
 

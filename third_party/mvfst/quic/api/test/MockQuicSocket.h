@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
+#include "folly/portability/GMock.h"
 
-#include <quic/api/QuicSocket.h>
+#include "quic/api/QuicSocket.h"
 
 namespace quic {
 

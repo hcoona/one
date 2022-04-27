@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
-#include <quic/state/QuicPriorityQueue.h>
+#include "quic/state/QuicPriorityQueue.h"
 
 namespace quic::test {
 

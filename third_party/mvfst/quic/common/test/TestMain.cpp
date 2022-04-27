@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/init/Init.h>
+#include "folly/init/Init.h"
 
-#include <folly/Portability.h>
-#include <folly/portability/GFlags.h>
-#include <folly/portability/GTest.h>
+#include "folly/Portability.h"
+#include "folly/portability/GFlags.h"
+#include "folly/portability/GTest.h"
 
 /*
  * This is the recommended main function for all tests.

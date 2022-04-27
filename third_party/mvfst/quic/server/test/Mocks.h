@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
+#include "folly/portability/GMock.h"
 
-#include <quic/server/QuicServer.h>
-#include <quic/server/QuicServerTransport.h>
-#include <quic/server/QuicServerWorker.h>
-#include <quic/server/state/ServerConnectionIdRejector.h>
+#include "quic/server/QuicServer.h"
+#include "quic/server/QuicServerTransport.h"
+#include "quic/server/QuicServerWorker.h"
+#include "quic/server/state/ServerConnectionIdRejector.h"
 
 namespace quic {
 

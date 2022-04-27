@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/server/handshake/StatelessResetGenerator.h>
+#include "quic/server/handshake/StatelessResetGenerator.h"
 
-#include <folly/Random.h>
-#include <folly/SocketAddress.h>
-#include <folly/portability/GTest.h>
+#include "folly/Random.h"
+#include "folly/SocketAddress.h"
+#include "folly/portability/GTest.h"
 
 using namespace testing;
 

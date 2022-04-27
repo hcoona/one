@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicReadCodec.h>
+#include "quic/codec/QuicReadCodec.h"
 
-#include <fizz/crypto/Utils.h>
-#include <folly/io/Cursor.h>
-#include <quic/codec/Decode.h>
-#include <quic/codec/PacketNumber.h>
+#include "fizz/crypto/Utils.h"
+#include "folly/io/Cursor.h"
+#include "quic/codec/Decode.h"
+#include "quic/codec/PacketNumber.h"
 
 namespace {
 quic::ConnectionId zeroConnId() {

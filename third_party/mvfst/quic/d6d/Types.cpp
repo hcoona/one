@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/d6d/Types.h>
+#include "quic/d6d/Types.h"
 
-#include <folly/lang/Assume.h>
+#include "folly/lang/Assume.h"
 
 namespace quic {
 std::string toString(const D6DMachineState state) {

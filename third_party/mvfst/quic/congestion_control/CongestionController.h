@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/QuicConstants.h>
-#include <quic/state/OutstandingPacket.h>
-#include <quic/state/PacketEvent.h>
+#include "quic/QuicConstants.h"
+#include "quic/state/OutstandingPacket.h"
+#include "quic/state/PacketEvent.h"
 
 namespace quic {
 

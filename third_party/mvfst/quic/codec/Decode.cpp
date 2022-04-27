@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/Decode.h>
+#include "quic/codec/Decode.h"
 
-#include <folly/String.h>
-#include <quic/QuicException.h>
-#include <quic/codec/PacketNumber.h>
-#include <quic/codec/QuicInteger.h>
+#include "folly/String.h"
+#include "quic/QuicException.h"
+#include "quic/codec/PacketNumber.h"
+#include "quic/codec/QuicInteger.h"
 
 namespace {
 

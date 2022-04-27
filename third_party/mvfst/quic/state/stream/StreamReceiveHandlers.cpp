@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/stream/StreamReceiveHandlers.h>
-#include <quic/state/stream/StreamStateFunctions.h>
+#include "quic/state/stream/StreamReceiveHandlers.h"
+#include "quic/state/stream/StreamStateFunctions.h"
 
 namespace quic {
 

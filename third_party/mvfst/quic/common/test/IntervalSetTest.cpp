@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/IntervalSet.h>
+#include "quic/common/IntervalSet.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 using namespace std;
 using namespace quic;

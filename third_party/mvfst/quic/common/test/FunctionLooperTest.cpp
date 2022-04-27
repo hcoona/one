@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/FunctionLooper.h>
+#include "quic/common/FunctionLooper.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 using namespace std;
 using namespace folly;

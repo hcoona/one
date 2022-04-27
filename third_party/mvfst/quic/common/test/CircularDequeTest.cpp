@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <gtest/gtest.h>
-#include <quic/common/CircularDeque.h>
-#include <quic/common/test/TestUtils.h>
+#include "gtest/gtest.h"
+#include "quic/common/CircularDeque.h"
+#include "quic/common/test/TestUtils.h"
 #include <numeric>
 #include <utility>
 

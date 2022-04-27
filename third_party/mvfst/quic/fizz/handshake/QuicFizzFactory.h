@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <fizz/protocol/OpenSSLFactory.h>
+#include "fizz/protocol/OpenSSLFactory.h"
 
 namespace quic {
 

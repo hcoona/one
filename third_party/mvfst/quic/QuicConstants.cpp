@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/QuicConstants.h>
+#include "quic/QuicConstants.h"
 
 namespace quic {
 

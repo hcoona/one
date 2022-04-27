@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/common/test/TestPacketBuilders.h>
-#include <quic/state/QuicStateFunctions.h>
+#include "quic/common/test/TestPacketBuilders.h"
+#include "quic/state/QuicStateFunctions.h"
 
 namespace quic::test {
 

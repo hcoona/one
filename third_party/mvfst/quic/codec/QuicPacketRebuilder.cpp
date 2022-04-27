@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/codec/QuicPacketRebuilder.h>
-#include <quic/codec/QuicWriteCodec.h>
-#include <quic/flowcontrol/QuicFlowController.h>
-#include <quic/state/QuicStateFunctions.h>
-#include <quic/state/QuicStreamFunctions.h>
-#include <quic/state/SimpleFrameFunctions.h>
+#include "quic/codec/QuicPacketRebuilder.h"
+#include "quic/codec/QuicWriteCodec.h"
+#include "quic/flowcontrol/QuicFlowController.h"
+#include "quic/state/QuicStateFunctions.h"
+#include "quic/state/QuicStreamFunctions.h"
+#include "quic/state/SimpleFrameFunctions.h"
 
 namespace quic {
 

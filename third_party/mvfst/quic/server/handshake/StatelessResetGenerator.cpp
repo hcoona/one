@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/server/handshake/StatelessResetGenerator.h>
+#include "quic/server/handshake/StatelessResetGenerator.h"
 
-#include <folly/Range.h>
+#include "folly/Range.h"
 
 namespace {
 constexpr folly::StringPiece kSalt{"Stateless reset"};

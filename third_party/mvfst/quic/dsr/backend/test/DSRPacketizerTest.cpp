@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <folly/portability/GTest.h>
-#include <quic/common/test/TestUtils.h>
-#include <quic/dsr/backend/DSRPacketizer.h>
-#include <quic/dsr/backend/test/TestUtils.h>
-#include <quic/dsr/frontend/WriteFunctions.h>
-#include <quic/dsr/test/TestCommon.h>
+#include "folly/portability/GTest.h"
+#include "quic/common/test/TestUtils.h"
+#include "quic/dsr/backend/DSRPacketizer.h"
+#include "quic/dsr/backend/test/TestUtils.h"
+#include "quic/dsr/frontend/WriteFunctions.h"
+#include "quic/dsr/test/TestCommon.h"
 
 using namespace testing;
 

@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/api/QuicStreamAsyncTransport.h>
+#include "quic/api/QuicStreamAsyncTransport.h"
 
-#include <folly/io/Cursor.h>
+#include "folly/io/Cursor.h"
 
 namespace quic {
 

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/QuicStreamUtilities.h>
+#include "quic/state/QuicStreamUtilities.h"
 
 namespace quic {
 

@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/QuicConstants.h>
-#include <quic/common/TransportKnobs.h>
+#include "quic/QuicConstants.h"
+#include "quic/common/TransportKnobs.h"
 
-#include <folly/Format.h>
-#include <folly/portability/GTest.h>
+#include "folly/Format.h"
+#include "folly/portability/GTest.h"
 
 namespace quic {
 namespace test {

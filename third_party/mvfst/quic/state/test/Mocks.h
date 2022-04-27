@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <quic/QuicConstants.h>
-#include <quic/state/StateData.h>
+#include "folly/portability/GMock.h"
+#include "quic/QuicConstants.h"
+#include "quic/state/StateData.h"
 
 namespace quic {
 namespace test {

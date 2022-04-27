@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/logging/QLogger.h>
-#include <quic/logging/QLoggerConstants.h>
-#include <quic/logging/QLoggerTypes.h>
+#include "quic/logging/QLogger.h"
+#include "quic/logging/QLoggerConstants.h"
+#include "quic/logging/QLoggerTypes.h"
 
 namespace quic {
 

@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/QuicStateFunctions.h>
-#include <quic/state/QuicStreamFunctions.h>
+#include "quic/state/QuicStateFunctions.h"
+#include "quic/state/QuicStreamFunctions.h"
 
-#include <quic/common/TimeUtil.h>
+#include "quic/common/TimeUtil.h"
 
 namespace {
 std::deque<quic::OutstandingPacket>::reverse_iterator

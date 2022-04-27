@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <folly/portability/GMock.h>
-#include <quic/d6d/ProbeSizeRaiser.h>
+#include "folly/portability/GMock.h"
+#include "quic/d6d/ProbeSizeRaiser.h"
 
 namespace quic {
 namespace test {

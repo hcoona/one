@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <quic/QuicConstants.h>
-#include <quic/codec/PacketNumberCipher.h>
-#include <quic/codec/Types.h>
+#include "quic/QuicConstants.h"
+#include "quic/codec/PacketNumberCipher.h"
+#include "quic/codec/Types.h"
 
 namespace quic {
 

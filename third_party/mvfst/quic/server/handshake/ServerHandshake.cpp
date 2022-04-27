@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/server/handshake/ServerHandshake.h>
+#include "quic/server/handshake/ServerHandshake.h"
 
-#include <quic/fizz/handshake/FizzBridge.h>
-#include <quic/fizz/handshake/FizzCryptoFactory.h>
-#include <quic/state/QuicStreamFunctions.h>
+#include "quic/fizz/handshake/FizzBridge.h"
+#include "quic/fizz/handshake/FizzCryptoFactory.h"
+#include "quic/state/QuicStreamFunctions.h"
 
 namespace quic {
 ServerHandshake::ServerHandshake(QuicConnectionStateBase* conn)

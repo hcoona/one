@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/tools/tperf/PacingObserver.h>
+#include "quic/tools/tperf/PacingObserver.h"
 
-#include <quic/common/test/TestUtils.h>
-#include <quic/logging/test/Mocks.h>
+#include "quic/common/test/TestUtils.h"
+#include "quic/logging/test/Mocks.h"
 
 using namespace testing;
 

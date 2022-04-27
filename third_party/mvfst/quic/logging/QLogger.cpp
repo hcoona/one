@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/logging/QLogger.h>
+#include "quic/logging/QLogger.h"
 
-#include <quic/codec/Types.h>
+#include "quic/codec/Types.h"
 
 namespace quic {
 

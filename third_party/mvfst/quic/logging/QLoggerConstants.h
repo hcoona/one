@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <folly/String.h>
-#include <quic/QuicConstants.h>
-#include <quic/codec/Types.h>
+#include "folly/String.h"
+#include "quic/QuicConstants.h"
+#include "quic/codec/Types.h"
 
 namespace quic {
 constexpr folly::StringPiece kShortHeaderPacketType = "1RTT";

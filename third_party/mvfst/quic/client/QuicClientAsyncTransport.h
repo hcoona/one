@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <quic/api/QuicStreamAsyncTransport.h>
-#include <quic/client/QuicClientTransport.h>
+#include "quic/api/QuicStreamAsyncTransport.h"
+#include "quic/client/QuicClientTransport.h"
 
 namespace quic {
 

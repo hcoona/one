@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/loss/QuicLossFunctions.h>
-#include <quic/state/QuicStreamFunctions.h>
+#include "quic/loss/QuicLossFunctions.h"
+#include "quic/state/QuicStreamFunctions.h"
 
 namespace quic {
 

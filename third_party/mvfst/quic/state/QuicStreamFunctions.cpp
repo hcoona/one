@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/QuicStreamFunctions.h>
+#include "quic/state/QuicStreamFunctions.h"
 
-#include <quic/QuicException.h>
-#include <quic/flowcontrol/QuicFlowController.h>
+#include "quic/QuicException.h"
+#include "quic/flowcontrol/QuicFlowController.h"
 
-#include <quic/state/QuicStreamUtilities.h>
+#include "quic/state/QuicStreamUtilities.h"
 
-#include <folly/io/Cursor.h>
+#include "folly/io/Cursor.h"
 #include <algorithm>
 
 namespace {

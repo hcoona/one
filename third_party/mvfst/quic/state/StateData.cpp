@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/state/OutstandingPacket.h>
-#include <quic/state/QuicStreamUtilities.h>
-#include <quic/state/StateData.h>
+#include "quic/state/OutstandingPacket.h"
+#include "quic/state/QuicStreamUtilities.h"
+#include "quic/state/StateData.h"
 
 namespace quic {
 QuicStreamState::QuicStreamState(StreamId idIn, QuicConnectionStateBase& connIn)

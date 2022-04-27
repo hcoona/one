@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include <fizz/record/Extensions.h>
-#include <quic/codec/QuicInteger.h>
-#include <quic/common/BufUtil.h>
-#include <quic/handshake/TransportParameters.h>
+#include "fizz/record/Extensions.h"
+#include "quic/codec/QuicInteger.h"
+#include "quic/common/BufUtil.h"
+#include "quic/handshake/TransportParameters.h"
 
 namespace quic {
 

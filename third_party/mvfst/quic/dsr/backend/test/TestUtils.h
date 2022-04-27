@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <quic/dsr/Types.h>
-#include <quic/dsr/backend/DSRPacketizer.h>
+#include "quic/dsr/Types.h"
+#include "quic/dsr/backend/DSRPacketizer.h"
 
 #pragma once
 

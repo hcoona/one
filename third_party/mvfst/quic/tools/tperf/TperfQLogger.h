@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <quic/logging/FileQLogger.h>
-#include <quic/tools/tperf/PacingObserver.h>
+#include "quic/logging/FileQLogger.h"
+#include "quic/tools/tperf/PacingObserver.h"
 
 namespace quic {
 namespace tperf {
