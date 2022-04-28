@@ -136,3 +136,25 @@ cc_library(
         "@openssl//:ssl",
     ],
 )
+
+cc_library(
+    name = "test_utility",
+    testonly = True,
+    srcs = glob([
+        "fizz/**/test/TestUtil.cpp",
+    ]),
+    hdrs = glob([
+        "fizz/**/test/Mocks.h",
+        "fizz/**/test/TestUtil.h",
+    ]) + [
+        "fizz/protocol/test/Matchers.h",
+        "fizz/protocol/test/ProtocolTest.h",
+        "fizz/protocol/test/TestMessages.h",
+        "fizz/record/test/ExtensionTestsBase.h",
+    ],
+    strip_include_prefix = ".",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":fizz",
+    ],
+)
