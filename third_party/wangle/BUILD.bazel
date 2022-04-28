@@ -90,7 +90,7 @@ cc_library(
 [
     cc_test(
         name = name,
-        size = "small",
+        size = "medium",
         srcs = ["wangle/test/TestMain.cpp"] + [filename],
         deps = [
             ":wangle",
@@ -106,9 +106,7 @@ cc_library(
         ("wangle/acceptor/test/ConnectionManagerTest.cpp", "ConnectionManagerTest"),
         ("wangle/acceptor/test/LoadShedConfigurationTest.cpp", "LoadShedConfigurationTest"),
         ("wangle/acceptor/test/PeekingAcceptorHandshakeHelperTest.cpp", "PeekingAcceptorHandshakeHelperTest"),
-        ("wangle/bootstrap/test/BootstrapTest.cpp", "BootstrapTest"),
         ("wangle/channel/broadcast/test/BroadcastHandlerTest.cpp", "BroadcastHandlerTest"),
-        ("wangle/channel/broadcast/test/BroadcastPoolTest.cpp", "BroadcastPoolTest"),
         ("wangle/channel/broadcast/test/ObservingHandlerTest.cpp", "ObservingHandlerTest"),
         ("wangle/channel/test/AsyncSocketHandlerTest.cpp", "AsyncSocketHandlerTest"),
         ("wangle/channel/test/OutputBufferingHandlerTest.cpp", "OutputBufferingHandlerTest"),
@@ -123,9 +121,33 @@ cc_library(
     ]
 ]
 
+[
+    cc_test(
+        name = name,
+        size = "medium",
+        srcs = ["wangle/test/TestMain.cpp"] + [filename],
+        tags = [
+            "no_asan",
+        ],
+        deps = [
+            ":wangle",
+            "@//third_party/folly",
+            "@//third_party/folly:test_utility",
+            "@boost//:filesystem",
+            "@boost//:thread",
+            "@com_github_google_glog//:glog",
+            "@com_google_googletest//:gtest",
+        ],
+    )
+    for filename, name in [
+        ("wangle/bootstrap/test/BootstrapTest.cpp", "BootstrapTest"),
+        ("wangle/channel/broadcast/test/BroadcastPoolTest.cpp", "BroadcastPoolTest"),
+    ]
+]
+
 cc_test(
     name = "SSLContextManagerTest",
-    size = "medium",
+    size = "large",
     srcs = [
         "wangle/ssl/test/SSLContextManagerTest.cpp",
         "wangle/test/TestMain.cpp",
