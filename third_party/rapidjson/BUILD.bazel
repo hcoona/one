@@ -80,7 +80,7 @@ cc_test(
 
 cc_test(
     name = "rapidjson_perftests",
-    size = "small",
+    size = "medium",
     srcs = glob([
         "test/perftest/*.cpp",
         "test/perftest/*.h",
@@ -95,7 +95,9 @@ cc_test(
         ],
     ),
     includes = ["test/perftest"],
-    tags = ["no_asan"],
+    tags = [
+        "no_asan",
+    ],
     deps = [
         ":rapidjson",
         "@bazel_tools//tools/cpp/runfiles",
