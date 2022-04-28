@@ -279,18 +279,18 @@ typename Container::difference_type distance(
 // The smallest element (index = 0) of heap container is stored at cont[3] and
 // so on.
 template <typename size_type, typename Offsets>
-size_type getOffsets(
-    size_type size, Offsets& offsets, size_type index, size_type offset = 1) {
-  for (; offset <= size; offset <<= 1) {
-    index = getOffsets(size, offsets, index, 2 * offset + 1) - 1;
-    offsets[index] = offset - 1;
-  }
-  return index;
-}
-
-template <typename size_type, typename Offsets>
 void getOffsets(size_type size, Offsets& offsets) {
-  getOffsets(size, offsets, size);
+  size_type i = 0;
+  size_type offset = 0;
+  size_type index = size;
+  do {
+    for (size_type o = offset; o < size; o = 2 * o + 2) {
+      offsets[i++] = o;
+    }
+    offset = offsets[--i];
+    offsets[--index] = offset;
+    offset = 2 * offset + 1;
+  } while (i || offset < size);
 }
 
 // Inplace conversion of a sorted vector to heap layout
@@ -316,11 +316,17 @@ void heapify(Container& cont) {
 
   std::function<void(size_type, size_type)> rotate = [&](size_type next,
                                                          size_type index) {
-    if (index == next)
-      return;
-    rotate(offsets[next], index);
-    cont[offsets[next]] = std::move(cont[next]);
-    offsets[next] = size;
+    std::vector<size_type> worklist;
+    while (index != next) {
+      worklist.push_back(next);
+      next = offsets[next];
+    }
+    while (!worklist.empty()) {
+      auto cur = worklist.back();
+      worklist.pop_back();
+      cont[offsets[cur]] = std::move(cont[cur]);
+      offsets[cur] = size;
+    }
   };
 
   for (size_type index = 0; index < size; index++) {
@@ -1279,8 +1285,8 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
         m_.cont_.begin(), m_.cont_.end());
   }
 
-  const Range<typename Container::iterator> iterate() const noexcept {
-    return Range<typename Container::iterator>(
+  const Range<typename Container::const_iterator> iterate() const noexcept {
+    return Range<typename Container::const_iterator>(
         m_.cont_.begin(), m_.cont_.end());
   }
 

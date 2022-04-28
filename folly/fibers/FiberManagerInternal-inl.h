@@ -80,7 +80,17 @@ inline void FiberManager::activateFiber(Fiber* fiber) {
 #endif
 
   activeFiber_ = fiber;
+
+#ifdef FOLLY_SANITIZE_THREAD
+  auto tsanCtx = __tsan_get_current_fiber();
+  __tsan_switch_to_fiber(fiber->tsanCtx_, 0);
+#endif
+
   fiber->fiberImpl_.activate();
+
+#ifdef FOLLY_SANITIZE_THREAD
+  __tsan_switch_to_fiber(tsanCtx, 0);
+#endif
 }
 
 inline void FiberManager::deactivateFiber(Fiber* fiber) {
@@ -151,8 +161,8 @@ inline void FiberManager::runReadyFiber(Fiber* fiber) {
     fiber->rcontext_ = RequestContext::saveContext();
     fiber->asyncRoot_ = folly::exchangeCurrentAsyncStackRoot(nullptr);
   } else if (fiber->state_ == Fiber::INVALID) {
-    assert(fibersActive_ > 0);
-    --fibersActive_;
+    assert(fibersActive_.load(std::memory_order_relaxed) > 0);
+    fibersActive_.fetch_sub(1, std::memory_order_relaxed);
     // Making sure that task functor is deleted once task is complete.
     // NOTE: we must do it on main context, as the fiber is not
     // running at this point.
