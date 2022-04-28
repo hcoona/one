@@ -633,7 +633,7 @@ ssize_t AsyncUDPSocket::writev(
 
 #ifdef FOLLY_HAVE_MSG_ERRQUEUE
   constexpr size_t kSmallSizeMax = 5;
-  size_t controlBufSize = gso > 0 ? 1 : 0;
+  size_t controlBufSize = 1;
   controlBufSize +=
       cmsgs_.size() * (CMSG_SPACE(sizeof(int)) / CMSG_SPACE(sizeof(uint16_t)));
 
