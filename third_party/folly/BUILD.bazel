@@ -103,7 +103,10 @@ cc_library(
                 "folly/tools/**",
                 "folly/python/fibers.h",
                 "folly/python/GILAwareManualExecutor.h",
-            ] + ["folly/experimental/exception_tracer/*.h"],
+            ] + ["folly/experimental/exception_tracer/*.h"] + [
+                "folly/portability/GTest.h",
+                "folly/portability/GMock.h",
+            ],
         ),
         "//conditions:default": glob(
             [
@@ -116,6 +119,9 @@ cc_library(
                 "folly/tools/**",
                 "folly/python/fibers.h",
                 "folly/python/GILAwareManualExecutor.h",
+            ] + [
+                "folly/portability/GTest.h",
+                "folly/portability/GMock.h",
             ],
         ),
     }) + ["folly/folly-config.h"],
@@ -153,6 +159,7 @@ cc_library(
         "@com_github_jedisct1_libsodium//:sodium",
         "@com_github_libevent_libevent//:event",
         "@com_github_lz4_lz4//:lz4",
+        "@com_google_googletest//:gtest",
         "@openssl//:crypto",
         "@openssl//:ssl",
         "@org_sourceware_bzip2//:bz2",
@@ -191,6 +198,9 @@ cc_library(
         "folly/test/DeterministicSchedule.h",
         "folly/test/JsonTestUtil.h",
         "folly/test/TestUtils.h",
+    ] + [
+        "folly/portability/GTest.h",
+        "folly/portability/GMock.h",
     ],
     strip_include_prefix = ".",
     visibility = ["//visibility:public"],
