@@ -32,20 +32,21 @@
 namespace folly {
 namespace symbolizer {
 
-Dwarf::Dwarf(const ElfFile* elf)
-    : defaultDebugSections_{
+Dwarf::Dwarf(ElfCacheBase* elfCache, const ElfFile* elf)
+    : elfCache_(elfCache),
+      defaultDebugSections_{
           .elf = elf,
-          .debugAbbrev = getSection(".debug_abbrev"),
-          .debugAddr = getSection(".debug_addr"),
-          .debugAranges = getSection(".debug_aranges"),
-          .debugInfo = getSection(".debug_info"),
-          .debugLine = getSection(".debug_line"),
-          .debugLineStr = getSection(".debug_line_str"),
-          .debugLoclists = getSection(".debug_loclists"),
-          .debugRanges = getSection(".debug_ranges"),
-          .debugRnglists = getSection(".debug_rnglists"),
-          .debugStr = getSection(".debug_str"),
-          .debugStrOffsets = getSection(".debug_str_offsets")} {
+          .debugAbbrev = getElfSection(elf, ".debug_abbrev"),
+          .debugAddr = getElfSection(elf, ".debug_addr"),
+          .debugAranges = getElfSection(elf, ".debug_aranges"),
+          .debugInfo = getElfSection(elf, ".debug_info"),
+          .debugLine = getElfSection(elf, ".debug_line"),
+          .debugLineStr = getElfSection(elf, ".debug_line_str"),
+          .debugLoclists = getElfSection(elf, ".debug_loclists"),
+          .debugRanges = getElfSection(elf, ".debug_ranges"),
+          .debugRnglists = getElfSection(elf, ".debug_rnglists"),
+          .debugStr = getElfSection(elf, ".debug_str"),
+          .debugStrOffsets = getElfSection(elf, ".debug_str_offsets")} {
   // Optional sections:
   //  - defaultDebugSections_.debugAranges: for fast address range lookup.
   //     If missing .debug_info can be used - but it's much slower (linear
@@ -61,29 +62,7 @@ Dwarf::Dwarf(const ElfFile* elf)
   }
 }
 
-folly::StringPiece Dwarf::getSection(const char* name) const {
-  const ElfShdr* elfSection = defaultDebugSections_.elf->getSectionByName(name);
-  if (!elfSection) {
-    return {};
-  }
-#ifdef SHF_COMPRESSED
-  if (elfSection->sh_flags & SHF_COMPRESSED) {
-    return {};
-  }
-#endif
-  return defaultDebugSections_.elf->getSectionBody(*elfSection);
-}
-
 namespace {
-
-// Skip over padding until sp.data() - start is a multiple of alignment
-void skipPadding(folly::StringPiece& sp, const char* start, size_t alignment) {
-  size_t remainder = (sp.data() - start) % alignment;
-  if (remainder) {
-    FOLLY_SAFE_CHECK(alignment - remainder <= sp.size(), "invalid padding");
-    sp.advance(alignment - remainder);
-  }
-}
 
 /**
  * Find @address in .debug_aranges and return the offset in
@@ -95,18 +74,44 @@ bool findDebugInfoOffset(
   folly::StringPiece chunk;
   while (section.next(chunk)) {
     auto version = read<uint16_t>(chunk);
-    FOLLY_SAFE_CHECK(version == 2, "invalid aranges version");
+    if (version != 2) {
+      FOLLY_SAFE_DFATAL("invalid aranges version: ", version);
+      return false;
+    }
 
     offset = readOffset(chunk, section.is64Bit());
     auto addressSize = read<uint8_t>(chunk);
-    FOLLY_SAFE_CHECK(addressSize == sizeof(uintptr_t), "invalid address size");
+    if (addressSize != sizeof(uintptr_t)) {
+      FOLLY_SAFE_DFATAL("invalid address size: ", addressSize);
+      return false;
+    }
     auto segmentSize = read<uint8_t>(chunk);
-    FOLLY_SAFE_CHECK(segmentSize == 0, "segmented architecture not supported");
+    if (segmentSize != 0) {
+      FOLLY_SAFE_DFATAL("segmented architecture not supported: ", segmentSize);
+      return false;
+    }
 
     // Padded to a multiple of 2 addresses.
     // Strangely enough, this is the only place in the DWARF spec that requires
     // padding.
-    skipPadding(chunk, aranges.data(), 2 * sizeof(uintptr_t));
+    {
+      size_t alignment = 2 * sizeof(uintptr_t);
+      size_t remainder = (chunk.data() - aranges.data()) % alignment;
+      if (remainder != 0) {
+        if (alignment - remainder > chunk.size()) {
+          FOLLY_SAFE_DFATAL(
+              "invalid padding: alignment: ",
+              alignment,
+              " remainder: ",
+              remainder,
+              " chunk.size(): ",
+              chunk.size());
+          return false;
+        }
+        chunk.advance(alignment - remainder);
+      }
+    }
+
     for (;;) {
       auto start = read<uintptr_t>(chunk);
       auto length = read<uintptr_t>(chunk);
@@ -148,14 +153,18 @@ bool Dwarf::findAddress(
     if (findDebugInfoOffset(
             address, defaultDebugSections_.debugAranges, offset)) {
       // Read compilation unit header from .debug_info
-      auto unit = getCompilationUnit(defaultDebugSections_, offset);
-      if (unit.unitType != DW_UT_compile && unit.unitType != DW_UT_skeleton) {
+      auto unit = getCompilationUnits(
+          elfCache_,
+          defaultDebugSections_,
+          offset,
+          mode == LocationInfoMode::FULL_WITH_INLINE);
+      if (unit.mainCompilationUnit.unitType != DW_UT_compile &&
+          unit.mainCompilationUnit.unitType != DW_UT_skeleton) {
         return false;
       }
-      DwarfImpl impl(unit);
+      DwarfImpl impl(elfCache_, unit, mode);
       return impl.findLocation(
           address,
-          mode,
           locationInfo,
           inlineFrames,
           eachParameterName,
@@ -179,15 +188,19 @@ bool Dwarf::findAddress(
   // and look for the address in each compilation unit.
   uint64_t offset = 0;
   while (offset < defaultDebugSections_.debugInfo.size()) {
-    auto unit = getCompilationUnit(defaultDebugSections_, offset);
-    offset += unit.size;
-    if (unit.unitType != DW_UT_compile && unit.unitType != DW_UT_skeleton) {
+    auto unit = getCompilationUnits(
+        elfCache_,
+        defaultDebugSections_,
+        offset,
+        mode == LocationInfoMode::FULL_WITH_INLINE);
+    offset += unit.mainCompilationUnit.size;
+    if (unit.mainCompilationUnit.unitType != DW_UT_compile &&
+        unit.mainCompilationUnit.unitType != DW_UT_skeleton) {
       continue;
     }
-    DwarfImpl impl(unit);
+    DwarfImpl impl(elfCache_, unit, mode);
     if (impl.findLocation(
             address,
-            mode,
             locationInfo,
             inlineFrames,
             eachParameterName,
