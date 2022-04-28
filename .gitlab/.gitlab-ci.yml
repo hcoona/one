@@ -39,4 +39,4 @@ build:
 test:
   stage: test
   script:
-    - bazel test -c opt --config=clang-asan //...
+    - bazel test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
