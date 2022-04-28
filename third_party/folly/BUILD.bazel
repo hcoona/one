@@ -48,7 +48,7 @@ cc_library(
     name = "folly",
     # `folly_base_files` in `CMakeLists.txt`
     # `files`
-    srcs = select({
+    srcs = ["folly/Benchmark.cpp"] + select({
         "@//bazel/config:with_sanitizer": glob(
             [
                 "folly/**/*.cpp",
@@ -132,7 +132,10 @@ cc_library(
         "-pthread",
         "-ldl",
         "-lrt",
-    ],
+    ] + select({
+        "@//bazel/config:with_sanitizer": ["-latomic"],
+        "//conditions:default": [],
+    }),
     strip_include_prefix = ".",
     visibility = ["//visibility:public"],
     deps = [
