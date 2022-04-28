@@ -221,11 +221,11 @@ inline folly::StringPiece streamStateToString(StreamRecvState state) {
 }
 
 struct QuicStreamState : public QuicStreamLike {
-  virtual ~QuicStreamState() override = default;
+  virtual ~QuicStreamState() noexcept override = default;
 
   QuicStreamState(StreamId id, QuicConnectionStateBase& conn);
 
-  QuicStreamState(QuicStreamState&&) = default;
+  QuicStreamState(QuicStreamState&&) noexcept = default;
 
   /**
    * Constructor to migrate QuicStreamState to another

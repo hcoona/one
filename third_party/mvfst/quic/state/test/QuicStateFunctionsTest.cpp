@@ -33,6 +33,8 @@ bool verifyToScheduleAckTimeout(const QuicConnectionStateBase& conn) {
   return conn.pendingEvents.scheduleAckTimeout;
 }
 
+namespace {
+
 RegularQuicWritePacket makeTestShortPacket() {
   ShortHeader header(
       ProtectionType::KeyPhaseZero, getTestConnectionId(), 2 /* packetNum */);
@@ -50,6 +52,8 @@ RegularQuicWritePacket makeTestLongPacket(LongHeader::Types type) {
   RegularQuicWritePacket packet(std::move(header));
   return packet;
 }
+
+}  // namespace
 
 class UpdateLargestReceivedPacketNumTest
     : public TestWithParam<PacketNumberSpace> {};

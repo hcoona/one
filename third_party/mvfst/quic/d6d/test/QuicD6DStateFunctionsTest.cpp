@@ -40,12 +40,16 @@ struct D6DProbeLostTestFixture {
   TimeLastNonSearchStateEnd timeLastNonSearchStateEndE;
 };
 
+namespace {
+
 RegularQuicWritePacket makeTestShortPacket() {
   ShortHeader header(
       ProtectionType::KeyPhaseZero, getTestConnectionId(), 2 /* packetNum */);
   RegularQuicWritePacket packet(std::move(header));
   return packet;
 }
+
+}  // namespace
 
 class QuicD6DStateFunctionsTest : public Test {
  public:

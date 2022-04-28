@@ -50,12 +50,16 @@ folly::Optional<QuicFrame> getFrameIfPresent(
   return folly::none;
 }
 
+namespace {
+
 bool verifyFramePresent(
     std::vector<std::unique_ptr<folly::IOBuf>>& socketWrites,
     QuicReadCodec& readCodec,
     QuicFrame::Type frameType) {
   return getFrameIfPresent(socketWrites, readCodec, frameType).hasValue();
 }
+
+}  // namespace
 
 struct MigrationParam {
   folly::Optional<uint64_t> clientSentActiveConnIdTransportParam;

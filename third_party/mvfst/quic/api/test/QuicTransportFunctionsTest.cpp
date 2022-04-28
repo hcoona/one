@@ -87,6 +87,8 @@ void writeCryptoDataProbesToSocketForTest(
       version);
 }
 
+namespace {
+
 RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   SmallVec<QuicWriteFrame, 4, uint16_t> trimmedFrames{};
   for (auto frame : packet.frames) {
@@ -97,6 +99,8 @@ RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   packet.frames = trimmedFrames;
   return packet;
 }
+
+}  // namespace
 
 auto buildEmptyPacket(
     QuicServerConnectionState& conn,

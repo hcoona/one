@@ -2935,6 +2935,8 @@ TEST_F(QuicClientTransportAfterStartTest, RecvPathChallengeAvailablePeerId) {
   EXPECT_EQ(pathResponse.pathData, pathChallenge.pathData);
 }
 
+namespace {
+
 bool verifyFramePresent(
     std::vector<std::unique_ptr<folly::IOBuf>>& socketWrites,
     QuicReadCodec& readCodec,
@@ -2956,6 +2958,8 @@ bool verifyFramePresent(
   }
   return false;
 }
+
+}  // namespace
 
 TEST_F(QuicClientTransportAfterStartTest, CloseConnectionWithStreamPending) {
   StreamId streamId = client->createBidirectionalStream().value();

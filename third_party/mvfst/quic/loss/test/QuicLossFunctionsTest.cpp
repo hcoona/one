@@ -308,6 +308,8 @@ PacketNum QuicLossFunctionsTest::sendPacket(
   return conn.lossState.largestSent.value();
 }
 
+namespace {
+
 RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   SmallVec<QuicWriteFrame, 4, uint16_t> trimmedFrames{};
   for (auto frame : packet.frames) {
@@ -318,6 +320,8 @@ RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   packet.frames = trimmedFrames;
   return packet;
 }
+
+}  // namespace
 
 TEST_F(QuicLossFunctionsTest, AllPacketsProcessed) {
   auto conn = createConn();

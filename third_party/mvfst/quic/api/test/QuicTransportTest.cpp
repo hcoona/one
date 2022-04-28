@@ -124,6 +124,8 @@ class QuicTransportTest : public Test {
   std::shared_ptr<TestQuicTransport> transport_;
 };
 
+namespace {
+
 RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   SmallVec<QuicWriteFrame, 4, uint16_t> trimmedFrames{};
   for (auto frame : packet.frames) {
@@ -134,6 +136,8 @@ RegularQuicWritePacket stripPaddingFrames(RegularQuicWritePacket packet) {
   packet.frames = trimmedFrames;
   return packet;
 }
+
+}  // namespace
 
 size_t bufLength(
     const SocketAddress&,
