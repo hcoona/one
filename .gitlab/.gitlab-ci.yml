@@ -33,10 +33,18 @@ stages:
 
 build:
   stage: build
+  cache:
+    - key: $BAZEL_DIGEST_VERSION
+      paths:
+        - output
   script:
-    - bazel build --config=libc++ //...
+    - bazel --output_base=output build --config=libc++ //...
 
 test:
   stage: test
+  cache:
+    - key: $BAZEL_DIGEST_VERSION
+      paths:
+        - output
   script:
-    - bazel test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
+    - bazel --output_base=output test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
