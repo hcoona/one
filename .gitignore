@@ -437,6 +437,7 @@ $RECYCLE.BIN/
 
 # Ignore CI pipeline output base
 /.bazel_output
+/.cache
 
 # Normal files
 !/bazel/build

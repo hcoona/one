@@ -22,10 +22,14 @@ default:
     - echo "startup --batch_cpu_scheduling" >> .bazelrc
     - tools/setup_clang.sh /usr/lib/llvm-13
 
+variables:
+  CACHE_FALLBACK_KEY: main
+
 cache:
-  key: bazel_cache
-  paths:
-    - .cache/
+  - key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .bazel_output/
+      - .cache/
 
 stages:
   - build
@@ -33,18 +37,10 @@ stages:
 
 build:
   stage: build
-  cache:
-    - key: $BAZEL_DIGEST_VERSION
-      paths:
-        - .bazel_output
   script:
     - bazel --output_base=.bazel_output build --config=libc++ //...
 
 test:
   stage: test
-  cache:
-    - key: $BAZEL_DIGEST_VERSION
-      paths:
-        - output
   script:
     - bazel --output_base=.bazel_output test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
