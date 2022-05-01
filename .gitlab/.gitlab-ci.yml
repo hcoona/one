@@ -36,9 +36,9 @@ build:
   cache:
     - key: $BAZEL_DIGEST_VERSION
       paths:
-        - output
+        - .bazel_output
   script:
-    - bazel --output_base=output build --config=libc++ //...
+    - bazel --output_base=.bazel_output build --config=libc++ //...
 
 test:
   stage: test
@@ -47,4 +47,4 @@ test:
       paths:
         - output
   script:
-    - bazel --output_base=output test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
+    - bazel --output_base=.bazel_output test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
