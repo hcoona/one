@@ -37,3 +37,8 @@ test:
   stage: test
   script:
     - bazel --output_base=.bazel_output test -c opt --config=clang-asan -- //... -//third_party/wangle:SSLContextManagerTest
+  artifacts:
+    paths:
+      - .bazel_output/execroot/com_github_hcoona_one/bazel-out/**/testlogs/**
+    expire_in: 2 days
+    when: on_failure
