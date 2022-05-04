@@ -37,6 +37,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 #include <future>
 #include <iostream>
 #include <string>
+#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -68,21 +69,17 @@ int main(int argc, char* argv[]) {
   po::options_description desc("Options");
   desc.add_options()("help", "show help")(
       "source-dir", po::value<std::string>()->required(),
-      "path to use for cmake configuration")("output",
-                                             po::value<std::string>()
-                                                 ->default_value(""),
-                                             "output file for graphviz "
-                                             "file")("exclude",
-                                                     po::value<std::vector<
-                                                         std::string>>()
-                                                         ->multitoken()
-                                                         ->default_value(
-                                                             {"/usr/"
-                                                              "include/",
-                                                              "/usr/lib/",
-                                                              "/build/"}),
-                                                     "exclude patterns for "
-                                                     "files");
+      "path to use for cmake configuration")(
+      "output", po::value<std::string>()->default_value(""),
+      "output file for graphviz "
+      "file")(
+      "exclude",
+      po::value<std::vector<std::string>>()->multitoken()->default_value(
+          {"/usr/"
+           "include/",
+           "/usr/lib/", "/build/"}),
+      "exclude patterns for "
+      "files");
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
 
