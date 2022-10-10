@@ -6,7 +6,6 @@ pr:
     - main
   paths:
     exclude:
-    - docker/**
     - docs/**
     - tools/**
     - .clang-format
