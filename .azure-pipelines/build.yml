@@ -21,8 +21,11 @@ jobs:
       --verbose_failures
       --config=buildbuddy
       --remote_header=x-buildbuddy-api-key=$(BuildBuddyApiKey)
-      --build_metadata=BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-      --build_metadata=COMMIT_SHA=$(git rev-parse HEAD)
+      --build_metadata=REPO_URL=$(Build.Repository.Uri)
+      --build_metadata=BRANCH_NAME=$(Build.SourceBranchName)
+      --build_metadata=COMMIT_SHA=$(Build.SourceVersion)
+      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results)"
+      --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
       --config=libc++
       //...
@@ -50,8 +53,11 @@ jobs:
       --verbose_failures
       --config=buildbuddy
       --remote_header=x-buildbuddy-api-key=$(BuildBuddyApiKey)
-      --build_metadata=BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-      --build_metadata=COMMIT_SHA=$(git rev-parse HEAD)
+      --build_metadata=REPO_URL=$(Build.Repository.Uri)
+      --build_metadata=BRANCH_NAME=$(Build.SourceBranchName)
+      --build_metadata=COMMIT_SHA=$(Build.SourceVersion)
+      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results)"
+      --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
       --compilation_mode opt
       --config=clang-asan
