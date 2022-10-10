@@ -1,8 +1,65 @@
 jobs:
 - job: build
+  timeoutInMinutes: 240
+  variables:
+    bazelDiskCacheDirectory: $(Build.StagingDirectory)/bazel/disk_cache
+    bazelRepositoryCacheDirectory: $(Build.StagingDirectory)/bazel/repository_cache
+    bazelOutputBaseDirectory: $(Build.StagingDirectory)/bazel/output_base
   steps:
-  - script: bazel info
+  - checkout: self
+    clean: true
+  - bash: mkdir -p $(bazelDiskCacheDirectory)
+    displayName: Make Bazel disk_cache directory
+  - bash: mkdir -p $(bazelRepositoryCacheDirectory)
+    displayName: Make Bazel repository_cache directory
+  - bash: mkdir -p $(bazelOutputBaseDirectory)
+    displayName: Make Bazel output_base directory
+  - bash: tools/setup_clang.sh /usr/lib/llvm-14
+    displayName: Setup for Bazel build with clang
+  - script: >
+      bazel
+      --batch_cpu_scheduling
+      --output_base=$(bazelOutputBaseDirectory)
+      build
+      --disk_cache=$(bazelDiskCacheDirectory)
+      --repository_cache=$(bazelRepositoryCacheDirectory)
+      --noshow_loading_progress
+      --show_progress_rate_limit=5
+      --verbose_failures
+      --config=libc++
+      //...
+    displayName: Build project
 
 - job: test
+  timeoutInMinutes: 240
+  variables:
+    bazelDiskCacheDirectory: $(Build.StagingDirectory)/bazel/disk_cache
+    bazelRepositoryCacheDirectory: $(Build.StagingDirectory)/bazel/repository_cache
+    bazelOutputBaseDirectory: $(Build.StagingDirectory)/bazel/output_base
   steps:
-  - script: bazel info
+  - checkout: self
+    clean: true
+  - bash: mkdir -p $(bazelDiskCacheDirectory)
+    displayName: Make Bazel disk_cache directory
+  - bash: mkdir -p $(bazelRepositoryCacheDirectory)
+    displayName: Make Bazel repository_cache directory
+  - bash: mkdir -p $(bazelOutputBaseDirectory)
+    displayName: Make Bazel output_base directory
+  - bash: tools/setup_clang.sh /usr/lib/llvm-14
+    displayName: Setup for Bazel build with clang
+  - script: >
+      bazel
+      --batch_cpu_scheduling
+      --output_base=$(bazelOutputBaseDirectory)
+      test
+      --disk_cache=$(bazelDiskCacheDirectory)
+      --repository_cache=$(bazelRepositoryCacheDirectory)
+      --noshow_loading_progress
+      --show_progress_rate_limit=5
+      --verbose_failures
+      --compilation_mode opt
+      --config=clang-asan
+      --
+      //...
+      -//third_party/wangle:SSLContextManagerTest
+    displayName: Test project
