@@ -31,11 +31,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Copied from https://github.com/envoyproxy/envoy/blob/55e9b316d2e7d17a05b68924d0dffc2635ab8e52/bazel/setup_clang.sh
+# Copied from https://github.com/envoyproxy/envoy/blob/55e9b31/bazel/setup_clang.sh
 #
 # Modifications:
 #
-# 1. Remove action_env ENVOY_UBSAN_VPTR=1
+# 1. Remove `--action_env=ENVOY_UBSAN_VPTR=1`.
+# 2. Link ubsan dynamically.
 
 BAZELRC_FILE="${BAZELRC_FILE:-$(bazel info workspace)/clang.bazelrc}"
 
@@ -59,6 +60,7 @@ build:clang --action_env='LLVM_CONFIG=${LLVM_PREFIX}/bin/llvm-config'
 build:clang --repo_env='LLVM_CONFIG=${LLVM_PREFIX}/bin/llvm-config'
 build:clang --linkopt='-L$(llvm-config --libdir)'
 build:clang --linkopt='-Wl,-rpath,$(llvm-config --libdir)'
+
 build:clang-asan --copt=-fsanitize=vptr,function
 build:clang-asan --linkopt=-fsanitize=vptr,function
 build:clang-asan --linkopt=-fsanitize-link-c++-runtime
