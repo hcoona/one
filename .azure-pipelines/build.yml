@@ -12,6 +12,8 @@ jobs:
       secretsFilter: 'BuildBuddyApiKey'
   - bash: tools/setup_clang.sh /usr/lib/llvm-14
     displayName: Setup for Bazel build with clang
+  - bash: .azure-pipelines/get_source_branch_name.sh
+    displayName: Set source branch name for BuildBuddy
   - script: >
       bazel
       --batch_cpu_scheduling
@@ -22,9 +24,9 @@ jobs:
       --config=buildbuddy
       --remote_header=x-buildbuddy-api-key=$(BuildBuddyApiKey)
       --build_metadata=REPO_URL=$(Build.Repository.Uri)
-      --build_metadata=BRANCH_NAME=$(Build.SourceBranchName)
+      --build_metadata=BRANCH_NAME=$(BuildBuddy.SourceBranchName)
       --build_metadata=COMMIT_SHA=$(Build.SourceVersion)
-      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results)"
+      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=logs&j=$(System.JobId))"
       --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
       --config=libc++
@@ -44,6 +46,8 @@ jobs:
       secretsFilter: 'BuildBuddyApiKey'
   - bash: tools/setup_clang.sh /usr/lib/llvm-14
     displayName: Setup for Bazel build with clang
+  - bash: .azure-pipelines/get_source_branch_name.sh
+    displayName: Set source branch name for BuildBuddy
   - script: >
       bazel
       --batch_cpu_scheduling
@@ -54,9 +58,9 @@ jobs:
       --config=buildbuddy
       --remote_header=x-buildbuddy-api-key=$(BuildBuddyApiKey)
       --build_metadata=REPO_URL=$(Build.Repository.Uri)
-      --build_metadata=BRANCH_NAME=$(Build.SourceBranchName)
+      --build_metadata=BRANCH_NAME=$(BuildBuddy.SourceBranchName)
       --build_metadata=COMMIT_SHA=$(Build.SourceVersion)
-      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=results)"
+      --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=logs&j=$(System.JobId))"
       --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
       --compilation_mode opt
