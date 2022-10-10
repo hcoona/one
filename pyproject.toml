@@ -16,10 +16,10 @@ isort = ">=5.8.0 <6.0"
 pylint = ">=2.7.4 <3.0"
 yapf = ">=0.31.0 <1.0"
 
-[[tool.poetry.source]]
-default = true
-name = "tsinghua-mirror"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+# [[tool.poetry.source]]
+# default = true
+# name = "tsinghua-mirror"
+# url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
