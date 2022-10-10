@@ -1,0 +1,10 @@
+trigger: none
+
+pr:
+- main
+
+pool:
+  vmImage: ubuntu-22.04
+
+jobs:
+- template: /.azure-pipelines/build.yml@self
