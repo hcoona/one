@@ -14,7 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
-
+#
+# Modifications for gitignore.io:
+# 1. Comment out `!.vscode/launch.json`
+#
 # Created by https://www.toptal.com/developers/gitignore/api/vim,c++,java,bazel,linux,macos,maven,windows,intellij+all,visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim,c++,java,bazel,linux,macos,maven,windows,intellij+all,visualstudiocode,python
 
@@ -25,6 +28,13 @@
 # Ignore all bazel-* symlinks. There is no full list since this can change
 # based on the name of the directory bazel is cloned into.
 /bazel-*
+
+# Directories for the Bazel IntelliJ plugin containing the generated
+# IntelliJ project files and plugin configuration. Seperate directories are
+# for the IntelliJ, Android Studio and CLion versions of the plugin.
+/.ijwb/
+/.aswb/
+/.clwb/
 
 ### C++ ###
 # Prerequisites
@@ -124,6 +134,9 @@ atlassian-ide-plugin.xml
 # Cursive Clojure plugin
 .idea/replstate.xml
 
+# SonarLint plugin
+.idea/sonarlint/
+
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
@@ -137,20 +150,13 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### Intellij+all Patch ###
-# Ignores the whole .idea folder and all .iml files
-# See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
+# Ignore everything but code style settings and run configurations
+# that are supposed to be shared within teams.
 
-.idea/
+.idea/*
 
-# Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
-
-*.iml
-modules.xml
-.idea/misc.xml
-*.ipr
-
-# Sonarlint plugin
-.idea/sonarlint
+!.idea/codeStyles
+!.idea/runConfigurations
 
 ### Java ###
 # Compiled class file
@@ -176,6 +182,7 @@ modules.xml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+replay_pid*
 
 ### Linux ###
 *~
@@ -221,6 +228,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### macOS Patch ###
+# iCloud generated files
+*.icloud
+
 ### Maven ###
 target/
 pom.xml.tag
@@ -233,6 +244,12 @@ buildNumber.properties
 .mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+
+# Eclipse m2e generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -328,7 +345,22 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 
 # Celery stuff
@@ -371,6 +403,13 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -393,19 +432,30 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
-.vscode/settings.json
-.vscode/tasks.json
-.vscode/launch.json
-.vscode/extensions.json
-*.code-workspace
+!.vscode/settings.json
+!.vscode/tasks.json
+#  Don't want launch.json file because we have many targets to run.
+#  We want to maintain it locally.
+#!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
+
+# Built Visual Studio Code Extensions
+*.vsix
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
 .ionide
+
+# Support for Project snippet scope
+.vscode/*.code-snippets
+
+# Ignore code-workspaces
+*.code-workspace
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -434,10 +484,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,c++,java,bazel,linux,macos,maven,windows,intellij+all,visualstudiocode,python
-
-# Ignore CI pipeline output base
-/.bazel_output
-/.cache
 
 # Normal files
 !/bazel/build
