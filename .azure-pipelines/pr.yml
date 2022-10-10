@@ -1,7 +1,22 @@
 trigger: none
 
 pr:
-- main
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - docker/**
+    - docs/**
+    - tools/**
+    - .clang-format
+    - .clang-tidy
+    - .editorconfig
+    - .gitignore
+    - CPPLINT.cfg
+    - LICENSE
+    - mkdocs.yml
+    - README.md
 
 pool:
   vmImage: ubuntu-22.04
