@@ -459,7 +459,7 @@ load("@rules_python//python:pip.bzl", "pip_parse")
 
 # Create a central repo that knows about the dependencies needed from
 # requirements.txt. The requirements.txt is generated from
-# poetry export -f requirements.txt --output requirements.txt --dev
+# poetry export -f requirements.txt --output requirements.txt --with dev
 pip_parse(
     name = "mono_pip_deps",
     requirements_lock = "//:requirements.txt",
