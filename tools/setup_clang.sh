@@ -37,6 +37,7 @@
 #
 # 1. Remove `--action_env=ENVOY_UBSAN_VPTR=1`.
 # 2. Link ubsan dynamically & remove `RT_LIBRARY_PATH`.
+# 3. Use fixed $PATH to help use remote caching.
 
 BAZELRC_FILE="${BAZELRC_FILE:-$(bazel info workspace)/clang.bazelrc}"
 
@@ -47,7 +48,7 @@ if [[ ! -e "${LLVM_PREFIX}/bin/llvm-config" ]]; then
   exit 1
 fi
 
-PATH="$("${LLVM_PREFIX}"/bin/llvm-config --bindir):${PATH}"
+PATH="$("${LLVM_PREFIX}"/bin/llvm-config --bindir):/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
 echo -n "# Generated file, do not edit. If you want to disable clang, just delete this file.
