@@ -1,29 +1,36 @@
-[tool.poetry]
-authors = ["Shuai Zhang <zhangshuai.ustc@gmail.com>"]
+[project]
+authors = [
+  {name = "Shuai Zhang", email = "zhangshuai.ustc@gmail.com"},
+]
+dependencies = [
+  "absl-py<2.0,>=1.0.0",
+  "jinja2<4.0,>=3.0.3",
+  "pyyaml<7.0,>=6.0",
+]
 description = "Python project manager for ONE repo"
 name = "one"
+requires-python = ">=3.7"
 version = "0.0.1-alpha.1"
 
-[tool.poetry.dependencies]
-python = ">=3.6.1 <4.0"
-jinja2 = "^3.0.3"
-pyyaml = "^6.0"
-absl-py = "^1.0.0"
+[tool.pdm.dev-dependencies]
+dev = [
+  "cpplint<2.0,>=1.5.5",
+  "isort<6.0,>=5.8.0",
+  "pylint<3.0,>=2.7.4",
+  "yapf<1.0,>=0.31.0",
+]
 
-[tool.poetry.dev-dependencies]
-cpplint = ">=1.5.5 <2.0"
-isort = ">=5.8.0 <6.0"
-pylint = ">=2.7.4 <3.0"
-yapf = ">=0.31.0 <1.0"
-
-# [[tool.poetry.source]]
-# default = true
-# name = "tsinghua-mirror"
+# [[tool.pdm.source]]
+# name = "pypi"
 # url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+# verify_ssl = true
+
+[tool.pdm.build]
+includes = []
 
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0"]
+build-backend = "pdm.pep517.api"
+requires = ["pdm-pep517>=1.0.0"]
 
 [tool.isort]
 force_single_line = true
