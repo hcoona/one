@@ -36,7 +36,7 @@
 # Modifications:
 #
 # 1. Remove `--action_env=ENVOY_UBSAN_VPTR=1`.
-# 2. Link ubsan dynamically.
+# 2. Link ubsan dynamically & remove `RT_LIBRARY_PATH`.
 
 BAZELRC_FILE="${BAZELRC_FILE:-$(bazel info workspace)/clang.bazelrc}"
 
@@ -49,8 +49,6 @@ fi
 
 PATH="$("${LLVM_PREFIX}"/bin/llvm-config --bindir):${PATH}"
 export PATH
-
-RT_LIBRARY_PATH="$(dirname "$(find "$(llvm-config --libdir)" -name libclang_rt.ubsan_standalone_cxx-x86_64.a | head -1)")"
 
 echo -n "# Generated file, do not edit. If you want to disable clang, just delete this file.
 build:clang --action_env='PATH=${PATH}'
