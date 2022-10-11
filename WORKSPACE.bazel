@@ -43,9 +43,9 @@ RULES_CC_COMMIT_ID = "0913abc3be0edff60af681c0473518f51fb9eeef"  # 2021-08-12T14
 
 RULES_CC_SHA256 = "04d22a8c6f0caab1466ff9ae8577dbd12a0c7d0bc468425b75de094ec68ab4f9"
 
-RULES_PYTHON_TAG = "0.6.0"  # 2022-01-05T00:06:20Z
+RULES_PYTHON_TAG = "0.13.0"  # 2022-09-25T10:33:56Z
 
-RULES_PYTHON_SHA256 = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502"
+RULES_PYTHON_SHA256 = "8c8fe44ef0a9afc256d1e75ad5f448bb59b81aba149b8958f02f7b3a98f5d9b4"
 
 RULES_JAVA_TAG = "5.0.0"  # 2021-11-23T10:46:14Z
 
@@ -455,13 +455,29 @@ http_archive(
 # Ordered lexicographical.
 #
 
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+
+python_register_toolchains(
+    name = "python3_9",
+    # Available versions are listed in @rules_python//python:versions.bzl.
+    # We recommend using the same version your team is already standardized on.
+    python_version = "3.9",
+)
+
+load("@python3_9//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 # Create a central repo that knows about the dependencies needed from
 # requirements.txt. The requirements.txt is generated from
 # pdm export -o requirements.txt
+#
+# As with any repository rule, if you would like to ensure that pip_parse is
+# re-executed in order to pick up a non-hermetic change to your environment
+# (e.g., updating your system python interpreter), you can force it to
+# re-execute by running bazel sync --only [pip_parse name].
 pip_parse(
     name = "mono_pip_deps",
+    python_interpreter_target = interpreter,
     requirements_lock = "//:requirements.txt",
 )
 
