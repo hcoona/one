@@ -39,11 +39,16 @@
 
 run --color=yes
 build --color=yes
+
+# https://bazel.build/remote/caching#known-issues
+build --experimental_guard_against_concurrent_changes
+
+build --incompatible_strict_action_env
 build --host_force_python=PY3
 
-build --cxxopt="-std=c++17"
+build --cxxopt="-std=c++17" --host_cxxopt="-std=c++17"
 # Use gnu11 for asm keyword.
-build --conlyopt="-std=gnu11"
+build --conlyopt="-std=gnu11" --host_conlyopt="-std=gnu11"
 # Enable hardening.
 build --copt="-DONE_OPTION_HARDENED=1"
 
@@ -73,14 +78,17 @@ build --define=with_glog=true
 build --copt -DHAVE_ZLIB=1
 
 # Pass PATH, CC, CXX and LLVM_CONFIG variables from the environment.
-build --action_env=CC
-build --action_env=CXX
-build --action_env=LLVM_CONFIG
-build --action_env=PATH
+build --action_env=CC --host_action_env=CC
+build --action_env=CXX --host_action_env=CXX
+build --action_env=LLVM_CONFIG --host_action_env=LLVM_CONFIG
+build --action_env=PATH --host_action_env=PATH
 
 #
 # Default options should come above this line.
 #
+
+# Use gold linker for gcc compiler.
+build:gcc --linkopt=-fuse-ld=gold
 
 # Common flags for Clang
 build:clang --action_env=BAZEL_COMPILER=clang
@@ -113,6 +121,8 @@ build:sanitizer --linkopt -ldl
 # We define _FORTIFY_SOURCE=0 here as a workaround.
 build:sanitizer --copt -U_FORTIFY_SOURCE
 build:sanitizer --copt -D_FORTIFY_SOURCE=0
+build:sanitizer --build_tag_filters=-no_san
+build:sanitizer --test_tag_filters=-no_san
 
 # Basic ASAN/UBSAN that works for gcc
 build:asan --action_env=ONE_ASAN=1
