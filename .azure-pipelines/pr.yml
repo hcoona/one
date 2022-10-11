@@ -23,8 +23,9 @@ pr:
     - main
   paths:
     exclude:
+    - .vscode/**
     - docs/**
-    - tools/**
+    - tools/bazel-compdb.py
     - .clang-format
     - .clang-tidy
     - .editorconfig
