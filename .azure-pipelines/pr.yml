@@ -26,6 +26,7 @@ pr:
     - .vscode/**
     - docs/**
     - tools/bazel-compdb.py
+    - tools/resolved_to_aria2c_list.py
     - .clang-format
     - .clang-tidy
     - .editorconfig
