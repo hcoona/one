@@ -493,3 +493,6 @@ $RECYCLE.BIN/
 
 # Ignore generated compile_commands.json file
 /compile_commands.json
+
+# Bazel distribution directory
+/distdir

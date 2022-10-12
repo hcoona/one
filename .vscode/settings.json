@@ -7,5 +7,6 @@
     "--clang-tidy",
     "--cross-file-rename",
     "--suggest-missing-includes"
-  ]
+  ],
+  "python.formatting.provider": "yapf"
 }
