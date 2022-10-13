@@ -21,7 +21,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - task: AzureKeyVault@2.211.1
+  - task: AzureKeyVault@2
     displayName: Get ApiKey from Azure KeyVault
     inputs:
       connectedServiceName: 'Isolated'
@@ -62,7 +62,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - task: AzureKeyVault@2.211.1
+  - task: AzureKeyVault@2
     displayName: Get ApiKey from Azure KeyVault
     inputs:
       connectedServiceName: 'Isolated'
