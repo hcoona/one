@@ -15,6 +15,13 @@
       "automerge": true
     },
     {
+      "matchManagers": [
+        // Managed by PDM.
+        "pip_requirements"
+      ],
+      "enabled": false
+    },
+    {
       "matchPackageNames": [
         // Manually manage it.
         "com_github_chenshuo_muduo"
