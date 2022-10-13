@@ -50,7 +50,7 @@ steps:
     tar xvf bazel-bin/external/additional_distfiles/archives.tar -C $(Build.StagingDirectory)/distdir --strip-components=3
   displayName: Prepare distdir files for bazel internal
 
-- task: PublishPipelineArtifact@1
+- task: PublishPipelineArtifact@1.199.0
   inputs:
     path: '$(Build.StagingDirectory)/distdir'
     artifactName: 'distdir'
