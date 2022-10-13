@@ -272,9 +272,9 @@ http_archive(
 
 http_archive(
     name = "com_github_google_double_conversion",  # 2022-01-30T20:52:33Z
-    sha256 = "3cdf5e962ef903168618dc664da7460db34bcb9911ee9ca9a343c33efd649e2d",
-    strip_prefix = "double-conversion-a109d7d05165b338513e3e379ecb5697a22b05c3",
-    urls = ["https://github.com/google/double-conversion/archive/a109d7d05165b338513e3e379ecb5697a22b05c3.tar.gz"],
+    sha256 = "287c91c6c4185ad5bbeaa8785be6d0271e2a9175d5ff18a81b2dd7946e7402b8",
+    strip_prefix = "double-conversion-256ac809561b756645e73ab7127c2aaaeabaa427",
+    urls = ["https://github.com/google/double-conversion/archive/256ac809561b756645e73ab7127c2aaaeabaa427.tar.gz"],
 )
 
 http_archive(
