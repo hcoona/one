@@ -25,6 +25,7 @@ trigger:
     - .azure-pipelines/distdir/official.yml
     - .bazelversion
     - WORKSPACE.bazel
+    - requirements.txt
 
 pr: none
 
