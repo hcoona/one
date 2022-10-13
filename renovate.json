@@ -27,6 +27,10 @@
         "com_github_chenshuo_muduo"
       ],
       "enabled": false
+    },
+    {
+      "matchPackagePrefixes": ["rules_", "io_bazel", "bazel_"],
+      "groupName": "bazel_starlark_libs"
     }
   ]
 }
