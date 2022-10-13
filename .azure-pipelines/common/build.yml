@@ -98,5 +98,4 @@ jobs:
       --config=clang-asan
       --
       //...
-      -//third_party/wangle:SSLContextManagerTest
     displayName: Test project
