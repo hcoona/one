@@ -15,7 +15,15 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - .bazelversion
+    - WORKSPACE.bazel
 
 pr: none
 
