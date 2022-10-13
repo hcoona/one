@@ -31,6 +31,12 @@ jobs:
     displayName: Setup for Bazel build with clang
   - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
+  - task: DownloadPipelineArtifact@2
+    displayName: Download distdir
+    inputs:
+      buildType: 'specific'
+      project: 'GitHub ADO'
+      definition: 'One-distdir-Official'
   - script: >
       bazel
       --batch_cpu_scheduling
@@ -46,6 +52,7 @@ jobs:
       --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=logs&j=$(System.JobId))"
       --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
+      --distdir=$(Pipeline.Workspace)/distdir
       --config=libc++
       //...
     displayName: Build project
@@ -65,6 +72,12 @@ jobs:
     displayName: Setup for Bazel build with clang
   - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
+  - task: DownloadPipelineArtifact@2
+    displayName: Download distdir
+    inputs:
+      buildType: 'specific'
+      project: 'GitHub ADO'
+      definition: 'One-distdir-Official'
   - script: >
       bazel
       --batch_cpu_scheduling
@@ -80,6 +93,7 @@ jobs:
       --build_metadata=BUILDBUDDY_LINKS="[Azure Pipelines]($(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)&view=logs&j=$(System.JobId))"
       --build_metadata=ALLOW_ENV=AGENT_MACHINENAME,AGENT_NAME,AGENT_OS,AGENT_OSARCHITECTURE,BUILD_BUILDURI,BUILD_REASON,SYSTEM_JOBDISPLAYNAME,SYSTEM_JOBID,SYSTEM_JOBNAME
       --build_metadata=ROLE=CI
+      --distdir=$(Pipeline.Workspace)/distdir
       --compilation_mode opt
       --config=clang-asan
       --
