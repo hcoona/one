@@ -22,11 +22,13 @@ pr:
     include:
     - main
   paths:
+    include:
+    - '*'
+    - tools/setup_clang.sh
     exclude:
-    - .vscode/**
-    - docs/**
-    - tools/bazel-compdb.py
-    - tools/resolved_to_aria2c_list.py
+    - .vscode
+    - docs
+    - tools
     - .clang-format
     - .clang-tidy
     - .editorconfig
