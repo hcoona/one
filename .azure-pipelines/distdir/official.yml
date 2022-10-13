@@ -19,9 +19,10 @@ trigger:
   batch: true
   branches:
     include:
-    - master
+    - main
   paths:
     include:
+    - .azure-pipelines/distdir/official.yml
     - .bazelversion
     - WORKSPACE.bazel
 
