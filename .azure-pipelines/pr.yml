@@ -42,6 +42,7 @@ pr:
     - LICENSE
     - mkdocs.yml
     - README.md
+    - renovate.json
 
 pool:
   vmImage: ubuntu-22.04
