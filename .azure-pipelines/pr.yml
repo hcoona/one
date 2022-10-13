@@ -24,8 +24,13 @@ pr:
   paths:
     include:
     - '*'
+    - .azure-pipelines
+    - .azure-pipelines/common/build.yml
+    - .azure-pipelines/common/get_source_branch_name.sh
     - tools/setup_clang.sh
     exclude:
+    - .azure-pipelines/common
+    - .azure-pipelines/distdir
     - .vscode
     - docs
     - tools
