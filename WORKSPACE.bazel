@@ -127,17 +127,17 @@ http_archive(
 # 2. Build too complex to bazelize library.
 http_archive(
     name = "rules_foreign_cc",  # 2021-12-03T17:15:40Z
-    sha256 = "1df78c7d7eed2dc21b8b325a2853c31933a81e7b780f9a59a5d078be9008b13a",
-    strip_prefix = "rules_foreign_cc-0.7.0",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.7.0.tar.gz",
+    sha256 = "2a4d07cd64b0719b39a7c12218a3e507672b82a97b98c6a89d38565894cf7c51",
+    strip_prefix = "rules_foreign_cc-0.9.0",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.9.0.tar.gz",
 )
 
 http_archive(
     name = "rules_perl",  # 2021-09-23T03:21:58Z
-    sha256 = "55fbe071971772758ad669615fc9aac9b126db6ae45909f0f36de499f6201dd3",
-    strip_prefix = "rules_perl-2f4f36f454375e678e81e5ca465d4d497c5c02da",
+    sha256 = "7d4e17a5850446388ab74a3d884d80731d45931aa6ac93edb9efbd500628fdcb",
+    strip_prefix = "rules_perl-022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403",
     urls = [
-        "https://github.com/bazelbuild/rules_perl/archive/2f4f36f454375e678e81e5ca465d4d497c5c02da.tar.gz",
+        "https://github.com/bazelbuild/rules_perl/archive/022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403.tar.gz",
     ],
 )
 
