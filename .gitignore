@@ -496,3 +496,6 @@ $RECYCLE.BIN/
 
 # Bazel distribution directory
 /distdir
+
+# User-level bazelrc
+/user.bazelrc

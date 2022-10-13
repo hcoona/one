@@ -207,6 +207,10 @@ build:msan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=msan
 
 try-import %workspace%/clang.bazelrc
 
+#
+# BuildBuddy
+#
+
 # You need to put the API key in your ~/.bazelrc file or provide it from commandline.
 build:buildbuddy --bes_results_url=https://app.buildbuddy.io/invocation/
 build:buildbuddy --bes_backend=grpcs://remote.buildbuddy.io
@@ -217,3 +221,9 @@ build:buildbuddy --remote_download_outputs=all
 
 build:buildbuddy-readonly --config=buildbuddy
 build:buildbuddy-readonly --noremote_upload_local_results
+
+#
+# User
+#
+
+try-import %workspace%/user.bazelrc
