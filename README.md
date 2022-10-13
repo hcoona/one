@@ -71,3 +71,19 @@ bazel test --config=clang-asan --config=buildbuddy //... --test_tag_filters=-ben
 ```bash
 bazel test -c opt --config=libc++ --config=buildbuddy //... --test_tag_filters=benchmark
 ```
+
+### How to generate `compile_commands.json`
+
+#### (Suggested) Generate with Hedron's Compile Commands Extractor for Bazel
+
+```bash
+bazel run @hedron_compile_commands//:refresh_all -- --config=libc++
+```
+
+#### Generate with grailbio's bazel-compilation-database tool
+
+This method would be REMOVED if I found hedron's approach stable.
+
+```bash
+tools/bazel-compdb.py -s -q //... -- --config=libc++
+```
