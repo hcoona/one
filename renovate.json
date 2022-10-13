@@ -5,5 +5,21 @@
   ],
   "ignorePaths": [
     "third_party/**"
+  ],
+  "prConcurrentLimit": 1,
+  "packageRules": [
+    {
+      "matchManagers": [
+        "azure-pipelines"
+      ],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        // Manually manage it.
+        "com_github_chenshuo_muduo"
+      ],
+      "enabled": false
+    }
   ]
 }
