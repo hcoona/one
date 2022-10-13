@@ -29,7 +29,7 @@ jobs:
       secretsFilter: 'BuildBuddyApiKey'
   - bash: tools/setup_clang.sh /usr/lib/llvm-14
     displayName: Setup for Bazel build with clang
-  - bash: .azure-pipelines/get_source_branch_name.sh
+  - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
   - script: >
       bazel
@@ -63,7 +63,7 @@ jobs:
       secretsFilter: 'BuildBuddyApiKey'
   - bash: tools/setup_clang.sh /usr/lib/llvm-14
     displayName: Setup for Bazel build with clang
-  - bash: .azure-pipelines/get_source_branch_name.sh
+  - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
   - script: >
       bazel
