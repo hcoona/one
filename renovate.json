@@ -6,7 +6,10 @@
   "ignorePaths": [
     "third_party/**"
   ],
+  "labels": ["renovate"],
   "prConcurrentLimit": 1,
+  "platformAutomerge": true,
+  "platformCommit": true,
   "packageRules": [
     {
       "matchManagers": [
