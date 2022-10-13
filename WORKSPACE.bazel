@@ -134,10 +134,10 @@ http_archive(
 
 http_archive(
     name = "rules_perl",  # 2021-09-23T03:21:58Z
-    sha256 = "55fbe071971772758ad669615fc9aac9b126db6ae45909f0f36de499f6201dd3",
-    strip_prefix = "rules_perl-2f4f36f454375e678e81e5ca465d4d497c5c02da",
+    sha256 = "7d4e17a5850446388ab74a3d884d80731d45931aa6ac93edb9efbd500628fdcb",
+    strip_prefix = "rules_perl-022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403",
     urls = [
-        "https://github.com/bazelbuild/rules_perl/archive/2f4f36f454375e678e81e5ca465d4d497c5c02da.tar.gz",
+        "https://github.com/bazelbuild/rules_perl/archive/022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403.tar.gz",
     ],
 )
 
