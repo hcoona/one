@@ -39,3 +39,25 @@ bazel test --config=clang-asan //... --test_tag_filters=-benchmark
 ```bash
 bazel test -c opt //... --test_tag_filters=benchmark
 ```
+
+### Build with distdir
+
+See [Bazel Distribution files directories](https://bazel.build/run/build#distribution-directory) for what's so called distdir. We use it to avoid download necessary repo files from many places which could be quite unstable.
+
+1. Go to [One-distdir-Official](https://dev.azure.com/zhangshuai89/GitHub%20ADO/_build?definitionId=14)
+2. Open the latest succeeded run, check the "1 published" link under "Related" column.
+3. Download the artifact & put it somewhere.
+4. When building the project, go with the option `--distdir $ONE_DISTDIR`.
+
+Downloading with Azure CLI tool is harder. You need to generate a PAT from Azure Devops portal to continue.
+
+```bash
+# Enter your PAT here.
+az devops login
+
+# Query the latest succeeded run-id.
+az pipelines runs list --organization "https://dev.azure.com/zhangshuai89/" --project "GitHub ADO" --pipeline-ids 14  --query "[?result=='succeeded'] | [0] | id"
+
+# Fill the run id found in previous step.
+az pipelines runs artifact download --artifact-name distdir --path distdir --run-id "<run-id>" --organization "https://dev.azure.com/zhangshuai89/" --project "GitHub ADO"
+```
