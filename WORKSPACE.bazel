@@ -379,10 +379,10 @@ http_archive(
         "//bazel/third_party/boost:0001-fix-deps-repo-name.patch",
         "//bazel/third_party/boost:0002-rename-lzma-repo-name-in-build-file.patch",
     ],
-    sha256 = "2d0b2eef7137730dbbb180397fe9c3d601f8f25950c43222cb3ee85256a21869",
-    strip_prefix = "rules_boost-fce83babe3f6287bccb45d2df013a309fa3194b8",
+    sha256 = "8be3ad3578231579f3d289c0330fd90975fe437451830a569a9a35661104a211",
+    strip_prefix = "rules_boost-630cf5dbad418ee8cfa637b1e33125b11807721d",
     urls = [
-        "https://github.com/nelhage/rules_boost/archive/fce83babe3f6287bccb45d2df013a309fa3194b8.tar.gz",
+        "https://github.com/nelhage/rules_boost/archive/630cf5dbad418ee8cfa637b1e33125b11807721d.tar.gz",
     ],
 )
 
