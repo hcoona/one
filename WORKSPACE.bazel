@@ -374,10 +374,11 @@ http_archive(
 
 http_archive(
     name = "com_github_nelhage_rules_boost",  # 2021-08-27T15:46:06Z
-    patch_args = ["-p1"],
-    patches = [
-        "//bazel/third_party/boost:0001-fix-deps-repo-name.patch",
-        "//bazel/third_party/boost:0002-rename-lzma-repo-name-in-build-file.patch",
+    patch_cmds = [
+        "sed -i 's/@net_zlib_zlib/@com_github_madler_zlib/g' BUILD.boost",
+        "sed -i 's/@org_bzip_bzip2\\/\\/:bz2lib/@org_sourceware_bzip2\\/\\/:bz2/g' BUILD.boost",
+        "sed -i 's/@org_lzma_lzma/@org_tukaani_xz/g' BUILD.boost",
+        "sed -i 's/external\\/org_lzma_lzma/external\\/org_tukaani_xz/g' BUILD.lzma",
     ],
     sha256 = "2d0b2eef7137730dbbb180397fe9c3d601f8f25950c43222cb3ee85256a21869",
     strip_prefix = "rules_boost-fce83babe3f6287bccb45d2df013a309fa3194b8",
