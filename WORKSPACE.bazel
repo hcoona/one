@@ -217,14 +217,14 @@ register_toolchains("@remotejdk11_linux_toolchain_config_repo//:toolchain")
 #
 
 http_archive(
-    name = "boost",  # 2021-08-05T01:30:05Z
+    name = "boost",  # 2022-08-03T14:30:05Z
     build_file = "@com_github_nelhage_rules_boost//:BUILD.boost",
     patch_cmds = ["rm -f doc/pdf/BUILD"],
     patch_cmds_win = ["Remove-Item -Force doc/pdf/BUILD"],
-    sha256 = "5347464af5b14ac54bb945dc68f1dd7c56f0dad7262816b956138fc53bcc0131",
-    strip_prefix = "boost_1_77_0",
+    sha256 = "4b2136f98bdd1f5857f1c3dea9ac2018effe65286cf251534b6ae20cc45e1847",
+    strip_prefix = "boost_1_80_0",
     urls = [
-        "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz",
+        "https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz",
     ],
 )
 
@@ -373,17 +373,17 @@ http_archive(
 )
 
 http_archive(
-    name = "com_github_nelhage_rules_boost",  # 2021-08-27T15:46:06Z
+    name = "com_github_nelhage_rules_boost",  # 2022-09-29T15:34:50Z
     patch_cmds = [
         "sed -i 's/@net_zlib_zlib/@com_github_madler_zlib/g' BUILD.boost",
         "sed -i 's/@org_bzip_bzip2\\/\\/:bz2lib/@org_sourceware_bzip2\\/\\/:bz2/g' BUILD.boost",
         "sed -i 's/@org_lzma_lzma/@org_tukaani_xz/g' BUILD.boost",
         "sed -i 's/external\\/org_lzma_lzma/external\\/org_tukaani_xz/g' BUILD.lzma",
     ],
-    sha256 = "2d0b2eef7137730dbbb180397fe9c3d601f8f25950c43222cb3ee85256a21869",
-    strip_prefix = "rules_boost-fce83babe3f6287bccb45d2df013a309fa3194b8",
+    sha256 = "8be3ad3578231579f3d289c0330fd90975fe437451830a569a9a35661104a211",
+    strip_prefix = "rules_boost-630cf5dbad418ee8cfa637b1e33125b11807721d",
     urls = [
-        "https://github.com/nelhage/rules_boost/archive/fce83babe3f6287bccb45d2df013a309fa3194b8.tar.gz",
+        "https://github.com/nelhage/rules_boost/archive/630cf5dbad418ee8cfa637b1e33125b11807721d.tar.gz",
     ],
 )
 
