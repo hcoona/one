@@ -1,26 +1,24 @@
 diff --git a/bazel/glog.bzl b/bazel/glog.bzl
-index 40833b4..589659b 100755
+index 4208d9e..e0c1fcd 100644
 --- a/bazel/glog.bzl
 +++ b/bazel/glog.bzl
-@@ -55,7 +55,14 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
+@@ -61,7 +61,11 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
          "-DHAVE_STRING_H",
-         "-DHAVE_UNWIND_H",
+         "-DGLOG_CUSTOM_PREFIX_SUPPORT",
          "-I%s/glog_internal" % gendir,
 -    ] + (["-DHAVE_LIB_GFLAGS"] if with_gflags else [])
 +    ] + (["-DHAVE_LIB_GFLAGS"] if with_gflags else []) + [
 +        # One repo extensions.
-+        "-DHAVE_SNPRINTF",
 +        "-DHAVE_LIB_GMOCK",
 +        "-DHAVE_LIB_GTEST",
 +    ]
 
      wasm_copts = [
          # Disable warnings that exists in glog.
-@@ -74,6 +81,10 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
+@@ -81,6 +85,9 @@ def glog_library(namespace = "google", with_gflags = 1, **kwargs):
          # For logging.cc.
          "-DHAVE_PREAD",
          "-DHAVE___ATTRIBUTE__",
-+    ] + [
 +        # One repo extensions.
 +        "-DHAVE_RWLOCK",
 +        "-DHAVE_SIGALTSTACK",

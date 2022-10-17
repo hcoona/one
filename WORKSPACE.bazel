@@ -278,11 +278,10 @@ http_archive(
 )
 
 http_archive(
-    name = "com_github_google_glog",  # 2021-05-07T23:06:39Z
+    name = "com_github_google_glog",  # 2022-04-04T22:04:31Z
     patch_args = ["-p1"],
     patches = [
         "//bazel/third_party/glog:0001-improvement-copts.patch",
-        "//bazel/third_party/glog:0002-mark-override.patch",
     ],
     sha256 = "122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022",
     strip_prefix = "glog-0.6.0",
