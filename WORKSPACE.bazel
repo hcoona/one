@@ -396,9 +396,9 @@ http_archive(
 
 http_archive(
     name = "com_google_googletest",  # 2021-07-09T13:28:13Z
-    sha256 = "12ef65654dc01ab40f6f33f9d02c04f2097d2cd9fbe48dc6001b29543583b0ad",
-    strip_prefix = "googletest-8d51ffdfab10b3fba636ae69bc03da4b54f8c235",
-    urls = ["https://github.com/google/googletest/archive/8d51ffdfab10b3fba636ae69bc03da4b54f8c235.zip"],
+    sha256 = "fceabf4203748b9748aee9a950e17d4fdf5b8d86cc306006432bc4aa3b9750bc",
+    strip_prefix = "googletest-a9b2f0495cabb1ff01b51bcd0625cb1fd82da4ce",
+    urls = ["https://github.com/google/googletest/archive/a9b2f0495cabb1ff01b51bcd0625cb1fd82da4ce.zip"],
 )
 
 http_archive(
