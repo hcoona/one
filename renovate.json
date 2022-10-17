@@ -26,8 +26,9 @@
     },
     {
       "matchPackageNames": [
-        // Manually manage it.
-        "com_github_chenshuo_muduo"
+        // Manage them manully because they are not aligned with main branch.
+        "com_github_chenshuo_muduo",
+        "com_googlesource_code_re2"
       ],
       "enabled": false
     },
