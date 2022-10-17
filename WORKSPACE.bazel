@@ -356,9 +356,9 @@ llvm_terminfo_disable(name = "llvm_terminfo")
 http_archive(
     name = "com_github_lz4_lz4",  # 2019-08-20
     build_file = "//bazel/third_party/lz4:lz4.BUILD",
-    sha256 = "658ba6191fa44c92280d4aa2c271b0f4fbc0e34d249578dd05e50e76d0e5efcc",
-    strip_prefix = "lz4-1.9.2",
-    urls = ["https://github.com/lz4/lz4/archive/v1.9.2.tar.gz"],
+    sha256 = "0b0e3aa07c8c063ddf40b082bdf7e37a1562bda40a0ff5272957f3e987e0e54b",
+    strip_prefix = "lz4-1.9.4",
+    urls = ["https://github.com/lz4/lz4/archive/v1.9.4.tar.gz"],
 )
 
 # TODO(zhangshuai.ustc): SIMD optimization.
