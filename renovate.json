@@ -12,9 +12,11 @@
   "platformCommit": true,
   "packageRules": [
     {
+      // Only extract major version.
       "matchManagers": [
         "azure-pipelines"
       ],
+      "extractVersion": "^(?<version>\\d+)",
       "automerge": true
     },
     {
