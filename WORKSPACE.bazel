@@ -265,9 +265,9 @@ http_archive(
 
 http_archive(
     name = "com_github_google_benchmark",  # 2021-07-01T09:02:54Z
-    sha256 = "fb3f393a1af8abd74d9905888646aee20958e80a227152173fc432d53e4b8392",
-    strip_prefix = "benchmark-db4f581fbbff2fddeef0a01983f3e62c758137a3",
-    urls = ["https://github.com/google/benchmark/archive/db4f581fbbff2fddeef0a01983f3e62c758137a3.tar.gz"],
+    sha256 = "c6b55f9c1ac43527e0219d372ac26405402af62926d6e2df4303a456eef2ddf6",
+    strip_prefix = "benchmark-4eaa0c896db50451e7cb38c9bcd9cde21713852e",
+    urls = ["https://github.com/google/benchmark/archive/4eaa0c896db50451e7cb38c9bcd9cde21713852e.tar.gz"],
 )
 
 http_archive(
