@@ -87,7 +87,6 @@ TEST(SIMD, SIMD_SUFFIX(SkipWhitespace_EncodedMemoryStream)) {
 
         MemoryStream ms(buffer, 1024);
         EncodedInputStream<UTF8<>, MemoryStream> s(ms);
-        size_t i = 0;
         for (;;) {
             SkipWhitespace(s);
             if (s.Peek() == '\0')
@@ -95,7 +94,6 @@ TEST(SIMD, SIMD_SUFFIX(SkipWhitespace_EncodedMemoryStream)) {
             //EXPECT_EQ(i, s.Tell());
             (void)i;
             EXPECT_EQ('X', s.Take());
-            i += step;
         }
     }
 }
