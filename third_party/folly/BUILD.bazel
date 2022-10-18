@@ -55,9 +55,10 @@ cc_library(
             ],
             exclude = [
                 "folly/build/**",
+                "folly/docs/**",
                 "folly/logging/example/**",
                 "folly/**/*test/**",
-                "folly/tools/**",
+                "folly/**/tool/**",
                 "folly/**/*Benchmark.cpp",
                 "folly/**/*Test.cpp",
                 "folly/experimental/JSONSchemaTester.cpp",
@@ -75,9 +76,10 @@ cc_library(
             ],
             exclude = [
                 "folly/build/**",
+                "folly/docs/**",
                 "folly/logging/example/**",
                 "folly/**/*test/**",
-                "folly/tools/**",
+                "folly/**/tool/**",
                 "folly/**/*Benchmark.cpp",
                 "folly/**/*Test.cpp",
                 "folly/experimental/JSONSchemaTester.cpp",
@@ -98,9 +100,10 @@ cc_library(
             ],
             exclude = [
                 "folly/build/**",
+                "folly/docs/**",
                 "folly/logging/example/**",
                 "folly/**/*test/**",
-                "folly/tools/**",
+                "folly/**/tool/**",
                 "folly/python/fibers.h",
                 "folly/python/GILAwareManualExecutor.h",
             ] + ["folly/experimental/exception_tracer/*.h"] + [
@@ -114,9 +117,10 @@ cc_library(
             ],
             exclude = [
                 "folly/build/**",
+                "folly/docs/**",
                 "folly/logging/example/**",
                 "folly/**/*test/**",
-                "folly/tools/**",
+                "folly/**/tool/**",
                 "folly/python/fibers.h",
                 "folly/python/GILAwareManualExecutor.h",
             ] + [
