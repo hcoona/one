@@ -479,7 +479,7 @@ load("@rules_python//python:pip.bzl", "pip_parse")
 
 # Create a central repo that knows about the dependencies needed from
 # requirements.txt. The requirements.txt is generated from
-# pdm export -o requirements.txt
+# pdm export -o requirements.txt --dev
 #
 # As with any repository rule, if you would like to ensure that pip_parse is
 # re-executed in order to pick up a non-hermetic change to your environment
