@@ -37,6 +37,12 @@
     {
       "matchPackagePrefixes": ["rules_", "io_bazel", "bazel_"],
       "groupName": "bazel_starlark_libs"
+    },
+    {
+      "matchPackageNames": [
+        "com_google_absl"
+      ],
+      "extends": ["schedule:monthly"]
     }
   ]
 }
