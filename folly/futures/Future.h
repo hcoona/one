@@ -33,9 +33,7 @@
 #include <folly/executors/DrivableExecutor.h>
 #include <folly/executors/TimedDrivableExecutor.h>
 #include <folly/experimental/coro/Traits.h>
-#if !defined(FOLLY_DISABLE_FUTURE_FIBERS_BATON)
 #include <folly/fibers/Baton.h>
-#endif
 #include <folly/functional/Invoke.h>
 #include <folly/futures/Portability.h>
 #include <folly/futures/Promise.h>
@@ -822,6 +820,27 @@ class SemiFuture : private futures::detail::FutureBase<T> {
   SemiFuture<T> deferError(R (&func)(Args...)) && {
     return std::move(*this).deferError(&func);
   }
+
+  /// func is like std::function<void()> and is executed unconditionally
+  /// provided that the Semifuture is waited or given an executor, and
+  /// the value/exception is passed through to the resulting SemiFuture.
+  /// func shouldn't throw, but if it does it will be captured and propagated,
+  /// and discard any value/exception that this Semifuture has obtained.
+  ///
+  /// Caution: if the SemiFuture is detached - i.e., neither waited nor given an
+  /// executor - then func will not be invoked.
+  ///
+  /// Preconditions:
+  ///
+  /// - `valid() == true` (else throws FutureInvalid)
+  ///
+  /// Postconditions:
+  ///
+  /// - Calling code should act as if `valid() == false`,
+  ///   i.e., as if `*this` was moved into RESULT.
+  /// - `RESULT.valid() == true`
+  template <class F>
+  SemiFuture<T> deferEnsure(F&& func) &&;
 
   /// Convenience method for ignoring the value and creating a Future<Unit>.
   /// Exceptions still propagate.
@@ -2146,10 +2165,8 @@ template <class F>
 auto when(bool p, F&& thunk)
     -> decltype(std::declval<invoke_result_t<F>>().unit());
 
-#if !defined(FOLLY_DISABLE_FUTURE_FIBERS_BATON)
 SemiFuture<Unit> wait(std::unique_ptr<fibers::Baton> baton);
 SemiFuture<Unit> wait(std::shared_ptr<fibers::Baton> baton);
-#endif
 
 /**
  * Returns a lazy SemiFuture constructed by f, which also ensures that ensure is

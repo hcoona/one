@@ -20,10 +20,11 @@
  */
 
 /**
- * @class Function
+ * @class folly::Function
+ * @refcode docs/examples/folly/Function.cpp
  *
- * @brief A polymorphic function wrapper that is not copyable and does not
- *    require the wrapped function to be copy constructible.
+ * A polymorphic function wrapper that is not copyable and does not
+ * require the wrapped function to be copy constructible.
  *
  * `folly::Function` is a polymorphic function wrapper, similar to
  * `std::function`. The template parameters of the `folly::Function` define
@@ -196,24 +197,6 @@
  * select a non-const invoke operator (or the const one if no non-const one is
  * present), and then move it into a const `folly::Function` using
  * `constCastFunction`.
- * The name of `constCastFunction` should warn you that something
- * potentially dangerous is happening. As a matter of fact, using
- * `std::function` always involves this potentially dangerous aspect, which
- * is why it is not considered fully const-safe or even const-correct.
- * However, in most of the cases you will not need the dangerous aspect at all.
- * Either you do not require invocation of the function from a const context,
- * in which case you do not need to use `constCastFunction` and just
- * use the inner `folly::Function` in the example above, i.e. just use a
- * non-const `folly::Function`. Or, you may need invocation from const, but
- * the callable you are wrapping does not mutate its state (e.g. it is a class
- * object and implements `operator() const`, or it is a normal,
- * non-mutable lambda), in which case you can wrap the callable in a const
- * `folly::Function` directly, without using `constCastFunction`.
- * Only if you require invocation from a const context of a callable that
- * may mutate itself when invoked you have to go through the above procedure.
- * However, in that case what you do is potentially dangerous and requires
- * the equivalent of a `const_cast`, hence you need to call
- * `constCastFunction`.
  */
 
 #pragma once
@@ -264,15 +247,14 @@ template <typename T>
 using FunctionNullptrTest =
     decltype(static_cast<bool>(static_cast<T const&>(T(nullptr)) == nullptr));
 
-template <
-    typename T,
-    std::enable_if_t<!is_detected_v<FunctionNullptrTest, T>, int> = 0>
+template <typename T>
+constexpr bool IsNullptrCompatible = is_detected_v<FunctionNullptrTest, T>;
+
+template <typename T, std::enable_if_t<!IsNullptrCompatible<T>, int> = 0>
 constexpr bool isEmptyFunction(T const&) {
   return false;
 }
-template <
-    typename T,
-    std::enable_if_t<is_detected_v<FunctionNullptrTest, T>, int> = 0>
+template <typename T, std::enable_if_t<IsNullptrCompatible<T>, int> = 0>
 constexpr bool isEmptyFunction(T const& t) {
   return static_cast<bool>(t == nullptr);
 }
@@ -311,7 +293,7 @@ class FunctionTraitsSharedProxy {
   explicit FunctionTraitsSharedProxy(Function<F>&& func)
       : sp_(func ? std::make_shared<Function<F>>(std::move(func))
                  : std::shared_ptr<Function<F>>()) {}
-  R operator()(A&&... args) const {
+  R operator()(A... args) const {
     if (!sp_) {
       throw_exception<std::bad_function_call>();
     }
@@ -728,11 +710,7 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
 
   /**
    * Constructs a new `Function` from any callable object that is _not_ a
-   * `folly::Function`. This handles function pointers, pointers to static
-   * member functions, `std::reference_wrapper` objects, `std::function`
-   * objects, and arbitrary objects that implement `operator()` if the parameter
-   * signature matches (i.e. it returns an object convertible to `R` when called
-   * with `Args...`).
+   * `folly::Function`.
    *
    * \note `typename Traits::template IfSafeResult<Fun>` prevents this overload
    * from being selected by overload resolution when `fun` is not a compatible
@@ -745,16 +723,23 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
    * checked in `IsSmall`, and shouldn't be, because once the `Function` is
    * constructed, the contained object is never copied. This check is for this
    * ctor only, in the case that this ctor does a copy.
+   *
+   * @param fun function pointers, pointers to static
+   *     member functions, `std::reference_wrapper` objects, `std::function`
+   *     objects, and arbitrary objects that implement `operator()` if the
+   * parameter signature matches (i.e. it returns an object convertible to `R`
+   * when called with `Args...`).
    */
   template <
       typename Fun,
       typename =
           std::enable_if_t<!detail::is_similar_instantiation_v<Function, Fun>>,
       typename = typename Traits::template IfSafeResult<Fun>,
-      bool IsSmall = sizeof(Fun) <=
-          sizeof(Data::tiny) && noexcept(Fun(FOLLY_DECLVAL(Fun)))>
-  /* implicit */ Function(Fun fun) noexcept(
-      IsSmall&& noexcept(Fun(static_cast<Fun&&>(fun)))) {
+      bool IsSmall = ( //
+          sizeof(Fun) <= sizeof(Data) && //
+          alignof(Fun) <= alignof(Data) && //
+              noexcept(Fun(FOLLY_DECLVAL(Fun))))>
+  /* implicit */ Function(Fun fun) noexcept(IsSmall) {
     using Dispatch = conditional_t<
         IsSmall && is_trivially_copyable_v<Fun>,
         detail::function::DispatchSmallTrivial,
@@ -762,8 +747,10 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
             IsSmall,
             detail::function::DispatchSmall,
             detail::function::DispatchBig>>;
-    if (detail::function::isEmptyFunction(fun)) {
-      return;
+    if FOLLY_CXX17_CONSTEXPR (detail::function::IsNullptrCompatible<Fun>) {
+      if (detail::function::isEmptyFunction(fun)) {
+        return;
+      }
     }
     if FOLLY_CXX17_CONSTEXPR (IsSmall) {
       ::new (&data_.tiny) Fun(static_cast<Fun&&>(fun));
@@ -776,6 +763,7 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
 
   /**
    * For move-constructing from a `folly::Function<X(Ys...) [const?]>`.
+   *
    * For a `Function` with a `const` function type, the object must be
    * callable from a `const`-reference, i.e. implement `operator() const`.
    * For a `Function` with a non-`const` function type, the object will
@@ -831,9 +819,11 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
    */
   Function& operator=(Function&& that) noexcept {
     exec(Op::NUKE, &data_, nullptr);
-    that.exec(Op::MOVE, &that.data_, &data_);
-    exec_ = that.exec_;
-    call_ = that.call_;
+    if (FOLLY_LIKELY(this != &that)) {
+      that.exec(Op::MOVE, &that.data_, &data_);
+      exec_ = that.exec_;
+      call_ = that.call_;
+    }
     that.exec_ = nullptr;
     that.call_ = &Traits::uninitCall;
     return *this;
@@ -901,6 +891,8 @@ class Function final : private detail::function::FunctionTraits<FunctionType> {
 
   /**
    * Exchanges the callable objects of `*this` and `that`.
+   *
+   * @param that a folly::Function ref
    */
   void swap(Function& that) noexcept { std::swap(*this, that); }
 
@@ -963,8 +955,27 @@ bool operator!=(std::nullptr_t, const Function<FunctionType>& fn) {
 }
 
 /**
- * NOTE: See detailed note about `constCastFunction` at the top of the file.
- * This is potentially dangerous and requires the equivalent of a `const_cast`.
+ * Casts a `folly::Function` from non-const to a const signature.
+ *
+ * NOTE: The name of `constCastFunction` should warn you that something
+ * potentially dangerous is happening. As a matter of fact, using
+ * `std::function` always involves this potentially dangerous aspect, which
+ * is why it is not considered fully const-safe or even const-correct.
+ * However, in most of the cases you will not need the dangerous aspect at all.
+ * Either you do not require invocation of the function from a const context,
+ * in which case you do not need to use `constCastFunction` and just
+ * use a non-const `folly::Function`. Or, you may need invocation from const,
+ * but the callable you are wrapping does not mutate its state (e.g. it is a
+ * class object and implements `operator() const`, or it is a normal,
+ * non-mutable lambda), in which case you can wrap the callable in a const
+ * `folly::Function` directly, without using `constCastFunction`.
+ * Only if you require invocation from a const context of a callable that
+ * may mutate itself when invoked you have to go through the above procedure.
+ * However, in that case what you do is potentially dangerous and requires
+ * the equivalent of a `const_cast`, hence you need to call
+ * `constCastFunction`.
+ *
+ * @param that a non-const folly::Function.
  */
 template <typename ReturnType, typename... Args>
 Function<ReturnType(Args...) const> constCastFunction(
@@ -995,9 +1006,9 @@ Function<ReturnType(Args...) const noexcept> constCastFunction(
 #endif
 
 /**
- * @class FunctionRef
+ * @class folly::FunctionRef
  *
- * @brief A reference wrapper for callable objects
+ * A reference wrapper for callable objects
  *
  * FunctionRef is similar to std::reference_wrapper, but the template parameter
  * is the function signature type rather than the type of the referenced object.
@@ -1081,11 +1092,15 @@ class FunctionRef<ReturnType(Args...)> final {
     // will be cast back to `Fun*` (which is a const pointer whenever `Fun`
     // is a const type) inside `FunctionRef::call`
     auto& ref = fun; // work around forwarding lint advice
-    if (!detail::function::isEmptyFunction(ref)) {
-      auto ptr = std::addressof(ref);
-      object_ = const_cast<void*>(static_cast<void const*>(ptr));
-      call_ = &FunctionRef::template call<Fun>;
+    if FOLLY_CXX17_CONSTEXPR ( //
+        detail::function::IsNullptrCompatible<std::decay_t<Fun>>) {
+      if (detail::function::isEmptyFunction(fun)) {
+        return;
+      }
     }
+    auto ptr = std::addressof(ref);
+    object_ = const_cast<void*>(static_cast<void const*>(ptr));
+    call_ = &FunctionRef::template call<Fun>;
   }
 
   /**

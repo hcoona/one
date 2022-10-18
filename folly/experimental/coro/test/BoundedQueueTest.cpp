@@ -17,6 +17,7 @@
 #include <folly/experimental/coro/BoundedQueue.h>
 
 #include <chrono>
+#include <optional>
 #include <string>
 #include <thread>
 
@@ -28,6 +29,23 @@
 #include <folly/experimental/coro/Sleep.h>
 #include <folly/portability/GTest.h>
 #if FOLLY_HAS_COROUTINES
+
+namespace {
+struct SlowMover {
+  explicit SlowMover(bool slow = false) : slow(slow) {}
+  SlowMover(SlowMover&& other) noexcept { *this = std::move(other); }
+  SlowMover& operator=(SlowMover&& other) noexcept {
+    slow = other.slow;
+    if (slow) {
+      /* sleep override */ std::this_thread::sleep_for(
+          std::chrono::milliseconds(50));
+    }
+    return *this;
+  }
+
+  bool slow;
+};
+} // namespace
 
 CO_TEST(BoundedQueueTest, EnqueueDeque) {
   folly::coro::BoundedQueue<std::string, true, true> queue(100);
@@ -220,6 +238,70 @@ CO_TEST(BoundedQueueTest, TryDequeue) {
   EXPECT_FALSE(queue.try_dequeue().has_value());
   co_await queue.enqueue(1);
   EXPECT_TRUE(queue.try_dequeue().has_value());
+}
+
+TEST(BoundedQueueTest, UnorderedEnqueueCompletion) {
+  // Use optional to verify we're not accidentally dequeueing
+  // default-constructed values.
+  folly::coro::BoundedQueue<std::optional<SlowMover>> queue(1024);
+  std::atomic<int> turn = 0;
+
+  std::thread consumer([&] {
+    ++turn;
+    for (size_t i = 0; i < 2; ++i) {
+      ASSERT_TRUE(folly::coro::blockingWait(queue.dequeue()).has_value());
+    }
+  });
+
+  // producer2 will frequently initiate the enqueue after producer1 (thus
+  // acquiring a larger ticket) but complete the move after it. The consumer
+  // thus needs to block until the head-of-line item is available.
+  std::thread producer1([&] {
+    ++turn;
+    while (turn < 3) {
+    }
+    ++turn;
+    ASSERT_TRUE(queue.try_enqueue(SlowMover(true)));
+  });
+  std::thread producer2([&] {
+    ++turn;
+    while (turn < 4) {
+    }
+    /* sleep override */ std::this_thread::sleep_for(
+        std::chrono::milliseconds(1));
+    ASSERT_TRUE(queue.try_enqueue(SlowMover(false)));
+  });
+
+  producer1.join();
+  producer2.join();
+  consumer.join();
+}
+
+TEST(BoundedQueueTest, UnorderedDequeueCompletion) {
+  // Use optional to verify we're not accidentally dequeueing
+  // default-constructed values.
+  folly::coro::BoundedQueue<std::optional<SlowMover>> queue(2);
+
+  ASSERT_TRUE(queue.try_enqueue(SlowMover(true)));
+  ASSERT_TRUE(queue.try_enqueue(SlowMover(false)));
+
+  std::vector<std::thread> consumers;
+  for (size_t i = 0; i < 3; ++i) {
+    consumers.emplace_back([&]() {
+      ASSERT_TRUE(folly::coro::blockingWait(queue.dequeue()).has_value());
+    });
+  }
+
+  // The producer will get the ticket for the slow moving slot which will still
+  // be in the process of dequeuing, so the producer needs to block until it
+  // finishes and the slot becomes available.
+  std::thread producer(
+      [&] { folly::coro::blockingWait(queue.enqueue(SlowMover(false))); });
+
+  producer.join();
+  for (auto& consumer : consumers) {
+    consumer.join();
+  }
 }
 
 #endif

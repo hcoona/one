@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <folly/test/ObserverContainerTestUtil.h>
+
 #include <folly/ObserverContainer.h>
 #include <folly/portability/GMock.h>
 #include <folly/portability/GTest.h>
@@ -81,224 +83,51 @@ class TestSubject {
 };
 
 template <typename ObserverContainerT>
-class MockObserver : public ObserverContainerT::Observer {
+class MockTestSubjectObserver : public MockObserver<ObserverContainerT> {
  public:
   using TestSubjectT = typename ObserverContainerT::observed_type;
-  using ObserverContainerBase = ObserverContainerBase<
-      TestObserverInterface<typename ObserverContainerT::observed_type>,
-      typename ObserverContainerT::observed_type,
-      TestObserverContainerPolicy>;
-  using EventSet = typename TestSubjectT::ObserverContainer::Observer::EventSet;
-  using EventSetBuilder =
-      typename TestSubjectT::ObserverContainer::Observer::EventSetBuilder;
 
   // inherit constructor
-  using ObserverContainerT::Observer::Observer;
+  using MockObserver<ObserverContainerT>::MockObserver;
 
-  MOCK_METHOD1(attachedMock, void(TestSubjectT*));
-  MOCK_METHOD1(detachedMock, void(TestSubjectT*));
-  MOCK_METHOD2(
-      destroyedMock,
-      void(
-          TestSubjectT*,
-          typename TestSubjectT::ObserverContainer::ManagedObserver::
-              DestroyContext*));
-  MOCK_METHOD3(
-      movedMock,
-      void(
-          TestSubjectT*,
-          TestSubjectT*,
-          typename TestSubjectT::ObserverContainer::ManagedObserver::
-              MoveContext*));
-  MOCK_METHOD2(
-      invokeInterfaceMethodMock,
-      void(
-          TestSubjectT*,
-          folly::Function<void(
-              typename TestSubjectT::ObserverContainer::Observer*,
-              TestSubjectT*)>&));
-  MOCK_METHOD1(postInvokeInterfaceMethodMock, void(TestSubjectT*));
-  MOCK_METHOD1(addedToObserverContainerMock, void(ObserverContainerBase*));
-  MOCK_METHOD1(removedFromObserverContainerMock, void(ObserverContainerBase*));
-  MOCK_METHOD2(
-      movedToObserverContainerMock,
-      void(ObserverContainerBase*, ObserverContainerBase*));
   MOCK_METHOD1(specialMock, void(TestSubjectT*));
   MOCK_METHOD1(superSpecialMock, void(TestSubjectT*));
   MOCK_METHOD1(broadcastMock, void(TestSubjectT*));
 
-  /**
-   * Use default handler for invokeInterfaceMethod.
-   */
-  void useDefaultInvokeMockHandler() { defaultHandlersForInvoke_ = true; }
-
-  /**
-   * Use default handlers for postInvokeInterfaceMethod.
-   */
-  void useDefaultPostInvokeMockHandler() {
-    defaultHandlersForPostInvoke_ = true;
-  }
-
  private:
-  void attached(TestSubjectT* obj) noexcept override { attachedMock(obj); }
-  void detached(TestSubjectT* obj) noexcept override { detachedMock(obj); }
-  void destroyed(
-      TestSubjectT* obj,
-      typename TestSubjectT::ObserverContainer::ManagedObserver::DestroyContext*
-          ctx) noexcept override {
-    destroyedMock(obj, ctx);
-  }
-  void moved(
-      TestSubjectT* oldObj,
-      TestSubjectT* newObj,
-      typename TestSubjectT::ObserverContainer::ManagedObserver::MoveContext*
-          ctx) noexcept override {
-    movedMock(oldObj, newObj, ctx);
-  }
-  void invokeInterfaceMethod(
-      TestSubjectT* obj,
-      folly::Function<void(
-          typename TestSubjectT::ObserverContainer::Observer*, TestSubjectT*)>&
-          fn) noexcept override {
-    if (defaultHandlersForInvoke_) {
-      TestSubjectT::ObserverContainer::Observer::invokeInterfaceMethod(obj, fn);
-    } else {
-      invokeInterfaceMethodMock(obj, fn);
-    }
-  }
-  void postInvokeInterfaceMethod(TestSubjectT* obj) noexcept override {
-    if (defaultHandlersForPostInvoke_) {
-      TestSubjectT::ObserverContainer::Observer::postInvokeInterfaceMethod(obj);
-    } else {
-      postInvokeInterfaceMethodMock(obj);
-    }
-  }
-  void addedToObserverContainer(ObserverContainerBase* ctr) noexcept override {
-    addedToObserverContainerMock(ctr);
-  }
-  void removedFromObserverContainer(
-      ObserverContainerBase* ctr) noexcept override {
-    removedFromObserverContainerMock(ctr);
-  }
-  void movedToObserverContainer(
-      ObserverContainerBase* oldCtr,
-      ObserverContainerBase* newCtr) noexcept override {
-    movedToObserverContainerMock(oldCtr, newCtr);
-  }
   void special(TestSubjectT* obj) noexcept override { specialMock(obj); }
   void superSpecial(TestSubjectT* obj) noexcept override {
     superSpecialMock(obj);
   }
   void broadcast(TestSubjectT* obj) noexcept override { broadcastMock(obj); }
-
- private:
-  bool defaultHandlersForInvoke_{false};
-  bool defaultHandlersForPostInvoke_{false};
 };
 
 template <typename ObserverContainerT>
-class MockManagedObserver : public ObserverContainerT::ManagedObserver {
- public:
-  using TestSubjectT = typename ObserverContainerT::observed_type;
-  using ObserverContainerBase = ObserverContainerBase<
-      TestObserverInterface<typename ObserverContainerT::observed_type>,
-      typename ObserverContainerT::observed_type,
-      TestObserverContainerPolicy>;
-  using EventSet = typename TestSubjectT::ObserverContainer::Observer::EventSet;
-  using EventSetBuilder =
-      typename TestSubjectT::ObserverContainer::Observer::EventSetBuilder;
-
-  // inherit constructor
-  using ObserverContainerT::ManagedObserver::ManagedObserver;
-
-  MOCK_METHOD1(attachedMock, void(TestSubjectT*));
-  MOCK_METHOD1(detachedMock, void(TestSubjectT*));
-  MOCK_METHOD2(
-      destroyedMock,
-      void(
-          TestSubjectT*,
-          typename TestSubjectT::ObserverContainer::ManagedObserver::
-              DestroyContext*));
-  MOCK_METHOD3(
-      movedMock,
-      void(
-          TestSubjectT*,
-          TestSubjectT*,
-          typename TestSubjectT::ObserverContainer::ManagedObserver::
-              MoveContext*));
-  MOCK_METHOD2(
-      invokeInterfaceMethodMock,
-      void(
-          TestSubjectT*,
-          folly::Function<void(
-              typename TestSubjectT::ObserverContainer::Observer*,
-              TestSubjectT*)>&));
-  MOCK_METHOD1(postInvokeInterfaceMethodMock, void(TestSubjectT*));
-  MOCK_METHOD1(specialMock, void(TestSubjectT*));
-  MOCK_METHOD1(superSpecialMock, void(TestSubjectT*));
-  MOCK_METHOD1(broadcastMock, void(TestSubjectT*));
-
-  /**
-   * Use default handler for invokeInterfaceMethod.
-   */
-  void useDefaultInvokeMockHandler() { defaultHandlersForInvoke_ = true; }
-
-  /**
-   * Use default handlers for postInvokeInterfaceMethod.
-   */
-  void useDefaultPostInvokeMockHandler() {
-    defaultHandlersForPostInvoke_ = true;
-  }
-
- private:
-  void attached(TestSubjectT* obj) noexcept override { attachedMock(obj); }
-  void detached(TestSubjectT* obj) noexcept override { detachedMock(obj); }
-  void destroyed(
-      TestSubjectT* obj,
-      typename TestSubjectT::ObserverContainer::ManagedObserver::DestroyContext*
-          ctx) noexcept override {
-    destroyedMock(obj, ctx);
-  }
-  void moved(
-      TestSubjectT* oldObj,
-      TestSubjectT* newObj,
-      typename TestSubjectT::ObserverContainer::ManagedObserver::MoveContext*
-          ctx) noexcept override {
-    movedMock(oldObj, newObj, ctx);
-  }
-  void invokeInterfaceMethod(
-      TestSubjectT* obj,
-      folly::Function<void(
-          typename TestSubjectT::ObserverContainer::Observer*, TestSubjectT*)>&
-          fn) noexcept override {
-    if (defaultHandlersForInvoke_) {
-      TestSubjectT::ObserverContainer::Observer::invokeInterfaceMethod(obj, fn);
-    } else {
-      invokeInterfaceMethodMock(obj, fn);
-    }
-  }
-  void postInvokeInterfaceMethod(TestSubjectT* obj) noexcept override {
-    if (defaultHandlersForPostInvoke_) {
-      TestSubjectT::ObserverContainer::Observer::postInvokeInterfaceMethod(obj);
-    } else {
-      gmock_postInvokeInterfaceMethodMock(obj);
-    }
-  }
-  void special(TestSubjectT* obj) noexcept override { specialMock(obj); }
-  void superSpecial(TestSubjectT* obj) noexcept override {
-    superSpecialMock(obj);
-  }
-  void broadcast(TestSubjectT* obj) noexcept override { broadcastMock(obj); }
-
- private:
-  bool defaultHandlersForInvoke_{false};
-  bool defaultHandlersForPostInvoke_{false};
-};
-
-template <typename ObserverContainerT>
-class MockManagedObserverSpecialized
+class MockTestSubjectManagedObserver
     : public MockManagedObserver<ObserverContainerT> {
+ public:
+  using TestSubjectT = typename ObserverContainerT::observed_type;
+
+  // inherit constructor
   using MockManagedObserver<ObserverContainerT>::MockManagedObserver;
+
+  MOCK_METHOD1(specialMock, void(TestSubjectT*));
+  MOCK_METHOD1(superSpecialMock, void(TestSubjectT*));
+  MOCK_METHOD1(broadcastMock, void(TestSubjectT*));
+
+ private:
+  void special(TestSubjectT* obj) noexcept override { specialMock(obj); }
+  void superSpecial(TestSubjectT* obj) noexcept override {
+    superSpecialMock(obj);
+  }
+  void broadcast(TestSubjectT* obj) noexcept override { broadcastMock(obj); }
+};
+
+template <typename ObserverContainerT>
+class MockTestSubjectManagedObserverSpecialized
+    : public MockTestSubjectManagedObserver<ObserverContainerT> {
+  using MockTestSubjectManagedObserver<
+      ObserverContainerT>::MockTestSubjectManagedObserver;
 };
 
 /**
@@ -333,7 +162,8 @@ TEST_F(ObserverContainerTest, CtrObserverNeverAttachedWithChecks) {
  * Ensure add / remove works as expected.
  */
 TEST_F(ObserverContainerTest, CtrObserverAddRemove) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
@@ -345,8 +175,8 @@ TEST_F(ObserverContainerTest, CtrObserverAddRemove) {
           .findObservers<TestSubject::ObserverContainer::Observer>(),
       IsEmpty());
 
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   EXPECT_CALL(*observer1, addedToObserverContainerMock(&obj1->observerCtr));
   EXPECT_CALL(*observer1, attachedMock(obj1.get()));
   obj1->observerCtr.addObserver(observer1.get());
@@ -378,7 +208,8 @@ TEST_F(ObserverContainerTest, CtrObserverAddRemove) {
  * Ensure correct behavior for invokeInterfaceMethod.
  */
 TEST_F(ObserverContainerTest, CtrInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   // first invoke with no observers
@@ -387,8 +218,8 @@ TEST_F(ObserverContainerTest, CtrInvoke) {
   obj1->doSomethingSuperSpecial();
 
   // now add an observer and hit the events again to ensure it works
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
   EXPECT_CALL(*observer1, addedToObserverContainerMock(&obj1->observerCtr));
@@ -417,58 +248,62 @@ TEST_F(ObserverContainerTest, CtrInvoke) {
  * Ensure that invokeInterfaceMethod handles EventSets properly.
  */
 TEST_F(ObserverContainerTest, CtrInvokeMultipleObserversWithEventSets) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
   // observer 1 is subscribed to nothing
-  { observers.emplace_back(std::make_unique<StrictMock<MockObserver>>()); }
+  {
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>());
+  }
 
   // observer 2 is subscribed to SpecialEvent and SuperSpecialEvent explicitly
   // subscription is performed in two separate calls to enable()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 3 is subscribed to SpecialEvent and SuperSpecialEvent explicitly
   // subscription is performed in a single call to enable()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(
         TestObserverEvents::SpecialEvent,
         TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 4 is subscribed to all events via enableAllEvents()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enableAllEvents();
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 5 is subscribed to just SpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 6 is subscribed to just SuperSpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // add the observers
@@ -481,7 +316,7 @@ TEST_F(ObserverContainerTest, CtrInvokeMultipleObserversWithEventSets) {
     obj1->observerCtr.addObserver(observer.get());
   }
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAreArray(uniquePtrVecToRawPtrVec(observers)));
 
   // trigger multiple times
@@ -533,58 +368,62 @@ TEST_F(ObserverContainerTest, CtrInvokeMultipleObserversWithEventSets) {
 TEST_F(
     ObserverContainerTest,
     CtrInvokeMultipleObserversWithEventSetsOverrideInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
   // observer 1 is subscribed to nothing
-  { observers.emplace_back(std::make_unique<StrictMock<MockObserver>>()); }
+  {
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>());
+  }
 
   // observer 2 is subscribed to SpecialEvent and SuperSpecialEvent explicitly
   // subscription is performed in two separate calls to enable()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 3 is subscribed to SpecialEvent and SuperSpecialEvent explicitly
   // subscription is performed in a single call to enable()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(
         TestObserverEvents::SpecialEvent,
         TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 4 is subscribed to all events via enableAllEvents()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enableAllEvents();
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 5 is subscribed to just SpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 6 is subscribed to just SuperSpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // add the observers
@@ -594,7 +433,7 @@ TEST_F(
     obj1->observerCtr.addObserver(observer.get());
   }
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAreArray(uniquePtrVecToRawPtrVec(observers)));
 
   // trigger multiple times
@@ -609,12 +448,32 @@ TEST_F(
     //
     // since we're not using the default handlers for invoke and postInvoke,
     // we should see the mocked invoke and postInvoke being called
-    EXPECT_CALL(*observers[0], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[1], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[2], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[3], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[4], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[5], invokeInterfaceMethodMock(obj1.get(), _));
+
+    // broadcast
+    EXPECT_CALL(
+        *observers[0],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
+    EXPECT_CALL(
+        *observers[1],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
+    EXPECT_CALL(
+        *observers[2],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
+    EXPECT_CALL(
+        *observers[3],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
+    EXPECT_CALL(
+        *observers[4],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
+    EXPECT_CALL(
+        *observers[5],
+        invokeInterfaceMethodMock(
+            obj1.get(), _, folly::Optional<TestObserverEvents>()));
     EXPECT_CALL(*observers[0], postInvokeInterfaceMethodMock(obj1.get()));
     EXPECT_CALL(*observers[1], postInvokeInterfaceMethodMock(obj1.get()));
     EXPECT_CALL(*observers[2], postInvokeInterfaceMethodMock(obj1.get()));
@@ -623,13 +482,50 @@ TEST_F(
     EXPECT_CALL(*observers[5], postInvokeInterfaceMethodMock(obj1.get()));
     obj1->doBroadcast();
 
-    EXPECT_CALL(*observers[0], invokeInterfaceMethodMock(obj1.get(), _))
+    // special event
+    EXPECT_CALL(
+        *observers[0],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)))
         .Times(0);
-    EXPECT_CALL(*observers[1], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[2], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[3], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[4], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[5], invokeInterfaceMethodMock(obj1.get(), _))
+    EXPECT_CALL(
+        *observers[1],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)));
+    EXPECT_CALL(
+        *observers[2],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)));
+    EXPECT_CALL(
+        *observers[3],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)));
+    EXPECT_CALL(
+        *observers[4],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)));
+    EXPECT_CALL(
+        *observers[5],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SpecialEvent)))
         .Times(0);
     EXPECT_CALL(*observers[0], postInvokeInterfaceMethodMock(obj1.get()))
         .Times(0);
@@ -641,14 +537,51 @@ TEST_F(
         .Times(0);
     obj1->doSomethingSpecial();
 
-    EXPECT_CALL(*observers[0], invokeInterfaceMethodMock(obj1.get(), _))
+    // super special event
+    EXPECT_CALL(
+        *observers[0],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)))
         .Times(0);
-    EXPECT_CALL(*observers[1], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[2], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[3], invokeInterfaceMethodMock(obj1.get(), _));
-    EXPECT_CALL(*observers[4], invokeInterfaceMethodMock(obj1.get(), _))
+    EXPECT_CALL(
+        *observers[1],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)));
+    EXPECT_CALL(
+        *observers[2],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)));
+    EXPECT_CALL(
+        *observers[3],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)));
+    EXPECT_CALL(
+        *observers[4],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)))
         .Times(0);
-    EXPECT_CALL(*observers[5], invokeInterfaceMethodMock(obj1.get(), _));
+    EXPECT_CALL(
+        *observers[5],
+        invokeInterfaceMethodMock(
+            obj1.get(),
+            _,
+            folly::Optional<TestObserverEvents>(
+                TestObserverEvents::SuperSpecialEvent)));
     EXPECT_CALL(*observers[0], postInvokeInterfaceMethodMock(obj1.get()))
         .Times(0);
     EXPECT_CALL(*observers[1], postInvokeInterfaceMethodMock(obj1.get()));
@@ -673,18 +606,19 @@ TEST_F(
  * Add observer during event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeAddObserverOnInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -733,20 +667,21 @@ TEST_F(ObserverContainerTest, CtrInvokeAddObserverOnInvoke) {
  * Add two observers during event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeAddTwoObserversOnInvokeFirst) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs4 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs4 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -807,20 +742,21 @@ TEST_F(ObserverContainerTest, CtrInvokeAddTwoObserversOnInvokeFirst) {
  * Add two observers during event processing at two different points.
  */
 TEST_F(ObserverContainerTest, CtrInvokeAddTwoObserversOnInvokeFirstSecond) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs4 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs4 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -883,18 +819,19 @@ TEST_F(ObserverContainerTest, CtrInvokeAddTwoObserversOnInvokeFirstSecond) {
  * Add observer during post event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeAddObserverOnPostInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -945,18 +882,19 @@ TEST_F(ObserverContainerTest, CtrInvokeAddObserverOnPostInvoke) {
  * Remove observer during event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeRemoveObserverOnInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -1008,20 +946,21 @@ TEST_F(ObserverContainerTest, CtrInvokeRemoveObserverOnInvoke) {
  * Remove two observers during event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeRemoveTwoObserversOnInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs4 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs4 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -1085,18 +1024,19 @@ TEST_F(ObserverContainerTest, CtrInvokeRemoveTwoObserversOnInvoke) {
  * Remove observer during post event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeRemoveObserverOnPostInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -1148,20 +1088,21 @@ TEST_F(ObserverContainerTest, CtrInvokeRemoveObserverOnPostInvoke) {
  * Add and remove observer during event processing.
  */
 TEST_F(ObserverContainerTest, CtrInvokeAddRemoveObserverOnInvoke) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  auto obs4 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  auto obs4 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   obs1->useDefaultInvokeMockHandler();
   obs2->useDefaultInvokeMockHandler();
   obs3->useDefaultInvokeMockHandler();
@@ -1223,11 +1164,12 @@ TEST_F(ObserverContainerTest, CtrInvokeAddRemoveObserverOnInvoke) {
 }
 
 TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
-  using MockManagedObserverSpecialized =
-      MockManagedObserverSpecialized<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserverSpecialized =
+      MockTestSubjectManagedObserverSpecialized<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
@@ -1244,11 +1186,14 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
       obj1->observerCtr
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       IsEmpty());
-  EXPECT_THAT(obj1->observerCtr.findObservers<MockObserver>(), IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(), IsEmpty());
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(), IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
+      IsEmpty());
+  EXPECT_THAT(
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       IsEmpty());
 
   // lambda for adding observer
@@ -1257,7 +1202,7 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
     observer->useDefaultPostInvokeMockHandler();
     if constexpr (std::is_same_v<
                       decltype(*observer),
-                      StrictMock<MockObserver>&>) {
+                      StrictMock<MockTestSubjectObserver>&>) {
       EXPECT_CALL(*observer, addedToObserverContainerMock(&obj1->observerCtr));
     }
     EXPECT_CALL(*observer, attachedMock(obj1.get()));
@@ -1269,15 +1214,15 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
     EXPECT_CALL(*observer, detachedMock(obj1.get()));
     if constexpr (std::is_same_v<
                       decltype(*observer),
-                      StrictMock<MockObserver>&>) {
+                      StrictMock<MockTestSubjectObserver>&>) {
       EXPECT_CALL(
           *observer, removedFromObserverContainerMock(&obj1->observerCtr));
     }
     obj1->observerCtr.removeObserver(observer.get());
   };
 
-  // observer 1 is a MockObserver
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>();
+  // observer 1 is a MockTestSubjectObserver
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>();
   addObserver(obs1);
   EXPECT_EQ(1, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1293,16 +1238,18 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(), IsEmpty());
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
+      IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       IsEmpty());
 
-  // observer 2 is a MockManagedObserver
-  auto obs2 = std::make_unique<StrictMock<MockManagedObserver>>();
+  // observer 2 is a MockTestSubjectManagedObserver
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>();
   addObserver(obs2);
   EXPECT_EQ(2, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1320,17 +1267,18 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       UnorderedElementsAre(obs2.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(obs2.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       IsEmpty());
 
-  // observer 3 is another MockManagedObserver
-  auto obs3 = std::make_unique<StrictMock<MockManagedObserver>>();
+  // observer 3 is another MockTestSubjectManagedObserver
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>();
   addObserver(obs3);
   EXPECT_EQ(3, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1348,17 +1296,19 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       IsEmpty());
 
-  // observer 4 is a MockManagedObserverSpecialized
-  auto obs4 = std::make_unique<StrictMock<MockManagedObserverSpecialized>>();
+  // observer 4 is a MockTestSubjectManagedObserverSpecialized
+  auto obs4 =
+      std::make_unique<StrictMock<MockTestSubjectManagedObserverSpecialized>>();
   addObserver(obs4);
   EXPECT_EQ(4, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1376,17 +1326,18 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get(), obs4.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get(), obs4.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       UnorderedElementsAre(obs4.get()));
 
-  // observer 5 is another MockManagedObserver
-  auto obs5 = std::make_unique<StrictMock<MockManagedObserver>>();
+  // observer 5 is another MockTestSubjectManagedObserver
+  auto obs5 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>();
   addObserver(obs5);
   EXPECT_EQ(5, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1407,17 +1358,19 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get(), obs4.get(), obs5.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs3.get(), obs4.get(), obs5.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       UnorderedElementsAre(obs4.get()));
 
-  // observer 6 is another MockManagedObserverSpecialized
-  auto obs6 = std::make_unique<StrictMock<MockManagedObserverSpecialized>>();
+  // observer 6 is another MockTestSubjectManagedObserverSpecialized
+  auto obs6 =
+      std::make_unique<StrictMock<MockTestSubjectManagedObserverSpecialized>>();
   addObserver(obs6);
   EXPECT_EQ(6, obj1->observerCtr.numObservers());
   EXPECT_THAT(
@@ -1454,14 +1407,15 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
       UnorderedElementsAre(
           obs2.get(), obs3.get(), obs4.get(), obs5.get(), obs6.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(
           obs2.get(), obs3.get(), obs4.get(), obs5.get(), obs6.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       UnorderedElementsAre(obs4.get(), obs6.get()));
 
   // remove observers 3 and 4
@@ -1483,13 +1437,14 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs5.get(), obs6.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAre(obs1.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAre(obs2.get(), obs5.get(), obs6.get()));
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       UnorderedElementsAre(obs6.get()));
 
   // remove the rest of the observers
@@ -1510,18 +1465,22 @@ TEST_F(ObserverContainerTest, CtrGetFindObserversWithDetach) {
       obj1->observerCtr
           .findObservers<TestSubject::ObserverContainer::ManagedObserver>(),
       IsEmpty());
-  EXPECT_THAT(obj1->observerCtr.findObservers<MockObserver>(), IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(), IsEmpty());
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(), IsEmpty());
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserverSpecialized>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
+      IsEmpty());
+  EXPECT_THAT(
+      obj1->observerCtr
+          .findObservers<MockTestSubjectManagedObserverSpecialized>(),
       IsEmpty());
 
   obj1 = nullptr;
 }
 
 TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
@@ -1540,7 +1499,7 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
     observer->useDefaultPostInvokeMockHandler();
     if constexpr (std::is_same_v<
                       decltype(*observer),
-                      StrictMock<MockObserver>&>) {
+                      StrictMock<MockTestSubjectObserver>&>) {
       EXPECT_CALL(*observer, addedToObserverContainerMock(&obj1->observerCtr));
     }
     EXPECT_CALL(*observer, attachedMock(obj1.get()));
@@ -1552,7 +1511,7 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
     EXPECT_CALL(*observer, detachedMock(obj1.get()));
     if constexpr (std::is_same_v<
                       decltype(*observer),
-                      StrictMock<MockObserver>&>) {
+                      StrictMock<MockTestSubjectObserver>&>) {
       EXPECT_CALL(
           *observer, removedFromObserverContainerMock(&obj1->observerCtr));
     }
@@ -1560,8 +1519,8 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
   };
 
   // observer 1 has SpecialEvent
-  auto obs1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder()
+  auto obs1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder()
           .enable(TestObserverEvents::SpecialEvent)
           .build());
   addObserver(obs1);
@@ -1573,8 +1532,8 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
           .hasObserversForEvent<TestObserverEvents::SuperSpecialEvent>());
 
   // observer 2 has SuperSpecialEvent
-  auto obs2 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder()
+  auto obs2 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder()
           .enable(TestObserverEvents::SuperSpecialEvent)
           .build());
   addObserver(obs2);
@@ -1586,8 +1545,8 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
           .hasObserversForEvent<TestObserverEvents::SuperSpecialEvent>());
 
   // observer 3 has SpecialEvent
-  auto obs3 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder()
+  auto obs3 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder()
           .enable(TestObserverEvents::SpecialEvent)
           .build());
   addObserver(obs3);
@@ -1599,8 +1558,8 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
           .hasObserversForEvent<TestObserverEvents::SuperSpecialEvent>());
 
   // observer 4 has SuperSpecialEvent
-  auto obs4 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder()
+  auto obs4 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder()
           .enable(TestObserverEvents::SuperSpecialEvent)
           .build());
   addObserver(obs4);
@@ -1643,24 +1602,27 @@ TEST_F(ObserverContainerTest, CtrHasObserversForEvent) {
  */
 
 TEST_F(ObserverContainerTest, ObserverNeverAttachedToCtr) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
 }
 
 TEST_F(ObserverContainerTest, ObserverNeverAttachedToCtrNoEvents) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>();
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>();
 }
 
 TEST_F(ObserverContainerTest, ObserverAttachedThenObjectDestroyed) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  MockObserver::Safety dc(*observer1.get());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  MockTestSubjectObserver::Safety dc(*observer1.get());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -1679,13 +1641,14 @@ TEST_F(ObserverContainerTest, ObserverAttachedThenObjectDestroyed) {
 }
 
 TEST_F(ObserverContainerTest, SharedPtrObserverAttachedThenObjectDestroyed) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_shared<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  MockObserver::Safety dc(*observer1.get());
+  auto observer1 = std::make_shared<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  MockTestSubjectObserver::Safety dc(*observer1.get());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -1706,13 +1669,14 @@ TEST_F(ObserverContainerTest, SharedPtrObserverAttachedThenObjectDestroyed) {
 TEST_F(
     ObserverContainerTest,
     SharedPtrObserverAttachedThenObjectAndObserverDestroyed) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_shared<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
-  MockObserver::Safety dc(*observer1.get());
+  auto observer1 = std::make_shared<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  MockTestSubjectObserver::Safety dc(*observer1.get());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -1738,12 +1702,13 @@ TEST_F(
 }
 
 TEST_F(ObserverContainerTest, ObserverAttachedThenObserverDetached) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockObserver>>(
-      MockObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -1760,56 +1725,60 @@ TEST_F(ObserverContainerTest, ObserverAttachedThenObserverDetached) {
 }
 
 TEST_F(ObserverContainerTest, ObserverAttachedEvents) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
   // observer 1 is subscribed to nothing
-  { observers.emplace_back(std::make_unique<StrictMock<MockObserver>>()); }
+  {
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>());
+  }
 
   // observer 2 is subscribed to both events explicitly
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 3 is subscribed to both events explicitly at once
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(
         TestObserverEvents::SpecialEvent,
         TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 4 is subscribed to all events via enableAllEvents()
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enableAllEvents();
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 5 is subscribed to just SpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // observer 6 is subscribed to just SuperSpecialEvent
   {
-    MockObserver::EventSet eventSet;
+    MockTestSubjectObserver::EventSet eventSet;
     eventSet.enable(TestObserverEvents::SuperSpecialEvent);
     observers.emplace_back(
-        std::make_unique<StrictMock<MockObserver>>(eventSet));
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(eventSet));
   }
 
   // add the observers
@@ -1821,7 +1790,7 @@ TEST_F(ObserverContainerTest, ObserverAttachedEvents) {
     obj1->observerCtr.addObserver(observer.get());
   }
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAreArray(uniquePtrVecToRawPtrVec(observers)));
 
   // set up expectations, then trigger events
@@ -1855,57 +1824,66 @@ TEST_F(ObserverContainerTest, ObserverAttachedEvents) {
 }
 
 TEST_F(ObserverContainerTest, ObserverAttachedEventsUseBuilder) {
-  using MockObserver = MockObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectObserver>> observers;
 
   // observer 1 is subscribed to nothing
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder().build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder().build()));
   }
 
   // observer 2 is subscribed to both events explicitly
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SpecialEvent)
-            .enable(TestObserverEvents::SuperSpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SpecialEvent)
+                .enable(TestObserverEvents::SuperSpecialEvent)
+                .build()));
   }
 
   // observer 3 is subscribed to both events explicitly at once
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder()
-            .enable(
-                TestObserverEvents::SpecialEvent,
-                TestObserverEvents::SuperSpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder()
+                .enable(
+                    TestObserverEvents::SpecialEvent,
+                    TestObserverEvents::SuperSpecialEvent)
+                .build()));
   }
 
   // observer 4 is subscribed to all events via enableAllEvents()
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder().enableAllEvents().build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder()
+                .enableAllEvents()
+                .build()));
   }
 
   // observer 5 is subscribed to just SpecialEvent
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SpecialEvent)
+                .build()));
   }
 
   // observer 6 is subscribed to just SuperSpecialEvent
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockObserver>>(
-        MockObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SuperSpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectObserver>>(
+            MockTestSubjectObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SuperSpecialEvent)
+                .build()));
   }
 
   // add the observers
@@ -1917,7 +1895,7 @@ TEST_F(ObserverContainerTest, ObserverAttachedEventsUseBuilder) {
     obj1->observerCtr.addObserver(observer.get());
   }
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectObserver>(),
       UnorderedElementsAreArray(uniquePtrVecToRawPtrVec(observers)));
 
   // set up expectations, then trigger events
@@ -1955,27 +1933,31 @@ TEST_F(ObserverContainerTest, ObserverAttachedEventsUseBuilder) {
  */
 
 TEST_F(ObserverContainerTest, ManagedObserverNeverAttached) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>();
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
+  auto observer1 =
+      std::make_unique<StrictMock<MockTestSubjectManagedObserver>>();
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverNeverAttachedWithChecks) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>();
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
+  auto observer1 =
+      std::make_unique<StrictMock<MockTestSubjectManagedObserver>>();
   EXPECT_EQ(nullptr, observer1->getObservedObject());
   EXPECT_FALSE(observer1->isObserving());
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverAttachedThenObserverDestroyed) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -1995,13 +1977,15 @@ TEST_F(ObserverContainerTest, ManagedObserverAttachedThenObserverDestroyed) {
 
 TEST_F(
     ObserverContainerTest, ManagedObserverAttachedThenObserverDetachedViaCtr) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2023,13 +2007,15 @@ TEST_F(
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverAttachViaListCalledTwice) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2042,13 +2028,15 @@ TEST_F(ObserverContainerTest, ManagedObserverAttachViaListCalledTwice) {
 
 TEST_F(
     ObserverContainerTest, ManagedObserverAttachCalledTwiceDifferentObjects) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2061,13 +2049,15 @@ TEST_F(
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverDetachCalledTwice) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2084,25 +2074,29 @@ TEST_F(ObserverContainerTest, ManagedObserverDetachCalledTwice) {
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverDetachCalledNeverAttached) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
   EXPECT_FALSE(observer1->detach());
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDetach) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2141,13 +2135,15 @@ TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDetach) {
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDetachViaCtr) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2186,13 +2182,15 @@ TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDetachViaCtr) {
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDestroy) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2227,13 +2225,15 @@ TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDestroy) {
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDestroyViaCtr) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  auto observer1 = std::make_unique<StrictMock<MockManagedObserver>>(
-      MockManagedObserver::EventSetBuilder().enableAllEvents().build());
+  auto observer1 = std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+      MockTestSubjectManagedObserver::EventSetBuilder()
+          .enableAllEvents()
+          .build());
   observer1->useDefaultInvokeMockHandler();
   observer1->useDefaultPostInvokeMockHandler();
 
@@ -2268,42 +2268,46 @@ TEST_F(ObserverContainerTest, ManagedObserverMovesBetweenObjectsDestroyViaCtr) {
 }
 
 TEST_F(ObserverContainerTest, ManagedObserverAttachedEventsUseBuilder) {
-  using MockManagedObserver =
-      MockManagedObserver<TestSubject::ObserverContainer>;
+  using MockTestSubjectManagedObserver =
+      MockTestSubjectManagedObserver<TestSubject::ObserverContainer>;
   InSequence s;
 
   auto obj1 = std::make_unique<TestSubject>();
-  std::vector<std::unique_ptr<MockManagedObserver>> observers;
+  std::vector<std::unique_ptr<MockTestSubjectManagedObserver>> observers;
 
   // observer 1 is subscribed to nothing
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockManagedObserver>>(
-        MockManagedObserver::EventSetBuilder().build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+            MockTestSubjectManagedObserver::EventSetBuilder().build()));
   }
 
   // observer 2 is subscribed to both events explicitly
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockManagedObserver>>(
-        MockManagedObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SpecialEvent)
-            .enable(TestObserverEvents::SuperSpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+            MockTestSubjectManagedObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SpecialEvent)
+                .enable(TestObserverEvents::SuperSpecialEvent)
+                .build()));
   }
 
   // observer 3 is subscribed to just SpecialEvent
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockManagedObserver>>(
-        MockManagedObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+            MockTestSubjectManagedObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SpecialEvent)
+                .build()));
   }
 
   // observer 4 is subscribed to just SuperSpecialEvent
   {
-    observers.emplace_back(std::make_unique<StrictMock<MockManagedObserver>>(
-        MockManagedObserver::EventSetBuilder()
-            .enable(TestObserverEvents::SuperSpecialEvent)
-            .build()));
+    observers.emplace_back(
+        std::make_unique<StrictMock<MockTestSubjectManagedObserver>>(
+            MockTestSubjectManagedObserver::EventSetBuilder()
+                .enable(TestObserverEvents::SuperSpecialEvent)
+                .build()));
   }
 
   // add the observers
@@ -2314,7 +2318,7 @@ TEST_F(ObserverContainerTest, ManagedObserverAttachedEventsUseBuilder) {
     obj1->observerCtr.addObserver(observer.get());
   }
   EXPECT_THAT(
-      obj1->observerCtr.findObservers<MockManagedObserver>(),
+      obj1->observerCtr.findObservers<MockTestSubjectManagedObserver>(),
       UnorderedElementsAreArray(uniquePtrVecToRawPtrVec(observers)));
 
   // set up expectations, then trigger events
@@ -2338,6 +2342,105 @@ TEST_F(ObserverContainerTest, ManagedObserverAttachedEventsUseBuilder) {
   for (const auto& observer : observers) {
     EXPECT_CALL(*observer, destroyedMock(obj1.get(), _));
   }
+  obj1 = nullptr;
+}
+
+TEST_F(ObserverContainerTest, AddConstructorCallback) {
+  uint64_t numSubjectsCreated = 0;
+  std::vector<TestSubject*> subjectsCreated;
+  auto callbackF = [&](TestSubject* obj) {
+    subjectsCreated.push_back(obj);
+    numSubjectsCreated++;
+  };
+
+  TestSubject::ObserverContainer::addConstructorCallback(callbackF);
+
+  EXPECT_EQ(0, numSubjectsCreated);
+  auto obj1 = std::make_unique<TestSubject>();
+  EXPECT_EQ(1, numSubjectsCreated);
+  auto obj2 = std::make_unique<TestSubject>();
+  EXPECT_EQ(2, numSubjectsCreated);
+  EXPECT_THAT(subjectsCreated, ElementsAre(obj1.get(), obj2.get()));
+
+  obj1 = nullptr;
+  obj2 = nullptr;
+  EXPECT_EQ(2, numSubjectsCreated);
+}
+
+TEST_F(ObserverContainerTest, AddConstructorCallbackMulti) {
+  uint64_t numSubjectsCreated1 = 0;
+  std::vector<TestSubject*> subjectsCreated1;
+  auto callbackF1 = [&](TestSubject* obj) {
+    subjectsCreated1.push_back(obj);
+    numSubjectsCreated1++;
+  };
+
+  uint64_t numSubjectsCreated2 = 0;
+  std::vector<TestSubject*> subjectsCreated2;
+  auto callbackF2 = [&](TestSubject* obj) {
+    subjectsCreated2.push_back(obj);
+    numSubjectsCreated2++;
+  };
+
+  TestSubject::ObserverContainer::addConstructorCallback(callbackF1);
+  TestSubject::ObserverContainer::addConstructorCallback(callbackF2);
+
+  EXPECT_EQ(0, numSubjectsCreated1);
+  EXPECT_EQ(0, numSubjectsCreated2);
+  EXPECT_THAT(subjectsCreated1, IsEmpty());
+  EXPECT_THAT(subjectsCreated2, IsEmpty());
+  auto obj1 = std::make_unique<TestSubject>();
+  EXPECT_EQ(1, numSubjectsCreated1);
+  EXPECT_EQ(1, numSubjectsCreated2);
+  EXPECT_THAT(subjectsCreated1, ElementsAre(obj1.get()));
+  EXPECT_THAT(subjectsCreated2, ElementsAre(obj1.get()));
+  auto obj2 = std::make_unique<TestSubject>();
+  EXPECT_EQ(2, numSubjectsCreated1);
+  EXPECT_EQ(2, numSubjectsCreated2);
+  EXPECT_THAT(subjectsCreated1, ElementsAre(obj1.get(), obj2.get()));
+  EXPECT_THAT(subjectsCreated2, ElementsAre(obj1.get(), obj2.get()));
+
+  obj1 = nullptr;
+  obj2 = nullptr;
+  EXPECT_EQ(2, numSubjectsCreated1);
+  EXPECT_EQ(2, numSubjectsCreated2);
+}
+
+TEST_F(ObserverContainerTest, AddConstructorCallbackAttachObserver) {
+  using MockTestSubjectObserver =
+      MockTestSubjectObserver<TestSubject::ObserverContainer>;
+
+  auto obs = std::make_unique<StrictMock<MockTestSubjectObserver>>(
+      MockTestSubjectObserver::EventSetBuilder().enableAllEvents().build());
+  obs->useDefaultInvokeMockHandler();
+  obs->useDefaultPostInvokeMockHandler();
+
+  uint64_t numSubjectsCreated = 0;
+  auto callbackF = [&](TestSubject* obj) {
+    numSubjectsCreated++;
+    obj->observerCtr.addObserver(obs.get());
+  };
+
+  TestSubject::ObserverContainer::addConstructorCallback(callbackF);
+
+  TestSubject::ObserverContainer::ContainerBase* ctrPtr;
+  TestSubject* objPtr;
+  EXPECT_CALL(*obs, addedToObserverContainerMock(_))
+      .WillOnce(testing::SaveArg<0>(&ctrPtr));
+  EXPECT_CALL(*obs, attachedMock(_)).WillOnce(testing::SaveArg<0>(&objPtr));
+
+  auto obj1 = std::make_unique<TestSubject>();
+  EXPECT_EQ(&obj1->observerCtr, ctrPtr);
+  EXPECT_EQ(obj1.get(), objPtr);
+  EXPECT_EQ(1, numSubjectsCreated);
+
+  EXPECT_CALL(*obs, specialMock(obj1.get()));
+  EXPECT_CALL(*obs, superSpecialMock(obj1.get()));
+  obj1->doSomethingSpecial();
+  obj1->doSomethingSuperSpecial();
+
+  EXPECT_CALL(*obs, destroyedMock(obj1.get(), _));
+  EXPECT_CALL(*obs, removedFromObserverContainerMock(ctrPtr));
   obj1 = nullptr;
 }
 

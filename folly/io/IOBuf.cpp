@@ -141,14 +141,13 @@ struct IOBuf::HeapStorage {
   folly::IOBuf buf;
 };
 
-struct IOBuf::HeapFullStorage {
+struct alignas(folly::max_align_v) IOBuf::HeapFullStorage {
   // Make sure jemalloc allocates from the 64-byte class.  Putting this here
   // because HeapStorage is private so it can't be at namespace level.
   static_assert(sizeof(HeapStorage) <= 64, "IOBuf may not grow over 56 bytes!");
 
   HeapStorage hs;
   SharedInfo shared;
-  folly::max_align_t align;
 };
 
 IOBuf::SharedInfo::SharedInfo()
@@ -225,9 +224,12 @@ void IOBuf::operator delete(void* /* ptr */, void* /* placement */) {
 void IOBuf::releaseStorage(HeapStorage* storage, uint16_t freeFlags) noexcept {
   CHECK_EQ(storage->prefix.magic, static_cast<uint16_t>(kHeapMagic));
 
-  // Use relaxed memory order here.  If we are unlucky and happen to get
-  // out-of-date data the compare_exchange_weak() call below will catch
-  // it and load new data with memory_order_acq_rel.
+  // This function is effectively used as a memory barrier.  Logically, we can
+  // use relaxed memory order here.  If we are unlucky and happen to get
+  // out-of-date data the compare_exchange_weak() call below will catch it and
+  // load new data with memory_order_acq_rel.  However, changing this to be
+  // std::memory_order_relaxed will cause tsan to find problems with some
+  // caller code.
   auto flags = storage->prefix.flags.load(std::memory_order_acquire);
   DCHECK_EQ((flags & freeFlags), freeFlags);
 
@@ -287,7 +289,22 @@ IOBuf::IOBuf(
     std::size_t size,
     std::size_t headroom,
     std::size_t minTailroom)
-    : IOBuf(CREATE, headroom + size + minTailroom) {
+    : next_(this),
+      prev_(this),
+      data_(nullptr),
+      length_(0),
+      flagsAndSharedInfo_(0) {
+  std::size_t capacity = 0;
+  if (!checked_add(&capacity, size, headroom, minTailroom) ||
+      capacity > kMaxIOBufSize) {
+    throw_exception<std::bad_alloc>();
+  }
+
+  SharedInfo* info;
+  allocExtBuffer(capacity, &buf_, &info, &capacity_);
+  setSharedInfo(info);
+  data_ = buf_;
+
   advance(headroom);
   if (size > 0) {
     assert(buf != nullptr);
@@ -345,7 +362,7 @@ unique_ptr<IOBuf> IOBuf::createCombined(std::size_t capacity) {
 
   // To save a memory allocation, allocate space for the IOBuf object, the
   // SharedInfo struct, and the data itself all with a single call to malloc().
-  size_t requiredStorage = offsetof(HeapFullStorage, align) + capacity;
+  size_t requiredStorage = sizeof(HeapFullStorage) + capacity;
   size_t mallocSize = goodMallocSize(requiredStorage);
   auto storage = static_cast<HeapFullStorage*>(checkedMalloc(mallocSize));
 
@@ -356,7 +373,7 @@ unique_ptr<IOBuf> IOBuf::createCombined(std::size_t capacity) {
     io_buf_alloc_cb(storage, mallocSize);
   }
 
-  auto bufAddr = reinterpret_cast<uint8_t*>(&storage->align);
+  auto bufAddr = reinterpret_cast<uint8_t*>(storage) + sizeof(HeapFullStorage);
   uint8_t* storageEnd = reinterpret_cast<uint8_t*>(storage) + mallocSize;
   auto actualCapacity = size_t(storageEnd - bufAddr);
   unique_ptr<IOBuf> ret(new (&storage->hs.buf) IOBuf(
@@ -397,7 +414,7 @@ size_t IOBuf::goodSize(size_t minCapacity, CombinedOption combined) {
   }
   size_t overhead;
   if (combined == CombinedOption::COMBINED) {
-    overhead = offsetof(HeapFullStorage, align);
+    overhead = sizeof(HeapFullStorage);
   } else {
     // Pad minCapacity to a multiple of 8
     minCapacity = (minCapacity + 7) & ~7;

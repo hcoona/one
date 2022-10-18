@@ -20,6 +20,7 @@
 
 #include <folly/Conv.h>
 #include <folly/Optional.h>
+#include <folly/Range.h>
 #include <folly/functional/Invoke.h>
 
 namespace folly {
@@ -73,7 +74,7 @@ template <
 const typename Map::mapped_type& get_or_throw(
     const Map& map,
     const Key& key,
-    const std::string& exceptionStrPrefix = std::string()) {
+    const StringPiece& exceptionStrPrefix = StringPiece()) {
   auto pos = map.find(key);
   if (pos != map.end()) {
     return pos->second;
@@ -88,7 +89,7 @@ template <
 typename Map::mapped_type& get_or_throw(
     Map& map,
     const Key& key,
-    const std::string& exceptionStrPrefix = std::string()) {
+    const StringPiece& exceptionStrPrefix = StringPiece()) {
   auto pos = map.find(key);
   if (pos != map.end()) {
     return pos->second;
@@ -166,7 +167,7 @@ const typename Map::mapped_type& get_ref_default(
  * key in the map, or nullptr if the key doesn't exist in the map.
  */
 template <class Map, typename Key = typename Map::key_type>
-const typename Map::mapped_type* get_ptr(const Map& map, const Key& key) {
+const auto* get_ptr(const Map& map, const Key& key) {
   auto pos = map.find(key);
   return (pos != map.end() ? &pos->second : nullptr);
 }
@@ -175,7 +176,7 @@ const typename Map::mapped_type* get_ptr(const Map& map, const Key& key) {
  * Non-const overload of the above.
  */
 template <class Map, typename Key = typename Map::key_type>
-typename Map::mapped_type* get_ptr(Map& map, const Key& key) {
+auto* get_ptr(Map& map, const Key& key) {
   auto pos = map.find(key);
   return (pos != map.end() ? &pos->second : nullptr);
 }

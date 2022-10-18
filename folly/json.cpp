@@ -118,7 +118,11 @@ struct Printer {
           }
         }
         toAppend(
-            v.asDouble(), &out_, opts_.double_mode, opts_.double_num_digits);
+            v.asDouble(),
+            &out_,
+            opts_.double_mode,
+            opts_.double_num_digits,
+            opts_.double_flags);
         break;
       case dynamic::INT64: {
         auto intval = v.asInt();
@@ -152,28 +156,43 @@ struct Printer {
 
  private:
   void printKV(
+      dynamic const& o,
       const std::pair<const dynamic, dynamic>& p,
       const Context* context) const {
-    if (!opts_.allow_non_string_keys && !p.first.isString()) {
+    if (opts_.convert_int_keys && p.first.isInt()) {
+      auto strKey = p.first.asString();
+      if (o.count(strKey)) {
+        throw json::print_error(folly::to<std::string>(
+            "folly::toJson: Source object has integer and string keys "
+            "representing the same value: ",
+            p.first.asInt()));
+      }
+      (*this)(p.first.asString(), Context(context, p.first, true));
+    } else if (!opts_.allow_non_string_keys && !p.first.isString()) {
       throw json::print_error(
           "folly::toJson: JSON object key " +
-          toStringOr(p.first, "<unprintable key>") +
-          " was not a string when serializing key at " +
+          toStringOr(p.first, "<unprintable key>") + " was not a string " +
+          (opts_.convert_int_keys ? "or integer " : "") +
+          "when serializing key at " +
           Context(context, p.first, true).locationDescription());
+    } else {
+      (*this)(p.first, Context(context, p.first, true)); // Key
     }
-    (*this)(p.first, Context(context, p.first, true)); // Key
     mapColon();
     (*this)(p.second, Context(context, p.first, false)); // Value
   }
 
   template <typename Iterator>
   void printKVPairs(
-      Iterator begin, Iterator end, const Context* context) const {
-    printKV(*begin, context);
+      dynamic const& o,
+      Iterator begin,
+      Iterator end,
+      const Context* context) const {
+    printKV(o, *begin, context);
     for (++begin; begin != end; ++begin) {
       out_ += ',';
       newline();
-      printKV(*begin, context);
+      printKV(o, *begin, context);
     }
   }
 
@@ -200,9 +219,9 @@ struct Printer {
       } else {
         sort_keys_by(refs.begin(), refs.end(), std::less<>());
       }
-      printKVPairs(refs.cbegin(), refs.cend(), context);
+      printKVPairs(o, refs.cbegin(), refs.cend(), context);
     } else {
-      printKVPairs(o.items().begin(), o.items().end(), context);
+      printKVPairs(o, o.items().begin(), o.items().end(), context);
     }
     outdent();
     newline();
@@ -389,7 +408,7 @@ struct Input {
     return range_.subpiece(0, 16 /* arbitrary */).toString();
   }
 
-  dynamic error(char const* what) const {
+  [[noreturn]] dynamic error(char const* what) const {
     throw json::make_parse_error(lineNum_, context(), what);
   }
 
@@ -431,25 +450,29 @@ dynamic parseValue(Input& in, json::metadata_map* map);
 std::string parseString(Input& in);
 dynamic parseNumber(Input& in);
 
-template <class K>
 void parseObjectKeyValue(
-    Input& in, dynamic& ret, K&& key, json::metadata_map* map) {
+    Input& in,
+    dynamic& ret,
+    dynamic&& key,
+    json::metadata_map* map,
+    bool distinct) {
   auto keyLineNumber = in.getLineNum();
   in.skipWhitespace();
   in.expect(':');
   in.skipWhitespace();
-  K tmp;
-  if (map) {
-    tmp = K(key);
-  }
   auto valueLineNumber = in.getLineNum();
-  ret.insert(std::forward<K>(key), parseValue(in, map));
+  auto value = parseValue(in, map);
+  auto [it, inserted] = ret.try_emplace(std::move(key), std::move(value));
+  if (!inserted) {
+    if (distinct) {
+      in.error("duplicate key inserted");
+    }
+    it->second = std::move(value);
+  }
   if (map) {
-    auto val = ret.get_ptr(tmp);
-    // We just inserted it, so it should be there!
-    DCHECK(val != nullptr);
     map->emplace(
-        val, json::parse_metadata{{{keyLineNumber}}, {{valueLineNumber}}});
+        &it->second,
+        json::parse_metadata{{{keyLineNumber}}, {{valueLineNumber}}});
   }
 }
 
@@ -465,19 +488,21 @@ dynamic parseObject(Input& in, json::metadata_map* map) {
     return ret;
   }
 
+  const auto& opts = in.getOpts();
+  const bool distinct = opts.validate_keys || opts.convert_int_keys;
   for (;;) {
-    if (in.getOpts().allow_trailing_comma && *in == '}') {
+    if (opts.allow_trailing_comma && *in == '}') {
       break;
     }
-    if (*in == '\"') { // string
-      auto key = parseString(in);
-      parseObjectKeyValue(in, ret, std::move(key), map);
-    } else if (!in.getOpts().allow_non_string_keys) {
-      in.error("expected string for object key name");
-    } else {
-      auto key = parseValue(in, map);
-      parseObjectKeyValue(in, ret, std::move(key), map);
+    dynamic key = parseValue(in, map);
+    if (opts.convert_int_keys && key.isInt()) {
+      key = key.asString();
+    } else if (!opts.allow_non_string_keys && !key.isString()) {
+      in.error(
+          opts.convert_int_keys ? "expected string or integer for object key"
+                                : "expected string for object key");
     }
+    parseObjectKeyValue(in, ret, std::move(key), map, distinct);
 
     in.skipWhitespace();
     if (*in != ',') {
@@ -586,7 +611,7 @@ dynamic parseNumber(Input& in) {
   return val;
 }
 
-std::string decodeUnicodeEscape(Input& in) {
+void decodeUnicodeEscape(Input& in, std::string& out) {
   auto hexVal = [&](int c) -> uint16_t {
     // clang-format off
     return uint16_t(
@@ -634,7 +659,7 @@ std::string decodeUnicodeEscape(Input& in) {
     in.error("invalid unicode code point (in range [0xdc00,0xdfff])");
   }
 
-  return codePointToUtf8(codePoint);
+  appendCodePointToUtf8(codePoint, out);
 }
 
 std::string parseString(Input& in) {
@@ -662,7 +687,7 @@ std::string parseString(Input& in) {
         case 'n':     ret.push_back('\n'); ++in; break;
         case 'r':     ret.push_back('\r'); ++in; break;
         case 't':     ret.push_back('\t'); ++in; break;
-        case 'u':     ++in; ret += decodeUnicodeEscape(in); break;
+        case 'u':     ++in; decodeUnicodeEscape(in, ret); break;
         // clang-format on
         default:
           in.error(

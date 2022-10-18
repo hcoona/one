@@ -45,7 +45,7 @@ bool generic_checked_add(T* result, T a, T b) {
 
 template <typename T, typename = std::enable_if_t<std::is_unsigned<T>::value>>
 bool generic_checked_small_mul(T* result, T a, T b) {
-  static_assert(sizeof(T) < sizeof(uint64_t));
+  static_assert(sizeof(T) < sizeof(uint64_t), "Too large");
   uint64_t res = static_cast<uint64_t>(a) * static_cast<uint64_t>(b);
   constexpr uint64_t overflowMask = ~((1ULL << (sizeof(T) * 8)) - 1);
   if (FOLLY_UNLIKELY((res & overflowMask) != 0)) {
@@ -166,21 +166,15 @@ bool checked_mul(T* result, T a, T b) {
   }
   *result = {};
   return false;
-#elif _MSC_VER
-  static_assert(sizeof(T) <= sizeof(unsigned __int64));
+#elif _MSC_VER && FOLLY_X64
+  static_assert(sizeof(T) <= sizeof(unsigned __int64), "Too large");
   if (sizeof(T) < sizeof(uint64_t)) {
-    return detail::generic_checked_small_mul(result, a, b);
+    return detail::generic_checked_mul(result, a, b);
   } else {
     unsigned __int64 high;
     unsigned __int64 low = _umul128(a, b, &high);
-    // unsigned right shift is guaranteed to be 0
-    // if sizeof(T) == sizeof(unsigned __int64)
-    if (FOLLY_UNLIKELY(low >> (sizeof(T) * 8) != 0)) {
-      *result = {};
-      return false;
-    }
     if (FOLLY_LIKELY(high == 0)) {
-      *result = low;
+      *result = static_cast<T>(low);
       return true;
     }
     *result = {};

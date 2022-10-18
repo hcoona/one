@@ -50,7 +50,7 @@ If desired, you can specify both function argument style and `ostream` style
 streaming log arguments together:
 
 ```
-XLOG(INFO, "the number is ") <<  2 + 2);
+XLOG(INFO, "the number is ") <<  2 + 2;
 ```
 
 The `FB_LOG()` macro accepts requires a `Logger` object as its first argument,
@@ -98,8 +98,8 @@ object.  The configuration string syntax is documented in
 [Config.md](Config.md).
 
 You can then apply a `LogConfig` object to the main `LoggerDB` singleton by
-using `LoggerDB::get()->updateConfig()` to incrementally update the current
-configuration, or by using `LoggerDB::get()->resetConfig()` to replace all
+using `LoggerDB::get().updateConfig()` to incrementally update the current
+configuration, or by using `LoggerDB::get().resetConfig()` to replace all
 existing settings with the new configuration.
 
 The `folly::initLogging()` function provides a convenient API for initially

@@ -36,8 +36,8 @@
 #include <boost/function_types/function_arity.hpp>
 #include <glog/logging.h>
 
-DECLARE_bool(benchmark);
-DECLARE_uint32(bm_result_width_chars);
+FOLLY_GFLAGS_DECLARE_bool(benchmark);
+FOLLY_GFLAGS_DECLARE_uint32(bm_result_width_chars);
 
 namespace folly {
 
@@ -365,7 +365,7 @@ void printResultComparison(
  * Allow users to record customized counter during benchmarking,
  * there will be one extra column showing in the output result for each counter
  *
- * BENCHMARK_COUNTERS(insertVectorBegin, couters, iters) {
+ * BENCHMARK_COUNTERS(insertVectorBegin, counters, iters) {
  *   vector<int> v;
  *   FOR_EACH_RANGE (i, 0, iters) {
  *     v.insert(v.begin(), 42);

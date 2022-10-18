@@ -17,7 +17,6 @@
 #pragma once
 
 #include <folly/FileUtil.h>
-#include <folly/io/async/EventBaseAtomicNotificationQueue.h>
 #include <folly/system/Pid.h>
 
 namespace folly {
@@ -222,14 +221,16 @@ void EventBaseAtomicNotificationQueue<Task, Consumer>::drainFd() {
   uint64_t message = 0;
   if (eventfd_ >= 0) {
     auto result = readNoInt(eventfd_, &message, sizeof(message));
-    CHECK(result == sizeof(message) || errno == EAGAIN);
+    CHECK(result == sizeof(message) || errno == EAGAIN || errno == EWOULDBLOCK)
+        << "result = " << result << "; errno = " << errno;
     writesObserved_ += message;
   } else {
     ssize_t result;
     while ((result = readNoInt(pipeFds_[0], &message, sizeof(message))) != -1) {
       writesObserved_ += result;
     }
-    CHECK(result == -1 && errno == EAGAIN);
+    CHECK(result == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+        << "result = " << result << "; errno = " << errno;
   }
 }
 

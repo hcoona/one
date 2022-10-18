@@ -51,6 +51,16 @@ using ElfOff = FOLLY_ELF_ELFW(Off);
 using ElfPhdr = FOLLY_ELF_ELFW(Phdr);
 using ElfShdr = FOLLY_ELF_ELFW(Shdr);
 using ElfSym = FOLLY_ELF_ELFW(Sym);
+using ElfRel = FOLLY_ELF_ELFW(Rel);
+using ElfRela = FOLLY_ELF_ELFW(Rela);
+
+// ElfFileId is supposed to uniquely identify any instance of an ELF binary.
+// It does that by using file's inode, dev ID, size and modification time:
+// <dev, inode, size in bytes, mod time>
+// Just using dev, inode is not unique enough, because the file can
+// be overwritten with new contents, but will keep same dev and inode, so
+// we take into account modification time and file size to minimize risk.
+using ElfFileId = std::tuple<dev_t, ino_t, off_t, uint64_t>;
 
 /**
  * ELF file parser.
@@ -186,7 +196,7 @@ class ElfFile {
       noexcept(is_nothrow_invocable_v<Fn, ElfShdr const&>);
 
   /**
-   * Iterate over all symbols witin a given section.
+   * Iterate over all symbols within a given section.
    *
    * Returns a pointer to the current ("found") symbol when fn returned true,
    * or nullptr if fn returned false for all symbols.
@@ -203,6 +213,17 @@ class ElfFile {
       const ElfShdr& section,
       std::initializer_list<uint32_t> types,
       Fn fn) const noexcept(is_nothrow_invocable_v<Fn, ElfSym const&>);
+
+  /**
+   * Iterate over entries within a given section.
+   *
+   * Returns a pointer to the current ("found") entry when fn returned
+   * true, or nullptr if fn returned false for all entries.
+   */
+  template <typename E>
+  const E* iterateSectionEntries(
+      const ElfShdr& section, std::function<bool(const E&)> fn) const
+      noexcept(is_nothrow_invocable_v<E const&>);
 
   /**
    * Find symbol definition by address.
@@ -264,10 +285,14 @@ class ElfFile {
 
   const char* filepath() const { return filepath_; }
 
+  const ElfFileId& getFileId() const { return fileId_; }
+
   /**
    * Announce an intention to access file data in a specific pattern in the
    * future. https://man7.org/linux/man-pages/man2/posix_fadvise.2.html
    */
+  std::pair<const int, char const*> posixFadvise(
+      off_t offset, off_t len, int const advice) const noexcept;
   std::pair<const int, char const*> posixFadvise(
       int const advice) const noexcept;
 
@@ -317,6 +342,15 @@ class ElfFile {
             (addr + sizeof(T)) <= (section.sh_addr + section.sh_size),
         "Address is not contained within the provided segment");
 
+    // SHT_NOBITS: a section that occupies no space in the file but otherwise
+    // resembles SHT_PROGBITS. Although this section contains no bytes, the
+    // sh_offset member contains the conceptual file offset. Typically used
+    // for zero-initialized data sections like .bss.
+    if (section.sh_type == SHT_NOBITS) {
+      static T t = {};
+      return t;
+    }
+
     return at<T>(section.sh_offset + (addr - section.sh_addr));
   }
 
@@ -325,6 +359,7 @@ class ElfFile {
   int fd_;
   char* file_; // mmap() location
   size_t length_; // mmap() length
+  ElfFileId fileId_;
 
   uintptr_t baseAddress_;
 };

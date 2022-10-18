@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <glog/logging.h>
+#include <folly/ConstructorCallbackList.h>
 #include <folly/Function.h>
 #include <folly/Optional.h>
 #include <folly/ScopeGuard.h>
@@ -96,7 +97,7 @@ class ObserverContainerStoreBase {
 template <unsigned int ReserveElements = 2>
 struct ObserverContainerStorePolicyDefault {
   template <typename Observer>
-  using container = conditional_t<
+  using container = std::conditional_t<
       !kIsMobile,
       folly::small_vector<Observer, ReserveElements>,
       std::vector<Observer>>;
@@ -301,6 +302,7 @@ class ObserverContainerBase {
  public:
   using interface_type = ObserverInterface;
   using observed_type = Observed;
+  using policy_type = ContainerPolicy;
   using EventEnum = typename ContainerPolicy::event_enum;
   using EventEnumIntT = std::underlying_type_t<EventEnum>;
 
@@ -383,24 +385,14 @@ class ObserverContainerBase {
   };
 
   /**
-   * Observer interface.
+   * Observer base interface.
    *
-   * The interface between an observer container and observers in the container.
-   *
-   * This interface includes methods that are called upon relevant changes to
-   * the container (added/removedFromObserverContainer) and changes to the
-   * object being observed (attached/detached/moved/destoyed). It also defines
-   * how observers communicate which events they want to subscribe to, for
-   * containers that support event subscription.
-   *
-   * An observer must not be destroyed while it is in a container. This can be
-   * accomplished by removing the observer from the container on its destruction
-   * or delaying destruction.
-   *
-   * Typical use cases should not attempt to implement this interface and should
-   * instead use a specialization such as ManagedObserver.
+   * This interface includes the events exposed by the subject's observer
+   * interface and the set of events that are provided by the ObserverContainer
+   * (attached/detached/moved/destoyed). It also defines how observers subscribe
+   * to specific events made available by the subject.
    */
-  class Observer : public ObserverInterface, public DestructorCheck {
+  class ObserverBase : public ObserverInterface, public DestructorCheck {
    public:
     using observed_type = Observed;
     using interface_type = ObserverInterface;
@@ -408,17 +400,17 @@ class ObserverContainerBase {
     using EventSet = ObserverEventSet;
     using EventSetBuilder = typename ObserverEventSet::Builder;
 
-    ~Observer() override = default;
+    ~ObserverBase() override = default;
 
     /**
      * Construct a new observer with no event subscriptions.
      */
-    Observer() {}
+    ObserverBase() {}
 
     /**
      * Construct a new observer subscribed to events in the passed EventSet.
      */
-    explicit Observer(EventSet eventSet) : eventSet_(eventSet) {}
+    explicit ObserverBase(EventSet eventSet) : eventSet_(eventSet) {}
 
     /**
      * Base class that can be used to pass context about move operation.
@@ -429,9 +421,6 @@ class ObserverContainerBase {
      * Base class that can be used to pass context about why object destroyed.
      */
     class DestroyContext {};
-
-   protected:
-    friend ObserverContainerBase;
 
     /**
      * Invoked when this observer is attached to an object.
@@ -490,10 +479,12 @@ class ObserverContainerBase {
      * @param obj           Object associated with observer event.
      * @param fn            Function that will invoke the method associated with
      *                      an observer event, passing any event context.
+     * @param maybeEvent    The event enum associated with the invocation.
      */
     virtual void invokeInterfaceMethod(
         Observed* obj,
-        folly::Function<void(Observer*, Observed*)>& fn) noexcept {
+        folly::Function<void(ObserverBase*, Observed*)>& fn,
+        folly::Optional<EventEnum> /* maybeEvent */) noexcept {
       fn(this, obj);
     }
 
@@ -509,6 +500,50 @@ class ObserverContainerBase {
      * @param obj           Object associated with observer event.
      */
     virtual void postInvokeInterfaceMethod(Observed* /* obj */) noexcept {}
+
+    /**
+     * Returns the EventSet containing the events the observer wants.
+     */
+    const EventSet& getEventSet() const noexcept { return eventSet_; }
+
+   private:
+    const EventSet eventSet_;
+  };
+
+  /**
+   * Observer interface.
+   *
+   * The interface between an observer container and observers in the container.
+   *
+   * This interface includes methods that are called upon relevant changes to
+   * the observer's status in a container (added/removedFromObserverContainer).
+   *
+   * An observer must not be destroyed while it is in a container. This can be
+   * accomplished by removing the observer from the container on its destruction
+   * or delaying destruction.
+   *
+   * Typical use cases should not attempt to implement this interface and should
+   * instead use a specialization such as ManagedObserver.
+   */
+  class Observer : public ObserverBase {
+   public:
+    using observed_type = Observed;
+    using interface_type = ObserverInterface;
+
+    using EventSet = ObserverEventSet;
+    using EventSetBuilder = typename ObserverEventSet::Builder;
+
+    ~Observer() override = default;
+
+    /**
+     * Construct a new observer with no event subscriptions.
+     */
+    Observer() : ObserverBase() {}
+
+    /**
+     * Construct a new observer subscribed to events in the passed EventSet.
+     */
+    explicit Observer(EventSet eventSet) : ObserverBase(eventSet) {}
 
     /**
      * Invoked when this observer has been added to an observer container.
@@ -548,14 +583,6 @@ class ObserverContainerBase {
     virtual void movedToObserverContainer(
         ObserverContainerBase* oldCtr,
         ObserverContainerBase* newCtr) noexcept = 0;
-
-    /**
-     * Returns the EventSet containing the events the observer wants.
-     */
-    const EventSet& getEventSet() const noexcept { return eventSet_; }
-
-   private:
-    const EventSet eventSet_;
   };
 
   /**
@@ -674,35 +701,6 @@ class ObserverContainerBase {
   }
 
   /**
-   * Invokes an observer interface method on observers subscribed to an event.
-   *
-   * See instead `invokeInterfaceMethodAllObservers` to invoke an interface
-   * method on all observers without filtering based on observer event
-   * subscription.
-   *
-   * @tparam event       Associated event in EventEnum. The passed function will
-   *                     only be called for observers subscribed to this event.
-   * @param  fn          Function to call for each observer that takes a pointer
-   *                     to the observer and invokes the interface method.
-   */
-  template <EventEnum event>
-  void invokeInterfaceMethod(
-      folly::Function<void(ObserverInterface*, Observed*)>&& fn) noexcept {
-    invokeInterfaceMethodImpl(std::move(fn), event);
-  }
-
-  /**
-   * Invokes an observer interface method on all observers.
-   *
-   * @param  fn          Function to call for each observer that takes a pointer
-   *                     to the observer and invokes the interface method.
-   */
-  void invokeInterfaceMethodAllObservers(
-      folly::Function<void(ObserverInterface*, Observed*)>&& fn) noexcept {
-    invokeInterfaceMethodImpl(std::move(fn), folly::none);
-  }
-
-  /**
    * Helper class for observers that attach to single object / container.
    *
    * Does not have any thread safety, and thus can only be used if the observer
@@ -786,69 +784,25 @@ class ObserverContainerBase {
 
   virtual const ObserverContainerStoreBase<Observer>& getStoreConst() const = 0;
 
-  /**
-   * Proxy functions for use by derived classes to call observer methods.
-   *
-   * Necessary as C++ friendship is neither inherited nor transitive.
-   */
-
-  void invokeAttached(Observer* observer, Observed* obj) noexcept {
-    observer->attached(obj);
-  }
-
-  void invokeDetached(Observer* observer, Observed* obj) noexcept {
-    observer->detached(obj);
-  }
-
-  void invokeDestroyed(
-      Observer* observer,
-      Observed* obj,
-      typename Observer::DestroyContext* ctx) noexcept {
-    observer->destroyed(obj, ctx);
-  }
-
-  void invokeMoved(
-      Observer* observer,
-      Observed* oldObj,
-      Observed* newObj,
-      typename Observer::MoveContext* ctx) noexcept {
-    observer->moved(oldObj, newObj, ctx);
-  }
-
-  void invokeAddedToContainer(
-      Observer* observer, ObserverContainerBase* ctr) noexcept {
-    observer->addedToObserverContainer(ctr);
-  }
-
-  void invokeRemovedFromContainer(
-      Observer* observer, ObserverContainerBase* ctr) noexcept {
-    observer->removedFromObserverContainer(ctr);
-  }
-
-  void invokeMovedToContainer(
-      Observer* observer, ObserverContainerBase* ctr) noexcept {
-    observer->movedToObserverContainer(ctr);
-  }
-
- private:
   void invokeInterfaceMethodImpl(
-      folly::Function<void(Observer*, Observed*)>&& fn,
-      const folly::Optional<EventEnum> maybeEventEnum = folly::none) noexcept {
+      Observed* observed,
+      folly::Function<void(ObserverBase*, Observed*)>&& fn,
+      const folly::Optional<EventEnum> maybeEvent = folly::none) noexcept {
     using InvokeWhileIteratingPolicy = typename ObserverContainerStoreBase<
         Observer>::InvokeWhileIteratingPolicy;
     getStore().invokeForEachObserver(
-        [this, maybeEventEnum, &fn](Observer* observer) {
-          if (!maybeEventEnum.has_value() ||
-              observer->getEventSet().isEnabled(maybeEventEnum.value())) {
-            observer->invokeInterfaceMethod(getObject(), fn);
+        [observed, maybeEvent, &fn](Observer* observer) {
+          if (!maybeEvent.has_value() ||
+              observer->getEventSet().isEnabled(maybeEvent.value())) {
+            observer->invokeInterfaceMethod(observed, fn, maybeEvent);
           }
         },
         InvokeWhileIteratingPolicy::InvokeAdded);
     getStore().invokeForEachObserver(
-        [this, maybeEventEnum](Observer* observer) {
-          if (!maybeEventEnum.has_value() ||
-              observer->getEventSet().isEnabled(maybeEventEnum.value())) {
-            observer->postInvokeInterfaceMethod(getObject());
+        [observed, maybeEvent](ObserverBase* observer) {
+          if (!maybeEvent.has_value() ||
+              observer->getEventSet().isEnabled(maybeEvent.value())) {
+            observer->postInvokeInterfaceMethod(observed);
           }
         },
         InvokeWhileIteratingPolicy::DoNotInvokeAdded);
@@ -862,7 +816,8 @@ template <
     typename ObserverInterface,
     typename Observed,
     typename ContainerPolicy,
-    typename StorePolicy = ObserverContainerStorePolicyDefault<>>
+    typename StorePolicy = ObserverContainerStorePolicyDefault<>,
+    std::size_t MaxConstructorCallbacks = 4>
 class ObserverContainer : public ObserverContainerBase<
                               ObserverInterface,
                               Observed,
@@ -873,8 +828,11 @@ class ObserverContainer : public ObserverContainerBase<
   using Observer = typename ContainerBase::Observer;
   using EventEnum = typename ContainerBase::EventEnum;
   using StoreBase = ObserverContainerStoreBase<Observer>;
+  using ContainerConstructorCallbackList =
+      ConstructorCallbackList<Observed, MaxConstructorCallbacks>;
 
-  explicit ObserverContainer(Observed* obj) : obj_(CHECK_NOTNULL(obj)) {}
+  explicit ObserverContainer(Observed* obj)
+      : obj_(CHECK_NOTNULL(obj)), constructorCallbackList_(obj) {}
 
   ~ObserverContainer() override {
     using InvokeWhileIteratingPolicy =
@@ -882,9 +840,9 @@ class ObserverContainer : public ObserverContainerBase<
     getStore().invokeForEachObserver(
         [this](Observer* observer) {
           DestructorCheck::Safety dc(*observer);
-          this->invokeDestroyed(observer, obj_, nullptr /* ctx */);
+          observer->destroyed(obj_, nullptr /* ctx */);
           if (!dc.destroyed()) {
-            this->invokeRemovedFromContainer(observer, this);
+            observer->removedFromObserverContainer(this);
           }
         },
         InvokeWhileIteratingPolicy::CheckNoAdded);
@@ -911,9 +869,9 @@ class ObserverContainer : public ObserverContainerBase<
     CHECK_NOTNULL(observer.get());
     if (getStore().add(observer)) {
       DestructorCheck::Safety dc(*observer);
-      this->invokeAddedToContainer(observer.get(), this);
+      observer->addedToObserverContainer(this);
       if (!dc.destroyed()) {
-        this->invokeAttached(observer.get(), obj_);
+        observer->attached(obj_);
       }
     }
   }
@@ -928,13 +886,55 @@ class ObserverContainer : public ObserverContainerBase<
     CHECK_NOTNULL(observer.get());
     if (getStore().remove(observer)) {
       DestructorCheck::Safety dc(*observer);
-      this->invokeDetached(observer.get(), obj_);
+      observer->detached(obj_);
       if (!dc.destroyed()) {
-        this->invokeRemovedFromContainer(observer.get(), this);
+        observer->removedFromObserverContainer(this);
       }
       return true;
     }
     return false;
+  }
+
+  /**
+   * Add a callback fired each time obj of the observed type is constructed.
+   *
+   * Uses ConstructorCallbackList. Can be used to attach observers to all
+   * objects of a given type.
+   *
+   * @throw std::length_error() if installing callback would exceed max allowed
+   */
+  static void addConstructorCallback(
+      typename ContainerConstructorCallbackList::Callback cb) {
+    ContainerConstructorCallbackList::addCallback(std::move(cb));
+  }
+
+  /**
+   * Invokes an observer interface method on observers subscribed to an event.
+   *
+   * See instead `invokeInterfaceMethodAllObservers` to invoke an interface
+   * method on all observers without filtering based on observer event
+   * subscription.
+   *
+   * @tparam event       Associated event in EventEnum. The passed function will
+   *                     only be called for observers subscribed to this event.
+   * @param  fn          Function to call for each observer that takes a pointer
+   *                     to the observer and invokes the interface method.
+   */
+  template <EventEnum event>
+  void invokeInterfaceMethod(
+      folly::Function<void(ObserverInterface*, Observed*)>&& fn) noexcept {
+    this->invokeInterfaceMethodImpl(obj_, std::move(fn), event);
+  }
+
+  /**
+   * Invokes an observer interface method on all observers.
+   *
+   * @param  fn          Function to call for each observer that takes a pointer
+   *                     to the observer and invokes the interface method.
+   */
+  void invokeInterfaceMethodAllObservers(
+      folly::Function<void(ObserverInterface*, Observed*)>&& fn) noexcept {
+    this->invokeInterfaceMethodImpl(obj_, std::move(fn), folly::none);
   }
 
   ObserverContainer(const ObserverContainer&) = delete;
@@ -951,6 +951,16 @@ class ObserverContainer : public ObserverContainerBase<
 
   // Store that contains the observers in the container.
   ObserverContainerStore<Observer, StorePolicy> store_;
+
+  // Enables objects to register constructor callbacks.
+  //
+  // This can be used to enable observers to be attached to all objects of a
+  // given type immediately upon object construction.
+  //
+  // Initialized last and in ObserverContainer instead of ObserverContainerBase
+  // to ensure that the container has completed initialization and is ready to
+  // add observers when any constructor callbacks are called.
+  ContainerConstructorCallbackList constructorCallbackList_{this};
 };
 
 } // namespace folly

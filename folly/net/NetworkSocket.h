@@ -23,15 +23,17 @@
 
 namespace folly {
 /**
- * This is just a very thin wrapper around either a file descriptor or
+ * NetworkSocket is just a very thin wrapper around either a file descriptor or
  * a SOCKET depending on platform, along with a couple of helper methods
  * for explicitly converting to/from file descriptors, even on Windows.
+ *
+ * @struct folly::NetworkSocket
  */
 struct NetworkSocket {
 #ifdef _WIN32
   using native_handle_type = SOCKET;
   static constexpr native_handle_type invalid_handle_value = INVALID_SOCKET;
-#elif defined(__XROS__) || defined(__EMSCRIPTEN__)
+#elif defined(__EMSCRIPTEN__)
   using native_handle_type = void*;
   static constexpr native_handle_type invalid_handle_value = nullptr;
 #else
@@ -46,11 +48,24 @@ struct NetworkSocket {
 
   template <typename T>
   static NetworkSocket fromFd(T) = delete;
+  /**
+   * Return underlying NetworkSocket handle associated with the file descriptor.
+   *
+   * @param fd The file descriptor
+   *
+   * @return Underlying platform specific NetworkSocket handle for the file
+   * descriptor
+   */
   static NetworkSocket fromFd(int fd) {
     return NetworkSocket(
         netops::detail::SocketFileDescriptorMap::fdToSocket(fd));
   }
 
+  /**
+   * Return the file descriptor associated with this NetworkSocket.
+   *
+   * @return The file descriptor associated with this NetworkSocket
+   */
   int toFd() const {
     return netops::detail::SocketFileDescriptorMap::socketToFd(data);
   }

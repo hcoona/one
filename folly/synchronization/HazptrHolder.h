@@ -17,7 +17,7 @@
 #pragma once
 
 #include <folly/Traits.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include <folly/synchronization/AsymmetricThreadFence.h>
 #include <folly/synchronization/Hazptr-fwd.h>
 #include <folly/synchronization/HazptrDomain.h>
 #include <folly/synchronization/HazptrRec.h>
@@ -119,7 +119,8 @@ class hazptr_holder {
        for stealing bits of the pointer word */
     auto p = ptr;
     reset_protection(f(p));
-    /*** Full fence ***/ folly::asymmetricLightBarrier();
+    /*** Full fence ***/ folly::asymmetric_thread_fence_light(
+        std::memory_order_seq_cst);
     ptr = src.load(std::memory_order_acquire);
     if (UNLIKELY(p != ptr)) {
       reset_protection();

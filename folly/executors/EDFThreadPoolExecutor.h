@@ -23,13 +23,34 @@
 
 #include <folly/executors/SoftRealTimeExecutor.h>
 #include <folly/executors/ThreadPoolExecutor.h>
-#include <folly/synchronization/LifoSem.h>
 
 namespace folly {
 
+class EDFThreadPoolSemaphore {
+ public:
+  virtual ~EDFThreadPoolSemaphore() = default;
+  virtual void post(uint32_t value) = 0;
+  virtual void wait() = 0;
+};
+
+template <class Semaphore>
+class EDFThreadPoolSemaphoreImpl : public EDFThreadPoolSemaphore {
+ public:
+  template <class... Args>
+  explicit EDFThreadPoolSemaphoreImpl(Args&&... args)
+      : sem_(std::forward<Args>(args)...) {}
+
+  void post(uint32_t value) override { sem_.post(value); }
+  void wait() override { sem_.wait(); }
+
+ private:
+  Semaphore sem_;
+};
+
 /**
- * `EDFThreadPoolExecutor` is a `SoftRealTimeExecutor` that implements
- * the earliest-deadline-first scheduling policy.
+ * `EDFThreadPoolExecutor` is a `SoftRealTimeExecutor` that implements the
+ * earliest-deadline-first scheduling policy. Deadline ties are resolved by
+ * submission order.
  */
 class EDFThreadPoolExecutor : public SoftRealTimeExecutor,
                               public ThreadPoolExecutor {
@@ -41,10 +62,17 @@ class EDFThreadPoolExecutor : public SoftRealTimeExecutor,
   static constexpr uint64_t kLatestDeadline =
       std::numeric_limits<uint64_t>::max();
 
+  // Default semaphore is LifoSem.
+  static std::unique_ptr<EDFThreadPoolSemaphore> makeDefaultSemaphore();
+  static std::unique_ptr<EDFThreadPoolSemaphore> makeThrottledLifoSemSemaphore(
+      std::chrono::nanoseconds wakeUpInterval = {});
+
   explicit EDFThreadPoolExecutor(
       std::size_t numThreads,
       std::shared_ptr<ThreadFactory> threadFactory =
-          std::make_shared<NamedThreadFactory>("EDFThreadPool"));
+          std::make_shared<NamedThreadFactory>("EDFThreadPool"),
+      std::unique_ptr<EDFThreadPoolSemaphore> semaphore =
+          makeDefaultSemaphore());
 
   ~EDFThreadPoolExecutor() override;
 
@@ -67,7 +95,7 @@ class EDFThreadPoolExecutor : public SoftRealTimeExecutor,
   std::shared_ptr<Task> take();
 
   std::unique_ptr<TaskQueue> taskQueue_;
-  LifoSem sem_;
+  std::unique_ptr<EDFThreadPoolSemaphore> sem_;
   std::atomic<int> threadsToStop_{0};
 
   // All operations performed on `numIdleThreads_` explicitly specify memory

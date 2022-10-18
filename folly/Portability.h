@@ -30,7 +30,7 @@
 static_assert(FOLLY_CPLUSPLUS >= 201402L, "__cplusplus >= 201402L");
 
 #if defined(__GNUC__) && !defined(__clang__)
-static_assert(__GNUC__ >= 7, "__GNUC__ >= 5");
+static_assert(__GNUC__ >= 7, "__GNUC__ >= 7");
 #endif
 
 // Unaligned loads and stores
@@ -377,13 +377,6 @@ constexpr auto kHasWeakSymbols = false;
 #endif
 #endif
 
-#if FOLLY_UNUSUAL_GFLAGS_NAMESPACE
-namespace FOLLY_GFLAGS_NAMESPACE {}
-namespace gflags {
-using namespace FOLLY_GFLAGS_NAMESPACE;
-} // namespace gflags
-#endif
-
 // RTTI may not be enabled for this compilation unit.
 #if defined(__GXX_RTTI) || defined(__cpp_rtti) || \
     (defined(_MSC_VER) && defined(_CPPRTTI))
@@ -558,16 +551,32 @@ constexpr auto kCpplibVer = 0;
 #define FOLLY_CXX17_CONSTEXPR
 #endif
 
+//  FOLLY_CXX20_CONSTEXPR
+//
+//  C++20 permits more cases to be marked constexpr, including constructors that
+//  leave members uninitialized and virtual functions.
+#if FOLLY_CPLUSPLUS >= 202002L
+#define FOLLY_CXX20_CONSTEXPR constexpr
+#else
+#define FOLLY_CXX20_CONSTEXPR
+#endif
+
 // C++20 constinit
-#if __cpp_constinit >= 201907L
+#if defined(__cpp_constinit) && __cpp_constinit >= 201907L
 #define FOLLY_CONSTINIT constinit
 #else
 #define FOLLY_CONSTINIT
 #endif
 
+#if defined(FOLLY_CFG_NO_COROUTINES)
+#define FOLLY_HAS_COROUTINES 0
+#else
 #if __cplusplus >= 201703L
 // folly::coro requires C++17 support
-#if defined(_WIN32) && defined(__clang__) && !defined(LLVM_COROUTINES)
+#if defined(__NVCC__)
+// For now, NVCC matches other compilers but does not offer coroutines.
+#define FOLLY_HAS_COROUTINES 0
+#elif defined(_WIN32) && defined(__clang__) && !defined(LLVM_COROUTINES)
 // LLVM and MSVC coroutines are ABI incompatible, so for the MSVC implementation
 // of <experimental/coroutine> on Windows we *don't* have coroutines.
 //
@@ -594,6 +603,7 @@ constexpr auto kCpplibVer = 0;
 #else
 #define FOLLY_HAS_COROUTINES 0
 #endif // __cplusplus >= 201703L
+#endif // FOLLY_CFG_NO_COROUTINES
 
 // MSVC 2017.5 && C++17
 #if __cpp_noexcept_function_type >= 201510 || \
@@ -601,7 +611,7 @@ constexpr auto kCpplibVer = 0;
 #define FOLLY_HAVE_NOEXCEPT_FUNCTION_TYPE 1
 #endif
 
-#if __cpp_inline_variables >= 201606L
+#if __cpp_inline_variables >= 201606L || FOLLY_CPLUSPLUS >= 201703L
 #define FOLLY_HAS_INLINE_VARIABLES 1
 #define FOLLY_INLINE_VARIABLE inline
 #else
@@ -615,4 +625,11 @@ constexpr auto kCpplibVer = 0;
 #define FOLLY_HAS_STRING_VIEW 1
 #else
 #define FOLLY_HAS_STRING_VIEW 0
+#endif
+
+// C++20 consteval
+#if FOLLY_CPLUSPLUS >= 202002L
+#define FOLLY_CONSTEVAL consteval
+#else
+#define FOLLY_CONSTEVAL constexpr
 #endif

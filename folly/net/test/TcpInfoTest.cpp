@@ -298,6 +298,11 @@ class TcpInfoTest : public Test {
         wrappedTcpInfo.packetsInFlight());
     EXPECT_NE(0U, wrappedTcpInfo.packetsInFlight());
 
+    EXPECT_EQ(controlTcpInfo.tcpi_delivered, wrappedTcpInfo.packetsDelivered());
+    EXPECT_EQ(
+        controlTcpInfo.tcpi_delivered_ce,
+        wrappedTcpInfo.packetsDeliveredWithCEMarks());
+
     EXPECT_EQ(controlTcpInfo.tcpi_snd_cwnd, wrappedTcpInfo.cwndInPackets());
     EXPECT_EQ(
         controlTcpInfo.tcpi_snd_cwnd * controlTcpInfo.tcpi_snd_mss,
@@ -493,6 +498,11 @@ TEST_F(TcpInfoTest, LatestStruct) {
   checkNoCcNameType(wrappedTcpInfo);
   checkNoCcInfo(wrappedTcpInfo);
   checkNoMemoryInfo(wrappedTcpInfo);
+}
+
+TEST_F(TcpInfoTest, ConstructorWithLatestTcpInfo) {
+  TcpInfo wrappedTcpInfo{getTestLatestTcpInfo()};
+  checkTcpInfoAgainstLatest(wrappedTcpInfo);
 }
 
 TEST_F(TcpInfoTest, LatestStructWithCcInfo) {

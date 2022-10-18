@@ -29,6 +29,8 @@
 #include <vector>
 
 #include <folly/ScopeGuard.h>
+#include <folly/synchronization/LifoSem.h>
+#include <folly/synchronization/ThrottledLifoSem.h>
 
 namespace folly {
 
@@ -41,10 +43,14 @@ class EDFThreadPoolExecutor::Task {
       : fs_(std::move(fs)), total_(fs_.size()), deadline_(deadline) {}
 
   uint64_t getDeadline() const { return deadline_; }
+  uint64_t getEnqueueOrder() const { return enqueueOrder_; }
 
   bool isDone() const {
     return iter_.load(std::memory_order_relaxed) >= total_;
   }
+
+  // Cannot be set in the ctor because known only after acquiring the lock.
+  void setEnqueueOrder(uint64_t enqueueOrder) { enqueueOrder_ = enqueueOrder; }
 
   int next() {
     if (isDone()) {
@@ -74,6 +80,7 @@ class EDFThreadPoolExecutor::Task {
   std::atomic<int> iter_{0};
   int total_;
   uint64_t deadline_;
+  uint64_t enqueueOrder_;
   std::shared_ptr<RequestContext> context_ = RequestContext::saveContext();
   std::chrono::steady_clock::time_point enqueueTime_ =
       std::chrono::steady_clock::now();
@@ -89,12 +96,16 @@ class EDFThreadPoolExecutor::TaskQueue {
 
     struct Compare {
       bool operator()(const TaskPtr& lhs, const TaskPtr& rhs) const {
-        return lhs->getDeadline() > rhs->getDeadline();
+        if (lhs->getDeadline() != rhs->getDeadline()) {
+          return lhs->getDeadline() > rhs->getDeadline();
+        }
+        return lhs->getEnqueueOrder() > rhs->getEnqueueOrder();
       }
     };
 
     std::priority_queue<TaskPtr, std::vector<TaskPtr>, Compare> tasks;
     std::atomic<bool> empty{true};
+    uint64_t enqueued = 0;
   };
 
   static constexpr std::size_t kNumBuckets = 2 << 5;
@@ -107,6 +118,7 @@ class EDFThreadPoolExecutor::TaskQueue {
     auto& bucket = getBucket(deadline);
     {
       SharedMutex::WriteHolder guard(&bucket.mutex);
+      task->setEnqueueOrder(bucket.enqueued++);
       bucket.tasks.push(std::move(task));
       bucket.empty.store(bucket.tasks.empty(), std::memory_order_relaxed);
     }
@@ -238,10 +250,26 @@ class EDFThreadPoolExecutor::TaskQueue {
   std::atomic<std::size_t> numItems_;
 };
 
+/* static */ std::unique_ptr<EDFThreadPoolSemaphore>
+EDFThreadPoolExecutor::makeDefaultSemaphore() {
+  return std::make_unique<EDFThreadPoolSemaphoreImpl<LifoSem>>();
+}
+
+/* static */ std::unique_ptr<EDFThreadPoolSemaphore>
+EDFThreadPoolExecutor::makeThrottledLifoSemSemaphore(
+    std::chrono::nanoseconds wakeUpInterval) {
+  ThrottledLifoSem::Options opts;
+  opts.wakeUpInterval = wakeUpInterval;
+  return std::make_unique<EDFThreadPoolSemaphoreImpl<ThrottledLifoSem>>(opts);
+}
+
 EDFThreadPoolExecutor::EDFThreadPoolExecutor(
-    std::size_t numThreads, std::shared_ptr<ThreadFactory> threadFactory)
+    std::size_t numThreads,
+    std::shared_ptr<ThreadFactory> threadFactory,
+    std::unique_ptr<EDFThreadPoolSemaphore> semaphore)
     : ThreadPoolExecutor(numThreads, numThreads, std::move(threadFactory)),
-      taskQueue_(std::make_unique<TaskQueue>()) {
+      taskQueue_(std::make_unique<TaskQueue>()),
+      sem_(std::move(semaphore)) {
   setNumThreads(numThreads);
   registerThreadPoolExecutor(this);
 }
@@ -266,7 +294,7 @@ void EDFThreadPoolExecutor::add(Func f, std::size_t total, uint64_t deadline) {
   if (numIdleThreads > 0) {
     // If idle threads are available notify them, otherwise all worker threads
     // are running and will get around to this task in time.
-    sem_.post(std::min(total, numIdleThreads));
+    sem_->post(std::min(total, numIdleThreads));
   }
 }
 
@@ -282,7 +310,7 @@ void EDFThreadPoolExecutor::add(std::vector<Func> fs, uint64_t deadline) {
   if (numIdleThreads > 0) {
     // If idle threads are available notify them, otherwise all worker threads
     // are running and will get around to this task in time.
-    sem_.post(std::min(total, numIdleThreads));
+    sem_->post(std::min(total, numIdleThreads));
   }
 }
 
@@ -386,7 +414,7 @@ void EDFThreadPoolExecutor::threadRun(ThreadPtr thread) {
 // threadListLock_ is writelocked.
 void EDFThreadPoolExecutor::stopThreads(std::size_t numThreads) {
   threadsToStop_.fetch_add(numThreads, std::memory_order_relaxed);
-  sem_.post(numThreads);
+  sem_->post(numThreads);
 }
 
 // threadListLock_ is read (or write) locked.
@@ -442,7 +470,7 @@ std::shared_ptr<EDFThreadPoolExecutor::Task> EDFThreadPoolExecutor::take() {
       return nullptr;
     }
 
-    sem_.wait();
+    sem_->wait();
   }
 }
 

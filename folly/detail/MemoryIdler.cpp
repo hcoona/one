@@ -32,7 +32,7 @@
 #include <folly/portability/SysMman.h>
 #include <folly/portability/Unistd.h>
 
-DEFINE_bool(
+FOLLY_GFLAGS_DEFINE_bool(
     folly_memory_idler_purge_arenas,
     true,
     "if enabled, folly memory-idler purges jemalloc arenas on thread idle");
@@ -88,8 +88,8 @@ void MemoryIdler::flushLocalMallocCaches() {
 // Stack madvise isn't Linux or glibc specific, but the system calls
 // and arithmetic (and bug compatibility) are not portable.  The set of
 // platforms could be increased if it was useful.
-#if (FOLLY_X64 || FOLLY_PPC64) && defined(_GNU_SOURCE) && \
-    defined(__linux__) && !FOLLY_MOBILE && !FOLLY_SANITIZE_ADDRESS
+#if defined(__GLIBC__) && defined(__linux__) && !FOLLY_MOBILE && \
+    !FOLLY_SANITIZE_ADDRESS
 
 static thread_local uintptr_t tls_stackLimit;
 static thread_local size_t tls_stackSize;
