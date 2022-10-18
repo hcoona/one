@@ -39,6 +39,12 @@ jobs:
       definition: 'One-distdir-Official'
   - script: >
       bazel
+      query
+      --distdir=$(Pipeline.Workspace)/distdir
+      'attr(testonly, 0, //...)'
+      |
+      xargs
+      bazel
       --batch_cpu_scheduling
       build
       --noshow_loading_progress
@@ -54,7 +60,6 @@ jobs:
       --build_metadata=ROLE=CI
       --distdir=$(Pipeline.Workspace)/distdir
       --config=libc++
-      //...
     displayName: Build project
 
 - job: test
