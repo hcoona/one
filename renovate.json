@@ -40,9 +40,13 @@
     },
     {
       "matchPackageNames": [
-        "com_google_absl"
+        "com_github_google_benchmark",
+        "com_github_google_double_conversion",
+        "com_google_absl",
+        "com_google_googletest"
       ],
-      "extends": ["schedule:monthly"]
+      "extends": ["schedule:monthly"],
+      "groupName": "google_live_at_head"
     }
   ]
 }
