@@ -92,7 +92,6 @@ TEST(SIMD, SIMD_SUFFIX(SkipWhitespace_EncodedMemoryStream)) {
             if (s.Peek() == '\0')
                 break;
             //EXPECT_EQ(i, s.Tell());
-            (void)i;
             EXPECT_EQ('X', s.Take());
         }
     }
