@@ -437,7 +437,7 @@ class QuicServerWorker : public folly::AsyncUDPSocket::ReadCallback,
   }
 
   // from EventRecvmsgCallback
-  EventRecvmsgCallback::MsgHdr* allocateData() override {
+  EventRecvmsgCallback::MsgHdr* allocateData() noexcept override {
     auto* ret = msgHdr_.release();
     if (!ret) {
       ret = new MsgHdr(this);
