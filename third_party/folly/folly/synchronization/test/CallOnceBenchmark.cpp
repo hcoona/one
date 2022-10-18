@@ -20,7 +20,7 @@
 #include <mutex>
 #include <thread>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Benchmark.h"
 

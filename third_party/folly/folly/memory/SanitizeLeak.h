@@ -21,9 +21,24 @@
 namespace folly {
 
 namespace detail {
+
+using lsan_ignore_object_t = void(void const*);
+
+extern lsan_ignore_object_t* const lsan_ignore_object_v;
+
 void annotate_object_leaked_impl(void const* ptr);
 void annotate_object_collected_impl(void const* ptr);
+
 } // namespace detail
+
+//  lsan_ignore_object
+//
+//  Marks an allocation to be treated as a root when Leak Sanitizer scans for
+//  leaked allocations.
+FOLLY_ALWAYS_INLINE static void lsan_ignore_object(void const* const ptr) {
+  auto fun = detail::lsan_ignore_object_v;
+  return kIsSanitizeAddress && fun ? fun(ptr) : void();
+}
 
 /**
  * When the current compilation unit is being compiled with ASAN enabled this
@@ -36,7 +51,7 @@ void annotate_object_collected_impl(void const* ptr);
  */
 FOLLY_ALWAYS_INLINE static void annotate_object_leaked(void const* ptr) {
   if (kIsSanitizeAddress) {
-    detail::annotate_object_leaked_impl(static_cast<void const*>(ptr));
+    detail::annotate_object_leaked_impl(ptr);
   }
 }
 
@@ -48,7 +63,7 @@ FOLLY_ALWAYS_INLINE static void annotate_object_leaked(void const* ptr) {
  */
 FOLLY_ALWAYS_INLINE static void annotate_object_collected(void const* ptr) {
   if (kIsSanitizeAddress) {
-    detail::annotate_object_collected_impl(static_cast<void const*>(ptr));
+    detail::annotate_object_collected_impl(ptr);
   }
 }
 } // namespace folly

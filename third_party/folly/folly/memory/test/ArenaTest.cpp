@@ -16,12 +16,14 @@
 
 #include "folly/memory/Arena.h"
 
+#include <scoped_allocator>
 #include <set>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Memory.h"
+#include "folly/memory/MallctlHelper.h"
 #include "folly/memory/Malloc.h"
 #include "folly/portability/GFlags.h"
 #include "folly/portability/GTest.h"
@@ -149,9 +151,68 @@ TEST(Arena, Vector) {
   }
 }
 
-TEST(Arena, DefaultConstructible) {
+TEST(Arena, FallbackArenaIsDefaultConstructible) {
   std::vector<size_t, FallbackSysArenaAllocator<size_t>> vec;
   EXPECT_NO_THROW(vec.push_back(42));
+}
+
+namespace {
+static inline int64_t getMallocBytes() {
+  uint64_t mallocBytes = 0;
+  folly::mallctlRead("thread.allocated", &mallocBytes);
+  return mallocBytes;
+}
+
+#define EXPECT_HEAP_ALLOC(vec, expect)  \
+  {                                     \
+    const int64_t c = getMallocBytes(); \
+    vec.push_back(42);                  \
+    vec.reserve(4);                     \
+    if (expect) {                       \
+      EXPECT_GT(getMallocBytes(), c);   \
+    } else {                            \
+      EXPECT_EQ(getMallocBytes(), c);   \
+    }                                   \
+  }
+#define EXPECT_ALLOC(x) EXPECT_HEAP_ALLOC(x, true)
+#define EXPECT_NO_ALLOC(x) EXPECT_HEAP_ALLOC(x, false)
+} // namespace
+
+TEST(Arena, FallbackSysArenaDoesFallbackToHeap) {
+  if (!folly::usingJEMalloc()) {
+    return; // Cannot count amount of mallocs :-(
+  }
+  using FallBackIntAlloc = FallbackSysArenaAllocator<int>;
+  using ScopedFbIntAlloc = std::scoped_allocator_adaptor<FallBackIntAlloc>;
+  using AdaptedIntAlloc = CxxAllocatorAdaptor<int, SysArena>;
+
+  // Regular arena, uninitialize fallback and initialized fallback
+  SysArena arena0;
+  FallBackIntAlloc f_no_init;
+  FallBackIntAlloc f_do_init(arena0);
+  arena0.allocate(1); // First allocation to prime the arena
+
+  std::vector<int, FallBackIntAlloc> vec_arg_empty__fallback;
+  std::vector<int, FallBackIntAlloc> vec_arg_noinit_fallback(f_no_init);
+  std::vector<int, FallBackIntAlloc> vec_arg_doinit_fallback(f_do_init);
+  std::vector<int, ScopedFbIntAlloc> vec_arg_empty__scoped;
+  std::vector<int, ScopedFbIntAlloc> vec_arg_doinit_scoped(arena0);
+
+  auto a0_adapted = AdaptedIntAlloc(arena0);
+  std::vector<int, AdaptedIntAlloc> vec_arena_cxx_adapted(a0_adapted);
+
+  EXPECT_ALLOC(vec_arg_empty__fallback);
+  EXPECT_ALLOC(vec_arg_noinit_fallback);
+  EXPECT_NO_ALLOC(vec_arg_doinit_fallback);
+  EXPECT_NO_ALLOC(vec_arena_cxx_adapted);
+  EXPECT_ALLOC(vec_arg_empty__scoped);
+  EXPECT_NO_ALLOC(vec_arg_doinit_scoped);
+
+  // Compilation of std::vector<T, FallbackSysArenaAllocator<T>> vec
+  // 1. vec(arena0); - Should not Compile! ambigous constructor, use explicit
+  //    casting vec(FallbackSysArenaAllocator<T>(arena0)) instead
+  // 2. std::vector<T, Arena> vec, std::vector<T, SysArena> vec - both do not
+  //     compile, use CxxAdaptor or scoped_alloc wrapper for arena as above.
 }
 
 TEST(Arena, Compare) {

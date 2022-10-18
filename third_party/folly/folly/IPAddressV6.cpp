@@ -20,7 +20,7 @@
 #include <ostream>
 #include <string>
 
-#include "fmt/core.h"
+#include <fmt/core.h>
 
 #include "folly/IPAddress.h"
 #include "folly/IPAddressV4.h"
@@ -38,7 +38,6 @@
 
 // Alias the max size of an interface name to what posix expects.
 #define IFNAMSIZ IF_NAMESIZE
-#elif defined __XROS__
 #else
 #include <net/if.h>
 #endif

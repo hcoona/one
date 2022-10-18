@@ -16,7 +16,7 @@
 
 #include "folly/stats/BucketedTimeSeries.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Benchmark.h"
 

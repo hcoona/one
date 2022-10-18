@@ -25,7 +25,7 @@
 #include "folly/portability/GTest.h"
 #include "folly/system/ThreadName.h"
 
-#include "boost/thread/barrier.hpp"
+#include <boost/thread/barrier.hpp>
 
 using namespace folly;
 

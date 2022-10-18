@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <deque>
 #include <string>
-#include "fmt/core.h"
+#include <fmt/core.h>
 #include "folly/Benchmark.h"
 #include "folly/Preprocessor.h"
 #include "folly/portability/GFlags.h"
@@ -40,7 +40,9 @@ size_t getPow2(size_t v) {
 
 template <void* memset_impl(void*, int, size_t)>
 void bmMemset(void* buf, size_t length, size_t iters) {
+#if !defined(__aarch64__)
   __asm__ volatile(".align 64\n");
+#endif
 #pragma unroll(1)
   for (size_t i = 0; i < iters; ++i) {
     memset_impl(buf, 0xFF, length);

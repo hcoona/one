@@ -19,7 +19,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 namespace folly {
 namespace observer_detail {

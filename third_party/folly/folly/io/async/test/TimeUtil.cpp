@@ -33,7 +33,7 @@
 #include <ostream>
 #include <stdexcept>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Conv.h"
 #include "folly/Portability.h"

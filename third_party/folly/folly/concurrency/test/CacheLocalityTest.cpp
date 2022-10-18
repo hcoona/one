@@ -23,7 +23,7 @@
 #include "folly/portability/GTest.h"
 #include "folly/portability/SysResource.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 using namespace folly;
 

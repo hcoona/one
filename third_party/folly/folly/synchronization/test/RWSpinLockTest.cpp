@@ -25,7 +25,7 @@
 #include <thread>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/portability/GFlags.h"
 #include "folly/portability/GTest.h"

@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Likely.h"
 #include "folly/detail/Futex.h"

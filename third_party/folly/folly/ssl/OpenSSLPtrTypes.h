@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Memory.h"
 #include "folly/portability/OpenSSL.h"
@@ -120,6 +120,16 @@ FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(BNCtx, BN_CTX, BN_CTX_free);
 // SSL and SSL_CTX
 FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(SSL, SSL, SSL_free);
 FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(SSLSession, SSL_SESSION, SSL_SESSION_free);
+
+// OCSP
+#ifndef OPENSSL_NO_OCSP
+FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(OcspRequest, OCSP_REQUEST, OCSP_REQUEST_free);
+FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(
+    OcspResponse, OCSP_RESPONSE, OCSP_RESPONSE_free);
+FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(
+    OcspBasicResponse, OCSP_BASICRESP, OCSP_BASICRESP_free);
+FOLLY_SSL_DETAIL_DEFINE_PTR_TYPE(OcspCertId, OCSP_CERTID, OCSP_CERTID_free);
+#endif
 
 // OpenSSL STACK_OF(T) can both represent owned or borrowed values.
 //

@@ -47,7 +47,7 @@ that provides a `draw` member function. (The details will be explained later.)
 
 ``` Cpp
     // This example is an adaptation of one found in Louis Dionne's dyno library.
-    #include <folly/Poly.h>
+    #include "folly/Poly.h"
     #include <iostream>
 
     struct IDrawable {

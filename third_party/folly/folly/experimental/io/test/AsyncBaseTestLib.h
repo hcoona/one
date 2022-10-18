@@ -26,7 +26,7 @@
 #include <thread>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/ScopeGuard.h"
 #include "folly/String.h"

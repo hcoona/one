@@ -19,7 +19,7 @@
 #include <atomic>
 #include <memory>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/CPortability.h"
 #include "folly/Portability.h"

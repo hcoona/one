@@ -20,7 +20,7 @@
 #include <exception>
 #include <iostream>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/CppAttributes.h"
 #include "folly/Portability.h"

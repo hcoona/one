@@ -22,12 +22,16 @@
 #include <unordered_set>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/portability/GTest.h"
 
 #ifndef _WIN32
 #include <sys/wait.h>
+#endif
+
+#if FOLLY_HAVE_EXTRANDOM_SFMT19937
+#include <ext/random>
 #endif
 
 using namespace folly;
@@ -140,6 +144,23 @@ TEST(Random, sanity) {
         vals.size(),
         std::unordered_set<uint64_t>(vals.begin(), vals.end()).size());
   }
+
+  // Support for common generators.
+  folly::Random::rand32(std::mt19937{});
+  folly::Random::rand32(std::mt19937_64{});
+  folly::Random::rand32(std::minstd_rand{});
+#if FOLLY_HAVE_EXTRANDOM_SFMT19937
+  folly::Random::rand32(__gnu_cxx::sfmt19937{});
+  folly::Random::rand32(__gnu_cxx::sfmt19937_64{});
+#endif
+
+  folly::Random::rand64(std::mt19937{});
+  folly::Random::rand64(std::mt19937_64{});
+  folly::Random::rand64(std::minstd_rand{});
+#if FOLLY_HAVE_EXTRANDOM_SFMT19937
+  folly::Random::rand64(__gnu_cxx::sfmt19937{});
+  folly::Random::rand64(__gnu_cxx::sfmt19937_64{});
+#endif
 }
 
 TEST(Random, oneIn) {
@@ -199,6 +220,28 @@ TEST(Random, oneIn64) {
   uint64_t kAlmostMax = (uint64_t(1) << 63) + 1;
   EXPECT_FALSE(folly::Random::oneIn64(kAlmostMax));
   EXPECT_TRUE(folly::Random::oneIn(kAlmostMax));
+}
+
+TEST(Random, randDouble01) {
+  // Very basic test that we see at least one number < 0.1 and one > 0.9, to
+  // verify that the output is not constant and the mantissa is not misaligned.
+  auto constexpr kSeenHigh{1};
+  auto constexpr kSeenLow{2};
+  auto constexpr kSeenBoth{kSeenHigh | kSeenLow};
+
+  auto seenSoFar{0};
+  for (auto i = 0; i < 1000; ++i) {
+    auto value = folly::Random::randDouble01();
+    ASSERT_GE(value, 0);
+    ASSERT_LT(value, 1);
+    if (value > 0.9) {
+      seenSoFar |= kSeenHigh;
+    } else if (value < 0.1) {
+      seenSoFar |= kSeenLow;
+    }
+  }
+
+  EXPECT_EQ(kSeenBoth, seenSoFar);
 }
 
 #ifndef _WIN32

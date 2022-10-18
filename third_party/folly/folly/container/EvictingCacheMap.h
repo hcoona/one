@@ -20,10 +20,10 @@
 #include <exception>
 #include <functional>
 
-#include "boost/intrusive/list.hpp"
-#include "boost/intrusive/unordered_set.hpp"
-#include "boost/iterator/iterator_adaptor.hpp"
-#include "boost/utility.hpp"
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/unordered_set.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/utility.hpp>
 
 #include "folly/container/HeterogeneousAccess.h"
 #include "folly/lang/Exception.h"
@@ -278,13 +278,6 @@ class EvictingCacheMap {
 
   template <typename K, EnableHeterogeneousFind<K, int> = 0>
   iterator find(const K& key) {
-    return findImpl(*this, key);
-  }
-
-  const_iterator find(const TKey& key) const { return findImpl(*this, key); }
-
-  template <typename K, EnableHeterogeneousFind<K, int> = 0>
-  const_iterator find(const K& key) const {
     return findImpl(*this, key);
   }
 

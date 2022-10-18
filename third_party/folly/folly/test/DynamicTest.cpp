@@ -19,7 +19,7 @@
 #include <cmath>
 #include <iterator>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Range.h"
 #include "folly/json.h"
@@ -477,6 +477,16 @@ TEST(Dynamic, ArrayBasics) {
   EXPECT_EQ(array[11], "something");
 }
 
+TEST(Dynamic, Reserve) {
+  // reserve() has no observable behavior, so we only check that it can be
+  // called on the supported types.
+  dynamic{dynamic::array}.reserve(10);
+  dynamic{dynamic::object}.reserve(10);
+  dynamic{std::string{}}.reserve(10);
+  EXPECT_THROW(dynamic{}.reserve(10), folly::TypeError);
+  EXPECT_THROW(dynamic{1}.reserve(10), folly::TypeError);
+}
+
 TEST(Dynamic, DeepCopy) {
   dynamic val = dynamic::array("foo", "bar", dynamic::array("foo1", "bar1"));
   EXPECT_EQ(val.at(2).at(0), "foo1");
@@ -575,6 +585,7 @@ void testComparisonOperatorsForEqualDynamicValues(
   } else {
     testOrderingOperatorsForEqualValues(valueA, valueB);
   }
+  EXPECT_EQ(valueA.hash(), valueB.hash());
 }
 
 void testComparisonOperatorsForNotEqualDynamicValues(

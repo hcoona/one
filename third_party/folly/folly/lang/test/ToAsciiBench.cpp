@@ -20,7 +20,7 @@
 
 #include <cinttypes>
 
-#include "fmt/format.h"
+#include <fmt/format.h>
 
 #include "folly/Benchmark.h"
 #include "folly/lang/Keep.h"

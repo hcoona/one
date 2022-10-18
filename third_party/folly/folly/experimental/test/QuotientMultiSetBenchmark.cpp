@@ -16,7 +16,7 @@
 
 #include "folly/experimental/QuotientMultiSet.h"
 
-#include "boost/sort/spreadsort/integer_sort.hpp"
+#include <boost/sort/spreadsort/integer_sort.hpp>
 #include "folly/Benchmark.h"
 #include "folly/Format.h"
 #include "folly/Random.h"

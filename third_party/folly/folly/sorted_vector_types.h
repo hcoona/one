@@ -76,6 +76,7 @@
 #include "folly/ScopeGuard.h"
 #include "folly/Traits.h"
 #include "folly/Utility.h"
+#include "folly/lang/Access.h"
 #include "folly/lang/Exception.h"
 #include "folly/memory/MemoryResource.h"
 
@@ -118,22 +119,6 @@ struct growth_policy_wrapper<void> {
   }
 };
 
-/*
- * This helper returns the distance between two iterators if it is
- * possible to figure it out without messing up the range
- * (i.e. unless they are InputIterators).  Otherwise this returns
- * -1.
- */
-template <class Iterator>
-typename std::iterator_traits<Iterator>::difference_type distance_if_multipass(
-    Iterator first, Iterator last) {
-  typedef typename std::iterator_traits<Iterator>::iterator_category categ;
-  if (std::is_same<categ, std::input_iterator_tag>::value) {
-    return -1;
-  }
-  return std::distance(first, last);
-}
-
 template <class OurContainer, class Vector, class GrowthPolicy, class Value>
 typename OurContainer::iterator insert_with_hint(
     OurContainer& sorted,
@@ -164,52 +149,13 @@ typename OurContainer::iterator insert_with_hint(
   return sorted.begin() + std::distance(sorted.cbegin(), hint);
 }
 
-template <class OurContainer, class Vector, class InputIterator>
-void bulk_insert(
-    OurContainer& sorted,
-    Vector& cont,
-    InputIterator first,
-    InputIterator last) {
-  // prevent deref of middle where middle == cont.end()
-  if (first == last) {
-    return;
-  }
-
-  auto const& cmp(sorted.value_comp());
-
-  auto const d = distance_if_multipass(first, last);
-  if (d != -1) {
-    cont.reserve(cont.size() + d);
-  }
-  auto const prev_size = cont.size();
-
-  std::copy(first, last, std::back_inserter(cont));
-  auto const middle = cont.begin() + prev_size;
-  if (!std::is_sorted(middle, cont.end(), cmp)) {
-    std::sort(middle, cont.end(), cmp);
-  }
-  if (middle != cont.begin() && !cmp(*(middle - 1), *middle)) {
-    std::inplace_merge(cont.begin(), middle, cont.end(), cmp);
-  }
-  cont.erase(
-      std::unique(
-          cont.begin(),
-          cont.end(),
-          [&](typename OurContainer::value_type const& a,
-              typename OurContainer::value_type const& b) {
-            return !cmp(a, b) && !cmp(b, a);
-          }),
-      cont.end());
-}
-
-template <typename Container, typename Compare>
-bool is_sorted_unique(Container const& container, Compare const& comp) {
-  if (container.empty()) {
+template <typename Iterator, typename Compare>
+bool is_sorted_unique(Iterator begin, Iterator end, Compare const& comp) {
+  if (begin == end) {
     return true;
   }
-  auto const e = container.end();
-  for (auto a = container.begin(), b = std::next(a); b != e; ++a, ++b) {
-    if (!comp(*a, *b)) {
+  for (auto next = std::next(begin); next != end; ++begin, ++next) {
+    if (!comp(*begin, *next)) {
       return false;
     }
   }
@@ -229,6 +175,56 @@ Container&& as_sorted_unique(Container&& container, Compare const& comp) {
       container.end());
   return static_cast<Container&&>(container);
 }
+
+template <class OurContainer, class Vector, class InputIterator>
+void bulk_insert(
+    OurContainer& sorted,
+    Vector& cont,
+    InputIterator first,
+    InputIterator last,
+    bool range_is_sorted_unique = false) {
+  // Prevent deref of middle where middle == cont.end().
+  if (first == last) {
+    return;
+  }
+
+  auto const prev_size = cont.size();
+  cont.insert(cont.end(), first, last);
+  auto const middle = cont.begin() + prev_size;
+
+  auto const& cmp(sorted.value_comp());
+  if (range_is_sorted_unique) {
+    assert(is_sorted_unique(middle, cont.end(), cmp));
+  } else if (!std::is_sorted(middle, cont.end(), cmp)) {
+    std::sort(middle, cont.end(), cmp);
+  }
+
+  // We do not need to consider elements strictly smaller than the smallest new
+  // element in merge/unique.
+  auto merge_begin = middle;
+  while (merge_begin != cont.begin() && !cmp(*(merge_begin - 1), *middle)) {
+    --merge_begin;
+  }
+
+  if (merge_begin != middle) {
+    std::inplace_merge(cont.begin(), middle, cont.end(), cmp);
+  } else if (range_is_sorted_unique) {
+    // Old and new elements are already disjoint and unique. This includes the
+    // case when cont is initially empty.
+    return;
+  }
+
+  cont.erase(
+      std::unique(
+          merge_begin,
+          cont.end(),
+          [&](typename OurContainer::value_type const& a,
+              typename OurContainer::value_type const& b) {
+            return !cmp(a, b);
+          }),
+      cont.end());
+}
+
 } // namespace detail
 
 //////////////////////////////////////////////////////////////////////
@@ -374,7 +370,8 @@ class sorted_vector_set : detail::growth_policy_wrapper<GrowthPolicy> {
                                                         const Compare&,
                                                         Container&&>::value)
       : m_(comp, std::move(container)) {
-    assert(detail::is_sorted_unique(m_.cont_, value_comp()));
+    assert(detail::is_sorted_unique(
+        m_.cont_.begin(), m_.cont_.end(), value_comp()));
   }
 
   Allocator get_allocator() const { return m_.cont_.get_allocator(); }
@@ -444,6 +441,16 @@ class sorted_vector_set : detail::growth_policy_wrapper<GrowthPolicy> {
     detail::bulk_insert(*this, m_.cont_, first, last);
   }
 
+  // If [first, last) is known to be sorted and unique according to the
+  // comparator (for example if the range comes from a sorted container of the
+  // same type) this version can save unnecessary operations, especially if
+  // *this is empty.
+  template <class InputIterator>
+  void insert(sorted_unique_t, InputIterator first, InputIterator last) {
+    detail::bulk_insert(
+        *this, m_.cont_, first, last, /* range_is_sorted_unique */ true);
+  }
+
   void insert(std::initializer_list<value_type> ilist) {
     insert(ilist.begin(), ilist.end());
   }
@@ -507,6 +514,14 @@ class sorted_vector_set : detail::growth_policy_wrapper<GrowthPolicy> {
     return m_.cont_.erase(first, last);
   }
 
+  template <class Predicate>
+  friend size_type erase_if(sorted_vector_set& container, Predicate predicate) {
+    auto& c = container.m_.cont_;
+    const auto preEraseSize = c.size();
+    c.erase(std::remove_if(c.begin(), c.end(), std::ref(predicate)), c.end());
+    return preEraseSize - c.size();
+  }
+
   iterator find(const key_type& key) { return find_(*this, key); }
 
   const_iterator find(const key_type& key) const { return find_(*this, key); }
@@ -523,6 +538,54 @@ class sorted_vector_set : detail::growth_policy_wrapper<GrowthPolicy> {
 
   size_type count(const key_type& key) const {
     return find(key) == end() ? 0 : 1;
+  }
+
+  std::pair<iterator, iterator> find(
+      const key_type& key1, const key_type& key2) {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  std::pair<const_iterator, const_iterator> find(
+      const key_type& key1, const key_type& key2) const {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  template <typename K>
+  std::pair<if_is_transparent<K, iterator>, if_is_transparent<K, iterator>>
+  find(const K& key1, const K& key2) {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  template <typename K>
+  std::pair<
+      if_is_transparent<K, const_iterator>,
+      if_is_transparent<K, const_iterator>>
+  find(const K& key1, const K& key2) const {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
   }
 
   template <typename K>
@@ -672,6 +735,61 @@ class sorted_vector_set : detail::growth_policy_wrapper<GrowthPolicy> {
       return it;
     }
     return end;
+  }
+  template <typename Self, typename K>
+  static std::pair<self_iterator_t<Self>, self_iterator_t<Self>> lower_bound2_(
+      Self& self, K const& key1, K const& key2) {
+    auto len = self.size();
+    auto first = self.begin(), second = self.begin();
+    auto c = self.key_comp();
+    assert(!c(key2, key1));
+    while (true) {
+      if (len == 0) {
+        return std::make_pair(first, first);
+      }
+      auto half = len / 2;
+      auto middle = first + half;
+      if (c(*middle, key1)) {
+        first = middle + 1;
+        half = len - half - 1;
+      } else if (c(*middle, key2)) {
+        second = middle + (len & 1);
+        len = half;
+        break;
+      }
+      len = half;
+    }
+    while (len) {
+      auto half = len / 2;
+      auto middle1 = first + half;
+      auto middle2 = second + half;
+      if (c(*middle1, key1)) {
+        first = middle1 + (len & 1);
+      }
+      if (c(*middle2, key2)) {
+        second = middle2 + (len & 1);
+      }
+      len = half;
+    }
+    return std::make_pair(first, second);
+  }
+
+  template <typename Self, typename K>
+  static std::pair<self_iterator_t<Self>, self_iterator_t<Self>> find2_(
+      Self& self, K const& key1, K const& key2) {
+    auto end = self.end();
+    auto its = lower_bound2_(self, key1, key2);
+    if (its.second != end) {
+      if (self.key_comp()(key1, *its.first)) {
+        its.first = end;
+      }
+      if (self.key_comp()(key2, *its.second)) {
+        its.second = end;
+      }
+    } else if (its.first != end && self.key_comp()(key1, *its.first)) {
+      its.first = end;
+    }
+    return its;
   }
 };
 
@@ -852,8 +970,8 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
                                                         value_compare,
                                                         Container&&>::value)
       : m_(value_compare(comp), std::move(container)) {
-    assert(std::is_sorted(m_.cont_.begin(), m_.cont_.end(), value_comp()));
-    assert(detail::is_sorted_unique(m_.cont_, value_comp()));
+    assert(detail::is_sorted_unique(
+        m_.cont_.begin(), m_.cont_.end(), value_comp()));
   }
 
   Allocator get_allocator() const { return m_.cont_.get_allocator(); }
@@ -925,6 +1043,16 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
     detail::bulk_insert(*this, m_.cont_, first, last);
   }
 
+  // If [first, last) is known to be sorted and unique according to the
+  // comparator (for example if the range comes from a sorted container of the
+  // same type) this version can save unnecessary operations, especially if
+  // *this is empty.
+  template <class InputIterator>
+  void insert(sorted_unique_t, InputIterator first, InputIterator last) {
+    detail::bulk_insert(
+        *this, m_.cont_, first, last, /* range_is_sorted_unique */ true);
+  }
+
   void insert(std::initializer_list<value_type> ilist) {
     insert(ilist.begin(), ilist.end());
   }
@@ -988,6 +1116,14 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
     return m_.cont_.erase(first, last);
   }
 
+  template <class Predicate>
+  friend size_type erase_if(sorted_vector_map& container, Predicate predicate) {
+    auto& c = container.m_.cont_;
+    const auto preEraseSize = c.size();
+    c.erase(std::remove_if(c.begin(), c.end(), std::ref(predicate)), c.end());
+    return preEraseSize - c.size();
+  }
+
   iterator find(const key_type& key) { return find_(*this, key); }
 
   const_iterator find(const key_type& key) const { return find_(*this, key); }
@@ -1000,6 +1136,54 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
   template <typename K>
   if_is_transparent<K, const_iterator> find(const K& key) const {
     return find_(*this, key);
+  }
+
+  std::pair<iterator, iterator> find(
+      const key_type& key1, const key_type& key2) {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  std::pair<const_iterator, const_iterator> find(
+      const key_type& key1, const key_type& key2) const {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  template <typename K>
+  std::pair<if_is_transparent<K, iterator>, if_is_transparent<K, iterator>>
+  find(const K& key1, const K& key2) {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
+  }
+
+  template <typename K>
+  std::pair<
+      if_is_transparent<K, const_iterator>,
+      if_is_transparent<K, const_iterator>>
+  find(const K& key1, const K& key2) const {
+    if (key_comp()(key2, key1)) {
+      auto iterators = find2_(*this, key2, key1);
+      access::swap(iterators.first, iterators.second);
+      return iterators;
+    } else {
+      return find2_(*this, key1, key2);
+    }
   }
 
   mapped_type& at(const key_type& key) {
@@ -1167,7 +1351,7 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
 
   template <typename Self, typename K>
   static self_iterator_t<Self> lower_bound(Self& self, K const& key) {
-    auto f = [c = self.key_comp()](value_type const& a, K const& b) {
+    auto f = [c = self.key_comp()](auto const& a, K const& b) {
       return c(a.first, b);
     };
     return std::lower_bound(self.begin(), self.end(), key, f);
@@ -1175,7 +1359,7 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
 
   template <typename Self, typename K>
   static self_iterator_t<Self> upper_bound(Self& self, K const& key) {
-    auto f = [c = self.key_comp()](K const& a, value_type const& b) {
+    auto f = [c = self.key_comp()](K const& a, auto const& b) {
       return c(a, b.first);
     };
     return std::upper_bound(self.begin(), self.end(), key, f);
@@ -1188,6 +1372,63 @@ class sorted_vector_map : detail::growth_policy_wrapper<GrowthPolicy> {
     // argument types different from the iterator value_type, so we
     // have to do this.
     return {lower_bound(self, key), upper_bound(self, key)};
+  }
+
+  template <typename Self, typename K>
+  static std::pair<self_iterator_t<Self>, self_iterator_t<Self>> lower_bound2_(
+      Self& self, K const& key1, K const& key2) {
+    auto len = self.size();
+    auto first = self.begin(), second = self.begin();
+    auto c = self.key_comp();
+    assert(!c(key2, key1));
+    while (true) {
+      if (len == 0) {
+        return std::make_pair(first, first);
+      }
+      auto half = len / 2;
+      auto middle = first + half;
+      if (c(middle->first, key1)) {
+        first = middle + 1;
+        half = len - half - 1;
+      } else if (c(middle->first, key2)) {
+        second = middle + (len & 1);
+        len = half;
+        break;
+      }
+      len = half;
+    }
+    while (len) {
+      auto half = len / 2;
+      auto middle1 = first + half;
+      auto middle2 = second + half;
+      if (c(middle1->first, key1)) {
+        first = middle1 + (len & 1);
+      }
+      if (c(middle2->first, key2)) {
+        second = middle2 + (len & 1);
+      }
+      len = half;
+    }
+    return std::make_pair(first, second);
+  }
+
+  template <typename Self, typename K>
+  static std::pair<self_iterator_t<Self>, self_iterator_t<Self>> find2_(
+      Self& self, K const& key1, K const& key2) {
+    auto end = self.end();
+    auto its = lower_bound2_(self, key1, key2);
+    if (its.second != end) {
+      if (self.key_comp()(key1, its.first->first)) {
+        its.first = end;
+      }
+      if (self.key_comp()(key2, its.second->first)) {
+        its.second = end;
+      }
+    } else if (its.first != end && self.key_comp()(key1, its.first->first)) {
+      its.first = end;
+    }
+    return its;
+    ;
   }
 };
 

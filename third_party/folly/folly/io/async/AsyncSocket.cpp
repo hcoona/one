@@ -23,7 +23,7 @@
 #include <sstream>
 #include <thread>
 
-#include "boost/preprocessor/control/if.hpp"
+#include <boost/preprocessor/control/if.hpp>
 
 #include "folly/Exception.h"
 #include "folly/ExceptionWrapper.h"
@@ -35,6 +35,7 @@
 #include "folly/io/IOBuf.h"
 #include "folly/io/IOBufQueue.h"
 #include "folly/io/SocketOptionMap.h"
+#include "folly/lang/CheckedMath.h"
 #include "folly/portability/Fcntl.h"
 #include "folly/portability/Sockets.h"
 #include "folly/portability/SysMman.h"
@@ -252,8 +253,15 @@ class AsyncSocket::BytesWriteRequest : public AsyncSocket::WriteRequest {
     assert(opCount > 0);
     // Since we put a variable size iovec array at the end
     // of each BytesWriteRequest, we have to manually allocate the memory.
-    void* buf =
-        malloc(sizeof(BytesWriteRequest) + (opCount * sizeof(struct iovec)));
+    uint32_t bufSize = 0;
+    if (!checked_muladd<uint32_t>(
+            &bufSize,
+            opCount,
+            sizeof(struct iovec),
+            sizeof(BytesWriteRequest))) {
+      throw std::bad_alloc();
+    }
+    void* buf = malloc(bufSize);
     if (buf == nullptr) {
       throw std::bad_alloc();
     }
@@ -2394,6 +2402,10 @@ void AsyncSocket::ioReady(uint16_t events) noexcept {
     return;
   }
 
+  const auto startRawBytesReceived = getRawBytesReceived();
+  const auto startAppBytesReceived = getAppBytesReceived();
+  const auto startRawBytesWritten = getRawBytesWritten();
+
   if (relevantEvents == EventHandler::READ) {
     handleRead();
   } else if (relevantEvents == EventHandler::WRITE) {
@@ -2417,6 +2429,34 @@ void AsyncSocket::ioReady(uint16_t events) noexcept {
     VLOG(4) << "AsyncSocket::ioRead() called with unexpected events "
             << std::hex << events << "(this=" << this << ")";
     abort();
+  }
+
+  // It is possible that there are messages in the error queue yet
+  // `handleErrMessages()` returns without reading them because no error
+  // message callback is set and byte events are disabled. This could happen
+  // when a write is performed to an AsyncSocket with byte events enabled,
+  // triggers timestamps, and the fd is detached from the AsyncSocket and
+  // attached to a new AsyncSocket before the error messages generated for those
+  // timestamps arrive on the error queue. These `orphan` messages in the error
+  // queue will cause us to spin: `ioReady()` will be repeatedly invoked, but
+  // because we are not reading from the socket error queue, the state will
+  // never be cleared.
+  //
+  // To prevent spinning under such circumstances, we
+  // drain the queue of AF_INET sockets if the read or write handlers did not
+  // read or write anything on an invocation of `ioReady()`. We check both raw
+  // and app bytes received because raw bytes received are 0 for AsyncSSLSockets
+  // with no BIO. Because the read or write handlers can modify the event flags,
+  // we check these flags again before draining the error queue. We restrict
+  // the drain to AF_INET sockets as other socket family do not support
+  // MSG_ERRQUEUE (e.g., AF_UNIX) or their support is not well documented
+  if (startRawBytesReceived == getRawBytesReceived() &&
+      startAppBytesReceived == getAppBytesReceived() &&
+      startRawBytesWritten == getRawBytesWritten() &&
+      eventFlags_ != EventHandler::NONE && eventFlags_ == events &&
+      (localAddr_.getFamily() == AF_INET ||
+       localAddr_.getFamily() == AF_INET6)) {
+    drainErrorQueue();
   }
 }
 
@@ -2521,6 +2561,42 @@ void AsyncSocket::prepareReadBuffers(IOBufIovecBuilder::IoVecVec& iovs) {
   // no matter what, buffers should be prepared for non-ssl socket
   CHECK(readCallback_);
   readCallback_->getReadBuffers(iovs);
+}
+
+void AsyncSocket::drainErrorQueue() noexcept {
+  VLOG(5) << "AsyncSocket::drainErrorQueue() this=" << this << ", fd=" << fd_
+          << ", state=" << state_;
+
+  if (errMessageCallback_ != nullptr ||
+      (byteEventHelper_ && byteEventHelper_->byteEventsEnabled)) {
+    VLOG(7) << "AsyncSocket::drainErrorQueue(): "
+            << "err message callback installed or "
+            << "ByteEvents enabled - exiting.";
+    return;
+  }
+
+#ifdef FOLLY_HAVE_MSG_ERRQUEUE
+  int ret = 0;
+  while (ret >= 0 && fd_ != NetworkSocket()) {
+    uint8_t ctrl[1024];
+    unsigned char data;
+
+    struct iovec entry;
+    entry.iov_base = &data;
+    entry.iov_len = sizeof(data);
+
+    struct msghdr msg;
+    msg.msg_iov = &entry;
+    msg.msg_iovlen = 1;
+    msg.msg_name = nullptr;
+    msg.msg_namelen = 0;
+    msg.msg_control = ctrl;
+    msg.msg_controllen = sizeof(ctrl);
+    msg.msg_flags = 0;
+
+    ret = netops_->recvmsg(fd_, &msg, MSG_ERRQUEUE);
+  }
+#endif
 }
 
 size_t AsyncSocket::handleErrMessages() noexcept {
@@ -2790,13 +2866,26 @@ AsyncSocket::ReadCode AsyncSocket::processZeroCopyRead() {
   auto ret =
       ::getsockopt(fd_.toFd(), IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, &zc, &zc_len);
   if (!ret) {
-    // check for errors
+    // zc.err can be set even if there is still more data buffered in the
+    // kernel that we have not fully read yet.  When zc.err is set, just
+    // remember the error code, and keep reading until we get 0 data back from
+    // the kernel. Only once we have seen 0 bytes returned from the kernel do we
+    // want to return the error to the caller.
     if (zc.err) {
+      zerocopyReadErr_ = zc.err;
+    }
+
+    auto len = zc.length + zc.copybuf_len;
+
+    if (zerocopyReadErr_ && len == 0) {
+      auto err = zerocopyReadErr_;
+      zerocopyReadErr_ = 0;
+
       readErr_ = READ_ERROR;
       AsyncSocketException ex(
           AsyncSocketException::INTERNAL_ERROR,
           withAddr("TCP_ZEROCOPY_RECEIVE failed"),
-          zc.err);
+          err);
       return failRead(__func__, ex);
     }
 
@@ -2808,20 +2897,18 @@ AsyncSocket::ReadCode AsyncSocket::processZeroCopyRead() {
       buf = std::move(tmp);
     }
 
-    auto len = zc.length + zc.copybuf_len;
     if (len) {
       readCallback_->readZeroCopyDataAvailable(std::move(buf), zc.copybuf_len);
 
-      // if there is no buffer data, we continue if we filled up the zerocopy
-      // buffer otherwise we're done
-      if (zc.copybuf_len == 0) {
-        return (zc.length == zc_length) ? ReadCode::READ_CONTINUE
-                                        : ReadCode::READ_DONE;
+      // If we completely filled up the zerocopy buffer then we likely have
+      // more data buffered in the kernel, so return READ_CONTINUE to try again.
+      // We also want the caller to retry reading if we have a deferred error
+      // code to give them.
+      if ((zc.copybuf_len == 0 && zc.length == zc_length) ||
+          zc.copybuf_len == zc_copybuf_len || zerocopyReadErr_ != 0) {
+        return ReadCode::READ_CONTINUE;
       }
-
-      // we continue if we filled up the copy buffer
-      return (zc.copybuf_len == zc_copybuf_len) ? ReadCode::READ_CONTINUE
-                                                : ReadCode::READ_DONE;
+      return ReadCode::READ_DONE;
     } else {
       // No more data to read right now.
       return ReadCode::READ_DONE;

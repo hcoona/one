@@ -18,6 +18,7 @@
 
 #include "folly/Executor.h"
 #include "folly/IntrusiveList.h"
+#include "folly/executors/SequencedExecutor.h"
 #include "folly/experimental/channels/Channel.h"
 #include "folly/experimental/channels/ChannelCallbackHandle.h"
 #include "folly/experimental/coro/Task.h"
@@ -38,7 +39,7 @@ namespace channels {
  * The callback is run for each received value on the given executor. A try
  * is passed to the callback with the result:
  *
- *    - If a value is sent, the folly::Try will contain the value.
+ *    - If a value is sent, the Try will contain the value.
  *    - If the channel is closed by the sender with no exception, the try will
  *          be empty (with no value or exception).
  *    - If the channel is closed by the sender with an exception, the try will
@@ -57,43 +58,13 @@ template <
     typename TValue = typename TReceiver::ValueType,
     std::enable_if_t<
         std::is_constructible_v<
-            folly::Function<folly::coro::Task<bool>(folly::Try<TValue>)>,
+            folly::Function<folly::coro::Task<bool>(Try<TValue>)>,
             OnNextFunc>,
         int> = 0>
 ChannelCallbackHandle consumeChannelWithCallback(
     TReceiver receiver,
-    folly::Executor::KeepAlive<> executor,
+    folly::Executor::KeepAlive<folly::SequencedExecutor> executor,
     OnNextFunc onNext);
-
-/**
- * This overload is similar to the previous overload. However, unlike the
- * previous overload (which returns a handle that allows cancellation of that
- * specific consumption operation), this overload accepts a list of handles and
- * returns void. This overload will immediately add a handle to the list, and
- * will remove itself from the list if the channel is closed or cancelled.
- *
- * When the passed-in handle list is destroyed by the caller, all handles
- * remaining in the list will trigger cancellation on their corresponding
- * consumption operations.
- *
- * Note that ChannelCallbackHandleList is not thread safe. This means that all
- * operations using a particular list (including start and cancellation) need to
- * run on the same serial executor passed to this function.
- */
-template <
-    typename TReceiver,
-    typename OnNextFunc,
-    typename TValue = typename TReceiver::ValueType,
-    std::enable_if_t<
-        std::is_constructible_v<
-            folly::Function<folly::coro::Task<bool>(folly::Try<TValue>)>,
-            OnNextFunc>,
-        int> = 0>
-void consumeChannelWithCallback(
-    TReceiver receiver,
-    folly::Executor::KeepAlive<> executor,
-    OnNextFunc onNext,
-    ChannelCallbackHandleList& callbackHandles);
 } // namespace channels
 } // namespace folly
 

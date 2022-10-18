@@ -27,8 +27,8 @@
 #include <stdexcept>
 #include <tuple>
 
-#include "boost/lexical_cast.hpp"
-#include "glog/logging.h"
+#include <boost/lexical_cast.hpp>
+#include <glog/logging.h>
 
 #include "folly/container/Foreach.h"
 #include "folly/portability/GTest.h"
@@ -672,6 +672,26 @@ TEST(Conv, DoubleToInt) {
   }
 }
 
+namespace {
+
+template <class From, class To>
+void testNotFiniteToInt() {
+  for (auto s : {"nan", "inf", "-inf"}) {
+    auto v = to<From>(s);
+    auto rv = folly::tryTo<To>(v);
+    EXPECT_FALSE(rv.hasValue()) << s << " " << rv.value();
+  }
+}
+
+} // namespace
+
+TEST(Conv, NotFiniteToInt) {
+  testNotFiniteToInt<float, int64_t>();
+  testNotFiniteToInt<float, uint64_t>();
+  testNotFiniteToInt<double, int64_t>();
+  testNotFiniteToInt<double, uint64_t>();
+}
+
 TEST(Conv, EnumToInt) {
   enum A { x = 42, y = 420, z = 65 };
   auto i = to<int>(x);
@@ -843,6 +863,7 @@ TEST(Conv, FloatToInt) {
   EXPECT_THROW(
       to<uint64_t>(static_cast<float>(std::numeric_limits<uint64_t>::max())),
       std::range_error);
+  EXPECT_THROW(to<uint64_t>(static_cast<float>(-1)), std::range_error);
 }
 
 TEST(Conv, IntToFloat) {
@@ -863,6 +884,11 @@ TEST(Conv, IntToFloat) {
   EXPECT_THROW(
       to<double>(std::numeric_limits<__int128>::min() + 1), std::range_error);
 #endif
+}
+
+TEST(Conv, BoolToString) {
+  EXPECT_EQ(to<std::string>(true), "1");
+  EXPECT_EQ(to<std::string>(false), "0");
 }
 
 TEST(Conv, BoolToFloat) {

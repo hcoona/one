@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <system_error>
 
-#include "boost/regex.hpp"
+#include <boost/regex.hpp>
 
 #include "folly/Conv.h"
 #include "folly/CppAttributes.h"

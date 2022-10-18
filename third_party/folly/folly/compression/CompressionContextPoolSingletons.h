@@ -19,7 +19,7 @@
 #include "folly/folly-config.h"
 
 #if FOLLY_HAVE_LIBZSTD
-#include "zstd.h"
+#include <zstd.h>
 #endif
 
 #include "folly/compression/CompressionCoreLocalContextPool.h"
@@ -86,6 +86,14 @@ ZSTD_DCtx_Pool::Ref getZSTD_DCtx();
 ZSTD_CCtx_Pool::Ref getNULL_ZSTD_CCtx();
 
 ZSTD_DCtx_Pool::Ref getNULL_ZSTD_DCtx();
+
+ZSTD_CCtx_Pool& zstd_cctx_pool();
+
+ZSTD_DCtx_Pool& zstd_dctx_pool();
+
+size_t get_zstd_cctx_created_count();
+
+size_t get_zstd_dctx_created_count();
 
 #endif // FOLLY_HAVE_LIBZSTD
 

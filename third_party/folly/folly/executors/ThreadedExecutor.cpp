@@ -19,7 +19,7 @@
 #include <chrono>
 #include <utility>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/ScopeGuard.h"
 #include "folly/executors/thread_factory/NamedThreadFactory.h"

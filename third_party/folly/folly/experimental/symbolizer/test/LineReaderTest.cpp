@@ -16,7 +16,7 @@
 
 #include "folly/experimental/symbolizer/LineReader.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/FileUtil.h"
 #include "folly/experimental/TestUtil.h"

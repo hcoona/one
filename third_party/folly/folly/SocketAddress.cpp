@@ -29,9 +29,9 @@
 #include <system_error>
 #include <type_traits>
 
-#include "boost/functional/hash.hpp"
+#include <boost/functional/hash.hpp>
 
-#include "fmt/core.h"
+#include <fmt/core.h>
 
 #include "folly/CppAttributes.h"
 #include "folly/Exception.h"
@@ -322,7 +322,6 @@ void SocketAddress::setFromSockaddr(
   }
 }
 
-#ifndef __XROS__
 void SocketAddress::setFromSockaddr(const struct sockaddr_in* address) {
   assert(address->sin_family == AF_INET);
   setFromSockaddr((sockaddr*)address);
@@ -332,7 +331,6 @@ void SocketAddress::setFromSockaddr(const struct sockaddr_in6* address) {
   assert(address->sin6_family == AF_INET6);
   setFromSockaddr((sockaddr*)address);
 }
-#endif
 
 void SocketAddress::setFromSockaddr(
     const struct sockaddr_un* address, socklen_t addrlen) {

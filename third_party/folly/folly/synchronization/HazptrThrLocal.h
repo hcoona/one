@@ -22,7 +22,7 @@
 
 #include <atomic>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/SingletonThreadLocal.h"
 #include "folly/synchronization/HazptrObj.h"

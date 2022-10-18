@@ -16,7 +16,7 @@
 
 #include <array>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/container/Foreach.h"
 #include "folly/portability/GTest.h"

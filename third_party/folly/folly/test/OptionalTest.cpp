@@ -26,7 +26,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "boost/optional.hpp"
+#include <boost/optional.hpp>
 
 #include "folly/Portability.h"
 #include "folly/portability/GMock.h"

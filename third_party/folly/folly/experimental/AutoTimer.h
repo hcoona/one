@@ -20,7 +20,7 @@
 #include <string>
 #include <type_traits>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Conv.h"
 #include "folly/Format.h"
@@ -96,9 +96,9 @@ class AutoTimer final {
   }
 
   template <typename... Args>
-  DoubleSeconds logFormat(Args&&... args) {
+  DoubleSeconds logFormat(fmt::format_string<Args...> fmt, Args&&... args) {
     auto now = Clock::now();
-    return logImpl(now, fmt::format(std::forward<Args>(args)...));
+    return logImpl(now, fmt::format(fmt, std::forward<Args>(args)...));
   }
 
  private:

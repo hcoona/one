@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/String.h"
 #include "folly/executors/thread_factory/ThreadFactory.h"
@@ -46,8 +46,8 @@ class PriorityThreadFactory : public ThreadFactory {
     int priority = priority_;
     return factory_->newThread([priority, func = std::move(func)]() mutable {
       if (setpriority(PRIO_PROCESS, 0, priority) != 0) {
-        LOG(ERROR) << "setpriority failed (are you root?) with error " << errno,
-            errnoStr(errno);
+        LOG(WARNING) << "setpriority failed (are you root?) with error "
+                     << errno << " " << errnoStr(errno);
       }
       func();
     });

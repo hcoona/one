@@ -29,7 +29,7 @@
 #include <limits>
 #include <stdexcept>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Likely.h"
 #include "folly/Portability.h"

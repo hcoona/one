@@ -16,7 +16,7 @@
 
 #include <vector>
 
-#include "boost/thread/barrier.hpp"
+#include <boost/thread/barrier.hpp>
 
 #include "folly/Conv.h"
 #include "folly/executors/ManualExecutor.h"

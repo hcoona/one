@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "fmt/format.h"
+#include <fmt/format.h>
 #include "folly/CancellationToken.h"
 #include "folly/experimental/channels/Channel.h"
 #include "folly/experimental/channels/ConsumeChannel.h"
@@ -73,7 +73,7 @@ void Producer<TValue>::write(TValue value) {
 }
 
 template <typename TValue>
-void Producer<TValue>::close(std::optional<folly::exception_wrapper> ex) {
+void Producer<TValue>::close(std::optional<exception_wrapper> ex) {
   executor_->add([this, ex = std::move(ex)]() mutable {
     if (ex.has_value()) {
       sender_->senderClose(std::move(ex.value()));

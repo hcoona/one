@@ -18,7 +18,7 @@
 
 #include <numeric>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Format.h"
 #include "folly/container/Enumerate.h"
@@ -128,6 +128,18 @@ bool operator==(dynamic const& a, dynamic const& b) {
 
 #define FB_X(T) return *a.getAddress<T>() == *b.getAddress<T>();
   FB_DYNAMIC_APPLY(a.type_, FB_X);
+#undef FB_X
+}
+
+dynamic::dynamic(dynamic const& o) : type_(o.type_) {
+#define FB_X(T) new (getAddress<T>()) T(*o.getAddress<T>())
+  FB_DYNAMIC_APPLY(o.type_, FB_X);
+#undef FB_X
+}
+
+dynamic::dynamic(dynamic&& o) noexcept : type_(o.type_) {
+#define FB_X(T) new (getAddress<T>()) T(std::move(*o.getAddress<T>()))
+  FB_DYNAMIC_APPLY(o.type_, FB_X);
 #undef FB_X
 }
 
@@ -512,6 +524,18 @@ const dynamic* dynamic::get_ptr(json_pointer const& jsonPtr) const& {
       return nullptr;
   }
   assume_unreachable();
+}
+
+void dynamic::reserve(std::size_t capacity) {
+  if (auto* ar = get_nothrow<Array>()) {
+    ar->reserve(capacity);
+  } else if (auto* obj = get_nothrow<ObjectImpl>()) {
+    obj->reserve(capacity);
+  } else if (auto* str = get_nothrow<std::string>()) {
+    str->reserve(capacity);
+  } else {
+    throw_exception<TypeError>("array/object/string", type());
+  }
 }
 
 //////////////////////////////////////////////////////////////////////

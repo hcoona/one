@@ -30,8 +30,8 @@
 #include <system_error>
 #include <thread>
 
-#include "boost/container/flat_set.hpp"
-#include "boost/range/adaptors.hpp"
+#include <boost/container/flat_set.hpp>
+#include <boost/range/adaptors.hpp>
 
 #include "folly/Conv.h"
 #include "folly/Exception.h"
@@ -191,7 +191,7 @@ Subprocess::Subprocess(
     const Options& options,
     const char* executable,
     const std::vector<std::string>* env)
-    : destroyOkWhileRunning_(options.allowDestructionWhileProcessRunning_) {
+    : destroyBehavior_(options.destroyBehavior_) {
   if (argv.empty()) {
     throw std::invalid_argument("argv must not be empty");
   }
@@ -205,7 +205,7 @@ Subprocess::Subprocess(
     const std::string& cmd,
     const Options& options,
     const std::vector<std::string>* env)
-    : destroyOkWhileRunning_(options.allowDestructionWhileProcessRunning_) {
+    : destroyBehavior_(options.destroyBehavior_) {
   if (options.usePath_) {
     throw std::invalid_argument("usePath() not allowed when running in shell");
   }
@@ -217,17 +217,43 @@ Subprocess::Subprocess(
 Subprocess Subprocess::fromExistingProcess(pid_t pid) {
   Subprocess sp;
   sp.pid_ = pid;
-  sp.destroyOkWhileRunning_ = false;
+  sp.destroyBehavior_ = DestroyBehaviorLeak;
   sp.returnCode_ = ProcessReturnCode::makeRunning();
   return sp;
 }
 
 Subprocess::~Subprocess() {
-  if (!destroyOkWhileRunning_) {
-    CHECK_NE(returnCode_.state(), ProcessReturnCode::RUNNING)
-        << "Subprocess destroyed without reaping child";
-  } else if (returnCode_.state() == ProcessReturnCode::RUNNING) {
-    XLOG(DBG) << "Subprocess destroyed without reaping child process";
+  if (returnCode_.state() == ProcessReturnCode::RUNNING) {
+    if (destroyBehavior_ == DestroyBehaviorFatal) {
+      // Explicitly crash if we are destroyed without reaping the child process.
+      //
+      // If you are running into this crash, you are destroying a Subprocess
+      // without cleaning up the child process first, which can leave behind a
+      // zombie process on the system until the current process exits.  You may
+      // want to use one of the following options instead when creating the
+      // Subprocess:
+      // - Options::detach()
+      //   If you do not want to wait on the child process to complete, and do
+      //   not care about its exit status, use detach().
+      // - Options::killChildOnDestruction()
+      //   If you want the child process to be automatically killed when the
+      //   Subprocess is destroyed, use killChildOnDestruction() or
+      //   terminateChildOnDestruction()
+      XLOG(FATAL) << "Subprocess destroyed without reaping child";
+    } else if (destroyBehavior_ == DestroyBehaviorLeak) {
+      // Do nothing if we are destroyed without reaping the child process.
+      XLOG(DBG) << "Subprocess destroyed without reaping child process";
+    } else {
+      // If we are killed without reaping the child process, explicitly
+      // terminate/kill it and wait for it to exit.
+      try {
+        TimeoutDuration timeout(destroyBehavior_);
+        terminateOrKill(timeout);
+      } catch (const std::exception& ex) {
+        XLOG(WARN) << "error terminating process in Subprocess destructor: "
+                   << ex.what();
+      }
+    }
   }
 }
 
@@ -830,13 +856,17 @@ ProcessReturnCode Subprocess::waitOrTerminateOrKill(
 ProcessReturnCode Subprocess::terminateOrKill(TimeoutDuration sigtermTimeout) {
   returnCode_.enforce(ProcessReturnCode::RUNNING);
   DCHECK_GT(pid_, 0) << "The subprocess has been waited already";
-  // 1. Send SIGTERM to kill the process
-  terminate();
-  // 2. check whether subprocess has terminated using non-blocking waitpid
-  waitTimeout(sigtermTimeout);
-  if (!returnCode_.running()) {
-    return returnCode_;
+
+  if (sigtermTimeout > TimeoutDuration(0)) {
+    // 1. Send SIGTERM to kill the process
+    terminate();
+    // 2. check whether subprocess has terminated using non-blocking waitpid
+    waitTimeout(sigtermTimeout);
+    if (!returnCode_.running()) {
+      return returnCode_;
+    }
   }
+
   // 3. If we are at this point, we have waited enough time after
   // sending SIGTERM, we have to use nuclear option SIGKILL to kill
   // the subprocess.

@@ -20,7 +20,7 @@
 
 #include <system_error>
 
-#include "boost/algorithm/string.hpp"
+#include <boost/algorithm/string.hpp>
 
 #include "folly/Memory.h"
 #include "folly/Subprocess.h"
@@ -30,7 +30,7 @@
 #include "folly/portability/GTest.h"
 #include "folly/portability/Stdlib.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 using namespace folly;
 using folly::experimental::EnvironmentState;

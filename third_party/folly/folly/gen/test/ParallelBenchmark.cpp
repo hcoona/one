@@ -19,7 +19,7 @@
 #include <iostream>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/gen/Base.h"
 #include "folly/gen/Parallel.h"

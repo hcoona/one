@@ -23,8 +23,8 @@
 #include <string>
 #include <vector>
 
-#include "fmt/core.h"
-#include "glog/logging.h"
+#include <fmt/core.h>
+#include <glog/logging.h>
 
 #include "folly/Benchmark.h"
 #include "folly/Preprocessor.h"

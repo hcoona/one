@@ -22,8 +22,8 @@
 #include "folly/portability/GFlags.h"
 #include "folly/portability/GTest.h"
 
-#include "boost/thread/barrier.hpp"
-#include "glog/logging.h"
+#include <boost/thread/barrier.hpp>
+#include <glog/logging.h>
 
 #include <atomic>
 #include <thread>

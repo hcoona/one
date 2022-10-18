@@ -15,6 +15,8 @@
  */
 
 #include "folly/executors/CPUThreadPoolExecutor.h"
+#include "folly/executors/IOThreadPoolExecutor.h"
+#include "folly/executors/SequencedExecutor.h"
 #include "folly/experimental/channels/ConsumeChannel.h"
 #include "folly/experimental/coro/DetachOnCancel.h"
 #include "folly/experimental/coro/Sleep.h"
@@ -46,7 +48,7 @@ toMap(TPair firstPair, Others... items) {
 template <typename TValue>
 class MockNextCallback {
  public:
-  void operator()(folly::Try<TValue> result) {
+  void operator()(Try<TValue> result) {
     if (result.hasValue()) {
       onValue(result.value());
     } else if (result.template hasException<folly::OperationCancelled>()) {
@@ -70,7 +72,6 @@ enum class ConsumptionMode {
   CoroWithTry,
   CoroWithoutTry,
   CallbackWithHandle,
-  CallbackWithHandleList
 };
 
 template <typename TValue>
@@ -85,9 +86,10 @@ class ChannelConsumerBase {
 
   virtual ~ChannelConsumerBase() = default;
 
-  virtual folly::Executor::KeepAlive<> getExecutor() = 0;
+  virtual folly::Executor::KeepAlive<folly::SequencedExecutor>
+  getExecutor() = 0;
 
-  virtual void onNext(folly::Try<TValue> result) = 0;
+  virtual void onNext(Try<TValue> result) = 0;
 
   void startConsuming(Receiver<TValue> receiver) {
     folly::coro::co_withCancellation(
@@ -97,27 +99,23 @@ class ChannelConsumerBase {
   }
 
   folly::coro::Task<void> processValuesCoro(Receiver<TValue> receiver) {
-    auto executor = co_await folly::coro::co_current_executor;
     if (mode_ == ConsumptionMode::CoroWithTry ||
         mode_ == ConsumptionMode::CoroWithoutTry) {
       do {
-        folly::Try<TValue> resultTry;
+        Try<TValue> resultTry;
         if (mode_ == ConsumptionMode::CoroWithTry) {
           resultTry = co_await folly::coro::co_awaitTry(receiver.next());
         } else if (mode_ == ConsumptionMode::CoroWithoutTry) {
           try {
             auto result = co_await receiver.next();
             if (result.has_value()) {
-              resultTry = folly::Try<TValue>(result.value());
+              resultTry = Try<TValue>(result.value());
             } else {
-              resultTry = folly::Try<TValue>();
+              resultTry = Try<TValue>();
             }
-          } catch (const std::exception& ex) {
-            resultTry = folly::Try<TValue>(
-                folly::exception_wrapper(std::current_exception(), ex));
           } catch (...) {
-            resultTry = folly::Try<TValue>(
-                folly::exception_wrapper(std::current_exception()));
+            resultTry =
+                Try<TValue>(exception_wrapper(std::current_exception()));
           }
         } else {
           LOG(FATAL) << "Unknown consumption mode";
@@ -133,7 +131,7 @@ class ChannelConsumerBase {
       auto callbackHandle = consumeChannelWithCallback(
           std::move(receiver),
           getExecutor(),
-          [=](folly::Try<TValue> resultTry) -> folly::coro::Task<bool> {
+          [=](Try<TValue> resultTry) -> folly::coro::Task<bool> {
             onNext(std::move(resultTry));
             co_return co_await folly::coro::detachOnCancel(
                 continueConsuming_.getSemiFuture());
@@ -142,24 +140,6 @@ class ChannelConsumerBase {
           co_await folly::coro::co_current_cancellation_token,
           [=, handle = std::move(callbackHandle)]() mutable {
             handle.reset();
-          });
-    } else if (mode_ == ConsumptionMode::CallbackWithHandleList) {
-      auto callbackHandleList = ChannelCallbackHandleList();
-      consumeChannelWithCallback(
-          std::move(receiver),
-          getExecutor(),
-          [=](folly::Try<TValue> resultTry) -> folly::coro::Task<bool> {
-            onNext(std::move(resultTry));
-            co_return co_await folly::coro::detachOnCancel(
-                continueConsuming_.getSemiFuture());
-          },
-          callbackHandleList);
-      cancelCallback_ = std::make_unique<folly::CancellationCallback>(
-          co_await folly::coro::co_current_cancellation_token,
-          [=, handleList = std::move(callbackHandleList)]() mutable {
-            executor->add([handleList = std::move(handleList)]() mutable {
-              handleList.clear();
-            });
           });
     } else {
       LOG(FATAL) << "Unknown consumption mode";
@@ -181,7 +161,7 @@ class StressTestConsumer : public ChannelConsumerBase<TValue> {
   StressTestConsumer(
       ConsumptionMode mode, folly::Function<void(TValue)> onValue)
       : ChannelConsumerBase<TValue>(mode),
-        executor_(std::make_unique<folly::CPUThreadPoolExecutor>(1)),
+        executor_(std::make_unique<folly::IOThreadPoolExecutor>(1)),
         onValue_(std::move(onValue)) {}
 
   StressTestConsumer(StressTestConsumer&&) = delete;
@@ -195,11 +175,11 @@ class StressTestConsumer : public ChannelConsumerBase<TValue> {
     executor_.reset();
   }
 
-  folly::Executor::KeepAlive<> getExecutor() override {
-    return executor_.get();
+  folly::Executor::KeepAlive<folly::SequencedExecutor> getExecutor() override {
+    return executor_->getEventBase();
   }
 
-  void onNext(folly::Try<TValue> result) override {
+  void onNext(Try<TValue> result) override {
     if (result.hasValue()) {
       onValue_(std::move(result.value()));
     } else if (result.template hasException<folly::OperationCancelled>()) {
@@ -219,7 +199,7 @@ class StressTestConsumer : public ChannelConsumerBase<TValue> {
   }
 
  private:
-  std::unique_ptr<folly::CPUThreadPoolExecutor> executor_;
+  std::unique_ptr<folly::IOThreadPoolExecutor> executor_;
   folly::Function<void(TValue)> onValue_;
   folly::Promise<CloseType> closedType_;
 };
@@ -242,8 +222,7 @@ class StressTestProducer {
   }
 
   void startProducing(
-      Sender<TValue> sender,
-      std::optional<folly::exception_wrapper> closeException) {
+      Sender<TValue> sender, std::optional<exception_wrapper> closeException) {
     auto produceTask = folly::coro::co_invoke(
         [=,
          sender = std::move(sender),

@@ -16,7 +16,7 @@
 
 #include "folly/experimental/symbolizer/SymbolizedFrame.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/portability/GTest.h"
 

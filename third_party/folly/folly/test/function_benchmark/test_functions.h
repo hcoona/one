@@ -20,7 +20,7 @@
 #include <functional>
 #include <string>
 
-#include "folly/Function.h"
+#include <folly/Function.h>
 
 class Exception : public std::exception {
  public:

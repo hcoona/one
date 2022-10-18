@@ -53,10 +53,9 @@ class ExecutorKeepAliveBase {
 /// threadsafe.
 class Executor {
  public:
-  // Workaround for a linkage problem with explicitly defaulted dtor t22914621
-  virtual ~Executor() {}
+  virtual ~Executor() = default;
 
-  /// Enqueue a function to executed by this executor. This and all
+  /// Enqueue a function to be executed by this executor. This and all
   /// variants must be threadsafe.
   virtual void add(Func) = 0;
 
@@ -66,9 +65,9 @@ class Executor {
 
   virtual uint8_t getNumPriorities() const { return 1; }
 
-  static const int8_t LO_PRI = SCHAR_MIN;
-  static const int8_t MID_PRI = 0;
-  static const int8_t HI_PRI = SCHAR_MAX;
+  static constexpr int8_t LO_PRI = SCHAR_MIN;
+  static constexpr int8_t MID_PRI = 0;
+  static constexpr int8_t HI_PRI = SCHAR_MAX;
 
   /**
    * Executor::KeepAlive is a safe pointer to an Executor.

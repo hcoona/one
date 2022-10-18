@@ -20,7 +20,7 @@
 
 #include <string>
 
-#include "fmt/core.h"
+#include <fmt/core.h>
 
 #include "folly/MacAddress.h"
 #include "folly/String.h"

@@ -16,11 +16,13 @@
 
 #pragma once
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #ifdef _MSC_VER
 #include <immintrin.h>
 #endif
+
+#include <string_view>
 
 #include "folly/CpuId.h"
 #include "folly/Portability.h"
@@ -40,6 +42,7 @@ namespace instructions {
 // use explicitly.
 
 struct Default {
+  static std::string_view name() noexcept { return "Default"; }
   static bool supported(const folly::CpuId& /* cpuId */ = {}) { return true; }
   static FOLLY_ALWAYS_INLINE uint64_t popcount(uint64_t value) {
     return uint64_t(__builtin_popcountll(value));
@@ -83,6 +86,8 @@ struct Default {
 
 #if FOLLY_X64 || defined(__i386__)
 struct Nehalem : public Default {
+  static std::string_view name() noexcept { return "Nehalem"; }
+
   static bool supported(const folly::CpuId& cpuId = {}) {
     return cpuId.popcnt();
   }
@@ -101,6 +106,8 @@ struct Nehalem : public Default {
 };
 
 struct Haswell : public Nehalem {
+  static std::string_view name() noexcept { return "Haswell"; }
+
   static bool supported(const folly::CpuId& cpuId = {}) {
     return Nehalem::supported(cpuId) && cpuId.bmi1() && cpuId.bmi2();
   }
@@ -187,6 +194,7 @@ auto dispatch(Type type, F&& f) -> decltype(f(std::declval<Default>())) {
       return f(Default());
   }
 #else
+  (void)type;
   return f(Default());
 #endif
 

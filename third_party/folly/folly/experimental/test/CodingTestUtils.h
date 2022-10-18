@@ -24,7 +24,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Benchmark.h"
 #include "folly/Likely.h"

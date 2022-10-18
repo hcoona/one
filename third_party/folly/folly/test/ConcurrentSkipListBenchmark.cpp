@@ -24,7 +24,7 @@
 #include <set>
 #include <thread>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Benchmark.h"
 #include "folly/hash/Hash.h"

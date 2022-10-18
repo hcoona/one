@@ -21,7 +21,9 @@
 #include <limits>
 #include "folly/Function.h"
 #include "folly/ThreadLocal.h"
-#include "folly/synchronization/AsymmetricMemoryBarrier.h"
+#include "folly/synchronization/AsymmetricThreadFence.h"
+#include "folly/synchronization/RelaxedAtomic.h"
+#include "folly/synchronization/detail/ThreadCachedTag.h"
 
 namespace folly {
 
@@ -29,8 +31,21 @@ namespace detail {
 
 // Use memory_order_seq_cst for accesses to increments/decrements if we're
 // running under TSAN, because TSAN ignores barriers completely.
-constexpr std::memory_order kReadersMemoryOrder =
-    kIsSanitizeThread ? std::memory_order_seq_cst : std::memory_order_relaxed;
+template <bool>
+struct thread_cached_readers_atomic_;
+template <>
+struct thread_cached_readers_atomic_<false> {
+  template <typename T>
+  using apply = folly::relaxed_atomic<T>;
+};
+template <>
+struct thread_cached_readers_atomic_<true> {
+  template <typename T>
+  using apply = std::atomic<T>;
+};
+template <typename T>
+using thread_cached_readers_atomic = typename thread_cached_readers_atomic_<
+    kIsSanitizeThread>::template apply<T>;
 
 // A data structure that keeps a per-thread cache of a bitfield that contains
 // the current active epoch for readers in the thread, and the number of active
@@ -49,37 +64,31 @@ constexpr std::memory_order kReadersMemoryOrder =
 //
 // These implications afford us debugging opportunities, such
 // as being able to detect long-running readers (T113951078).
-template <typename Tag>
 class ThreadCachedReaders {
-  std::atomic<uint64_t> orphan_epoch_readers_ = std::atomic<uint64_t>(0);
+  using atomic_type = detail::thread_cached_readers_atomic<uint64_t>;
+  atomic_type orphan_epoch_readers_{0};
   folly::detail::Futex<> waiting_{0};
 
   class EpochCount {
    public:
     ThreadCachedReaders* readers_;
     explicit constexpr EpochCount(ThreadCachedReaders* readers) noexcept
-        : readers_(readers), epoch_readers_{}, cache_(readers->tls_cache_) {}
-    std::atomic<uint64_t> epoch_readers_;
-    EpochCount*& cache_; // reference to the cached ptr
+        : readers_(readers), epoch_readers_{} {}
+    atomic_type epoch_readers_;
     ~EpochCount() noexcept {
       // Set the cached epoch and readers.
-      readers_->orphan_epoch_readers_.store(
-          epoch_readers_.load(kReadersMemoryOrder), kReadersMemoryOrder);
-      folly::asymmetricLightBarrier(); // B
+      uint64_t epoch_readers = epoch_readers_;
+      readers_->orphan_epoch_readers_ = epoch_readers;
+      folly::asymmetric_thread_fence_light(std::memory_order_seq_cst); // B
       detail::futexWake(&readers_->waiting_);
-      // reset the cache_ on destructor so we can handle the delete/recreate.
-      cache_ = nullptr;
     }
   };
-  folly::ThreadLocalPtr<EpochCount, Tag> cs_;
+  folly::ThreadLocalPtr<EpochCount, ThreadCachedTag> cs_;
 
-  // Cache the count of nested readers and their epochs in a thread local.
-  static thread_local EpochCount* tls_cache_;
-
+  // may abort if internal allocations fail
   void init() {
     auto ret = new EpochCount(this);
     cs_.reset(ret);
-    tls_cache_ = ret;
   }
 
   static uint32_t readers_from_epoch_reader(uint64_t epoch_reader) {
@@ -96,33 +105,33 @@ class ThreadCachedReaders {
 
  public:
   FOLLY_ALWAYS_INLINE void increment(uint64_t epoch) {
-    if (tls_cache_ == nullptr) {
+    auto tls_cache = cs_.get();
+    if (tls_cache == nullptr) {
       init();
+      tls_cache = cs_.get();
     }
-    uint64_t epoch_reader =
-        tls_cache_->epoch_readers_.load(kReadersMemoryOrder);
+    uint64_t epoch_reader = tls_cache->epoch_readers_;
     if (readers_from_epoch_reader(epoch_reader) != 0) {
       DCHECK(
           readers_from_epoch_reader(epoch_reader) <
           std::numeric_limits<uint32_t>::max());
-      tls_cache_->epoch_readers_.store(epoch_reader + 1, kReadersMemoryOrder);
+      tls_cache->epoch_readers_ = epoch_reader + 1;
     } else {
-      tls_cache_->epoch_readers_.store(
-          create_epoch_reader(epoch, 1), kReadersMemoryOrder);
+      tls_cache->epoch_readers_ = create_epoch_reader(epoch, 1);
     }
-    folly::asymmetricLightBarrier(); // A
+    folly::asymmetric_thread_fence_light(std::memory_order_seq_cst); // A
   }
 
   FOLLY_ALWAYS_INLINE void decrement() {
-    folly::asymmetricLightBarrier(); // B
+    folly::asymmetric_thread_fence_light(std::memory_order_seq_cst); // B
 
-    DCHECK(tls_cache_ != nullptr);
-    uint64_t epoch_reader =
-        tls_cache_->epoch_readers_.load(kReadersMemoryOrder);
+    auto tls_cache = cs_.get();
+    DCHECK(tls_cache != nullptr);
+    uint64_t epoch_reader = tls_cache->epoch_readers_;
     DCHECK(readers_from_epoch_reader(epoch_reader) > 0);
-    tls_cache_->epoch_readers_.store(epoch_reader - 1, kReadersMemoryOrder);
+    tls_cache->epoch_readers_ = epoch_reader - 1;
 
-    folly::asymmetricLightBarrier(); // C
+    folly::asymmetric_thread_fence_light(std::memory_order_seq_cst); // C
     if (waiting_.load(std::memory_order_acquire)) {
       waiting_.store(0, std::memory_order_release);
       detail::futexWake(&waiting_);
@@ -136,7 +145,7 @@ class ThreadCachedReaders {
   }
 
   bool epochIsClear(uint8_t epoch) {
-    uint64_t orphaned = orphan_epoch_readers_.load(kReadersMemoryOrder);
+    uint64_t orphaned = orphan_epoch_readers_;
     if (epochHasReaders(epoch, orphaned)) {
       return false;
     }
@@ -149,10 +158,10 @@ class ThreadCachedReaders {
     // epoch.  However, this is ok - they started concurrently *after*
     // any callbacks that will run, and therefore it is safe to run
     // the callbacks.
-    folly::asymmetricHeavyBarrier();
+    folly::asymmetric_thread_fence_heavy(std::memory_order_seq_cst);
     auto access = cs_.accessAllThreads();
     return !std::any_of(access.begin(), access.end(), [&](auto& i) {
-      return epochHasReaders(epoch, i.epoch_readers_.load(kReadersMemoryOrder));
+      return epochHasReaders(epoch, i.epoch_readers_);
     });
   }
 
@@ -166,7 +175,7 @@ class ThreadCachedReaders {
       // Matches C.  Ensure either decrement sees waiting_,
       // or we see their decrement and can safely sleep.
       waiting_.store(1, std::memory_order_release);
-      folly::asymmetricHeavyBarrier();
+      folly::asymmetric_thread_fence_heavy(std::memory_order_seq_cst);
       if (epochIsClear(epoch)) {
         break;
       }
@@ -174,22 +183,7 @@ class ThreadCachedReaders {
     }
     waiting_.store(0, std::memory_order_relaxed);
   }
-
-  // We are guaranteed to be called while StaticMeta lock is still
-  // held because of ordering in AtForkList.  We can therefore safely
-  // touch orphan_ and clear out all counts.
-  void resetAfterFork() {
-    if (tls_cache_) {
-      tls_cache_->epoch_readers_.store(0, kReadersMemoryOrder);
-    }
-    orphan_epoch_readers_.store(0, kReadersMemoryOrder);
-    folly::asymmetricLightBarrier();
-  }
 };
-
-template <typename Tag>
-thread_local typename detail::ThreadCachedReaders<Tag>::EpochCount*
-    detail::ThreadCachedReaders<Tag>::tls_cache_ = nullptr;
 
 } // namespace detail
 } // namespace folly

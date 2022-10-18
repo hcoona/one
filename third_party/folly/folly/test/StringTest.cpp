@@ -24,8 +24,8 @@
 #include <set>
 #include <tuple>
 
-#include "boost/regex.hpp"
-#include "glog/logging.h"
+#include <boost/regex.hpp>
+#include <glog/logging.h>
 
 #include "folly/FBVector.h"
 #include "folly/container/Array.h"
@@ -230,6 +230,18 @@ TEST(Escape, uriUnescape) {
   EXPECT_THROW({ uriUnescape<std::string>("hello%2"); }, std::invalid_argument);
   EXPECT_THROW(
       { uriUnescape<std::string>("hello%2g"); }, std::invalid_argument);
+}
+
+TEST(Escape, tryUriUnescape) {
+  EXPECT_EQ(
+      "hello, /world",
+      tryUriUnescape<std::string>("hello, /world").value_or(""));
+  EXPECT_EQ(
+      "hello, /world",
+      tryUriUnescape<std::string>("hello%2c+%2fworld", UriEscapeMode::QUERY)
+          .value_or(""));
+  EXPECT_FALSE(tryUriUnescape<std::string>("hello%").hasValue());
+  EXPECT_FALSE(tryUriUnescape<std::string>("hello%2g").hasValue());
 }
 
 namespace {

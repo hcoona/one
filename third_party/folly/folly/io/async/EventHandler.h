@@ -18,7 +18,7 @@
 
 #include <cstddef>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/io/async/EventBaseBackendBase.h"
 #include "folly/io/async/EventUtil.h"
@@ -177,6 +177,10 @@ class EventHandler {
   void setEventCallback(EventReadCallback* cb) { event_.setCallback(cb); }
 
   void setEventCallback(EventRecvmsgCallback* cb) { event_.setCallback(cb); }
+
+  void setRecvmsgMultishotCallback(EventRecvmsgMultishotCallback* cb) {
+    event_.setCallback(cb);
+  }
 
   void resetEventCallback() { event_.resetCallback(); }
 

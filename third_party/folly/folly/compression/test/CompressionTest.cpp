@@ -23,7 +23,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Random.h"
 #include "folly/Varint.h"
@@ -32,7 +32,7 @@
 #include "folly/portability/GTest.h"
 
 #if FOLLY_HAVE_LIBZSTD
-#include "zstd.h"
+#include <zstd.h>
 
 #include "folly/compression/Zstd.h"
 #endif
@@ -95,6 +95,8 @@ class RandomDataHolder : public DataHolder {
 };
 
 RandomDataHolder::RandomDataHolder(size_t sizeLog2) : DataHolder(sizeLog2) {
+  memset(data_.get(), 0, size_);
+
   static constexpr size_t numThreadsLog2 = 3;
   static constexpr size_t numThreads = size_t(1) << numThreadsLog2;
 

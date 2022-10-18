@@ -23,7 +23,7 @@
 #include "folly/lang/Bits.h"
 #include "folly/lang/SafeAssert.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #if FOLLY_QUOTIENT_MULTI_SET_SUPPORTED
 

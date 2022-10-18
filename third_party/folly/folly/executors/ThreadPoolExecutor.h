@@ -20,7 +20,7 @@
 #include <mutex>
 #include <queue>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/DefaultKeepAliveExecutor.h"
 #include "folly/Memory.h"

@@ -18,7 +18,7 @@
 
 #include <stdexcept>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/portability/GMock.h"
 #include "folly/portability/GTest.h"

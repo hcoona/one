@@ -18,8 +18,8 @@
 
 #include <thread>
 
-#include "boost/thread/barrier.hpp"
-#include "glog/logging.h"
+#include <boost/thread/barrier.hpp>
+#include <glog/logging.h>
 
 #include "folly/experimental/io/FsUtil.h"
 #include "folly/io/async/EventBase.h"
@@ -1091,4 +1091,85 @@ TEST(Singleton, ForkInChild) {
   EXPECT_DEATH(
       [&]() { vault.destroyInstances(); }(),
       "Attempting to destroy singleton .*ForkObject.* in child process");
+}
+
+struct EagerInitOnReenableSingletonsTag {};
+template <typename T, typename Tag = detail::DefaultTag>
+using SingletonEagerInitOnReenableSingletons =
+    Singleton<T, Tag, EagerInitOnReenableSingletonsTag>;
+
+TEST(Singleton, EagerInitOnReenableSingletons) {
+  struct CountingSingleton {
+    explicit CountingSingleton(int& counter) { ++counter; }
+  };
+
+  int counter1{0};
+  int counter2{0};
+  struct Tag1 {};
+  struct Tag2 {};
+
+  auto& vault = *SingletonVault::singleton<EagerInitOnReenableSingletonsTag>();
+  auto singleton1 =
+      SingletonEagerInitOnReenableSingletons<CountingSingleton, Tag1>([&] {
+        return new CountingSingleton(counter1);
+      }).shouldEagerInitOnReenable();
+  auto singleton2 =
+      SingletonEagerInitOnReenableSingletons<CountingSingleton, Tag2>([&] {
+        return new CountingSingleton(counter2);
+      }).shouldEagerInitOnReenable();
+  vault.registrationComplete();
+
+  EXPECT_EQ(0, counter1);
+  EXPECT_EQ(0, counter2);
+
+  singleton1.try_get();
+
+  EXPECT_EQ(1, counter1);
+  EXPECT_EQ(0, counter2);
+
+  vault.destroyInstances();
+  vault.reenableInstances();
+
+  EXPECT_EQ(2, counter1);
+  EXPECT_EQ(0, counter2);
+
+  singleton1.try_get();
+
+  EXPECT_EQ(2, counter1);
+  EXPECT_EQ(0, counter2);
+
+  vault.destroyInstances();
+  vault.reenableInstances();
+
+  EXPECT_EQ(3, counter1);
+  EXPECT_EQ(0, counter2);
+
+  singleton2.try_get();
+
+  EXPECT_EQ(3, counter1);
+  EXPECT_EQ(1, counter2);
+
+  vault.destroyInstances();
+  vault.reenableInstances();
+
+  EXPECT_EQ(4, counter1);
+  EXPECT_EQ(2, counter2);
+}
+
+namespace {
+class CancelOnDestructionSingleton {
+ public:
+  ~CancelOnDestructionSingleton() {
+    CHECK(SingletonVault::singleton()
+              ->getDestructionCancellationToken()
+              .isCancellationRequested());
+  }
+};
+
+auto cancelOnDestructionSingleton =
+    folly::Singleton<CancelOnDestructionSingleton>{};
+} // namespace
+
+TEST(Singleton, CancelOnDestruction) {
+  cancelOnDestructionSingleton.try_get();
 }

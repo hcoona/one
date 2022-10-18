@@ -26,7 +26,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/FBString.h"
 #include "folly/FBVector.h"
@@ -34,6 +34,7 @@
 #include "folly/Portability.h"
 #include "folly/Range.h"
 #include "folly/detail/Iterators.h"
+#include "folly/lang/CheckedMath.h"
 #include "folly/lang/Ordering.h"
 #include "folly/portability/SysUio.h"
 #include "folly/synchronization/MicroSpinLock.h"
@@ -43,6 +44,14 @@ FOLLY_PUSH_WARNING
 FOLLY_GNU_DISABLE_WARNING("-Wshadow")
 
 namespace folly {
+
+namespace detail {
+// Is T a unique_ptr<> to a standard-layout type?
+template <typename T>
+struct IsUniquePtrToSL : std::false_type {};
+template <typename T, typename D>
+struct IsUniquePtrToSL<std::unique_ptr<T, D>> : std::is_standard_layout<T> {};
+} // namespace detail
 
 /**
  * An IOBuf is a pointer to a buffer of data.
@@ -65,17 +74,17 @@ namespace folly {
  *
  * The data layout looks like this:
  *
- *  +-------+
- *  | IOBuf |
- *  +-------+
- *   /
- *  |
- *  v
- *  +------------+--------------------+-----------+
- *  | headroom   |        data        |  tailroom |
- *  +------------+--------------------+-----------+
- *  ^            ^                    ^           ^
- *  buffer()   data()               tail()      bufferEnd()
+ *      +-------+
+ *      | IOBuf |
+ *      +-------+
+ *       /
+ *      |
+ *      v
+ *      +------------+--------------------+-----------+
+ *      | headroom   |        data        |  tailroom |
+ *      +------------+--------------------+-----------+
+ *      ^            ^                    ^           ^
+ *      buffer()   data()               tail()      bufferEnd()
  *
  *  The length() method returns the length of the valid data; capacity()
  *  returns the entire capacity of the buffer (from buffer() to bufferEnd()).
@@ -98,15 +107,15 @@ namespace folly {
  * same location for all IOBufs sharing the same underlying buffer, unless the
  * tail was trimmed with trimWritableTail().
  *
- *       +-----------+     +---------+
- *       |  IOBuf 1  |     | IOBuf 2 |
- *       +-----------+     +---------+
- *        |         | _____/        |
- *   data |    tail |/    data      | tail
- *        v         v               v
- *  +-------------------------------------+
- *  |     |         |               |     |
- *  +-------------------------------------+
+ *           +-----------+     +---------+
+ *           |  IOBuf 1  |     | IOBuf 2 |
+ *           +-----------+     +---------+
+ *            |         | _____/        |
+ *       data |    tail |/    data      | tail
+ *            v         v               v
+ *      +-------------------------------------+
+ *      |     |         |               |     |
+ *      +-------------------------------------+
  *
  * If you only read data from an IOBuf, you don't need to worry about other
  * IOBuf objects possibly sharing the same underlying buffer.  However, if you
@@ -216,15 +225,9 @@ namespace folly {
  * sharing on their own.  (For example, by using a shared_ptr.  Alternatively,
  * users always have the option of using clone() to create a second IOBuf that
  * points to the same underlying buffer.)
+ *
+ * @refcode docs/examples/folly/io/IOBuf.cpp
  */
-namespace detail {
-// Is T a unique_ptr<> to a standard-layout type?
-template <typename T>
-struct IsUniquePtrToSL : std::false_type {};
-template <typename T, typename D>
-struct IsUniquePtrToSL<std::unique_ptr<T, D>> : std::is_standard_layout<T> {};
-} // namespace detail
-
 class IOBuf {
  public:
   class Iterator;
@@ -1214,9 +1217,13 @@ class IOBuf {
    * Returns ByteRange that points to the data IOBuf stores.
    */
   ByteRange coalesce() {
-    const std::size_t newHeadroom = headroom();
-    const std::size_t newTailroom = prev()->tailroom();
-    return coalesceWithHeadroomTailroom(newHeadroom, newTailroom);
+    if (isChained()) {
+      const std::size_t newHeadroom = headroom();
+      const std::size_t newTailroom = prev()->tailroom();
+      coalesceAndReallocate(
+          newHeadroom, computeChainDataLength(), this, newTailroom);
+    }
+    return ByteRange(data_, length_);
   }
 
   /**
@@ -1764,7 +1771,10 @@ inline std::unique_ptr<IOBuf> IOBuf::copyBuffer(
     std::size_t size,
     std::size_t headroom,
     std::size_t minTailroom) {
-  std::size_t capacity = headroom + size + minTailroom;
+  std::size_t capacity;
+  if (!folly::checked_add(&capacity, size, headroom, minTailroom)) {
+    throw_exception(std::length_error(""));
+  }
   std::unique_ptr<IOBuf> buf = create(capacity);
   buf->advance(headroom);
   if (size != 0) {

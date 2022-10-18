@@ -903,9 +903,8 @@ class F14Table : public Policy {
       KeyEqual const& keyEqual,
       Alloc const& alloc)
       : Policy{hasher, keyEqual, alloc} {
-    if (initialCapacity > 0) {
-      reserve(initialCapacity);
-    }
+    debugModeOnReserve(initialCapacity);
+    initialReserve(initialCapacity);
   }
 
   F14Table(F14Table const& rhs) : Policy{rhs} { buildFromF14Table(rhs); }
@@ -1781,6 +1780,35 @@ class F14Table : public Policy {
         newCapacityScale);
   }
 
+  void initialReserve(std::size_t desiredCapacity) {
+    FOLLY_SAFE_DCHECK(size() == 0, size());
+    FOLLY_SAFE_DCHECK(chunkMask_ == 0, chunkMask_);
+    FOLLY_SAFE_DCHECK(chunks_ == Chunk::emptyInstance(), "");
+    if (desiredCapacity == 0) {
+      return;
+    }
+
+    std::size_t newChunkCount;
+    std::size_t newCapacityScale;
+    std::tie(newChunkCount, newCapacityScale) = computeChunkCountAndScale(
+        desiredCapacity, /*attemptExact=*/true, kContinuousCapacity);
+    auto newCapacity = computeCapacity(newChunkCount, newCapacityScale);
+    auto newAllocSize = chunkAllocSize(newChunkCount, newCapacityScale);
+
+    BytePtr rawAllocation;
+    auto undoState =
+        this->beforeRehash(0, 0, newCapacity, newAllocSize, rawAllocation);
+
+    chunks_ = initializeChunks(rawAllocation, newChunkCount, newCapacityScale);
+
+    FOLLY_SAFE_DCHECK(
+        newChunkCount < std::numeric_limits<InternalSizeType>::max(), "");
+    chunkMask_ = static_cast<InternalSizeType>(newChunkCount - 1);
+
+    this->afterRehash(
+        std::move(undoState), true, 0, 0, newCapacity, nullptr, 0);
+  }
+
   void rehashImpl(
       std::size_t origSize,
       std::size_t origChunkCount,
@@ -1976,7 +2004,11 @@ class F14Table : public Policy {
     // We want to support the pattern
     //   map.reserve(map.size() + 2); auto& r1 = map[k1]; auto& r2 = map[k2];
     debugModeOnReserve(capacity);
-    reserveImpl(capacity);
+    if (chunks_ == Chunk::emptyInstance()) {
+      initialReserve(capacity);
+    } else {
+      reserveImpl(capacity);
+    }
   }
 
   void reserveForInsert(size_t incoming = 1) {
@@ -1997,7 +2029,22 @@ class F14Table : public Policy {
   template <typename K, typename... Args>
   std::pair<ItemIter, bool> tryEmplaceValue(K const& key, Args&&... args) {
     const auto hp = splitHash(this->computeKeyHash(key));
+    return tryEmplaceValueImpl(hp, key, std::forward<Args>(args)...);
+  }
 
+  template <typename K, typename... Args>
+  std::pair<ItemIter, bool> tryEmplaceValueWithToken(
+      F14HashToken const& token, K const& key, Args&&... args) {
+    FOLLY_SAFE_DCHECK(
+        splitHash(this->computeKeyHash(key)) == static_cast<HashPair>(token),
+        "");
+    return tryEmplaceValueImpl(
+        static_cast<HashPair>(token), key, std::forward<Args>(args)...);
+  }
+
+  template <typename K, typename... Args>
+  std::pair<ItemIter, bool> tryEmplaceValueImpl(
+      HashPair hp, K const& key, Args&&... args) {
     if (size() > 0) {
       auto existing = findImpl(hp, key, Prefetch::ENABLED);
       if (!existing.atEnd()) {

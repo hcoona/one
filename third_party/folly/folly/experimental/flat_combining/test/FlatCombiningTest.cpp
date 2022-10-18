@@ -20,7 +20,7 @@
 
 #include "folly/portability/GTest.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 using namespace folly::test;
 

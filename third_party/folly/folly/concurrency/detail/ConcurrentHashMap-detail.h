@@ -302,24 +302,26 @@ class alignas(64) BucketTable {
   template <typename MatchFunc, typename K, typename... Args>
   bool insert(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
       hazptr_obj_cohort<Atom>* cohort,
       Args&&... args) {
     return doInsert(
-        it, k, type, match, nullptr, cohort, std::forward<Args>(args)...);
+        it, h, k, type, match, nullptr, cohort, std::forward<Args>(args)...);
   }
 
   template <typename MatchFunc, typename K, typename... Args>
   bool insert(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
       Node* cur,
       hazptr_obj_cohort<Atom>* cohort) {
-    return doInsert(it, k, type, match, cur, cohort, cur);
+    return doInsert(it, h, k, type, match, cur, cohort, cur);
   }
 
   // Must hold lock.
@@ -349,7 +351,6 @@ class alignas(64) BucketTable {
       // assuming all the nodes hash to the same bucket.
       auto lastrun = node;
       auto lastidx = idx;
-      auto count = 0;
       auto last = node->next_.load(std::memory_order_relaxed);
       for (; last != nullptr;
            last = last->next_.load(std::memory_order_relaxed)) {
@@ -357,9 +358,7 @@ class alignas(64) BucketTable {
         if (k != lastidx) {
           lastidx = k;
           lastrun = last;
-          count = 0;
         }
-        count++;
       }
       // Set longest last run in new bucket, incrementing the refcount.
       lastrun->acquire_link(); // defined in hazptr_obj_base_linked
@@ -386,10 +385,9 @@ class alignas(64) BucketTable {
   }
 
   template <typename K>
-  bool find(Iterator& res, const K& k) {
+  bool find(Iterator& res, size_t h, const K& k) {
     auto& hazcurr = res.hazptrs_[1];
     auto& haznext = res.hazptrs_[2];
-    auto h = HashFn()(k);
     size_t bcount;
     Buckets* buckets;
     getBucketsAndCount(bcount, buckets, res.hazptrs_[0]);
@@ -409,9 +407,8 @@ class alignas(64) BucketTable {
   }
 
   template <typename K, typename MatchFunc>
-  std::size_t erase(const K& key, Iterator* iter, MatchFunc match) {
+  std::size_t erase(size_t h, const K& key, Iterator* iter, MatchFunc match) {
     Node* node{nullptr};
-    auto h = HashFn()(key);
     {
       std::lock_guard<Mutex> g(m_);
 
@@ -661,13 +658,13 @@ class alignas(64) BucketTable {
   template <typename MatchFunc, typename K, typename... Args>
   bool doInsert(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
       Node* cur,
       hazptr_obj_cohort<Atom>* cohort,
       Args&&... args) {
-    auto h = HashFn()(k);
     std::unique_lock<Mutex> g(m_);
 
     size_t bcount = bucket_count_.load(std::memory_order_relaxed);
@@ -1209,6 +1206,7 @@ class alignas(64) SIMDTable {
   template <typename MatchFunc, typename K, typename... Args>
   bool insert(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
@@ -1218,7 +1216,6 @@ class alignas(64) SIMDTable {
     Chunks* chunks;
     size_t ccount, chunk_idx, tag_idx;
 
-    auto h = HashFn()(k);
     auto hp = splitHash(h);
 
     std::unique_lock<Mutex> g(m_);
@@ -1263,6 +1260,7 @@ class alignas(64) SIMDTable {
   template <typename MatchFunc, typename K, typename... Args>
   bool insert(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
@@ -1273,7 +1271,6 @@ class alignas(64) SIMDTable {
     Chunks* chunks;
     size_t ccount, chunk_idx, tag_idx;
 
-    auto h = HashFn()(k);
     auto hp = splitHash(h);
 
     std::unique_lock<Mutex> g(m_);
@@ -1318,9 +1315,8 @@ class alignas(64) SIMDTable {
   }
 
   template <typename K>
-  bool find(Iterator& res, const K& k) {
+  bool find(Iterator& res, size_t h, const K& k) {
     auto& hazz = res.hazptrs_[1];
-    auto h = HashFn()(k);
     auto hp = splitHash(h);
     size_t ccount;
     Chunks* chunks;
@@ -1351,8 +1347,7 @@ class alignas(64) SIMDTable {
   }
 
   template <typename K, typename MatchFunc>
-  std::size_t erase(const K& key, Iterator* iter, MatchFunc match) {
-    auto h = HashFn()(key);
+  std::size_t erase(size_t h, const K& key, Iterator* iter, MatchFunc match) {
     const HashPair hp = splitHash(h);
 
     std::unique_lock<Mutex> g(m_);
@@ -1720,16 +1715,17 @@ class alignas(64) ConcurrentHashMapSegment {
   bool empty() { return impl_.empty(); }
 
   template <typename Key>
-  bool insert(Iterator& it, std::pair<Key, mapped_type>&& foo) {
-    return insert(it, std::move(foo.first), std::move(foo.second));
+  bool insert(Iterator& it, size_t h, std::pair<Key, mapped_type>&& foo) {
+    return insert(it, h, std::move(foo.first), std::move(foo.second));
   }
 
   template <typename Key, typename Value>
-  bool insert(Iterator& it, Key&& k, Value&& v) {
+  bool insert(Iterator& it, size_t h, Key&& k, Value&& v) {
     auto node = (Node*)Allocator().allocate(sizeof(Node));
     new (node) Node(cohort_, std::forward<Key>(k), std::forward<Value>(v));
     auto res = insert_internal(
         it,
+        h,
         node->getItem().first,
         InsertType::DOES_NOT_EXIST,
         [](const ValueType&) { return false; },
@@ -1742,11 +1738,12 @@ class alignas(64) ConcurrentHashMapSegment {
   }
 
   template <typename Key, typename... Args>
-  bool try_emplace(Iterator& it, Key&& k, Args&&... args) {
+  bool try_emplace(Iterator& it, size_t h, Key&& k, Args&&... args) {
     // Note: first key is only ever compared.  Second is moved in to
     // create the node, and the first key is never touched again.
     return insert_internal(
         it,
+        h,
         std::forward<Key>(k),
         InsertType::DOES_NOT_EXIST,
         [](const ValueType&) { return false; },
@@ -1755,9 +1752,10 @@ class alignas(64) ConcurrentHashMapSegment {
   }
 
   template <typename... Args>
-  bool emplace(Iterator& it, const KeyType& k, Node* node) {
+  bool emplace(Iterator& it, size_t h, const KeyType& k, Node* node) {
     return insert_internal(
         it,
+        h,
         k,
         InsertType::DOES_NOT_EXIST,
         [](const ValueType&) { return false; },
@@ -1765,11 +1763,12 @@ class alignas(64) ConcurrentHashMapSegment {
   }
 
   template <typename Key, typename Value>
-  bool insert_or_assign(Iterator& it, Key&& k, Value&& v) {
+  bool insert_or_assign(Iterator& it, size_t h, Key&& k, Value&& v) {
     auto node = (Node*)Allocator().allocate(sizeof(Node));
     new (node) Node(cohort_, std::forward<Key>(k), std::forward<Value>(v));
     auto res = insert_internal(
         it,
+        h,
         node->getItem().first,
         InsertType::ANY,
         [](const ValueType&) { return false; },
@@ -1782,11 +1781,12 @@ class alignas(64) ConcurrentHashMapSegment {
   }
 
   template <typename Key, typename Value>
-  bool assign(Iterator& it, Key&& k, Value&& v) {
+  bool assign(Iterator& it, size_t h, Key&& k, Value&& v) {
     auto node = (Node*)Allocator().allocate(sizeof(Node));
     new (node) Node(cohort_, std::forward<Key>(k), std::forward<Value>(v));
     auto res = insert_internal(
         it,
+        h,
         node->getItem().first,
         InsertType::MUST_EXIST,
         [](const ValueType&) { return false; },
@@ -1797,18 +1797,18 @@ class alignas(64) ConcurrentHashMapSegment {
     }
     return res;
   }
-
-  template <typename Key, typename Value>
-  bool assign_if_equal(
-      Iterator& it, Key&& k, const ValueType& expected, Value&& desired) {
+  template <typename Key, typename Value, typename Predicate>
+  bool assign_if(
+      Iterator& it, size_t h, Key&& k, Value&& desired, Predicate&& predicate) {
     auto node = (Node*)Allocator().allocate(sizeof(Node));
     new (node)
         Node(cohort_, std::forward<Key>(k), std::forward<Value>(desired));
     auto res = insert_internal(
         it,
+        h,
         node->getItem().first,
         InsertType::MATCH,
-        [&expected](const ValueType& v) { return v == expected; },
+        std::forward<Predicate>(predicate),
         node);
     if (!res) {
       node->~Node();
@@ -1817,21 +1817,42 @@ class alignas(64) ConcurrentHashMapSegment {
     return res;
   }
 
+  template <typename Key, typename Value>
+  bool assign_if_equal(
+      Iterator& it,
+      size_t h,
+      Key&& k,
+      const ValueType& expected,
+      Value&& desired) {
+    return assign_if(
+        it,
+        h,
+        std::forward<Key>(k),
+        std::forward<Value>(desired),
+        [&expected](const ValueType& v) { return v == expected; });
+  }
+
   template <typename MatchFunc, typename K, typename... Args>
   bool insert_internal(
       Iterator& it,
+      size_t h,
       const K& k,
       InsertType type,
       MatchFunc match,
       Args&&... args) {
     return impl_.insert(
-        it, k, type, match, cohort_, std::forward<Args>(args)...);
+        it, h, k, type, match, cohort_, std::forward<Args>(args)...);
   }
 
   template <typename MatchFunc, typename K, typename... Args>
   bool insert_internal(
-      Iterator& it, const K& k, InsertType type, MatchFunc match, Node* cur) {
-    return impl_.insert(it, k, type, match, cur, cohort_);
+      Iterator& it,
+      size_t h,
+      const K& k,
+      InsertType type,
+      MatchFunc match,
+      Node* cur) {
+    return impl_.insert(it, h, k, type, match, cur, cohort_);
   }
 
   // Must hold lock.
@@ -1840,24 +1861,26 @@ class alignas(64) ConcurrentHashMapSegment {
   }
 
   template <typename K>
-  bool find(Iterator& res, const K& k) {
-    return impl_.find(res, k);
+  bool find(Iterator& res, size_t h, const K& k) {
+    return impl_.find(res, h, k);
   }
 
   // Listed separately because we need a prev pointer.
   template <typename K>
-  size_type erase(const K& key) {
-    return erase_internal(key, nullptr, [](const ValueType&) { return true; });
+  size_type erase(size_t h, const K& key) {
+    return erase_internal(
+        h, key, nullptr, [](const ValueType&) { return true; });
   }
 
   template <typename K, typename Predicate>
-  size_type erase_key_if(const K& key, Predicate&& predicate) {
-    return erase_internal(key, nullptr, std::forward<Predicate>(predicate));
+  size_type erase_key_if(size_t h, const K& key, Predicate&& predicate) {
+    return erase_internal(h, key, nullptr, std::forward<Predicate>(predicate));
   }
 
   template <typename K, typename MatchFunc>
-  size_type erase_internal(const K& key, Iterator* iter, MatchFunc match) {
-    return impl_.erase(key, iter, match);
+  size_type erase_internal(
+      size_t h, const K& key, Iterator* iter, MatchFunc match) {
+    return impl_.erase(h, key, iter, match);
   }
 
   // Unfortunately because we are reusing nodes on rehash, we can't
@@ -1866,8 +1889,8 @@ class alignas(64) ConcurrentHashMapSegment {
   //
   // This is a small departure from standard stl containers: erase may
   // throw if hash or key_eq functions throw.
-  void erase(Iterator& res, Iterator& pos) {
-    erase_internal(pos->first, &res, [](const ValueType&) { return true; });
+  void erase(Iterator& res, Iterator& pos, size_t h) {
+    erase_internal(h, pos->first, &res, [](const ValueType&) { return true; });
     // Invalidate the iterator.
     pos = cend();
   }

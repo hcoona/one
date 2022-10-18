@@ -19,7 +19,7 @@
 #include <atomic>
 #include <thread>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Portability.h"
 #include "folly/synchronization/detail/Sleeper.h"

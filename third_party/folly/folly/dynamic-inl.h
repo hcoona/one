@@ -357,14 +357,6 @@ inline dynamic::dynamic(ObjectMaker&& maker) : type_(OBJECT) {
       ObjectImpl(std::move(*maker.val_.getAddress<ObjectImpl>()));
 }
 
-inline dynamic::dynamic(dynamic const& o) : type_(NULLT) {
-  *this = o;
-}
-
-inline dynamic::dynamic(dynamic&& o) noexcept : type_(NULLT) {
-  *this = std::move(o);
-}
-
 inline dynamic::~dynamic() noexcept {
   destroy();
 }
@@ -1037,7 +1029,6 @@ T dynamic::asImpl() const {
 }
 
 // Return a T* to our type, or null if we're not that type.
-// clang-format off
 template <class T>
 T* dynamic::get_nothrow() & noexcept {
   if (type_ != TypeInfo<T>::type) {
@@ -1045,7 +1036,6 @@ T* dynamic::get_nothrow() & noexcept {
   }
   return getAddress<T>();
 }
-// clang-format on
 
 template <class T>
 T const* dynamic::get_nothrow() const& noexcept {

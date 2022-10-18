@@ -625,27 +625,6 @@ FOLLY_INLINE_VARIABLE constexpr bool is_transparent_v =
 template <typename T>
 struct is_transparent : bool_constant<is_transparent_v<T>> {};
 
-namespace detail {
-template <typename T>
-using sizeof_t = decltype(sizeof(T));
-} // namespace detail
-
-//  is_complete_v
-//  is_complete
-//
-//  A trait to test if the provided type T is a complete type or not.
-//  See https://en.cppreference.com/w/cpp/language/type.
-//
-//  If is_complete_v<T> is used (possibly cv-ref qualified), then the type T
-//  must always be incomplete. That is, it's not safe to instantiate
-//  is_complete_v<T> on a forward-declared class type T and then again after the
-//  class T is defined. Doing so would be an ODR violation for is_complete_v.
-template <typename T>
-FOLLY_INLINE_VARIABLE constexpr bool is_complete_v =
-    Disjunction<is_detected<detail::sizeof_t, T>, std::is_function<T>>::value;
-template <typename T>
-struct is_complete : bool_constant<is_complete_v<T>> {};
-
 } // namespace folly
 
 /**
@@ -952,5 +931,43 @@ using int_bits_t = make_signed_t<uint_bits_t<bits>>;
 
 template <std::size_t lg_bits>
 using int_bits_lg_t = make_signed_t<uint_bits_lg_t<lg_bits>>;
+
+namespace traits_detail {
+
+template <std::size_t I, typename T>
+struct type_pack_element_indexed_type {};
+
+template <typename, typename...>
+struct type_pack_element_set;
+template <std::size_t... I, typename... T>
+struct type_pack_element_set<std::index_sequence<I...>, T...>
+    : type_pack_element_indexed_type<I, T>... {};
+template <typename... T>
+using type_pack_element_set_t =
+    type_pack_element_set<std::index_sequence_for<T...>, T...>;
+
+template <std::size_t I>
+struct type_pack_element_test {
+  template <typename T>
+  static T impl(type_pack_element_indexed_type<I, T>*);
+};
+
+template <std::size_t I, typename... Ts>
+using type_pack_element_fallback = decltype(type_pack_element_test<I>::impl(
+    static_cast<type_pack_element_set_t<Ts...>*>(nullptr)));
+
+} // namespace traits_detail
+
+#if FOLLY_HAS_BUILTIN(__type_pack_element)
+
+template <std::size_t I, typename... Ts>
+using type_pack_element_t = __type_pack_element<I, Ts...>;
+
+#else
+
+template <std::size_t I, typename... Ts>
+using type_pack_element_t = traits_detail::type_pack_element_fallback<I, Ts...>;
+
+#endif
 
 } // namespace folly

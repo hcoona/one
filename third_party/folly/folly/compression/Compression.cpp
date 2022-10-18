@@ -17,18 +17,18 @@
 #include "folly/compression/Compression.h"
 
 #if FOLLY_HAVE_LIBLZ4
-#include "lz4.h"
-#include "lz4hc.h"
+#include <lz4.h>
+#include <lz4hc.h>
 #if LZ4_VERSION_NUMBER >= 10301
-#include "lz4frame.h"
+#include <lz4frame.h>
 #endif
 #endif
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #if FOLLY_HAVE_LIBSNAPPY
-#include "snappy-sinksource.h"
-#include "snappy.h"
+#include <snappy-sinksource.h>
+#include <snappy.h>
 #endif
 
 #if FOLLY_HAVE_LIBZ
@@ -36,7 +36,7 @@
 #endif
 
 #if FOLLY_HAVE_LIBLZMA
-#include "lzma.h"
+#include <lzma.h>
 #endif
 
 #if FOLLY_HAVE_LIBZSTD
@@ -46,7 +46,7 @@
 #if FOLLY_HAVE_LIBBZ2
 #include "folly/portability/Windows.h"
 
-#include "bzlib.h"
+#include <bzlib.h>
 #endif
 
 #include <algorithm>
@@ -853,7 +853,7 @@ std::unique_ptr<IOBuf> LZ4FrameCodec::doUncompress(
   }
   data = nullptr;
   // Select decompression options
-  LZ4F_decompressOptions_t options;
+  LZ4F_decompressOptions_t options{};
   options.stableDst = 1;
   // Select blockSize and growthSize for the IOBufQueue
   IOBufQueue queue(IOBufQueue::cacheChainLength());

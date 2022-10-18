@@ -125,7 +125,7 @@ Sample usage:
 #include <memory>
 #include <type_traits>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/ConcurrentSkipList-inl.h"
 #include "folly/Likely.h"

@@ -19,7 +19,7 @@
 #include <memory>
 #include <mutex>
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 #include "folly/Portability.h"
 #include "folly/SharedMutex.h"
@@ -31,7 +31,7 @@
 // clang-format off
 #include "folly/portability/Windows.h"
 // @lint-ignore CLANGTIDY
-#include "openssl/crypto.h"
+#include <openssl/crypto.h>
 // clang-format on
 
 #if !defined(OPENSSL_IS_BORINGSSL)

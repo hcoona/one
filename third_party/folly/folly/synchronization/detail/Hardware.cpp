@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "boost/preprocessor/repetition/repeat.hpp"
+#include <boost/preprocessor/repetition/repeat.hpp>
 
 #include "folly/CppAttributes.h"
 #include "folly/lang/Assume.h"

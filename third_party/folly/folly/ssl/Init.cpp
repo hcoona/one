@@ -21,7 +21,7 @@
 #include "folly/portability/OpenSSL.h"
 #include "folly/ssl/detail/OpenSSLThreading.h"
 
-#include "glog/logging.h"
+#include <glog/logging.h>
 
 namespace folly {
 namespace ssl {
@@ -55,6 +55,9 @@ void initializeOpenSSLLocked() {
     throw std::runtime_error("Failed to initialize OpenSSL RNG.");
   }
 #endif
+  // Non-fatal errors may be set during initialization, if OPENSSL_init_ssl
+  // successfully returned we can safely clear them
+  ERR_clear_error();
   initialized_ = true;
 }
 

@@ -18,8 +18,8 @@
 
 #include <system_error>
 
-#include "boost/algorithm/string.hpp"
-#include "glog/logging.h"
+#include <boost/algorithm/string.hpp>
+#include <glog/logging.h>
 
 #include "folly/Memory.h"
 #include "folly/portability/Fcntl.h"
@@ -95,6 +95,7 @@ TEST(TemporaryFile, moveAssignment) {
     fd = g.fd();
     f = std::move(g);
   }
+  EXPECT_TRUE(fs::exists(f.path()));
   EXPECT_EQ(fs::path("."), f.path().parent_path());
   EXPECT_EQ(f.fd(), fd);
 

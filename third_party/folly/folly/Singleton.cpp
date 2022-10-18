@@ -23,10 +23,12 @@
 #endif
 
 #include <atomic>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <fmt/chrono.h>
 
 #include "folly/Demangle.h"
 #include "folly/ScopeGuard.h"
@@ -264,6 +266,23 @@ void SingletonVault::addEagerInitSingleton(detail::SingletonHolderBase* entry) {
   eagerInitSingletons->insert(entry);
 }
 
+void SingletonVault::addEagerInitOnReenableSingleton(
+    detail::SingletonHolderBase* entry) {
+  auto state = state_.rlock();
+  state->check(detail::SingletonVaultState::Type::Running);
+
+  if (UNLIKELY(state->registrationComplete) &&
+      type_.load(std::memory_order_relaxed) == Type::Strict) {
+    LOG(ERROR)
+        << "Registering for eager-load on re-enable after registrationComplete().";
+  }
+
+  CHECK_THROW(singletons_.rlock()->count(entry->type()), std::logic_error);
+
+  auto eagerInitOnReenableSingletons = eagerInitOnReenableSingletons_.wlock();
+  eagerInitOnReenableSingletons->insert(entry);
+}
+
 void SingletonVault::registrationComplete() {
   std::atexit([]() { SingletonVault::singleton()->destroyInstances(); });
 
@@ -341,6 +360,8 @@ void SingletonVault::doEagerInitVia(Executor& exe, folly::Baton<>* done) {
 }
 
 void SingletonVault::destroyInstances() {
+  cancellationSource_.wlock()->requestCancellation();
+
   auto stateW = state_.wlock();
   if (stateW->state == detail::SingletonVaultState::Type::Quiescing) {
     return;
@@ -385,11 +406,27 @@ void SingletonVault::destroyInstances() {
 }
 
 void SingletonVault::reenableInstances() {
-  auto state = state_.wlock();
+  {
+    auto state = state_.wlock();
 
-  state->check(detail::SingletonVaultState::Type::Quiescing);
+    state->check(detail::SingletonVaultState::Type::Quiescing);
 
-  state->state = detail::SingletonVaultState::Type::Running;
+    state->state = detail::SingletonVaultState::Type::Running;
+  }
+
+  // reset the cancellation source
+  cancellationSource_.withWLock([&](auto& cancellationSource) {
+    cancellationSource = folly::CancellationSource{};
+  });
+
+  auto eagerInitOnReenableSingletons = eagerInitOnReenableSingletons_.copy();
+  auto instantiatedAtLeastOnce = instantiatedAtLeastOnce_.copy();
+  for (auto* single : eagerInitOnReenableSingletons) {
+    if (!instantiatedAtLeastOnce.count(single->type())) {
+      continue;
+    }
+    single->createInstance();
+  }
 }
 
 void SingletonVault::scheduleDestroyInstances() {
@@ -403,7 +440,12 @@ void SingletonVault::scheduleDestroyInstances() {
 }
 
 void SingletonVault::addToShutdownLog(std::string message) {
-  shutdownLog_.wlock()->push_back(std::move(message));
+  std::chrono::time_point<std::chrono::system_clock> now =
+      std::chrono::system_clock::now();
+  std::chrono::milliseconds millis =
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          now.time_since_epoch());
+  shutdownLog_.wlock()->push_back(fmt::format("{:%T} {}", millis, message));
 }
 
 #if FOLLY_HAVE_LIBRT

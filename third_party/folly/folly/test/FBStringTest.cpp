@@ -26,8 +26,8 @@
 #include <random>
 #include <sstream>
 
-#include "boost/algorithm/string.hpp"
-#include "glog/logging.h"
+#include <boost/algorithm/string.hpp>
+#include <glog/logging.h>
 
 #include "folly/Conv.h"
 #include "folly/Portability.h"
@@ -1741,4 +1741,12 @@ TEST(FBString, convertToStringView) {
 
 TEST(FBString, Format) {
   EXPECT_EQ("  foo", fmt::format("{:>5}", folly::fbstring("foo")));
+}
+
+TEST(FBString, OverLarge) {
+  EXPECT_THROW(
+      fbstring().reserve((size_t)0xFFFF'FFFF'FFFF'FFFF), std::length_error);
+  EXPECT_THROW(
+      fbstring_core<char32_t>().reserve((size_t)0x4000'0000'4000'0000),
+      std::length_error);
 }
