@@ -1,1 +1,4 @@
 site_name: ONE HCOONa's mono repo
+markdown_extensions:
+# Include other files via `{!included_file.md!}`.
+- markdown_include.include
