@@ -23,9 +23,6 @@
 #include <folly/Optional.h>
 #include <folly/Portability.h>
 #include <folly/ScopeGuard.h>
-#ifdef __APPLE__
-#include <folly/ThreadLocal.h>
-#endif
 #include <folly/Try.h>
 #include <folly/fibers/Baton.h>
 #include <folly/fibers/Fiber.h>
@@ -245,11 +242,6 @@ void FiberManager::runFibersHelper(LoopFunc&& loopFunc) {
     CHECK(oldAsyncRoot == nullptr);
 
     yieldedFibers_ = prevYieldedFibers;
-    if (observer_) {
-      for (auto& yielded : yieldedFibers) {
-        observer_->runnable(reinterpret_cast<uintptr_t>(&yielded));
-      }
-    }
     readyFibers_.splice(readyFibers_.end(), yieldedFibers);
     RequestContext::setContext(std::move(curCtx));
     if (!readyFibers_.empty()) {
@@ -297,9 +289,6 @@ inline void FiberManager::loopUntilNoReadyImpl() {
             fiber->rcontext_ = std::move(task->rcontext);
 
             fiber->setFunction(std::move(task->func), TaskOptions());
-            if (observer_) {
-              observer_->runnable(reinterpret_cast<uintptr_t>(fiber));
-            }
             runReadyFiber(fiber);
           });
 
@@ -383,10 +372,6 @@ Fiber* FiberManager::createTask(F&& func, TaskOptions taskOptions) {
     auto funcLoc = new typename Helper::Func(std::forward<F>(func), *this);
 
     fiber->setFunction(std::ref(*funcLoc), std::move(taskOptions));
-  }
-
-  if (observer_) {
-    observer_->runnable(reinterpret_cast<uintptr_t>(fiber));
   }
 
   return fiber;
@@ -529,10 +514,6 @@ Fiber* FiberManager::createTaskFinally(F&& func, G&& finally) {
     fiber->setFunctionFinally(std::ref(*funcLoc), std::ref(*finallyLoc));
   }
 
-  if (observer_) {
-    observer_->runnable(reinterpret_cast<uintptr_t>(fiber));
-  }
-
   return fiber;
 }
 
@@ -608,13 +589,8 @@ T& FiberManager::local() {
 
 template <typename T>
 T& FiberManager::localThread() {
-#ifndef __APPLE__
   static thread_local T t;
   return t;
-#else // osx doesn't support thread_local
-  static ThreadLocal<T> t;
-  return *t;
-#endif
 }
 
 inline void FiberManager::initLocalData(Fiber& fiber) {
@@ -633,18 +609,7 @@ FiberManager::FiberManager(
     : loopController_(std::move(loopController__)),
       stackAllocator_(options.guardPagesPerStack),
       options_(preprocessOptions(std::move(options))),
-      exceptionCallback_([](std::exception_ptr eptr, std::string context) {
-        try {
-          std::rethrow_exception(eptr);
-        } catch (const std::exception& e) {
-          LOG(DFATAL) << "Exception " << typeid(e).name() << " with message '"
-                      << e.what() << "' was thrown in "
-                      << "FiberManager with context '" << context << "'";
-        } catch (...) {
-          LOG(DFATAL) << "Unknown exception was thrown in FiberManager with "
-                      << "context '" << context << "'";
-        }
-      }),
+      exceptionCallback_(defaultExceptionCallback),
       fibersPoolResizer_(*this),
       localType_(typeid(LocalT)) {
   loopController_->setFiberManager(this);

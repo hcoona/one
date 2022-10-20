@@ -51,17 +51,6 @@ const static std::string kIntExceptionClassName =
     demangle(typeid(IntException)).toStdString();
 const static std::string kIntClassName = demangle(typeid(int)).toStdString();
 
-template <typename T>
-T& from_eptr(std::exception_ptr& eptr) {
-  try {
-    std::rethrow_exception(eptr);
-  } catch (T& e) {
-    return e;
-  } catch (...) {
-    throw std::logic_error("impossible");
-  }
-}
-
 TEST(ExceptionWrapper, nothrow) {
   EXPECT_TRUE(std::is_nothrow_default_constructible<exception_wrapper>::value);
   EXPECT_TRUE(std::is_nothrow_move_constructible<exception_wrapper>::value);
@@ -196,7 +185,7 @@ TEST(ExceptionWrapper, from_exception_ptr_any) {
 
 TEST(ExceptionWrapper, with_exception_ptr_empty) {
   auto ew = exception_wrapper(std::exception_ptr());
-  EXPECT_EQ(exception_wrapper::none(), ew.type());
+  EXPECT_EQ(nullptr, ew.type());
   EXPECT_FALSE(bool(ew));
   EXPECT_EQ(nullptr, ew.get_exception());
   EXPECT_EQ(nullptr, ew.get_exception<std::exception>());
@@ -216,14 +205,14 @@ TEST(ExceptionWrapper, with_exception_ptr_empty) {
 TEST(ExceptionWrapper, with_shared_ptr_test) {
   auto ew = exception_wrapper(std::runtime_error("foo"));
   EXPECT_TRUE(bool(ew));
-  EXPECT_EQ(typeid(std::runtime_error), ew.type());
+  EXPECT_EQ(&typeid(std::runtime_error), ew.type());
   EXPECT_NE(nullptr, ew.get_exception());
   EXPECT_NE(nullptr, ew.get_exception<std::exception>());
   EXPECT_STREQ("foo", ew.get_exception<std::exception>()->what());
   EXPECT_EQ(nullptr, ew.get_exception<int>());
-  EXPECT_FALSE(ew.has_exception_ptr());
+  EXPECT_TRUE(ew.has_exception_ptr());
   EXPECT_NE(nullptr, folly::as_const(ew).to_exception_ptr());
-  EXPECT_FALSE(ew.has_exception_ptr());
+  EXPECT_TRUE(ew.has_exception_ptr());
   EXPECT_NE(nullptr, ew.to_exception_ptr());
   EXPECT_TRUE(ew.has_exception_ptr());
   EXPECT_EQ(kRuntimeErrorClassName, ew.class_name());
@@ -235,7 +224,7 @@ TEST(ExceptionWrapper, with_shared_ptr_test) {
 
   exception_wrapper(std::move(ew));
   EXPECT_FALSE(bool(ew));
-  EXPECT_EQ(exception_wrapper::none(), ew.type());
+  EXPECT_EQ(nullptr, ew.type());
   EXPECT_EQ(nullptr, ew.get_exception());
   EXPECT_EQ(nullptr, ew.get_exception<std::exception>());
   EXPECT_EQ(nullptr, ew.get_exception<int>());
@@ -250,9 +239,9 @@ TEST(ExceptionWrapper, with_shared_ptr_test) {
 
 TEST(ExceptionWrapper, with_exception_ptr_exn_test) {
   auto ep = std::make_exception_ptr(std::runtime_error("foo"));
-  auto ew = exception_wrapper(ep, from_eptr<std::runtime_error>(ep));
+  auto ew = exception_wrapper(ep);
   EXPECT_TRUE(bool(ew));
-  EXPECT_EQ(typeid(std::runtime_error), ew.type());
+  EXPECT_EQ(&typeid(std::runtime_error), ew.type());
   EXPECT_NE(nullptr, ew.get_exception());
   EXPECT_NE(nullptr, ew.get_exception<std::exception>());
   EXPECT_STREQ("foo", ew.get_exception<std::exception>()->what());
@@ -269,7 +258,7 @@ TEST(ExceptionWrapper, with_exception_ptr_exn_test) {
 
   exception_wrapper(std::move(ew));
   EXPECT_FALSE(bool(ew));
-  EXPECT_EQ(exception_wrapper::none(), ew.type());
+  EXPECT_EQ(nullptr, ew.type());
   EXPECT_EQ(nullptr, ew.get_exception());
   EXPECT_EQ(nullptr, ew.get_exception<std::exception>());
   EXPECT_EQ(nullptr, ew.get_exception<int>());
@@ -284,7 +273,7 @@ TEST(ExceptionWrapper, with_exception_ptr_exn_test) {
 
 TEST(ExceptionWrapper, with_exception_ptr_any_test) {
   auto ep = std::make_exception_ptr<int>(12);
-  auto ew = exception_wrapper(ep, from_eptr<int>(ep));
+  auto ew = exception_wrapper(ep);
   EXPECT_TRUE(bool(ew));
   EXPECT_EQ(nullptr, ew.get_exception());
   EXPECT_EQ(nullptr, ew.get_exception<std::exception>());
@@ -476,7 +465,7 @@ struct DerivedNonStdException : BaseNonStdException {};
 
 TEST(ExceptionWrapper, base_derived_non_std_exception_test) {
   exception_wrapper ew{std::make_exception_ptr(DerivedNonStdException{})};
-  EXPECT_TRUE(ew.type() == typeid(DerivedNonStdException));
+  EXPECT_EQ(ew.type(), &typeid(DerivedNonStdException));
   EXPECT_TRUE(ew.with_exception([](const DerivedNonStdException&) {}));
 }
 
@@ -518,7 +507,7 @@ struct BigNonStdError {
 
 TEST(ExceptionWrapper, handle_std_exception) {
   auto ep = std::make_exception_ptr(std::runtime_error{"hello world"});
-  exception_wrapper const ew_eptr(ep, from_eptr<std::runtime_error>(ep));
+  exception_wrapper const ew_eptr(ep);
   exception_wrapper const ew_small(std::runtime_error{"hello world"});
   exception_wrapper const ew_big(BigRuntimeError{"hello world"});
 
@@ -600,7 +589,7 @@ TEST(ExceptionWrapper, handle_std_exception) {
 
 TEST(ExceptionWrapper, handle_std_exception_unhandled) {
   auto ep = std::make_exception_ptr(std::exception{});
-  exception_wrapper const ew_eptr(ep, from_eptr<std::exception>(ep));
+  exception_wrapper const ew_eptr(ep);
   exception_wrapper const ew_small(std::exception{});
 
   bool handled = false;
@@ -620,7 +609,7 @@ TEST(ExceptionWrapper, handle_std_exception_unhandled) {
 
 TEST(ExceptionWrapper, handle_std_exception_propagated) {
   auto ep = std::make_exception_ptr(std::runtime_error{"hello world"});
-  exception_wrapper const ew_eptr(ep, from_eptr<std::runtime_error>(ep));
+  exception_wrapper const ew_eptr(ep);
   exception_wrapper const ew_small(std::runtime_error{"hello world"});
   exception_wrapper const ew_big(BigRuntimeError{"hello world"});
 
@@ -632,7 +621,7 @@ TEST(ExceptionWrapper, handle_std_exception_propagated) {
 TEST(ExceptionWrapper, handle_non_std_exception_small) {
   auto ep = std::make_exception_ptr(42);
   exception_wrapper const ew_eptr1(ep);
-  exception_wrapper const ew_eptr2(ep, from_eptr<int>(ep));
+  exception_wrapper const ew_eptr2(ep);
   exception_wrapper const ew_small(folly::in_place, 42);
   bool handled = false;
 
@@ -687,7 +676,7 @@ TEST(ExceptionWrapper, handle_non_std_exception_small) {
 TEST(ExceptionWrapper, handle_non_std_exception_big) {
   auto ep = std::make_exception_ptr(BigNonStdError{});
   exception_wrapper const ew_eptr1(ep);
-  exception_wrapper const ew_eptr2(ep, from_eptr<BigNonStdError>(ep));
+  exception_wrapper const ew_eptr2(ep);
   exception_wrapper const ew_big(folly::in_place, BigNonStdError{});
   bool handled = false;
 

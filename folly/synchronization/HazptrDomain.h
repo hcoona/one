@@ -22,7 +22,7 @@
 #include <folly/Memory.h>
 #include <folly/Portability.h>
 #include <folly/executors/QueuedImmediateExecutor.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include <folly/synchronization/AsymmetricThreadFence.h>
 #include <folly/synchronization/Hazptr-fwd.h>
 #include <folly/synchronization/HazptrObj.h>
 #include <folly/synchronization/HazptrRec.h>
@@ -332,7 +332,8 @@ class hazptr_domain {
     }
     uintptr_t btag = l.head()->cohort_tag();
     bool tagged = ((btag & kTagBit) == kTagBit);
-    /*** Full fence ***/ asymmetricLightBarrier();
+    /*** Full fence ***/ asymmetric_thread_fence_light(
+        std::memory_order_seq_cst);
     List ll(l.head(), l.tail());
     if (!tagged) {
       untagged_[calc_shard(l.head())].push(ll, RetiredList::kMayNotBeLocked);
@@ -518,7 +519,8 @@ class hazptr_domain {
       Obj* tagged[kNumShards];
       bool done = true;
       if (extract_retired_objects(untagged, tagged)) {
-        /*** Full fence ***/ asymmetricHeavyBarrier(AMBFlags::EXPEDITED);
+        /*** Full fence ***/ asymmetric_thread_fence_heavy(
+            std::memory_order_seq_cst);
         Set hs = load_hazptr_vals();
         rcount -= match_tagged(tagged, hs);
         rcount -= match_reclaim_untagged(untagged, hs, done);

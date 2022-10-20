@@ -54,12 +54,14 @@ ElfFile::ElfFile() noexcept
     : fd_(-1),
       file_(static_cast<char*>(MAP_FAILED)),
       length_(0),
+      fileId_(),
       baseAddress_(0) {}
 
 ElfFile::ElfFile(const char* name, Options const& options)
     : fd_(-1),
       file_(static_cast<char*>(MAP_FAILED)),
       length_(0),
+      fileId_(),
       baseAddress_(0) {
   open(name, options);
 }
@@ -89,6 +91,12 @@ ElfFile::OpenResult ElfFile::openNoThrow(
   if (r == -1) {
     return {kSystemError, "fstat"};
   }
+
+  fileId_ = std::make_tuple(
+      st.st_dev,
+      st.st_ino,
+      st.st_size,
+      st.st_mtim.tv_sec * 1000'000'000LL + st.st_mtim.tv_nsec);
 
   length_ = st.st_size;
   int prot = PROT_READ;
@@ -159,6 +167,7 @@ ElfFile::ElfFile(ElfFile&& other) noexcept
     : fd_(other.fd_),
       file_(other.file_),
       length_(other.length_),
+      fileId_(other.fileId_),
       baseAddress_(other.baseAddress_) {
   // copy other.filepath_, leaving filepath_ zero-terminated, always.
   strlcpy(filepath_, other.filepath_, kFilepathMaxLen - 1);
@@ -166,6 +175,7 @@ ElfFile::ElfFile(ElfFile&& other) noexcept
   other.fd_ = -1;
   other.file_ = static_cast<char*>(MAP_FAILED);
   other.length_ = 0;
+  other.fileId_ = {};
   other.baseAddress_ = 0;
 }
 
@@ -178,12 +188,14 @@ ElfFile& ElfFile::operator=(ElfFile&& other) noexcept {
   fd_ = other.fd_;
   file_ = other.file_;
   length_ = other.length_;
+  fileId_ = other.fileId_;
   baseAddress_ = other.baseAddress_;
 
   other.filepath_[0] = 0;
   other.fd_ = -1;
   other.file_ = static_cast<char*>(MAP_FAILED);
   other.length_ = 0;
+  other.fileId_ = {};
   other.baseAddress_ = 0;
 
   return *this;
@@ -201,6 +213,8 @@ void ElfFile::reset() noexcept {
     close(fd_);
     fd_ = -1;
   }
+
+  fileId_ = {};
 }
 
 ElfFile::OpenResult ElfFile::init() noexcept {
@@ -448,15 +462,20 @@ const char* ElfFile::getSymbolName(Symbol symbol) const noexcept {
 }
 
 std::pair<const int, char const*> ElfFile::posixFadvise(
-    int const advice) const noexcept {
+    off_t offset, off_t len, int const advice) const noexcept {
   if (fd_ == -1) {
     return {1, "file not open"};
   }
-  int res = posix_fadvise(fd_, 0, 0, advice);
+  int res = posix_fadvise(fd_, offset, len, advice);
   if (res != 0) {
     return {res, "posix_fadvise failed for file"};
   }
   return {res, ""};
+}
+
+std::pair<const int, char const*> ElfFile::posixFadvise(
+    int const advice) const noexcept {
+  return posixFadvise(0, 0, advice);
 }
 
 } // namespace symbolizer

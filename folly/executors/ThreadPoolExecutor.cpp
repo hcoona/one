@@ -20,7 +20,7 @@
 
 #include <folly/executors/GlobalThreadPoolList.h>
 #include <folly/portability/PThread.h>
-#include <folly/synchronization/AsymmetricMemoryBarrier.h>
+#include <folly/synchronization/AsymmetricThreadFence.h>
 #include <folly/tracing/StaticTracepoint.h>
 
 namespace folly {
@@ -43,7 +43,7 @@ void ThreadPoolExecutor::deregisterThreadPoolExecutor(ThreadPoolExecutor* tpe) {
   });
 }
 
-DEFINE_int64(
+FOLLY_GFLAGS_DEFINE_int64(
     threadtimeout_ms,
     60000,
     "Idle time before ThreadPoolExecutor threads are joined");
@@ -126,18 +126,11 @@ void ThreadPoolExecutor::runTask(const ThreadPtr& thread, Task&& task) {
   thread->taskStatsCallbacks->callbackList.withRLock([&](auto& callbacks) {
     *thread->taskStatsCallbacks->inCallback = true;
     SCOPE_EXIT { *thread->taskStatsCallbacks->inCallback = false; };
-    try {
+    invokeCatchingExns("ThreadPoolExecutor: task stats callback", [&] {
       for (auto& callback : callbacks) {
         callback(stats);
       }
-    } catch (const std::exception& e) {
-      LOG(ERROR) << "ThreadPoolExecutor: task stats callback threw "
-                    "unhandled "
-                 << typeid(e).name() << " exception: " << e.what();
-    } catch (...) {
-      LOG(ERROR) << "ThreadPoolExecutor: task stats callback threw "
-                    "unhandled non-exception object";
-    }
+    });
   });
 }
 
@@ -453,7 +446,7 @@ bool ThreadPoolExecutor::tryTimeoutThread() {
   // queues have seq_cst ordering, some do not, so add an explicit
   // barrier.  tryTimeoutThread is the slow path and only happens once
   // every thread timeout; use asymmetric barrier to keep add() fast.
-  asymmetricHeavyBarrier();
+  asymmetric_thread_fence_heavy(std::memory_order_seq_cst);
 
   // If this is based on idle thread timeout, then
   // adjust vars appropriately (otherwise stop() or join()
@@ -482,7 +475,7 @@ void ThreadPoolExecutor::ensureActiveThreads() {
 
   // Matches barrier in tryTimeoutThread().  Ensure task added
   // is seen before loading activeThreads_ below.
-  asymmetricLightBarrier();
+  asymmetric_thread_fence_light(std::memory_order_seq_cst);
 
   // Fast path assuming we are already at max threads.
   auto active = activeThreads_.load(std::memory_order_relaxed);

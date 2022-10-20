@@ -30,6 +30,7 @@
 #include <folly/Portability.h>
 #include <folly/Range.h>
 #include <folly/String.h>
+#include <folly/container/Access.h>
 #include <folly/io/async/ssl/OpenSSLUtils.h>
 #include <folly/portability/OpenSSL.h>
 #include <folly/ssl/OpenSSLLockTypes.h>
@@ -200,8 +201,8 @@ class SSLContext {
 
   template <typename Container>
   void setCipherList(const Container& cipherList) {
-    using namespace std;
-    setCipherList(begin(cipherList), end(cipherList));
+    setCipherList(
+        folly::access::begin(cipherList), folly::access::end(cipherList));
   }
 
   template <typename Value>
@@ -227,8 +228,8 @@ class SSLContext {
 
   template <typename Container>
   void setSignatureAlgorithms(const Container& sigalgs) {
-    using namespace std;
-    setSignatureAlgorithms(begin(sigalgs), end(sigalgs));
+    setSignatureAlgorithms(
+        folly::access::begin(sigalgs), folly::access::end(sigalgs));
   }
 
   template <typename Value>
@@ -394,6 +395,17 @@ class SSLContext {
    * @param path Path to trusted certificate file
    */
   virtual void loadTrustedCertificates(const char* path);
+  /**
+   * Load trusted certificates from a vector of file paths
+   *
+   * @param paths container of file paths to trusted certificate files
+   */
+  template <typename StringList>
+  void loadTrustedCertificates(const StringList& paths) {
+    for (const auto& path : paths) {
+      loadTrustedCertificates(path.c_str());
+    }
+  }
   /**
    * Load trusted certificates from specified X509 certificate store.
    *

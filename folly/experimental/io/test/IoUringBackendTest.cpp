@@ -18,6 +18,7 @@
 #include <numeric>
 
 #include <folly/FileUtil.h>
+#include <folly/Function.h>
 #include <folly/String.h>
 #include <folly/experimental/io/IoUringBackend.h>
 #include <folly/experimental/io/test/IoTestTempFileUtil.h>
@@ -146,7 +147,7 @@ class EventFD : public folly::EventHandler, public folly::EventReadCallback {
   uint64_t getNum() const { return num_; }
 
   // from folly::EventReadCallback
-  folly::EventReadCallback::IoVec* allocateData() override {
+  folly::EventReadCallback::IoVec* allocateData() noexcept override {
     auto* ret = ioVecPtr_.release();
     return (ret ? ret : new IoVec(this));
   }
@@ -249,21 +250,23 @@ std::unique_ptr<folly::EventBase> getEventBase() {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   return getEventBase(options);
 }
 
 void testEventFD(bool overflow, bool persist, bool asyncRead) {
-  static constexpr size_t kBackendCapacity = 16;
+  static constexpr size_t kBackendCapacity = 64;
   static constexpr size_t kBackendMaxSubmit = 8;
   // for overflow == true  we use a greater than kBackendCapacity number of
   // EventFD instances and lower when overflow == false
   size_t kNumEventFds = overflow ? 2048 : 32;
-  static constexpr size_t kEventFdCount = 16;
+  static constexpr size_t kEventFdCount = 2;
   auto total = kNumEventFds * kEventFdCount + kEventFdCount / 2;
 
   folly::PollIoBackend::Options options;
-  options.setCapacity(kBackendCapacity).setMaxSubmit(kBackendMaxSubmit);
+  options.setCapacity(kBackendCapacity)
+      .setMaxSubmit(kBackendMaxSubmit)
+      .setMaxGet(kNumEventFds * 2);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -281,9 +284,13 @@ void testEventFD(bool overflow, bool persist, bool asyncRead) {
   evbPtr->loop();
 
   for (size_t i = 0; i < kNumEventFds; i++) {
-    CHECK_GE(
+    EXPECT_GE(
         (asyncRead ? eventsVec[i]->getAsyncNum() : eventsVec[i]->getNum()),
-        kEventFdCount);
+        kEventFdCount)
+        << " persist=" << persist << " overflow=" << overflow
+        << " asyncRead=" << asyncRead << " num= "
+        << (asyncRead ? eventsVec[i]->getAsyncNum() : eventsVec[i]->getNum())
+        << " kEventFdCount=" << kEventFdCount << " i=" << i;
   }
 }
 
@@ -400,7 +407,7 @@ class EventRecvmsgCallback : public folly::EventRecvmsgCallback {
   ~EventRecvmsgCallback() override = default;
 
   // from EventRecvmsgCallback
-  EventRecvmsgCallback::MsgHdr* allocateData() override {
+  EventRecvmsgCallback::MsgHdr* allocateData() noexcept override {
     auto* ret = msgHdr_.release();
     if (!ret) {
       ret = new MsgHdr(this);
@@ -423,7 +430,94 @@ class EventRecvmsgCallback : public folly::EventRecvmsgCallback {
   std::unique_ptr<MsgHdr> msgHdr_;
 };
 
-void testAsyncUDPRecvmsg(bool useRegisteredFds) {
+class EventRecvmsgMultishotCallback
+    : public folly::EventRecvmsgMultishotCallback {
+ private:
+  struct Hdr : public folly::EventRecvmsgMultishotCallback::Hdr {
+    Hdr() = delete;
+    ~Hdr() override {}
+    explicit Hdr(EventRecvmsgMultishotCallback* cb) {
+      arg_ = cb;
+      freeFunc_ = Hdr::free;
+      cbFunc_ = Hdr::cb;
+
+      ::memset(&data_, 0, sizeof(data_));
+      data_.msg_namelen = sizeof(struct sockaddr_storage);
+    }
+
+    static void free(folly::EventRecvmsgMultishotCallback::Hdr* h) { delete h; }
+
+    static void cb(
+        folly::EventRecvmsgMultishotCallback::Hdr* h,
+        int res,
+        std::unique_ptr<folly::IOBuf> io) {
+      reinterpret_cast<EventRecvmsgMultishotCallback*>(h->arg_)->cb(
+          reinterpret_cast<Hdr*>(h), res, std::move(io));
+    }
+  };
+
+  void cb(Hdr* msgHdr, int res, std::unique_ptr<folly::IOBuf> io) {
+    folly::EventRecvmsgMultishotCallback::ParsedRecvMsgMultishot p;
+    ASSERT_GE(res, 0);
+    EXPECT_EQ(res, io->coalesce().size());
+    ASSERT_TRUE(folly::EventRecvmsgMultishotCallback::parseRecvmsgMultishot(
+        io->coalesce(), msgHdr->data_, p));
+
+    EXPECT_EQ(p.payload.size(), static_cast<int>(numBytes_));
+
+    // check the contents
+    std::string data;
+    data.assign(
+        reinterpret_cast<const char*>(p.payload.data()),
+        static_cast<size_t>(p.payload.size()));
+    EXPECT_EQ(data, data_);
+
+    // check the address
+    folly::SocketAddress addr;
+    addr.setFromSockaddr((sockaddr*)(p.name.data()), p.name.size());
+    EXPECT_EQ(addr, addr_);
+
+    ++asyncNum_;
+    if (total_ > 0) {
+      --total_;
+      if (total_ == 0) {
+        evb_->terminateLoopSoon();
+      }
+    }
+  }
+
+ public:
+  EventRecvmsgMultishotCallback(
+      const std::string& data,
+      const folly::SocketAddress& addr,
+      size_t numBytes,
+      uint64_t& total,
+      folly::EventBase* eventBase)
+      : data_(data),
+        addr_(addr),
+        numBytes_(numBytes),
+        total_(total),
+        evb_(eventBase) {}
+  ~EventRecvmsgMultishotCallback() override = default;
+
+  // from EventRecvmsgCallback
+  folly::EventRecvmsgMultishotCallback::Hdr*
+  allocateRecvmsgMultishotData() noexcept override {
+    return new Hdr(this);
+  }
+
+  uint64_t getAsyncNum() const { return asyncNum_; }
+
+ private:
+  const std::string& data_;
+  folly::SocketAddress addr_;
+  size_t numBytes_{0};
+  uint64_t& total_;
+  folly::EventBase* evb_;
+  uint64_t asyncNum_{0};
+};
+
+void testAsyncUDPRecvmsg(bool useRegisteredFds, bool multishot = false) {
   static constexpr size_t kBackendCapacity = 16;
   static constexpr size_t kBackendMaxSubmit = 8;
   static constexpr size_t kBackendMaxGet = 8;
@@ -436,9 +530,15 @@ void testAsyncUDPRecvmsg(bool useRegisteredFds) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(useRegisteredFds);
+      .setUseRegisteredFds(useRegisteredFds ? kBackendCapacity : 0);
+  if (multishot) {
+    options.setInitialProvidedBuffers(
+        kNumBytes * 2 + 4 + sizeof(struct sockaddr_storage), 1000);
+  }
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
+  SKIP_IF(multishot && !folly::IoUringBackend::kernelSupportsRecvmsgMultishot())
+      << "multishot not available";
 
   // create the server sockets
   std::vector<std::unique_ptr<folly::AsyncUDPServerSocket>> serverSocketVec;
@@ -447,7 +547,7 @@ void testAsyncUDPRecvmsg(bool useRegisteredFds) {
   std::vector<std::unique_ptr<folly::AsyncUDPSocket>> clientSocketVec;
   clientSocketVec.reserve(kNumSockets);
 
-  std::vector<std::unique_ptr<EventRecvmsgCallback>> cbVec;
+  std::vector<folly::Function<uint64_t() const>> cbVec;
   cbVec.reserve(kNumSockets);
 
   std::string data(kNumBytes, 'A');
@@ -456,14 +556,22 @@ void testAsyncUDPRecvmsg(bool useRegisteredFds) {
     auto clientSock = std::make_unique<folly::AsyncUDPSocket>(evbPtr.get());
     clientSock->bind(folly::SocketAddress("::1", 0));
 
-    auto cb = std::make_unique<EventRecvmsgCallback>(
-        data, clientSock->address(), kNumBytes, total, evbPtr.get());
     auto serverSock = std::make_unique<folly::AsyncUDPServerSocket>(
         evbPtr.get(),
         1500,
         folly::AsyncUDPServerSocket::DispatchMechanism::RoundRobin);
     // set the event callback
-    serverSock->setEventCallback(cb.get());
+    if (multishot) {
+      auto cb_m = std::make_unique<EventRecvmsgMultishotCallback>(
+          data, clientSock->address(), kNumBytes, total, evbPtr.get());
+      serverSock->setRecvmsgMultishotCallback(cb_m.get());
+      cbVec.push_back([c = std::move(cb_m)]() { return c->getAsyncNum(); });
+    } else {
+      auto cb = std::make_unique<EventRecvmsgCallback>(
+          data, clientSock->address(), kNumBytes, total, evbPtr.get());
+      serverSock->setEventCallback(cb.get());
+      cbVec.push_back([c = std::move(cb)]() { return c->getAsyncNum(); });
+    }
     // bind
     serverSock->bind(folly::SocketAddress("::1", 0));
     // retrieve the real address
@@ -481,14 +589,12 @@ void testAsyncUDPRecvmsg(bool useRegisteredFds) {
     }
 
     clientSocketVec.emplace_back(std::move(clientSock));
-
-    cbVec.emplace_back(std::move(cb));
   }
 
   evbPtr->loopForever();
 
   for (size_t i = 0; i < kNumSockets; i++) {
-    CHECK_GE(cbVec[i]->getAsyncNum(), kNumPackets);
+    CHECK_GE(cbVec[i](), kNumPackets);
   }
 }
 } // namespace
@@ -659,6 +765,10 @@ TEST(IoUringBackend, AsyncUDPRecvmsgRegisterFd) {
   testAsyncUDPRecvmsg(true);
 }
 
+TEST(IoUringBackend, AsyncUDPRecvmsgMultishotRegisterFd) {
+  testAsyncUDPRecvmsg(true, true);
+}
+
 TEST(IoUringBackend, EventFD_NoOverflowNoPersist) {
   testEventFD(false, false, false);
 }
@@ -707,10 +817,10 @@ TEST(IoUringBackend, RegisteredFds) {
     options.setCapacity(kBackendCapacity)
         .setMaxSubmit(kBackendMaxSubmit)
         .setMaxGet(kBackendMaxGet)
-        .setUseRegisteredFds(true);
+        .setUseRegisteredFds(kBackendCapacity);
 
     backendReg = std::make_unique<folly::IoUringBackend>(options);
-    options.setUseRegisteredFds(false);
+    options.setUseRegisteredFds(0);
     backendNoReg = std::make_unique<folly::IoUringBackend>(options);
   } catch (const folly::IoUringBackend::NotAvailable&) {
   }
@@ -759,7 +869,7 @@ TEST(IoUringBackend, FileReadWrite) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -822,7 +932,7 @@ TEST(IoUringBackend, FileReadvWritev) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -915,7 +1025,7 @@ TEST(IoUringBackend, FileReadMany) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -974,7 +1084,7 @@ TEST(IoUringBackend, FileWriteMany) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -1056,7 +1166,7 @@ TEST(IoUringBackend, SendmsgRecvmsg) {
   options.setCapacity(kBackendCapacity)
       .setMaxSubmit(kBackendMaxSubmit)
       .setMaxGet(kBackendMaxGet)
-      .setUseRegisteredFds(false);
+      .setUseRegisteredFds(0);
   auto evbPtr = getEventBase(options);
   SKIP_IF(!evbPtr) << "Backend not available";
 
@@ -1148,6 +1258,89 @@ TEST(IoUringBackend, SendmsgRecvmsg) {
   ::close(recvFd);
 }
 
+TEST(IoUringBackend, ProvidedBuffers) {
+  auto evbPtr = getEventBase();
+  std::unique_ptr<folly::IoUringBackend> backend;
+  try {
+    /* 2 buffers of size 2 */
+    backend = std::make_unique<folly::IoUringBackend>(
+        folly::IoUringBackend::Options{}.setInitialProvidedBuffers(2, 2));
+  } catch (folly::IoUringBackend::NotAvailable const&) {
+  }
+  SKIP_IF(!backend) << "Backend not available";
+
+  auto* bufferProvider = backend->bufferProvider();
+  ASSERT_NE(bufferProvider, nullptr);
+
+  EXPECT_EQ(2, bufferProvider->count());
+
+  struct Reader : folly::IoUringBackend::IoSqeBase {
+    Reader(int fd, uint16_t bgid, std::function<void(int, uint32_t)> oncqe)
+        : fd_(fd), bgid_(bgid), oncqe_(oncqe) {}
+
+    void processSubmit(struct io_uring_sqe* sqe) noexcept override {
+      io_uring_prep_read(sqe, fd_, nullptr, 2 /* max read 2 per go */, 0);
+      sqe->flags |= IOSQE_BUFFER_SELECT;
+      sqe->buf_group = bgid_;
+    }
+
+    void callback(int res, uint32_t flags) noexcept override {
+      oncqe_(res, flags);
+    }
+
+    void callbackCancelled() noexcept override { FAIL(); }
+
+    int fd_;
+    uint16_t bgid_;
+    std::function<void(int, uint32_t)> oncqe_;
+  };
+
+  int fds[2];
+  ASSERT_EQ(0, ::pipe(fds));
+  SCOPE_EXIT {
+    ::close(fds[0]);
+    ::close(fds[1]);
+  };
+
+  std::vector<std::pair<int, uint32_t>> cqes;
+  std::vector<std::unique_ptr<Reader>> readers;
+  auto addReaders = [&](int n) {
+    for (int i = 0; i < n; i++) {
+      readers.push_back(std::make_unique<Reader>(
+          fds[0], bufferProvider->gid(), [&](int r, uint32_t f) {
+            cqes.emplace_back(r, f);
+          }));
+      backend->submit(*readers.back());
+    }
+  };
+
+  auto toString = [](std::unique_ptr<folly::IOBuf> x) -> std::string {
+    std::string ret;
+    x->appendTo(ret);
+    return ret;
+  };
+
+  addReaders(3);
+  ASSERT_EQ(6, ::write(fds[1], "123456", 6));
+  backend->eb_event_base_loop(EVLOOP_ONCE);
+  ASSERT_EQ(3, cqes.size()) << "expect 2 completions and 1 nobufs";
+
+  EXPECT_EQ(-ENOBUFS, cqes[2].first);
+  ASSERT_EQ(2, cqes[0].first);
+  ASSERT_EQ(2, cqes[1].first);
+  EXPECT_EQ("12", toString(bufferProvider->getIoBuf(cqes[0].second >> 16, 2)));
+  EXPECT_EQ("34", toString(bufferProvider->getIoBuf(cqes[1].second >> 16, 2)));
+
+  // now the buffers should be back
+  readers.clear();
+  cqes.clear();
+  addReaders(2);
+  backend->eb_event_base_loop(EVLOOP_ONCE);
+  ASSERT_EQ(1, cqes.size());
+  EXPECT_EQ(2, cqes[0].first);
+  EXPECT_EQ("56", toString(bufferProvider->getIoBuf(cqes[0].second >> 16, 2)));
+}
+
 namespace folly {
 namespace test {
 static constexpr size_t kCapacity = 32;
@@ -1161,7 +1354,7 @@ struct IoUringBackendProvider {
       options.setCapacity(kCapacity)
           .setMaxSubmit(kMaxSubmit)
           .setMaxGet(kMaxGet)
-          .setUseRegisteredFds(false);
+          .setUseRegisteredFds(0);
 
       return std::make_unique<folly::IoUringBackend>(options);
     } catch (const IoUringBackend::NotAvailable&) {
@@ -1177,7 +1370,7 @@ struct IoUringRegFdBackendProvider {
       options.setCapacity(kCapacity)
           .setMaxSubmit(kMaxSubmit)
           .setMaxGet(kMaxGet)
-          .setUseRegisteredFds(true);
+          .setUseRegisteredFds(kCapacity);
       return std::make_unique<folly::IoUringBackend>(options);
     } catch (const IoUringBackend::NotAvailable&) {
       return nullptr;
@@ -1193,7 +1386,7 @@ struct IoUringPollCQBackendProvider {
       options.setCapacity(kCapacity)
           .setMaxSubmit(kMaxSubmit)
           .setMaxGet(kMaxGet)
-          .setUseRegisteredFds(false)
+          .setUseRegisteredFds(0)
           .setFlags(folly::PollIoBackend::Options::Flags::POLL_CQ);
       return std::make_unique<folly::IoUringBackend>(options);
     } catch (const IoUringBackend::NotAvailable&) {
@@ -1210,7 +1403,7 @@ struct IoUringPollSQCQBackendProvider {
       options.setCapacity(kCapacity)
           .setMaxSubmit(kMaxSubmit)
           .setMaxGet(kMaxGet)
-          .setUseRegisteredFds(false)
+          .setUseRegisteredFds(0)
           .setFlags(
               folly::PollIoBackend::Options::Flags::POLL_SQ |
               folly::PollIoBackend::Options::Flags::POLL_CQ);
@@ -1255,6 +1448,7 @@ REGISTER_TYPED_TEST_SUITE_P(
     RepeatedRunInLoop,
     RunInLoopNoTimeMeasurement,
     RunInLoopStopLoop,
+    RunPoolLoop,
     messageAvailableException,
     TryRunningAfterTerminate,
     CancelRunInLoop,

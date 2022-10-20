@@ -16,10 +16,14 @@
 
 #include <cstring>
 
-#if !defined(__AVX2__)
+#if !defined(__AVX2__) || defined(__aarch64__)
 
-void* __folly_memset(void* dest, int ch, std::size_t count) {
+namespace folly {
+
+extern "C" void* __folly_memset(void* dest, int ch, std::size_t count) {
   return std::memset(dest, ch, count);
 }
+
+} // namespace folly
 
 #endif

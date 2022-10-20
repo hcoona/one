@@ -240,6 +240,28 @@ TEST(IOBuf, PullAndPeek) {
   }
 }
 
+TEST(IOBuf, pullFromChainContainingEmptyBufs) {
+  std::unique_ptr<IOBuf> iobuf1(IOBuf::create(10));
+  append(iobuf1, "he");
+  std::unique_ptr<IOBuf> iobuf2(IOBuf::create(10));
+  append(iobuf2, "llo ");
+  std::unique_ptr<IOBuf> iobuf3(IOBuf::create(10));
+  append(iobuf3, "world");
+  iobuf1->appendToChain(std::move(iobuf2));
+  // Add a default-constructed IOBuf which has 0 length and a null data pointer
+  // This doesn't affect the logical contents of the chain, it's here to
+  // make sure the pull() logic doesn't try to call memcpy() with a null
+  // pointer argument.
+  iobuf1->appendToChain(std::make_unique<folly::IOBuf>());
+  iobuf1->appendToChain(std::move(iobuf3));
+
+  std::string output;
+  output.resize(iobuf1->computeChainDataLength());
+  auto cursor = Cursor(iobuf1.get());
+  cursor.pull(&output[0], iobuf1->computeChainDataLength());
+  EXPECT_EQ("hello world", output);
+}
+
 TEST(IOBuf, pushCursorData) {
   unique_ptr<IOBuf> iobuf1(IOBuf::create(20));
   iobuf1->append(15);
@@ -660,6 +682,26 @@ TEST(IOBuf, QueueAppenderRWCursor) {
   for (uint32_t i = 0; i < n * n; ++i) {
     EXPECT_EQ(i, cursor.readBE<uint32_t>());
   }
+}
+
+TEST(IOBuf, QueueAppenderTrimEnd) {
+  folly::IOBufQueue queue;
+  QueueAppender app{&queue, 100};
+  const size_t n = 1024 / sizeof(uint32_t);
+  for (size_t i = 0; i < n; i++) {
+    app.writeBE<uint32_t>(0);
+  }
+
+  app.trimEnd(4);
+  EXPECT_EQ(1020, queue.front()->computeChainDataLength());
+
+  app.trimEnd(120);
+  EXPECT_EQ(900, queue.front()->computeChainDataLength());
+
+  app.trimEnd(900);
+  EXPECT_EQ(nullptr, queue.front());
+
+  EXPECT_THROW(app.trimEnd(100), std::underflow_error);
 }
 
 TEST(IOBuf, CursorOperators) {

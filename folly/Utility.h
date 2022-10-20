@@ -106,15 +106,15 @@ using decay_t = decltype(detail::decay_(FOLLY_DECLVAL(T &&)));
  *
  *  Note: The following text appears in the standard:
  *
- *  > In several places in this Clause the operation //DECAY_COPY(x)// is used.
- *  > All such uses mean call the function `decay_copy(x)` and use the result,
- *  > where `decay_copy` is defined as follows:
- *  >
- *  >   template <class T> decay_t<T> decay_copy(T&& v)
- *  >     { return std::forward<T>(v); }
- *  >
- *  > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4296.pdf
- *  >   30.2.6 `decay_copy` [thread.decaycopy].
+ *      In several places in this Clause the operation //DECAY_COPY(x)// is
+ *      used. All such uses mean call the function `decay_copy(x)` and use the
+ *      result, where `decay_copy` is defined as follows:
+ *
+ *        template <class T> decay_t<T> decay_copy(T&& v)
+ *          { return std::forward<T>(v); }
+ *
+ *      http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4296.pdf
+ *        30.2.6 `decay_copy` [thread.decaycopy].
  *
  *  We mimic it, with a `noexcept` specifier for good measure.
  */
@@ -430,6 +430,7 @@ class EnableCopyMove<false, false> {
 } // namespace moveonly_
 
 using MoveOnly = moveonly_::EnableCopyMove<false, true>;
+using NonCopyableNonMovable = moveonly_::EnableCopyMove<false, false>;
 
 //  unsafe_default_uninitialized
 //  unsafe_default_uninitialized_cv
@@ -465,13 +466,21 @@ using MoveOnly = moveonly_::EnableCopyMove<false, true>;
 struct unsafe_default_initialized_cv {
   template <typename T>
   FOLLY_ERASE constexpr /* implicit */ operator T() const noexcept {
-    T uninit;
-    FOLLY_PUSH_WARNING
-    FOLLY_MSVC_DISABLE_WARNING(4701)
-    FOLLY_MSVC_DISABLE_WARNING(4703)
-    FOLLY_GNU_DISABLE_WARNING("-Wuninitialized")
-    return uninit;
-    FOLLY_POP_WARNING
+#if defined(__cpp_lib_is_constant_evaluated)
+#if __cpp_lib_is_constant_evaluated >= 201811L
+    if (!std::is_constant_evaluated()) {
+      T uninit;
+      FOLLY_PUSH_WARNING
+      FOLLY_MSVC_DISABLE_WARNING(4701)
+      FOLLY_MSVC_DISABLE_WARNING(4703)
+      FOLLY_GNU_DISABLE_WARNING("-Wuninitialized")
+      FOLLY_GNU_DISABLE_WARNING("-Wmaybe-uninitialized")
+      return uninit;
+      FOLLY_POP_WARNING
+    }
+#endif
+#endif
+    return T();
   }
 };
 FOLLY_INLINE_VARIABLE constexpr unsafe_default_initialized_cv
@@ -619,6 +628,63 @@ struct to_integral_fn {
 };
 FOLLY_INLINE_VARIABLE constexpr to_integral_fn to_integral{};
 
+template <typename Src>
+class to_floating_point_convertible {
+  static_assert(std::is_integral<Src>::value, "not a floating-point");
+
+  template <typename Dst>
+  static constexpr bool to_ = std::is_floating_point<Dst>::value;
+
+ public:
+  explicit constexpr to_floating_point_convertible(Src const& value) noexcept
+      : value_(value) {}
+
+#if __cplusplus >= 201703L
+  explicit to_floating_point_convertible(to_floating_point_convertible const&) =
+      default;
+  explicit to_floating_point_convertible(to_floating_point_convertible&&) =
+      default;
+#else
+  to_floating_point_convertible(to_floating_point_convertible const&) = default;
+  to_floating_point_convertible(to_floating_point_convertible&&) = default;
+#endif
+  to_floating_point_convertible& operator=(
+      to_floating_point_convertible const&) = default;
+  to_floating_point_convertible& operator=(to_floating_point_convertible&&) =
+      default;
+
+  template <typename Dst, std::enable_if_t<to_<Dst>, int> = 0>
+  /* implicit */ constexpr operator Dst() const noexcept {
+    FOLLY_PUSH_WARNING
+    FOLLY_GNU_DISABLE_WARNING("-Wconversion")
+    return value_;
+    FOLLY_POP_WARNING
+  }
+
+ private:
+  Src value_;
+};
+
+//  to_floating_point
+//
+//  A utility for performing explicit integral-to-floating-point conversion
+//  without specifying the destination type. Sometimes preferable to
+//  static_cast<Dst>(src) to document the intended semantics of the cast.
+//
+//  Models explicit conversion with an elided destination type. Sits in between
+//  a stricter explicit conversion with a named destination type and a more
+//  lenient implicit conversion. Implemented with implicit conversion in order
+//  to take advantage of the undefined-behavior sanitizer's inspection of all
+//  implicit conversions.
+struct to_floating_point_fn {
+  template <typename..., typename Src>
+  constexpr auto operator()(Src const& src) const noexcept
+      -> to_floating_point_convertible<Src> {
+    return to_floating_point_convertible<Src>{src};
+  }
+};
+FOLLY_INLINE_VARIABLE constexpr to_floating_point_fn to_floating_point{};
+
 struct to_underlying_fn {
   template <typename..., class E>
   constexpr std::underlying_type_t<E> operator()(E e) const noexcept {
@@ -628,4 +694,23 @@ struct to_underlying_fn {
 };
 FOLLY_INLINE_VARIABLE constexpr to_underlying_fn to_underlying{};
 
+// Simulate if constexpr in C++14
+template <bool>
+struct if_constexpr_fn {
+  template <class F, class G>
+  constexpr auto&& operator()(F&& f, G&&) const {
+    return static_cast<F&&>(f);
+  }
+};
+
+template <>
+struct if_constexpr_fn<false> {
+  template <class F, class G>
+  constexpr auto&& operator()(F&&, G&& g) const {
+    return static_cast<G&&>(g);
+  }
+};
+
+template <bool Cond>
+FOLLY_INLINE_VARIABLE constexpr if_constexpr_fn<Cond> if_constexpr{};
 } // namespace folly

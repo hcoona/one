@@ -39,9 +39,11 @@ class ChannelFixture : public Test,
     executor_.drain();
   }
 
-  folly::Executor::KeepAlive<> getExecutor() override { return &executor_; }
+  folly::Executor::KeepAlive<folly::SequencedExecutor> getExecutor() override {
+    return &executor_;
+  }
 
-  void onNext(folly::Try<int> result) override { onNext_(std::move(result)); }
+  void onNext(Try<int> result) override { onNext_(std::move(result)); }
 
   folly::ManualExecutor executor_;
   StrictMock<MockNextCallback<int>> onNext_;
@@ -266,11 +268,6 @@ INSTANTIATE_TEST_SUITE_P(
     ChannelFixture,
     testing::Values(ConsumptionMode::CallbackWithHandle));
 
-INSTANTIATE_TEST_SUITE_P(
-    Channel_Callback_WithHandleList,
-    ChannelFixture,
-    testing::Values(ConsumptionMode::CallbackWithHandleList));
-
 class ChannelFixtureStress : public Test,
                              public WithParamInterface<ConsumptionMode> {
  protected:
@@ -371,10 +368,5 @@ INSTANTIATE_TEST_SUITE_P(
     Channel_Callback_WithHandle,
     ChannelFixtureStress,
     testing::Values(ConsumptionMode::CallbackWithHandle));
-
-INSTANTIATE_TEST_SUITE_P(
-    Channel_Callback_WithHandleList,
-    ChannelFixtureStress,
-    testing::Values(ConsumptionMode::CallbackWithHandleList));
 } // namespace channels
 } // namespace folly

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#include <folly/synchronization/Rcu.h>
-
 #include <atomic>
+#include <mutex>
 #include <thread>
 #include <vector>
 
@@ -26,9 +25,11 @@
 #include <folly/Random.h>
 #include <folly/portability/GFlags.h>
 #include <folly/portability/GTest.h>
+#include <folly/synchronization/Rcu.h>
 #include <folly/synchronization/RelaxedAtomic.h>
 
 using namespace folly;
+using rcu_domain = folly::rcu_domain;
 
 DEFINE_int64(iters, 100000, "Number of iterations");
 DEFINE_uint64(threads, 32, "Number of threads");
@@ -49,7 +50,7 @@ class des {
 TEST(RcuTest, Guard) {
   bool del = false;
   auto foo = new des(&del);
-  { rcu_reader g; }
+  { std::scoped_lock<rcu_domain> g(rcu_default_domain()); }
   rcu_retire(foo);
   rcu_synchronize();
   EXPECT_TRUE(del);
@@ -58,7 +59,7 @@ TEST(RcuTest, Guard) {
 TEST(RcuTest, SlowReader) {
   std::thread t;
   {
-    rcu_reader g;
+    std::scoped_lock<rcu_domain> lock(rcu_default_domain());
 
     t = std::thread([&]() { rcu_synchronize(); });
     usleep(100); // Wait for synchronize to start
@@ -66,8 +67,8 @@ TEST(RcuTest, SlowReader) {
   t.join();
 }
 
-rcu_reader tryretire(des* obj) {
-  rcu_reader g;
+static std::unique_lock<rcu_domain> try_retire(des* obj) {
+  std::unique_lock<rcu_domain> g(rcu_default_domain());
   rcu_retire(obj);
   return g;
 }
@@ -76,7 +77,7 @@ TEST(RcuTest, CopyGuard) {
   bool del = false;
   auto foo = new des(&del);
   {
-    auto res = tryretire(foo);
+    auto res = try_retire(foo);
     EXPECT_FALSE(del);
   }
   rcu_barrier();
@@ -85,7 +86,7 @@ TEST(RcuTest, CopyGuard) {
 
 static void delete_or_retire_oldint(int* oldint) {
   if (folly::Random::rand32() % 2 == 0) {
-    rcu_retire<int>(oldint, [](int* obj) {
+    rcu_retire(oldint, [](int* obj) {
       *obj = folly::Random::rand32();
       delete obj;
     });
@@ -106,7 +107,7 @@ TEST(RcuTest, Stress) {
   for (unsigned th = 0; th < FLAGS_threads; th++) {
     readers.push_back(std::thread([&]() {
       for (int i = 0; i < FLAGS_iters / 100; i++) {
-        rcu_reader g;
+        std::scoped_lock<rcu_domain> lock(rcu_default_domain());
         int sum = 0;
         int* ptrs[sz];
         for (uint32_t j = 0; j < sz; j++) {
@@ -162,17 +163,16 @@ TEST(RcuTest, Synchronize) {
 }
 
 TEST(RcuTest, NewDomainTest) {
-  struct UniqueTag;
-  rcu_domain<UniqueTag> newdomain(nullptr);
+  rcu_domain newdomain(nullptr);
   rcu_synchronize(newdomain);
 }
 
 TEST(RcuTest, NewDomainGuardTest) {
   struct UniqueTag;
-  rcu_domain<UniqueTag> newdomain(nullptr);
+  rcu_domain newdomain(nullptr);
   bool del = false;
   auto foo = new des(&del);
-  { rcu_reader_domain<UniqueTag> g(newdomain); }
+  { std::scoped_lock<rcu_domain> g(newdomain); }
   rcu_retire(foo, {}, newdomain);
   rcu_synchronize(newdomain);
   EXPECT_TRUE(del);
@@ -180,13 +180,13 @@ TEST(RcuTest, NewDomainGuardTest) {
 
 TEST(RcuTest, MovableReader) {
   {
-    rcu_reader g;
-    rcu_reader f(std::move(g));
+    std::unique_lock<rcu_domain> g(rcu_default_domain());
+    std::unique_lock<rcu_domain> f(std::move(g));
   }
   rcu_synchronize();
   {
-    rcu_reader g(std::defer_lock);
-    rcu_reader f;
+    std::unique_lock<rcu_domain> g(rcu_default_domain(), std::defer_lock);
+    std::unique_lock<rcu_domain> f(rcu_default_domain());
     g = std::move(f);
   }
   rcu_synchronize();
@@ -197,27 +197,29 @@ TEST(RcuTest, SynchronizeInCall) {
   rcu_synchronize();
 }
 
-TEST(RcuTest, ForkTest) {
+TEST(RcuTest, SafeForkTest) {
   rcu_default_domain().lock();
+  rcu_default_domain().unlock();
   auto pid = fork();
-  if (pid) {
-    // parent
-    rcu_default_domain().unlock();
+  if (pid > 0) {
+    // Parent branch -- wait for child to exit.
     rcu_synchronize();
     int status = -1;
     auto pid2 = waitpid(pid, &status, 0);
-    EXPECT_EQ(status, 0);
     EXPECT_EQ(pid, pid2);
-  } else {
-    // child
+    EXPECT_EQ(status, 0);
+  } else if (pid == 0) {
     rcu_synchronize();
-    exit(0); // Do not print gtest results
+    // Exit quickly to avoid spamming gtest output to console.
+    exit(0);
+  } else {
+    // Skip the test if fork() fails.
+    GTEST_SKIP();
   }
 }
 
 TEST(RcuTest, ThreadLocalList) {
-  struct TTag;
-  folly::detail::ThreadCachedLists<TTag> lists;
+  folly::detail::ThreadCachedLists lists;
   std::vector<std::thread> threads{FLAGS_threads};
   folly::relaxed_atomic<unsigned long> done{FLAGS_threads};
   for (auto& tr : threads) {
@@ -230,20 +232,19 @@ TEST(RcuTest, ThreadLocalList) {
     });
   }
   while (done > 0) {
-    folly::detail::ThreadCachedLists<TTag>::ListHead list{};
+    folly::detail::ThreadCachedLists::ListHead list{};
     lists.collect(list);
-    list.forEach([](folly::detail::ThreadCachedLists<TTag>::Node* node) {
-      delete node;
-    });
+    list.forEach(
+        [](folly::detail::ThreadCachedLists::Node* node) { delete node; });
   }
   for (auto& thread : threads) {
     thread.join();
   }
   // Run cleanup pass one more time to make ASAN happy
-  folly::detail::ThreadCachedLists<TTag>::ListHead list{};
+  folly::detail::ThreadCachedLists::ListHead list{};
   lists.collect(list);
   list.forEach(
-      [](folly::detail::ThreadCachedLists<TTag>::Node* node) { delete node; });
+      [](folly::detail::ThreadCachedLists::Node* node) { delete node; });
 }
 
 TEST(RcuTest, ThreadDeath) {
@@ -300,9 +301,10 @@ TEST(RcuTest, DeeplyNestedReaders) {
   int_ptr.store(new int(0), std::memory_order_release);
   for (unsigned th = 0; th < 32; th++) {
     readers.push_back(std::thread([&]() {
-      std::vector<rcu_reader> domain_readers;
+      std::vector<std::unique_lock<rcu_domain>> domain_readers;
       for (unsigned i = 0; i < 8192; i++) {
-        domain_readers.emplace_back();
+        domain_readers.push_back(
+            std::unique_lock<rcu_domain>(rcu_default_domain()));
         EXPECT_EQ(*(int_ptr.load(std::memory_order_acquire)), 0);
       }
     }));

@@ -15,6 +15,17 @@
  */
 
 // @author Nicholas Ormrod <njormrod@fb.com>
+/**
+ * DynamicConverter provides a simple, generic interface by which dynamic
+ * objects can be converted to/from concrete C++ types.
+ *
+ * Can be used in conjunction with folly/json.h to read a JSON value (which
+ * returns a folly::dynamic) and then turn that JSON value into a well-typed
+ * representation.
+ *
+ * @file DynamicConverter.h
+ * @refcode docs/examples/folly/DynamicConverter.cpp
+ */
 
 #pragma once
 
@@ -31,24 +42,26 @@
 #include <folly/lang/Exception.h>
 
 namespace folly {
+
+/**
+ * Return a well-typed representation of a dynamic.
+ *
+ * See docs/DynamicConverter.md for supported types and customization.
+ *
+ * @tparam T  A type representing the structure of the dynamic argument.
+ * @refcode docs/examples/folly/DynamicConverter.cpp
+ */
 template <typename T>
 T convertTo(const dynamic&);
+
+/**
+ * Turn an arbitrary type into a dynamic.
+ *
+ * @see convertTo for customization
+ */
 template <typename T>
 dynamic toDynamic(const T&);
 } // namespace folly
-
-/**
- * convertTo returns a well-typed representation of the input dynamic.
- *
- * Example:
- *
- *   dynamic d = dynamic::array(
- *       dynamic::array(1, 2, 3),
- *       dynamic::array(4, 5)); // a vector of vector of int
- *   auto vvi = convertTo<fbvector<fbvector<int>>>(d);
- *
- * See docs/DynamicConverter.md for supported types and customization
- */
 
 namespace folly {
 
@@ -65,6 +78,12 @@ template <typename T>
 using detect_member_type_mapped_type = typename T::mapped_type;
 template <typename T>
 using detect_member_type_key_type = typename T::key_type;
+template <typename T>
+using detect_like_pointer =
+    decltype((static_cast<bool>(std::declval<const T&>()), *std::declval<const T&>()), void());
+template <typename T>
+using detect_like_optional =
+    decltype(T(std::declval<typename T::value_type>()));
 
 template <typename T>
 struct iterator_class_is_container {
@@ -96,6 +115,17 @@ using is_map = StrictConjunction<
 template <typename T>
 using is_associative =
     StrictConjunction<is_range<T>, is_detected<detect_member_type_key_type, T>>;
+
+template <typename T>
+using is_like_pointer = Conjunction<
+    // Exclude string literals.
+    Negation<std::is_convertible<T, StringPiece>>,
+    is_detected<detect_like_pointer, T>>;
+
+template <typename T>
+using is_optional = Conjunction<
+    is_detected<detect_like_pointer, T>,
+    is_detected<detect_like_optional, T>>;
 
 } // namespace dynamicconverter_detail
 
@@ -259,6 +289,20 @@ struct DynamicConverter<std::pair<F, S>> {
   }
 };
 
+// optionals and other pointer-like types.
+template <typename T>
+struct DynamicConverter<
+    T,
+    typename std::enable_if<
+        dynamicconverter_detail::is_optional<T>::value>::type> {
+  static T convert(const dynamic& d) {
+    if (d.isNull()) {
+      return {};
+    }
+    return DynamicConverter<typename T::value_type>::convert(d);
+  }
+};
+
 // non-associative containers
 template <typename C>
 struct DynamicConverter<
@@ -379,6 +423,15 @@ struct DynamicConstructor<std::pair<A, B>, void> {
     d.push_back(toDynamic(x.second));
     return d;
   }
+};
+
+// optionals and other pointer-like types.
+template <typename T>
+struct DynamicConstructor<
+    T,
+    typename std::enable_if<
+        dynamicconverter_detail::is_like_pointer<T>::value>::type> {
+  static dynamic construct(const T& x) { return x ? toDynamic(*x) : dynamic(); }
 };
 
 // vector<bool>

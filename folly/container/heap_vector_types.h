@@ -97,11 +97,21 @@
 #include <folly/ScopeGuard.h>
 #include <folly/Traits.h>
 #include <folly/Utility.h>
+#include <folly/container/Iterator.h>
 #include <folly/lang/Exception.h>
 #include <folly/memory/MemoryResource.h>
 #include <folly/portability/Builtins.h>
+#include <folly/small_vector.h>
 
 namespace folly {
+template <
+    typename Key,
+    typename Value,
+    typename Compare,
+    typename Allocator,
+    typename GrowthPolicy,
+    typename Container>
+class heap_vector_map;
 
 namespace detail {
 
@@ -397,7 +407,7 @@ size_type insert(size_type offset, Container& cont) {
   if (size == 1) {
     return 0;
   }
-  auto adjust = 1;
+  size_type adjust = 1;
   if (offset == size - 1) {
     adjust = 0;
     auto last = lastOffset(size);
@@ -567,39 +577,19 @@ struct growth_policy_wrapper<void> {
   }
 };
 
-/*
- * This helper returns the distance between two iterators if it is
- * possible to figure it out without messing up the range
- * (i.e. unless they are InputIterators). Otherwise this returns
- * -1.
- */
-template <class Iterator>
-typename std::iterator_traits<Iterator>::difference_type distance_if_multipass(
-    Iterator first, Iterator last) {
-  using categ = typename std::iterator_traits<Iterator>::iterator_category;
-  if (std::is_same<categ, std::input_iterator_tag>::value) {
-    return -1;
-  }
-  return std::distance(first, last);
-}
-
-// Assumption fisrt != last
 template <class OurContainer, class Container, class InputIterator>
 void bulk_insert(
     OurContainer& sorted,
     Container& cont,
     InputIterator first,
     InputIterator last) {
-  auto const& cmp(sorted.value_comp());
+  assert(first != last);
 
-  auto const d = distance_if_multipass(first, last);
-  if (d != -1) {
-    cont.reserve(cont.size() + d);
-  }
   auto const prev_size = cont.size();
-
-  std::copy(first, last, std::back_inserter(cont));
+  cont.insert(cont.end(), first, last);
   auto const middle = cont.begin() + prev_size;
+
+  auto const& cmp(sorted.value_comp());
   if (!std::is_sorted(middle, cont.end(), cmp)) {
     std::sort(middle, cont.end(), cmp);
   }
@@ -647,19 +637,23 @@ Container&& as_sorted_unique(Container&& container, Compare const& comp) {
 }
 
 // class value_compare_map is used to compare map elements.
-template <class Compare, class value_type>
+template <class Compare>
 struct value_compare_map : Compare {
-  bool operator()(const value_type& a, const value_type& b) const {
+  template <class Pair1, class Pair2>
+  bool operator()(const Pair1& a, const Pair2& b) const {
     return Compare::operator()(a.first, b.first);
   }
 
-  using first_type = typename value_type::first_type;
-  first_type& getKey(const value_type& a) const {
-    return const_cast<value_type&>(a).first;
+  template <class value_type>
+  decltype(auto) getKey(const value_type& a) const {
+    using first_type = typename std::decay_t<decltype(a)>::first_type;
+    return const_cast<first_type&>(a.first);
   }
 
-  first_type& getKey(const value_type& a) {
-    return const_cast<value_type&>(a).first;
+  template <class value_type>
+  decltype(auto) getKey(const value_type& a) {
+    using first_type = typename std::decay_t<decltype(a)>::first_type;
+    return const_cast<first_type&>(a.first);
   }
 
   explicit value_compare_map(const Compare& c) : Compare(c) {}
@@ -734,11 +728,11 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
   struct heap_iterator {
     using iterator_category = std::random_access_iterator_tag;
     using size_type = typename Container::size_type;
-    using difference_type = typename Container::difference_type;
-    using value_type = typename Container::value_type;
-    using pointer = typename Container::pointer;
-    using reference = typename Container::reference;
-    using const_reference = typename Container::const_reference;
+    using difference_type =
+        typename std::iterator_traits<Iter>::difference_type;
+    using value_type = typename std::iterator_traits<Iter>::value_type;
+    using pointer = typename std::iterator_traits<Iter>::pointer;
+    using reference = typename std::iterator_traits<Iter>::reference;
 
     heap_iterator() = default;
     template <typename C>
@@ -853,14 +847,38 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
       return heap_vector_detail::distance(*cont_, offset1, offset0);
     }
 
-    reference operator*() { return const_cast<reference>(*ptr_); }
-    reference operator*() const { return const_cast<reference>(*ptr_); }
-    pointer operator->() { return &const_cast<reference>(*ptr_); }
-    pointer operator->() const { return &const_cast<reference>(*ptr_); }
+    reference operator*() const { return *ptr_; }
+    pointer operator->() const {
+      if constexpr (std::is_pointer_v<Iter>) {
+        return ptr_;
+      } else {
+        return ptr_.operator->();
+      }
+    }
 
    protected:
     template <typename I2>
     friend struct heap_iterator;
+
+    template <
+        typename T2,
+        typename Compare2,
+        typename Allocator2,
+        typename GrowthPolicy2,
+        typename Container2,
+        typename KeyT2,
+        typename ValueCompare2>
+    friend class heap_vector_container;
+
+    template <
+        typename Key2,
+        typename Value2,
+        typename Compare2,
+        typename Allocator2,
+        typename GrowthPolicy2,
+        typename Container2>
+    friend class ::folly::heap_vector_map;
+
     Iter ptr_;
     Container* cont_;
   };
@@ -1041,7 +1059,7 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
   std::pair<iterator, bool> insert(const value_type& value) {
     iterator it = lower_bound(m_.getKey(value));
     if (it == end() || value_comp()(value, *it)) {
-      auto offset = &*it - &*m_.cont_.begin();
+      auto offset = it.ptr_ - m_.cont_.begin();
       get_growth_policy().increase_capacity(*this, it);
       m_.cont_.push_back(value);
       offset = heap_vector_detail::insert(offset, m_.cont_);
@@ -1054,7 +1072,7 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
   std::pair<iterator, bool> insert(value_type&& value) {
     iterator it = lower_bound(m_.getKey(value));
     if (it == end() || value_comp()(value, *it)) {
-      auto offset = &*it - &*m_.cont_.begin();
+      auto offset = it.ptr_ - m_.cont_.begin();
       get_growth_policy().increase_capacity(*this, it);
       m_.cont_.push_back(std::move(value));
       offset = heap_vector_detail::insert(offset, m_.cont_);
@@ -1078,8 +1096,8 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
     if (first == last) {
       return;
     }
-    auto const d = heap_vector_detail::distance_if_multipass(first, last);
-    if (d == 1) {
+    if (iterator_has_known_distance_v<InputIterator, InputIterator> &&
+        std::distance(first, last) == 1) {
       insert(*first);
       return;
     }
@@ -1132,13 +1150,13 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
     if (it == end()) {
       return 0;
     }
-    heap_vector_detail::erase(&*it - &*m_.cont_.begin(), m_.cont_);
+    heap_vector_detail::erase(it.ptr_ - m_.cont_.begin(), m_.cont_);
     return 1;
   }
 
   iterator erase(const_iterator it) {
     auto offset =
-        heap_vector_detail::erase(&*it - &*m_.cont_.begin(), m_.cont_);
+        heap_vector_detail::erase(it.ptr_ - m_.cont_.begin(), m_.cont_);
     iterator ret = end();
     ret = m_.cont_.begin() + offset;
     return ret;
@@ -1333,10 +1351,8 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
   template <typename Self, typename K>
   static self_iterator_t<Self> lower_bound(Self& self, K const& key) {
     auto c = self.key_comp();
-    auto cmp = [&](value_type const& a) { return c(self.m_.getKey(a), key); };
-    auto reverseCmp = [&](value_type const& a) {
-      return c(key, self.m_.getKey(a));
-    };
+    auto cmp = [&](auto const& a) { return c(self.m_.getKey(a), key); };
+    auto reverseCmp = [&](auto const& a) { return c(key, self.m_.getKey(a)); };
     auto offset =
         heap_vector_detail::lower_bound(self.m_.cont_, cmp, reverseCmp);
     self_iterator_t<Self> ret = self.end();
@@ -1347,7 +1363,7 @@ class heap_vector_container : growth_policy_wrapper<GrowthPolicy> {
   template <typename Self, typename K>
   static self_iterator_t<Self> upper_bound(Self& self, K const& key) {
     auto c = self.key_comp();
-    auto cmp = [&](value_type const& a) { return c(key, self.m_.getKey(a)); };
+    auto cmp = [&](auto const& a) { return c(key, self.m_.getKey(a)); };
     auto offset = heap_vector_detail::upper_bound(self.m_.cont_, cmp);
     self_iterator_t<Self> ret = self.end();
     ret = self.m_.cont_.begin() + offset;
@@ -1456,8 +1472,7 @@ class heap_vector_map
           GrowthPolicy,
           Container,
           Key,
-          detail::heap_vector_detail::
-              value_compare_map<Compare, typename Container::value_type>> {
+          detail::heap_vector_detail::value_compare_map<Compare>> {
  public:
   using key_type = Key;
   using mapped_type = Value;
@@ -1470,10 +1485,9 @@ class heap_vector_map
   using const_reference = typename Container::const_reference;
   using difference_type = typename Container::difference_type;
   using size_type = typename Container::size_type;
-  using value_compare =
-      detail::heap_vector_detail::value_compare_map<Compare, value_type>;
+  using value_compare = detail::heap_vector_detail::value_compare_map<Compare>;
 
- private:
+ protected:
   using heap_vector_container =
       detail::heap_vector_detail::heap_vector_container<
           value_type,
@@ -1519,7 +1533,7 @@ class heap_vector_map
   mapped_type& operator[](const key_type& key) {
     iterator it = lower_bound(key);
     if (it == end() || key_comp()(key, it->first)) {
-      auto offset = &*it - &*m_.cont_.begin();
+      auto offset = it.ptr_ - m_.cont_.begin();
       get_growth_policy().increase_capacity(*this, it);
       m_.cont_.emplace_back(key, mapped_type());
       offset = detail::heap_vector_detail::insert(offset, m_.cont_);
@@ -1561,5 +1575,102 @@ using heap_vector_map = folly::heap_vector_map<
 } // namespace pmr
 
 #endif
+
+// Specialize heap_vector_map to integral key type and std::less comparaison.
+// small_heap_map achieve a very fast find for small map < 200 elements.
+template <
+    typename Key,
+    typename Value,
+    typename SizeType = uint32_t,
+    class Container = folly::small_vector<std::pair<Key, Value>, 0, SizeType>,
+    typename = std::enable_if_t<std::is_integral<Key>::value>>
+class small_heap_vector_map : public folly::heap_vector_map<
+                                  Key,
+                                  Value,
+                                  std::less<Key>,
+                                  typename Container::allocator_type,
+                                  void,
+                                  Container> {
+ public:
+  using key_type = Key;
+  using mapped_type = Value;
+  using value_type = typename Container::value_type;
+  using key_compare = std::less<Key>;
+  using allocator_type = typename Container::allocator_type;
+  using container_type = Container;
+  using pointer = typename Container::pointer;
+  using reference = typename Container::reference;
+  using const_reference = typename Container::const_reference;
+  using difference_type = typename Container::difference_type;
+  using size_type = typename Container::size_type;
+  using value_compare =
+      detail::heap_vector_detail::value_compare_map<std::less<Key>>;
+
+ private:
+  using heap_vector_map = folly::
+      heap_vector_map<Key, Value, key_compare, allocator_type, void, Container>;
+
+  using heap_vector_map::m_;
+
+ public:
+  using iterator = typename heap_vector_map::iterator;
+  using const_iterator = typename heap_vector_map::const_iterator;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+  using heap_vector_map::begin;
+  using heap_vector_map::heap_vector_map;
+  using heap_vector_map::size;
+  iterator find(const key_type key) {
+    auto offset = find_(*this, key);
+    iterator ret = begin();
+    ret = m_.cont_.begin() + offset;
+    return ret;
+  }
+
+  const_iterator find(const key_type key) const {
+    auto offset = find_(*this, key);
+    const_iterator ret = begin();
+    ret = m_.cont_.begin() + offset;
+    return ret;
+  }
+
+ private:
+  template <typename Self, typename K>
+  static inline size_type find_(Self& self, K const key) {
+    auto size = self.size();
+    if (!size) {
+      return 0;
+    }
+    auto& cont = self.m_.cont_;
+    size_type offset = 1;
+    auto cur_k = self.m_.getKey(cont[0]);
+    for (int i = 0; i < 6; i++) {
+      auto o = offset;
+      offset = 2 * offset;
+      if (cur_k <= key) {
+        ++offset;
+        if (cur_k == key) {
+          return o - 1;
+        }
+      }
+      if (offset > size) {
+        return size;
+      }
+      cur_k = self.m_.getKey(cont[offset - 1]);
+    }
+    while (true) {
+      auto lt = cur_k < key;
+      if (cur_k == key) {
+        return offset - 1;
+      }
+      offset = 2 * offset + lt;
+      if (offset > size)
+        return size;
+      cur_k = self.m_.getKey(cont[offset - 1]);
+    }
+    return size;
+  }
+};
 
 } // namespace folly
