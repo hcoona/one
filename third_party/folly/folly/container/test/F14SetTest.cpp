@@ -31,7 +31,7 @@ FOLLY_GNU_DISABLE_WARNING("-Wdeprecated-declarations")
 #include <unordered_map>
 #include <unordered_set>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/Conv.h"

@@ -20,7 +20,7 @@
 #include <condition_variable>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
 #include "folly/Benchmark.h"
 #include "folly/Range.h"

@@ -21,7 +21,7 @@
 #include "folly/portability/GFlags.h"
 #include "folly/portability/GTest.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include <atomic>
 #include <thread>

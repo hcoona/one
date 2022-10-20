@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 struct counted_shared_tag {};
 template <template <typename> class Atom = std::atomic>

@@ -20,8 +20,8 @@
 #include <cassert>
 #include <mutex>
 
-#include <glog/logging.h>
-#include <glog/raw_logging.h>
+#include "glog/logging.h"
+#include "glog/raw_logging.h"
 
 #include "folly/Likely.h"
 #include "folly/lang/Hint.h"

@@ -24,7 +24,7 @@
 #include "folly/Random.h"
 #include "folly/portability/GTest.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 void describePlatform() {
   LOG(INFO) << "sizeof(void*) = " << sizeof(void*);

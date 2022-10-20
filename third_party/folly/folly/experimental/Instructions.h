@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #ifdef _MSC_VER
 #include <immintrin.h>

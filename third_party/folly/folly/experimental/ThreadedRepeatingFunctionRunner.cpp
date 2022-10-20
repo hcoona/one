@@ -20,7 +20,7 @@
 
 #include "folly/system/ThreadName.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 

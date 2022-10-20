@@ -23,7 +23,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <boost/intrusive/list.hpp>
+#include "boost/intrusive/list.hpp"
 
 #include "folly/Optional.h"
 #include "folly/ScopeGuard.h"

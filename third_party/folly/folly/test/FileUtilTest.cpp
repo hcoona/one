@@ -22,7 +22,7 @@
 
 #include <deque>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Exception.h"
 #include "folly/File.h"

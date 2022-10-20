@@ -18,7 +18,7 @@
 
 #include "folly/portability/GFlags.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 DEFINE_string(
     coding_test_utils_instructions,

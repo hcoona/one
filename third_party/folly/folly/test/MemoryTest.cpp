@@ -21,7 +21,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/ConstexprMath.h"
 #include "folly/String.h"

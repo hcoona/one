@@ -16,8 +16,8 @@
 
 #include <mutex>
 
-#include <boost/thread/locks.hpp>
-#include <glog/logging.h>
+#include "boost/thread/locks.hpp"
+#include "glog/logging.h"
 
 #include "folly/File.h"
 #include "folly/String.h"

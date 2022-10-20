@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/String.h"
 #include "folly/executors/thread_factory/ThreadFactory.h"

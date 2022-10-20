@@ -25,7 +25,7 @@
 #include <memory>
 #include <thread>
 
-#include <boost/thread.hpp>
+#include "boost/thread.hpp"
 
 #include "folly/Exception.h"
 #include "folly/VirtualExecutor.h"

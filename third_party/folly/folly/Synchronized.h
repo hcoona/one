@@ -35,7 +35,7 @@
 #include "folly/functional/ApplyTuple.h"
 #include "folly/synchronization/Lock.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include <array>
 #include <mutex>

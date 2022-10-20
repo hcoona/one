@@ -25,7 +25,7 @@
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Exception.h"
 #include "folly/Function.h"

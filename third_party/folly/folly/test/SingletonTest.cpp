@@ -18,8 +18,8 @@
 
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
-#include <glog/logging.h>
+#include "boost/thread/barrier.hpp"
+#include "glog/logging.h"
 
 #include "folly/experimental/io/FsUtil.h"
 #include "folly/io/async/EventBase.h"

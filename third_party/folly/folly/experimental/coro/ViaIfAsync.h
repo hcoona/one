@@ -29,7 +29,7 @@
 #include "folly/lang/CustomizationPoint.h"
 #include "folly/tracing/AsyncStack.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #if FOLLY_HAS_COROUTINES
 

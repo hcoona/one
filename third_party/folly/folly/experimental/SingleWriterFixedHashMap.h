@@ -20,7 +20,7 @@
 
 #include "folly/lang/Bits.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 namespace folly {
 

@@ -20,7 +20,7 @@
 #include <limits>
 #include <stdexcept>
 
-#include <boost/lexical_cast.hpp>
+#include "boost/lexical_cast.hpp"
 
 #include "folly/Benchmark.h"
 #include "folly/CppAttributes.h"

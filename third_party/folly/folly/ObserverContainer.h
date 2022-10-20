@@ -19,7 +19,7 @@
 #include <bitset>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 #include "folly/ConstructorCallbackList.h"
 #include "folly/Function.h"
 #include "folly/Optional.h"

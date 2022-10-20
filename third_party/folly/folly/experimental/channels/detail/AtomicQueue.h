@@ -20,7 +20,7 @@
 #include <cassert>
 #include <memory>
 #include <utility>
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/lang/Assume.h"
 

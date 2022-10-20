@@ -16,7 +16,7 @@
 
 #include "folly/hash/Checksum.h"
 
-#include <boost/crc.hpp>
+#include "boost/crc.hpp"
 
 #include "folly/Benchmark.h"
 #include "folly/Random.h"

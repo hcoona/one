@@ -35,8 +35,8 @@
 #include <thread>
 #include <unordered_map>
 
-#include <boost/thread/barrier.hpp>
-#include <glog/logging.h>
+#include "boost/thread/barrier.hpp"
+#include "glog/logging.h"
 
 #include "folly/Memory.h"
 #include "folly/experimental/TestUtil.h"

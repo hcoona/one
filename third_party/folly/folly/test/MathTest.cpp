@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Portability.h"
 #include "folly/functional/Invoke.h"

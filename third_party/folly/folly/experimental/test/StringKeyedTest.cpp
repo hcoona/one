@@ -22,7 +22,7 @@
 #include <list>
 #include <string>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Range.h"
 #include "folly/hash/Hash.h"

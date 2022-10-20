@@ -23,7 +23,7 @@
 #include <typeinfo>
 #include <unordered_map>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/Conv.h"

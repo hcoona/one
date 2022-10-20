@@ -20,7 +20,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <fmt/format.h>
+#include "fmt/format.h"
 #include "folly/Range.h"
 #include "folly/portability/GTest.h"
 

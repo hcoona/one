@@ -22,7 +22,7 @@
 #include <string>
 
 #if FOLLY_HAVE_LIBGFLAGS && __has_include(<gflags/gflags.h>)
-#include <gflags/gflags.h>
+#include "gflags/gflags.h"
 #endif
 
 #if FOLLY_HAVE_LIBGFLAGS && __has_include(<gflags/gflags.h>)

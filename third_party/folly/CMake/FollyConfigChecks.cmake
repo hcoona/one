@@ -195,7 +195,7 @@ if (FOLLY_HAVE_LIBGFLAGS)
   list(APPEND CMAKE_REQUIRED_LIBRARIES ${FOLLY_LIBGFLAGS_LIBRARY})
   list(APPEND CMAKE_REQUIRED_INCLUDES ${FOLLY_LIBGFLAGS_INCLUDE})
   check_cxx_source_compiles("
-    #include <gflags/gflags.h>
+    #include "gflags/gflags.h"
     int main() {
       gflags::GetArgv();
       return 0;

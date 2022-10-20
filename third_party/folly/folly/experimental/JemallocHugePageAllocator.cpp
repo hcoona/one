@@ -22,7 +22,7 @@
 #include "folly/portability/String.h"
 #include "folly/portability/SysMman.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #if (defined(MADV_HUGEPAGE) || defined(MAP_ALIGNED_SUPER)) && \
     defined(FOLLY_USE_JEMALLOC) && !FOLLY_SANITIZE

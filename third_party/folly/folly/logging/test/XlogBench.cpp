@@ -19,8 +19,8 @@
 #include <cstddef>
 #include <thread>
 
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/thread/barrier.hpp>
+#include "boost/preprocessor/repetition/repeat.hpp"
+#include "boost/thread/barrier.hpp"
 
 #include "folly/Benchmark.h"
 #include "folly/init/Init.h"

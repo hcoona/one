@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <limits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Portability.h"
 #include "folly/Range.h"

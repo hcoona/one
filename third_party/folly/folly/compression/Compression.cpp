@@ -24,7 +24,7 @@
 #endif
 #endif
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #if FOLLY_HAVE_LIBSNAPPY
 #include <snappy-sinksource.h>

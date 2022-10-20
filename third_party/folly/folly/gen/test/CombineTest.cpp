@@ -21,7 +21,7 @@
 #include <tuple>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/FBVector.h"
 #include "folly/Range.h"

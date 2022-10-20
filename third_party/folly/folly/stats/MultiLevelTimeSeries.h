@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/String.h"
 #include "folly/stats/BucketedTimeSeries.h"

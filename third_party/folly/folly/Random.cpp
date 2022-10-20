@@ -29,7 +29,7 @@
 #include "folly/portability/Unistd.h"
 #include "folly/synchronization/RelaxedAtomic.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #ifdef _MSC_VER
 #include <wincrypt.h> // @manual

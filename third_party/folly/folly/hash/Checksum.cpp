@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include <boost/crc.hpp>
+#include "boost/crc.hpp"
 
 #include "folly/CpuId.h"
 #include "folly/hash/detail/ChecksumDetail.h"

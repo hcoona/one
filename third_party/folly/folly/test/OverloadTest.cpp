@@ -19,7 +19,7 @@
 #include <optional>
 #include <variant>
 
-#include <boost/variant.hpp>
+#include "boost/variant.hpp"
 
 #include "folly/DiscriminatedPtr.h"
 #include "folly/portability/GTest.h"

@@ -22,7 +22,7 @@
 #include <iostream>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/portability/GFlags.h"

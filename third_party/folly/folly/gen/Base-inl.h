@@ -31,8 +31,8 @@
     (!_MSC_VER || !(_MSC_VER < 1920 || _MSVC_LANG < 201703L))
 
 #if FOLLY_DETAIL_GEN_BASE_HAS_RANGEV3
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/transform.hpp>
+#include "range/v3/view/filter.hpp"
+#include "range/v3/view/transform.hpp"
 #endif
 
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.

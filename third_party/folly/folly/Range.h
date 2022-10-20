@@ -59,7 +59,7 @@
 #endif
 
 #if __has_include(<fmt/format.h>)
-#include <fmt/format.h>
+#include "fmt/format.h"
 #endif
 
 #include "folly/CpuId.h"
@@ -1620,7 +1620,7 @@ FOLLY_ASSUME_FBVECTOR_COMPATIBLE_1(folly::Range)
 // MSVC 2019.8 due to compiler bugs, so we need to include the actual
 // definition if available.
 #if __has_include(<range/v3/range/concepts.hpp>) && defined(_MSC_VER) && _MSC_VER >= 1920
-#include <range/v3/range/concepts.hpp> // @manual
+#include "range/v3/range/concepts.hpp" // @manual
 #else
 namespace ranges {
 template <class T>

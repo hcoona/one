@@ -24,9 +24,9 @@
 #include "folly/lang/Hint.h"
 #include "folly/test/TestUtils.h"
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/portability/GTest.h"
 

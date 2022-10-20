@@ -16,7 +16,7 @@
 
 #include "folly/json_patch.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/container/Enumerate.h"
 

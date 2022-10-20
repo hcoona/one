@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
 #include "folly/Likely.h"
 #include "folly/Portability.h"

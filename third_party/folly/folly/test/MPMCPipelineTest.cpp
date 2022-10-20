@@ -19,7 +19,7 @@
 #include <thread>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Conv.h"
 #include "folly/portability/GFlags.h"

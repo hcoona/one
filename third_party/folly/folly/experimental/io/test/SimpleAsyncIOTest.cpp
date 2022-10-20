@@ -26,7 +26,7 @@
 #include "folly/portability/GTest.h"
 #include "folly/synchronization/Baton.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 using namespace folly;
 

@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/init/Init.h"

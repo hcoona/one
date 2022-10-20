@@ -20,7 +20,7 @@
 #include <limits>
 #include <type_traits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Portability.h"
 #include "folly/Range.h"

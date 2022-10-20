@@ -21,8 +21,8 @@
 #include <cstddef>
 #include <memory>
 
-#include <boost/intrusive/list.hpp>
-#include <glog/logging.h>
+#include "boost/intrusive/list.hpp"
+#include "glog/logging.h"
 
 #include "folly/Optional.h"
 #include "folly/io/async/AsyncTimeout.h"

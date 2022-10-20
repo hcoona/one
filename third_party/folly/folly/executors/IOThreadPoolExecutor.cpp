@@ -16,7 +16,7 @@
 
 #include "folly/executors/IOThreadPoolExecutor.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/detail/MemoryIdler.h"
 #include "folly/portability/GFlags.h"

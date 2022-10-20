@@ -152,7 +152,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 // use this guard to handleSingleton breaking change in 3rd party code
 #ifndef FOLLY_SINGLETON_TRY_GET

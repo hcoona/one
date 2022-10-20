@@ -21,8 +21,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/intrusive/parent_from_member.hpp>
-#include <glog/logging.h>
+#include "boost/intrusive/parent_from_member.hpp"
+#include "glog/logging.h"
 
 #include "folly/Exception.h"
 #include "folly/Format.h"

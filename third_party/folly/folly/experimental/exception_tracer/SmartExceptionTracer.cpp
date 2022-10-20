@@ -16,7 +16,7 @@
 
 #include "folly/experimental/exception_tracer/SmartExceptionTracer.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 #include "folly/MapUtil.h"
 #include "folly/ScopeGuard.h"
 #include "folly/Synchronized.h"

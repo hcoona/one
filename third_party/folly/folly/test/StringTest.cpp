@@ -24,8 +24,8 @@
 #include <set>
 #include <tuple>
 
-#include <boost/regex.hpp>
-#include <glog/logging.h>
+#include "boost/regex.hpp"
+#include "glog/logging.h"
 
 #include "folly/FBVector.h"
 #include "folly/container/Array.h"

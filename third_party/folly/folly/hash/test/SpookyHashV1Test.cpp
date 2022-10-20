@@ -29,7 +29,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/portability/GTest.h"
 #include "folly/portability/Time.h"

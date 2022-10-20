@@ -19,7 +19,7 @@
 #include <cmath>
 #include <iterator>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Range.h"
 #include "folly/json.h"

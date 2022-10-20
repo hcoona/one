@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <boost/context/detail/fcontext.hpp>
-#include <glog/logging.h>
+#include "boost/context/detail/fcontext.hpp"
+#include "glog/logging.h"
 
 /**
  * Wrappers for different versions of boost::context library

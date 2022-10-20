@@ -18,7 +18,7 @@
 
 #include <cstddef>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/io/async/EventBaseBackendBase.h"
 #include "folly/io/async/EventUtil.h"

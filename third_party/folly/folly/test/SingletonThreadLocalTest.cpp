@@ -22,7 +22,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
 #include "folly/SingletonThreadLocal.h"
 #include "folly/String.h"

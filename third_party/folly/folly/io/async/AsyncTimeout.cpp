@@ -18,7 +18,7 @@
 
 #include <cassert>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/io/async/EventBase.h"
 #include "folly/io/async/EventUtil.h"

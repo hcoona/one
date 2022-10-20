@@ -16,7 +16,7 @@
 
 #include <float.h>
 #include <math.h>
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/ConstexprMath.h"
 #include "folly/experimental/Coinflip.h"

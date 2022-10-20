@@ -22,8 +22,8 @@
 #include <thread>
 #include <utility>
 
-#include <boost/intrusive_ptr.hpp>
-#include <boost/thread/barrier.hpp>
+#include "boost/intrusive_ptr.hpp"
+#include "boost/thread/barrier.hpp"
 
 #include "folly/Format.h"
 #include "folly/Memory.h"

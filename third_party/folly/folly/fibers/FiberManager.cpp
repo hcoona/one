@@ -21,7 +21,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/fibers/Fiber.h"
 #include "folly/fibers/LoopController.h"

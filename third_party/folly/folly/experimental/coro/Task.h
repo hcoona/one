@@ -19,7 +19,7 @@
 #include <exception>
 #include <type_traits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/CancellationToken.h"
 #include "folly/Executor.h"

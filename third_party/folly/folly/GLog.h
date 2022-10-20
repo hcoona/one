@@ -21,7 +21,7 @@
 #include <atomic>
 #include <chrono>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #ifndef FB_LOG_EVERY_MS
 /**

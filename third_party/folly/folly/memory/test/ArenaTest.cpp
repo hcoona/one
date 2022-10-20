@@ -20,7 +20,7 @@
 #include <set>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Memory.h"
 #include "folly/memory/MallctlHelper.h"

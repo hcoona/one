@@ -16,7 +16,7 @@
 
 #include <numeric>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
 #include "folly/DefaultKeepAliveExecutor.h"
 #include "folly/Random.h"

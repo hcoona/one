@@ -31,7 +31,7 @@
 #include "folly/experimental/coro/detail/ManualLifetime.h"
 #include "folly/tracing/AsyncStack.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include <iterator>
 #include <type_traits>

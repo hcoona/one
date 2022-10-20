@@ -16,7 +16,7 @@
 
 #include "folly/Padded.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/portability/GTest.h"
 

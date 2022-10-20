@@ -20,8 +20,8 @@
 #include <cerrno>
 #include <utility>
 
-#include <fmt/core.h>
-#include <glog/logging.h>
+#include "fmt/core.h"
+#include "glog/logging.h"
 
 #include "folly/Portability.h"
 #include "folly/portability/GFlags.h"

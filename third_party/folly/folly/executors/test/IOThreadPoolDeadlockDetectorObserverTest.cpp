@@ -16,7 +16,7 @@
 
 #include <memory>
 
-#include <fmt/core.h>
+#include "fmt/core.h"
 
 #include "folly/concurrency/DeadlockDetector.h"
 #include "folly/executors/IOThreadPoolDeadlockDetectorObserver.h"

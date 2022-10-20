@@ -20,7 +20,7 @@
 #include <chrono>
 #include <memory>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/ConstexprMath.h"
 #include "folly/Optional.h"

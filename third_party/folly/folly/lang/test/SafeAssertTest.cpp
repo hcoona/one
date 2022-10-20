@@ -16,7 +16,7 @@
 
 #include "folly/lang/SafeAssert.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/Conv.h"

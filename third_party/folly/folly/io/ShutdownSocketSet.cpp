@@ -19,7 +19,7 @@
 #include <chrono>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/FileUtil.h"
 #include "folly/net/NetOps.h"

@@ -22,7 +22,7 @@
 #include <thread>
 #include <utility>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/ConstexprMath.h"
 #include "folly/Likely.h"

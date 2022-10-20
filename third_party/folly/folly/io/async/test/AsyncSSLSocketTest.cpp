@@ -54,7 +54,7 @@
 #endif
 
 #if FOLLY_OPENSSL_IS_110
-#include <openssl/async.h>
+#include "openssl/async.h"
 #endif
 
 using std::cerr;

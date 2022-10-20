@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Portability.h"
 #include "folly/experimental/observer/detail/Core.h"

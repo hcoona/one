@@ -33,8 +33,8 @@
 #include <type_traits>
 #include <unordered_map>
 
-#include <boost/function_types/function_arity.hpp>
-#include <glog/logging.h>
+#include "boost/function_types/function_arity.hpp"
+#include "glog/logging.h"
 
 FOLLY_GFLAGS_DECLARE_bool(benchmark);
 FOLLY_GFLAGS_DECLARE_uint32(bm_result_width_chars);

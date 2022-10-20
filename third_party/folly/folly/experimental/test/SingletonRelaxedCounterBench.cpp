@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 
 #include "folly/Benchmark.h"
 #include "folly/init/Init.h"

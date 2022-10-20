@@ -26,8 +26,8 @@
 #include <set>
 #include <thread>
 
-#include <boost/thread/tss.hpp>
-#include <glog/logging.h>
+#include "boost/thread/tss.hpp"
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/experimental/io/FsUtil.h"

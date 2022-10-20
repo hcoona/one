@@ -21,8 +21,8 @@
 #include <thread>
 #include <vector>
 
-#include <boost/thread/barrier.hpp>
-#include <glog/logging.h>
+#include "boost/thread/barrier.hpp"
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/init/Init.h"

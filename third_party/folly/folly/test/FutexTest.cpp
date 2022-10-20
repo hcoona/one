@@ -22,7 +22,7 @@
 #include <ratio>
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Chrono.h"
 #include "folly/portability/GTest.h"

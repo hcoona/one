@@ -16,7 +16,7 @@
 
 #include "folly/experimental/FutureDAG.h"
 
-#include <boost/thread/barrier.hpp>
+#include "boost/thread/barrier.hpp"
 #include "folly/executors/GlobalExecutor.h"
 #include "folly/portability/GTest.h"
 

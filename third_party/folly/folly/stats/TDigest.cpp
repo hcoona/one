@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <limits>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/stats/detail/DoubleRadixSort.h"
 

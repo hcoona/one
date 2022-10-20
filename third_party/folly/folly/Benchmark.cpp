@@ -29,7 +29,7 @@
 #include <utility>
 #include <vector>
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
 #include "folly/FileUtil.h"
 #include "folly/MapUtil.h"

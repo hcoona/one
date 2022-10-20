@@ -23,10 +23,10 @@
 #include <set>
 #include <vector>
 
-#include <boost/intrusive/list.hpp>
-#include <boost/intrusive/slist.hpp>
+#include "boost/intrusive/list.hpp"
+#include "boost/intrusive/slist.hpp"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/CPortability.h"
 #include "folly/Conv.h"

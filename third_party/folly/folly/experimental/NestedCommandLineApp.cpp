@@ -18,7 +18,7 @@
 
 #include <iostream>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/FileUtil.h"
 #include "folly/Format.h"

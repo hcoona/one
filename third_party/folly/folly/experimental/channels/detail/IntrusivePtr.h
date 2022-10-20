@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <boost/intrusive_ptr.hpp>
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
+#include "boost/intrusive_ptr.hpp"
+#include "boost/smart_ptr/intrusive_ref_counter.hpp"
 
 namespace folly {
 namespace channels {

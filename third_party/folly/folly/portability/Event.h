@@ -24,7 +24,7 @@
 #include <event.h>
 
 #ifdef _MSC_VER
-#include <event2/event_compat.h> // @manual
+#include "event2/event_compat.h" // @manual
 // The signal_set macro from libevent 2 compat conflicts with the
 // boost::asio::signal_set function
 #undef signal_set

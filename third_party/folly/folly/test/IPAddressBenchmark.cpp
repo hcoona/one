@@ -16,8 +16,8 @@
 
 #include "folly/IPAddress.h"
 
-#include <fmt/core.h>
-#include <glog/logging.h>
+#include "fmt/core.h"
+#include "glog/logging.h"
 
 #include "folly/Benchmark.h"
 #include "folly/Conv.h"

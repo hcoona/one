@@ -18,7 +18,7 @@
 
 #include <thread>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/portability/GTest.h"
 #include "folly/portability/Unistd.h"

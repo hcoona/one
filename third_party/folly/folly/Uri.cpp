@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <cctype>
 
-#include <boost/regex.hpp>
+#include "boost/regex.hpp"
 
 namespace folly {
 

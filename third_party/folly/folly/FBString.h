@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <fmt/format.h>
+#include "fmt/format.h"
 #include "folly/CPortability.h"
 #include "folly/CppAttributes.h"
 #include "folly/Likely.h"

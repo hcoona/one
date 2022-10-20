@@ -21,7 +21,7 @@
 #include <memory>
 #include <vector>
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/gen/Base.h"
 #include "folly/portability/GFlags.h"

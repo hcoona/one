@@ -23,7 +23,7 @@
 #include <exception>
 #include <memory>
 #include <vector>
-#include <boost/variant.hpp>
+#include "boost/variant.hpp"
 
 #include "folly/ExceptionWrapper.h"
 #include "folly/SocketAddress.h"

@@ -21,7 +21,7 @@
 #include <thread>
 #include <vector>
 
-#include <fmt/ostream.h>
+#include "fmt/ostream.h"
 #include "folly/portability/GTest.h"
 #include "folly/synchronization/test/Barrier.h"
 

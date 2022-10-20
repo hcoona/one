@@ -32,7 +32,7 @@
 #if defined(__FreeBSD__)
 #include <malloc_np.h> // @manual
 #else
-#include <jemalloc/jemalloc.h> // @manual
+#include "jemalloc/jemalloc.h" // @manual
 #endif
 #else
 #if !defined(__FreeBSD__)

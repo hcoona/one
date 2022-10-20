@@ -18,7 +18,7 @@
 // specializations.
 #include "folly/experimental/crypto/detail/LtHashInternal.h"
 
-#include <glog/logging.h>
+#include "glog/logging.h"
 
 #include "folly/Memory.h"
 #include "folly/lang/Bits.h"
