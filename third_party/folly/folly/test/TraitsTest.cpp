@@ -343,23 +343,6 @@ TEST(Traits, is_detected_v) {
   EXPECT_FALSE((folly::is_detected_v<detector_find, double, char>));
 }
 
-TEST(Traits, is_complete) {
-  struct Incomplete;
-  struct Complete {};
-  enum FwdDeclaredEnum : int;
-  enum IncompleteEnum { IS_COMPLETE = folly::is_complete_v<IncompleteEnum> };
-
-  EXPECT_TRUE(folly::is_complete_v<Complete>);
-  EXPECT_FALSE(folly::is_complete_v<Incomplete>);
-  EXPECT_TRUE(folly::is_complete_v<FwdDeclaredEnum>);
-  EXPECT_FALSE(IncompleteEnum::IS_COMPLETE);
-  EXPECT_FALSE(folly::is_complete_v<const void>);
-  EXPECT_TRUE(folly::is_complete_v<int[10]>);
-  EXPECT_FALSE(folly::is_complete_v<int[]>);
-  EXPECT_FALSE(folly::is_complete_v<Incomplete[10]>);
-  EXPECT_TRUE(folly::is_complete_v<void()>);
-}
-
 TEST(Traits, aligned_storage_for_t) {
   struct alignas(2) Foo {
     char data[4];
@@ -537,4 +520,34 @@ TEST(Traits, int_bits_lg) {
 #if FOLLY_HAVE_INT128_T
   EXPECT_TRUE((std::is_same_v<int128_t, int_bits_lg_t<7>>));
 #endif // FOLLY_HAVE_INT128_T
+}
+
+struct type_pack_element_test {
+  template <size_t I, typename... T>
+  using fallback = traits_detail::type_pack_element_fallback<I, T...>;
+  template <size_t I, typename... T>
+  using native = type_pack_element_t<I, T...>;
+
+  template <typename IC, typename... T>
+  using fallback_ic = fallback<IC::value, T...>;
+  template <typename IC, typename... T>
+  using native_ic = native<IC::value, T...>;
+};
+
+TEST(Traits, type_pack_element_t) {
+  using test = type_pack_element_test;
+
+  EXPECT_TRUE(( //
+      std::is_same_v<
+          test::fallback<3, int, int, int, double, int, int>,
+          double>));
+  EXPECT_TRUE((is_detected_v<test::fallback_ic, index_constant<0>, int>));
+  EXPECT_FALSE((is_detected_v<test::fallback_ic, index_constant<0>>));
+
+  EXPECT_TRUE(( //
+      std::is_same_v<
+          test::native<3, int, int, int, double, int, int>, //
+          double>));
+  EXPECT_TRUE((is_detected_v<test::native_ic, index_constant<0>, int>));
+  EXPECT_FALSE((is_detected_v<test::native_ic, index_constant<0>>));
 }

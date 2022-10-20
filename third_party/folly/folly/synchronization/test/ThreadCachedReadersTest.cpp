@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <folly/ThreadLocal.h>
-#include <folly/synchronization/detail/ThreadCachedReaders.h>
+#include "folly/ThreadLocal.h"
+#include "folly/synchronization/detail/ThreadCachedReaders.h"
 
-#include <folly/portability/GTest.h>
+#include "folly/portability/GTest.h"
 
 using namespace folly;
 
@@ -32,15 +32,15 @@ class ThreadCachedReadersWidget {
     }
   }
 
-  void set(detail::ThreadCachedReaders<void>* readers) { readers_ = readers; }
+  void set(detail::ThreadCachedReaders* readers) { readers_ = readers; }
 
  private:
-  detail::ThreadCachedReaders<void>* readers_{nullptr};
+  detail::ThreadCachedReaders* readers_{nullptr};
 };
 } // namespace
 
 TEST(ThreadCachedReaders, ThreadLocalCreateOnThreadExit) {
-  detail::ThreadCachedReaders<void> readers;
+  detail::ThreadCachedReaders readers;
   ThreadLocal<ThreadCachedReadersWidget> w;
 
   std::thread([&] {

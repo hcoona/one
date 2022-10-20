@@ -46,6 +46,12 @@ struct hash<folly::fibers::FiberManager::Options> {
 namespace folly {
 namespace fibers {
 
+void FiberManager::defaultExceptionCallback(
+    const std::exception_ptr& eptr, StringPiece context) {
+  LOG(DFATAL) << "Exception thrown in FiberManager with context '" << context
+              << "': " << exceptionStr(eptr);
+}
+
 auto FiberManager::FrozenOptions::create(const Options& options) -> ssize_t {
   return std::hash<Options>()(options);
 }
@@ -136,9 +142,6 @@ size_t FiberManager::stackHighWatermark() const {
 }
 
 void FiberManager::remoteReadyInsert(Fiber* fiber) {
-  if (observer_) {
-    observer_->runnable(reinterpret_cast<uintptr_t>(fiber));
-  }
   if (remoteReadyQueue_.insertHead(fiber)) {
     loopController_->scheduleThreadSafe();
   }

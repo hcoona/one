@@ -70,6 +70,7 @@ class MergeProcessor : public IChannelCallback {
   void start(std::vector<Receiver<TValue>> inputReceivers) {
     executor_->add([=, inputReceivers = std::move(inputReceivers)]() mutable {
       if (!sender_->senderWait(this)) {
+        sender_->senderClose();
         processSenderCancelled();
         return;
       }
@@ -80,6 +81,8 @@ class MergeProcessor : public IChannelCallback {
       for (auto& inputReceiver : inputReceivers) {
         auto [unbufferedInputReceiver, buffer] =
             detail::receiverUnbuffer(std::move(inputReceiver));
+        CHECK(unbufferedInputReceiver != nullptr)
+            << "The bridge in the input receiver is null.";
         CHECK(buffers
                   .insert(std::make_pair(
                       unbufferedInputReceiver.get(), std::move(buffer)))

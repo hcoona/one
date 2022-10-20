@@ -85,6 +85,7 @@ string(REGEX REPLACE
 
 check_symbol_exists(pthread_atfork pthread.h FOLLY_HAVE_PTHREAD_ATFORK)
 
+list(APPEND CMAKE_REQUIRED_DEFINITIONS -D_GNU_SOURCE)
 check_symbol_exists(accept4 sys/socket.h FOLLY_HAVE_ACCEPT4)
 check_symbol_exists(getrandom sys/random.h FOLLY_HAVE_GETRANDOM)
 check_symbol_exists(preadv sys/uio.h FOLLY_HAVE_PREADV)
@@ -194,7 +195,7 @@ if (FOLLY_HAVE_LIBGFLAGS)
   list(APPEND CMAKE_REQUIRED_LIBRARIES ${FOLLY_LIBGFLAGS_LIBRARY})
   list(APPEND CMAKE_REQUIRED_INCLUDES ${FOLLY_LIBGFLAGS_INCLUDE})
   check_cxx_source_compiles("
-    #include <gflags/gflags.h>
+    #include "gflags/gflags.h"
     int main() {
       gflags::GetArgv();
       return 0;

@@ -38,6 +38,11 @@ extern "C" FOLLY_KEEP void check_unsafe_default_initialized_int_pass() {
   folly::detail::keep_sink_nx(a);
 }
 
+extern "C" FOLLY_KEEP int check_unsafe_default_initialized_int_cexpr() {
+  constexpr int a = folly::unsafe_default_initialized;
+  return a;
+}
+
 } // namespace folly
 
 namespace {
@@ -175,6 +180,19 @@ TEST_F(UtilityTest, MoveOnly) {
       "Should have noexcept move constructor");
 }
 
+TEST_F(UtilityTest, NonCopyableNonMovable) {
+  class FooBar : folly::NonCopyableNonMovable {
+    int a;
+  };
+
+  static_assert(
+      !std::is_copy_constructible<FooBar>::value,
+      "Should not be copy constructible");
+  static_assert(
+      !std::is_move_constructible<FooBar>::value,
+      "Should not be move constructible");
+}
+
 TEST_F(UtilityTest, to_signed) {
   {
     constexpr auto actual = folly::to_signed(int32_t(-12));
@@ -213,4 +231,34 @@ TEST_F(UtilityTest, to_integral) {
     constexpr uint32_t actual = folly::to_integral(100.0f);
     EXPECT_EQ(100, actual);
   }
+}
+
+TEST_F(UtilityTest, to_floating_point) {
+  {
+    constexpr float actual = folly::to_floating_point(100);
+    EXPECT_EQ(100.f, actual);
+  }
+}
+
+template <class T>
+constexpr bool is_vector = folly::detail::is_instantiation_of_v<std::vector, T>;
+
+TEST_F(UtilityTest, if_constexpr) {
+  static_assert(folly::if_constexpr<true>(1, 2) == 1);
+  static_assert(folly::if_constexpr<false>(1, 2) == 2);
+  static_assert(
+      folly::if_constexpr<true>([] { return 1; }, [] { return 2; })() == 1);
+  static_assert(
+      folly::if_constexpr<false>([] { return 1; }, [] { return 2; })() == 2);
+
+  std::vector<int> v;
+  std::set<int> e;
+
+  auto pushback = [](auto& c) { return c.push_back(42); };
+  folly::if_constexpr<is_vector<decltype(v)>>(pushback, [](auto&) {})(v);
+  folly::if_constexpr<is_vector<decltype(e)>>(pushback, [](auto&) {})(e);
+
+  ASSERT_EQ(v.size(), 1);
+  EXPECT_EQ(v.at(0), 42);
+  EXPECT_TRUE(e.empty());
 }

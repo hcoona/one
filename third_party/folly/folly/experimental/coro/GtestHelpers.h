@@ -24,6 +24,18 @@
 
 #if FOLLY_HAS_COROUTINES
 
+#if defined(__GLIBCXX__)
+
+#define LOG_ASYNC_TEST_EXCEPTION                            \
+  GTEST_LOG_(ERROR) << ex.what() << ", async stack trace: " \
+                    << folly::exception_tracer::getAsyncTrace(ex);
+
+#else
+
+#define LOG_ASYNC_TEST_EXCEPTION GTEST_LOG_(ERROR) << ex.what();
+
+#endif
+
 /**
  * This is based on the GTEST_TEST_ macro from gtest-internal.h. It seems that
  * gtest doesn't yet support coro tests, so this macro adds a way to define a
@@ -74,8 +86,7 @@
     try {                                                                      \
       folly::coro::blockingWait(co_TestBody());                                \
     } catch (const std::exception& ex) {                                       \
-      GTEST_LOG_(ERROR) << ex.what() << ", async stack trace: "                \
-                        << folly::exception_tracer::getAsyncTrace(ex);         \
+      LOG_ASYNC_TEST_EXCEPTION                                                 \
       throw;                                                                   \
     }                                                                          \
   }                                                                            \
@@ -226,6 +237,13 @@
   CO_ASSERT_PRED_FORMAT2(::testing::internal::CmpHelperGE, val1, val2)
 #define CO_ASSERT_GT(val1, val2) \
   CO_ASSERT_PRED_FORMAT2(::testing::internal::CmpHelperGT, val1, val2)
+
+#define CO_ASSERT_THROW(statement, expected_exception) \
+  GTEST_TEST_THROW_(statement, expected_exception, CO_GTEST_FATAL_FAILURE_)
+#define CO_ASSERT_NO_THROW(statement) \
+  GTEST_TEST_NO_THROW_(statement, CO_GTEST_FATAL_FAILURE_)
+#define CO_ASSERT_ANY_THROW(statement) \
+  GTEST_TEST_ANY_THROW_(statement, CO_GTEST_FATAL_FAILURE_)
 
 /**
  * coroutine version of FAIL() which is defined as GTEST_FAIL()

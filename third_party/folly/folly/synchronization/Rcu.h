@@ -20,6 +20,7 @@
 #include <functional>
 #include <limits>
 
+#include "folly/Function.h"
 #include "folly/Indestructible.h"
 #include "folly/Optional.h"
 #include "folly/detail/TurnSequencer.h"
@@ -130,12 +131,13 @@
 //       // done accessing the pointed-to data. We get a Guard on that
 //       // domain; as long as it exists, no function subsequently passed to
 //       // invokeEventually will execute.
-//       rcu_reader guard;
+//       std::scoped_lock<rcu_domain>(rcu_default_domain());
 //       ConfigData* configData = globalConfigData.load();
 //       // We created a guard before we read globalConfigData; we know that the
 //       // pointer will remain valid until the guard is destroyed.
 //       curManagementServer = configData->managementServerIP;
-//       // Guard is released here; retired objects may be freed.
+//       // RCU domain via the scoped mutex is released here; retired objects
+//       // may be freed.
 //     }
 //     doSomethingWith(curManagementServer);
 //   }
@@ -150,13 +152,13 @@
 //     globalConfigData.store(newConfigData);
 //     rcu_retire(oldConfigData);
 //     // alternatively, in a blocking manner:
-//     //   synchronize_rcu();
+//     //   rcu_synchronize();
 //     //   delete oldConfigData;
 //   }
 // }
 //
 // This gets us close to the speed of the second solution, without
-// leaking memory. A rcu_reader costs about 4 ns, faster than the
+// leaking memory. An std::scoped_lock costs about 5 ns, faster than the
 // lock() / unlock() pair in the more traditional mutex-based approach from our
 // first attempt, and the writer never blocks the readers.
 
@@ -169,25 +171,30 @@
 //   A "universe" of deferred execution. Each rcu_domain has an
 //   executor on which deferred functions may execute. Readers enter
 //   a read region in an rcu_domain by creating an instance of an
-//   rcu_reader_domain object on the domain. The rcu_reader_domain provides
-//   RAII semantics for read region protection.
+//   std::scoped_lock<folly::rcu_domain> object on the domain. The scoped
+//   lock provides RAII semantics for read region protection over the domain.
 //
-//   rcu_domains should in general be completely separated; rcu_reader objects
-//   created on one domain do not prevent functions deferred on other domains
-//   from running. It's intended that most callers should only ever use the
-//   default, global domain.
-//
-//   Creation of a domain takes a template tag argument, which
-//   defaults to RcuTag. To access different domains, you have to pass a
-//   different tag.  The global domain is preferred for almost all
-//   purposes, unless a different executor is required.
+//   rcu_domains should in general be completely separated;
+//   std::scoped_lock<folly::rcu_domain> locks created on one domain do not
+//   prevent functions deferred on other domains from running. It's intended
+//   that most callers should only ever use the default, global domain.
 //
 //   You should use a custom rcu_domain if you can't avoid sleeping
 //   during reader critical sections (because you don't want to block
 //   all other users of the domain while you sleep), or you want to change
-//   the default executor type.
-
+//   the default executor type on which retire callbacks are invoked.
+//   Otherwise, users are strongly encouraged to use the default domain.
+//
 // API correctness limitations:
+//
+//  - fork():
+//    Invoking fork() in a multithreaded program with any thread other than the
+//    forking thread being present in a read region will result in undefined
+//    behavior. Similarly, a forking thread must immediately invoke exec if
+//    fork() is invoked while in a read region. Invoking fork() inside of a read
+//    region, and then exiting before invoking exec(), will similarly result in
+//    undefined behavior.
+//
 //  - Exceptions:
 //    In short, nothing about this is exception safe. retire functions should
 //    not throw exceptions in their destructors, move constructors or call
@@ -196,16 +203,17 @@
 // Performance limitations:
 //  - Blocking:
 //    A blocked reader will block invocation of deferred functions until it
-//    becomes unblocked. Sleeping while holding a rcu_reader can have bad
-//    performance consequences.
+//    becomes unblocked. Sleeping while holding an
+//    std::scoped_lock<folly::rcu_domain> lock can have bad performance
+//    consequences.
 //
 // API questions you might have:
 //  - Nested critical sections:
 //    These are fine. The following is explicitly allowed by the standard, up to
 //    a nesting level of 100:
-//        rcu_reader reader1;
+//        std::scoped_lock<rcu_domain> reader1(rcu_default_domain());
 //        doSomeWork();
-//        rcu_reader reader2;
+//        std::scoped_lock<rcu_domain> reader2(rcu_default_domain());
 //        doSomeMoreWork();
 //  - Restrictions on retired()ed functions:
 //    Any operation is safe from within a retired function's
@@ -237,7 +245,7 @@
 // the current implementation may synchronize if the retire queue is full,
 // resulting in tail latencies of ~10ms.
 //
-// rcu_reader creation/destruction is ~4ns.  By comparison,
+// std::scoped_lock<rcu_domain> creation/destruction is ~5ns.  By comparison,
 // folly::SharedMutex::lock_shared + unlock_shared pair is ~26ns
 
 // Hazard pointers vs. RCU:
@@ -261,12 +269,13 @@
 // *the remaining part* of the list as valid, however parts before its current
 // hazptr may be freed.
 //
-// So roughly: RCU is simple, but an all-or-nothing affair.  A single rcu_reader
-// can block all reclamation. Hazptrs will reclaim exactly as much as possible,
-// at the cost of extra work writing traversal code
+// So roughly: RCU is simple, but an all-or-nothing affair.  A single
+// std::scoped_lock<folly::rcu_domain> can block all reclamation. Hazptrs will
+// reclaim exactly as much as possible, at the cost of extra work writing
+// traversal code
 //
 // Reproduced from
-// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0461r1.pdf
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/n4895.pdf
 //
 //                              Reference Counting    RCU            Hazptr
 //
@@ -290,11 +299,6 @@
 
 namespace folly {
 
-struct RcuTag;
-
-template <typename Tag = RcuTag>
-class rcu_domain;
-
 // Defines an RCU domain.  RCU readers within a given domain block updaters
 // (rcu_synchronize, call, retire, or rcu_retire) only within that same
 // domain, and have no effect on updaters associated with other rcu_domains.
@@ -312,50 +316,120 @@ class rcu_domain;
 // the executor invoking the RCU primitive, for example, rcu_retire().
 //
 // The domain must survive all its readers.
-template <typename Tag>
 class rcu_domain {
-  using list_head = typename detail::ThreadCachedLists<Tag>::ListHead;
-  using list_node = typename detail::ThreadCachedLists<Tag>::Node;
+  using list_head = typename detail::ThreadCachedLists::ListHead;
+  using list_node = typename detail::ThreadCachedLists::Node;
 
  public:
   /*
    * If an executor is passed, it is used to run calls and delete
    * retired objects.
    */
-  explicit rcu_domain(Executor* executor = nullptr) noexcept;
+  explicit rcu_domain(Executor* executor = nullptr) noexcept
+      : executor_(executor ? executor : &QueuedImmediateExecutor::instance()) {}
 
   rcu_domain(const rcu_domain&) = delete;
   rcu_domain(rcu_domain&&) = delete;
   rcu_domain& operator=(const rcu_domain&) = delete;
   rcu_domain& operator=(rcu_domain&&) = delete;
-  ~rcu_domain();
 
   // Reader locks: Prevent any calls from occuring, retired memory
   // from being freed, and synchronize() calls from completing until
   // all preceding lock() sections are finished.
 
-  // Note: can potentially allocate on thread first use.
-  FOLLY_ALWAYS_INLINE void lock();
-  FOLLY_ALWAYS_INLINE void unlock();
+  /*
+   * Enter a read region on the current thread.
+   *
+   * Note that despite the function being marked noexcept, an allocation
+   * may take place in folly::ThreadLocal the first time a thread enters a read
+   * region. Regardless, for now, we're marking this as noexcept to match the
+   * N4895 standard proposal:
+   *
+   * https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/n4895.pdf
+   */
+  FOLLY_ALWAYS_INLINE void lock() noexcept {
+    counters_.increment(version_.load(std::memory_order_acquire));
+  }
+  FOLLY_ALWAYS_INLINE void unlock() noexcept { counters_.decrement(); }
 
   // Invokes cbin(this) and then deletes this some time after all pre-existing
   // RCU readers have completed.  See rcu_synchronize() for more information
   // about RCU readers and domains.
   template <typename T>
-  void call(T&& cbin);
+  void call(T&& cbin) {
+    auto node = new list_node;
+    node->cb_ = [node, cb = std::forward<T>(cbin)]() {
+      cb();
+      delete node;
+    };
+    retire(node);
+  }
 
   // Invokes node->cb_(node) some time after all pre-existing RCU readers
   // have completed.  See rcu_synchronize() for more information about RCU
   // readers and domains.
-  void retire(list_node* node) noexcept;
+  void retire(list_node* node) noexcept {
+    q_.push(node);
+
+    // Note that it's likely we hold a read lock here,
+    // so we can only half_sync(false).  half_sync(true)
+    // or a synchronize() call might block forever.
+    uint64_t time = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::steady_clock::now().time_since_epoch())
+                        .count();
+    auto syncTime = syncTime_.load(std::memory_order_relaxed);
+    if (time > syncTime + syncTimePeriod_ &&
+        syncTime_.compare_exchange_strong(
+            syncTime, time, std::memory_order_relaxed)) {
+      list_head finished;
+      {
+        std::lock_guard<std::mutex> g(syncMutex_);
+        half_sync(false, finished);
+      }
+      // callbacks are called outside of syncMutex_
+      finished.forEach(
+          [&](list_node* item) { executor_->add(std::move(item->cb_)); });
+    }
+  }
 
   // Ensure concurrent critical sections have finished.
   // Always waits for full synchronization.
   // read lock *must not* be held.
-  void synchronize() noexcept;
+  void synchronize() noexcept {
+    auto curr = version_.load(std::memory_order_acquire);
+    // Target is two epochs away.
+    auto target = curr + 2;
+    while (true) {
+      // Try to assign ourselves to do the sync work.
+      // If someone else is already assigned, we can wait for
+      // the work to be finished by waiting on turn_.
+      auto work = work_.load(std::memory_order_acquire);
+      auto tmp = work;
+      if (work < target && work_.compare_exchange_strong(tmp, target)) {
+        list_head finished;
+        {
+          std::lock_guard<std::mutex> g(syncMutex_);
+          while (version_.load(std::memory_order_acquire) < target) {
+            half_sync(true, finished);
+          }
+        }
+        // callbacks are called outside of syncMutex_
+        finished.forEach(
+            [&](list_node* node) { executor_->add(std::move(node->cb_)); });
+        return;
+      } else {
+        if (version_.load(std::memory_order_acquire) >= target) {
+          return;
+        }
+        std::atomic<uint32_t> cutoff{100};
+        // Wait for someone to finish the work.
+        turn_.tryWaitForTurn(to_narrow(work), cutoff, false);
+      }
+    }
+  }
 
  private:
-  detail::ThreadCachedReaders<Tag> counters_;
+  detail::ThreadCachedReaders counters_;
   // Global epoch.
   std::atomic<uint64_t> version_{0};
   // Future epochs being driven by threads in synchronize
@@ -371,10 +445,9 @@ class rcu_domain {
   static constexpr uint64_t syncTimePeriod_{1600 * 2 /* full sync is 2x */};
   std::atomic<uint64_t> syncTime_{0};
   // call()s waiting to move through two epochs.
-  detail::ThreadCachedLists<Tag> q_;
+  detail::ThreadCachedLists q_;
   // Executor callbacks will eventually be run on.
   Executor* executor_{nullptr};
-  static bool singleton_; // Ensure uniqueness per-tag.
 
   // Queues for callbacks waiting to go through two epochs.
   list_head queues_[2]{};
@@ -384,83 +457,53 @@ class rcu_domain {
   // blocking must *not* be true if the current thread is locked,
   // or will deadlock.
   //
-  // returns a list of callbacks ready to run in cbs.
-  void half_sync(bool blocking, list_head& cbs);
+  // returns a list of callbacks ready to run in finished.
+  void half_sync(bool blocking, list_head& finished) {
+    auto curr = version_.load(std::memory_order_acquire);
+    auto next = curr + 1;
+
+    // Push all work to a queue for moving through two epochs.  One
+    // version is not enough because of late readers of the version_
+    // counter in lock_shared.
+    //
+    // Note that for a similar reason we can't swap out the q here,
+    // and instead drain it, so concurrent calls to call() are safe,
+    // and will wait for the next epoch.
+    q_.collect(queues_[0]);
+
+    if (blocking) {
+      counters_.waitForZero(next & 1);
+    } else {
+      if (!counters_.epochIsClear(next & 1)) {
+        return;
+      }
+    }
+
+    // Run callbacks that have been through two epochs, and swap queues
+    // for those only through a single epoch.
+    finished.splice(queues_[1]);
+    queues_[1].splice(queues_[0]);
+
+    version_.store(next, std::memory_order_release);
+    // Notify synchronous waiters in synchronize().
+    turn_.completeTurn(to_narrow(curr));
+  }
 };
 
-extern folly::Indestructible<rcu_domain<RcuTag>*> rcu_default_domain_;
+extern folly::Indestructible<rcu_domain*> rcu_default_domain_;
 
-inline rcu_domain<RcuTag>& rcu_default_domain() {
+inline rcu_domain& rcu_default_domain() {
   return **rcu_default_domain_;
 }
 
-// Main reader guard class.  Use rcu_reader instead unless you need to
-// specify a custom domain.  Note that the default domain will work
-// in almost all use cases.  Please see rcu_domain for more information on
-// custom domains.
-template <typename Tag = RcuTag>
-class rcu_reader_domain {
- public:
-  explicit FOLLY_ALWAYS_INLINE rcu_reader_domain(
-      rcu_domain<Tag>& domain = rcu_default_domain()) noexcept
-      : domain_(&domain) {
-    lock();
-  }
-  explicit rcu_reader_domain(
-      std::defer_lock_t,
-      rcu_domain<Tag>& domain = rcu_default_domain()) noexcept
-      : domain_(&domain), locked_(false) {}
-  rcu_reader_domain(const rcu_reader_domain&) = delete;
-  rcu_reader_domain(rcu_reader_domain&& other) noexcept
-      : domain_(std::exchange(other.domain_, nullptr)),
-        locked_(std::exchange(other.locked_, false)) {}
-  rcu_reader_domain& operator=(const rcu_reader_domain&) = delete;
-  rcu_reader_domain& operator=(rcu_reader_domain&& other) noexcept {
-    unlock();
-    domain_ = std::exchange(other.domain_, nullptr);
-    locked_ = std::exchange(other.locked_, false);
-    return *this;
-  }
-
-  FOLLY_ALWAYS_INLINE ~rcu_reader_domain() noexcept { unlock(); }
-
-  void swap(rcu_reader_domain& other) noexcept {
-    DCHECK(domain_ == other.domain_);
-    std::swap(locked_, other.locked_);
-  }
-
-  FOLLY_ALWAYS_INLINE void lock() noexcept {
-    locked_ = true;
-    domain_->lock();
-  }
-
-  FOLLY_ALWAYS_INLINE void unlock() noexcept {
-    if (locked_) {
-      domain_->unlock();
-    }
-  }
-
- private:
-  rcu_domain<Tag>* domain_;
-  bool locked_;
-};
-
-// Mark an RCU read-side critical section using RAII style, as in
-// folly::rcu_reader rcuGuard.
-//
-// This uses the default RCU domain, which suffices for most use cases.
-// Please see the rcu_domain documentation for more information.
-using rcu_reader = rcu_reader_domain<RcuTag>;
-
-template <typename Tag = RcuTag>
-inline void swap(
-    rcu_reader_domain<Tag>& a, rcu_reader_domain<Tag>& b) noexcept {
-  a.swap(b);
-}
-
 // Waits for all pre-existing RCU readers to complete.
-// RCU readers will normally be marked using the RAII interface rcu_reader,
-// as in folly::rcu_reader rcuGuard.
+// RCU readers will normally be marked using the RAII interface
+// std::scoped_lock<folly::rcu_domain>, as in:
+//
+// std::scoped_lock<folly::rcu_domain> rcuReader(rcu_default_domain());
+//
+// Other locking primitives that provide moveable semantics such as
+// std::unique_lock may be used as well.
 //
 // Note that rcu_synchronize is not obligated to wait for RCU readers that
 // start after rcu_synchronize starts.  Note also that holding a lock across
@@ -468,9 +511,8 @@ inline void swap(
 // rcu_retire, retire, or call) will result in deadlock.  Note that such
 // deadlock will normally only occur with user-written deleters, as in the
 // default of delele will normally be immune to such deadlocks.
-template <typename Tag = RcuTag>
 inline void rcu_synchronize(
-    rcu_domain<Tag>& domain = rcu_default_domain()) noexcept {
+    rcu_domain& domain = rcu_default_domain()) noexcept {
   domain.synchronize();
 }
 
@@ -481,9 +523,7 @@ inline void rcu_synchronize(
 // on any deleters passed to later calls to rcu_retire, retire, or call.
 //
 // And yes, the current implementation is buggy, and will be fixed.
-template <typename Tag = RcuTag>
-inline void rcu_barrier(
-    rcu_domain<Tag>& domain = rcu_default_domain()) noexcept {
+inline void rcu_barrier(rcu_domain& domain = rcu_default_domain()) noexcept {
   domain.synchronize();
 }
 
@@ -492,24 +532,17 @@ inline void rcu_barrier(
 // This will invoke the deleter d(p) asynchronously some time after all
 // pre-existing RCU readers have completed.  See synchronize_rcu() for more
 // information about RCU readers and domains.
-template <
-    typename T,
-    typename D = std::default_delete<T>,
-    typename Tag = RcuTag>
-void rcu_retire(
-    T* p, D d = {}, rcu_domain<Tag>& domain = rcu_default_domain()) {
+template <typename T, typename D = std::default_delete<T>>
+void rcu_retire(T* p, D d = {}, rcu_domain& domain = rcu_default_domain()) {
   domain.call([p, del = std::move(d)]() { del(p); });
 }
 
 // Base class for rcu objects.  retire() will use preallocated storage
 // from rcu_obj_base, vs.  rcu_retire() which always allocates.
-template <
-    typename T,
-    typename D = std::default_delete<T>,
-    typename Tag = RcuTag>
+template <typename T, typename D = std::default_delete<T>>
 class rcu_obj_base : detail::ThreadCachedListsBase::Node {
  public:
-  void retire(D d = {}, rcu_domain<Tag>& domain = rcu_default_domain()) {
+  void retire(D d = {}, rcu_domain& domain = rcu_default_domain()) {
     // This implementation assumes folly::Function has enough
     // inline storage for D, otherwise, it allocates.
     this->cb_ = [this, d = std::move(d)]() { d(static_cast<T*>(this)); };
@@ -518,5 +551,3 @@ class rcu_obj_base : detail::ThreadCachedListsBase::Node {
 };
 
 } // namespace folly
-
-#include "folly/synchronization/Rcu-inl.h"

@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "Python.h"
+#include <Python.h>
 #include "folly/Function.h"
 #include "folly/fibers/FiberManagerInternal.h"
 

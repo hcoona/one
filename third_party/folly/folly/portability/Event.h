@@ -21,7 +21,7 @@
 #include "folly/portability/Windows.h"
 #endif
 
-#include "event.h"
+#include <event.h>
 
 #ifdef _MSC_VER
 #include "event2/event_compat.h" // @manual

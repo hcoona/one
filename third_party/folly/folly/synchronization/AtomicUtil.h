@@ -24,6 +24,31 @@
 
 namespace folly {
 
+namespace detail {
+struct atomic_value_type_alias_ {
+  template <typename Atomic>
+  using apply = typename Atomic::value_type;
+};
+struct atomic_value_type_load_ {
+  template <typename Atomic>
+  using apply = decltype(std::declval<Atomic const&>().load());
+};
+} // namespace detail
+
+//  atomic_value_type_t
+//  atomic_value_type
+//
+//  A trait type alias and type giving the effective value-type of a type which
+//  are atomic-like. Either member type alias value_type or the return type of
+//  member function load.
+template <typename Atomic>
+using atomic_value_type_t = typename conditional_t<
+    is_detected_v<detail::atomic_value_type_alias_::apply, Atomic>,
+    detail::atomic_value_type_alias_,
+    detail::atomic_value_type_load_>::template apply<Atomic>;
+template <typename Atomic>
+struct atomic_value_type : type_t<atomic_value_type_t<Atomic>> {};
+
 //  atomic_compare_exchange_weak_explicit
 //
 //  Fix TSAN bug in std::atomic_compare_exchange_weak_explicit.
@@ -116,6 +141,36 @@ struct atomic_fetch_flip_fn {
       std::memory_order order = std::memory_order_seq_cst) const;
 };
 FOLLY_INLINE_VARIABLE constexpr atomic_fetch_flip_fn atomic_fetch_flip{};
+
+//  atomic_fetch_modify
+//
+//  Atomically modifies the value in the atomic by loading the value, passing it
+//  to the operation op, and storing the result, but without risk of race from
+//  interleaving accesses.
+//
+//  Example:
+//
+//    int atomic_fetch_nonnegative(std::atomic<int>& atomic) {
+//      auto const op = [](int value) { return std::max(value, 0); };
+//      return folly::atomic_fetch_modify(x, op);
+//    }
+//
+//  The implementation is just a c/x-loop. It is intended for use when other
+//  specialized and optimized forms of atomic-fetch-modify are inapplicable.
+//
+//  A single call to this function will call op at least one time, but with no
+//  upper bound on the number of times. It is expected that op be free of side-
+//  effect.
+//
+//  Does not attempt to handle ABA scenarios.
+struct atomic_fetch_modify_fn {
+  template <typename Atomic, typename Op>
+  atomic_value_type_t<Atomic> operator()(
+      Atomic& atomic,
+      Op op,
+      std::memory_order = std::memory_order_seq_cst) const;
+};
+FOLLY_INLINE_VARIABLE constexpr atomic_fetch_modify_fn atomic_fetch_modify{};
 
 } // namespace folly
 

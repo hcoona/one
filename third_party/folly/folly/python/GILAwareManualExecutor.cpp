@@ -16,7 +16,7 @@
 
 #include "folly/python/GILAwareManualExecutor.h"
 
-#include "Python.h"
+#include <Python.h>
 
 #include "folly/ScopeGuard.h"
 

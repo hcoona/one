@@ -37,7 +37,7 @@
 #ifndef ZSTD_STATIC_LINKING_ONLY
 #define ZSTD_STATIC_LINKING_ONLY
 #endif
-#include "zstd.h"
+#include <zstd.h>
 #endif
 
 namespace folly {
@@ -126,6 +126,23 @@ ZSTD_CCtx_Pool::Ref getNULL_ZSTD_CCtx() {
 ZSTD_DCtx_Pool::Ref getNULL_ZSTD_DCtx() {
   return zstd_dctx_pool_singleton.getNull();
 }
+
+ZSTD_CCtx_Pool& zstd_cctx_pool() {
+  return zstd_cctx_pool_singleton;
+}
+
+ZSTD_DCtx_Pool& zstd_dctx_pool() {
+  return zstd_dctx_pool_singleton;
+}
+
+size_t get_zstd_cctx_created_count() {
+  return zstd_cctx_pool_singleton.created_count();
+}
+
+size_t get_zstd_dctx_created_count() {
+  return zstd_dctx_pool_singleton.created_count();
+}
+
 #endif // FOLLY_HAVE_LIBZSTD
 
 } // namespace contexts

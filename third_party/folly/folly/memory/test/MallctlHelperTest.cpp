@@ -22,7 +22,7 @@
 #include "folly/portability/GTest.h"
 
 #if defined(FOLLY_USE_JEMALLOC) && !FOLLY_SANITIZE
-#include <jemalloc/jemalloc.h>
+#include "jemalloc/jemalloc.h"
 #endif
 
 using namespace folly;
