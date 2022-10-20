@@ -380,10 +380,10 @@ http_archive(
         "sed -i 's/@org_lzma_lzma/@org_tukaani_xz/g' BUILD.boost",
         "sed -i 's/external\\/org_lzma_lzma/external\\/org_tukaani_xz/g' BUILD.lzma",
     ],
-    sha256 = "781c5413ce5d5ae8e0f90e524dc712e0ccc329bf4d5dc5850d883e64db8eff9b",
-    strip_prefix = "rules_boost-ce6bd1a54c9527ffee7d0a87e97a2bdd50162ac2",
+    sha256 = "473630298c819cfd9e760cac1abf9985abee729230c872b0e2a4717137175726",
+    strip_prefix = "rules_boost-d35a5a8830dff6c7beb0dc48d1ef7b238e1ec619",
     urls = [
-        "https://github.com/nelhage/rules_boost/archive/ce6bd1a54c9527ffee7d0a87e97a2bdd50162ac2.tar.gz",
+        "https://github.com/nelhage/rules_boost/archive/d35a5a8830dff6c7beb0dc48d1ef7b238e1ec619.tar.gz",
     ],
 )
 
