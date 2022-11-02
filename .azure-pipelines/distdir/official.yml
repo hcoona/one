@@ -32,5 +32,33 @@ pr: none
 pool:
   vmImage: ubuntu-22.04
 
-steps:
-- template: /.azure-pipelines/common/generate_distdir.yml@self
+jobs:
+- job: build_distdir
+  displayName: Generate distdir
+  pool:
+    vmImage: ubuntu-22.04
+  steps:
+  - template: /.azure-pipelines/common/generate_distdir.yml@self
+
+- deployment: publish_distdir_prod
+  displayName: Publish distdir to Azure blob
+  pool:
+    vmImage: windows-latest
+  environment: production
+  dependsOn: build_distdir
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: none
+        - download: current
+          artifact: distdir
+        - task: AzureFileCopy@5
+          inputs:
+            sourcePath: '$(Pipeline.Workspace)/distdir/*'
+            azureSubscription: 'Bazel'
+            destination : 'Azure Blob'
+            storage: 'zsbazelcache'
+            containerName: 'one-distdir'
+            blobPrefix: 'distdir2'
+          displayName: Publish distdir to Azure storage account
