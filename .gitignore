@@ -505,3 +505,6 @@ $RECYCLE.BIN/
 /external
 # Ignore the directory in which `clangd` stores its local index.
 /.cache/
+
+# pdm
+/.pdm-python
