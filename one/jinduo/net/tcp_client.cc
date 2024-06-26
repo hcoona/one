@@ -72,10 +72,10 @@ TcpClient::~TcpClient() {
   LOG(INFO) << "TcpClient::~TcpClient[" << name_ << "] - connector "
             << connector_.get();
   std::shared_ptr<TcpConnection> conn;
-  bool unique = false;
+  long use_count = false;
   {
     absl::MutexLock lock(&mutex_);
-    unique = connection_.unique();
+    use_count = connection_.use_count();
     conn = connection_;
   }
   if (conn) {
@@ -84,7 +84,7 @@ TcpClient::~TcpClient() {
     CloseCallback cb = absl::bind_front(&details::removeConnection, loop_);
     loop_->RunInLoop(
         absl::bind_front(&TcpConnection::setCloseCallback, conn, cb));
-    if (unique) {
+    if (use_count == 1) {
       conn->forceClose();
     }
   } else {
