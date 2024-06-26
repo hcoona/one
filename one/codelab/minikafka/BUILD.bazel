@@ -32,9 +32,9 @@ cc_binary(
         "//one/codelab/minikafka/transport:kafka_tcp_server",
         "//one/jinduo/net",
         "//one/jinduo/net/http",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/base",
-        "@com_google_absl//absl/functional:bind_front",
+        "@gflags//:gflags",
+        "@glog//:glog",
+        "@abseil-cpp//absl/base",
+        "@abseil-cpp//absl/functional:bind_front",
     ],
 )

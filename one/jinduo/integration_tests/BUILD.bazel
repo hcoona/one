@@ -27,10 +27,10 @@ cc_binary(
     ],
     deps = [
         "//one/jinduo/net",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/functional:bind_front",
-        "@com_google_absl//absl/time",
+        "@gflags//:gflags",
+        "@glog//:glog",
+        "@abseil-cpp//absl/functional:bind_front",
+        "@abseil-cpp//absl/time",
     ],
 )
 
@@ -44,10 +44,10 @@ cc_binary(
     ],
     deps = [
         "//one/jinduo/net",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/base",
-        "@com_google_absl//absl/functional:bind_front",
-        "@com_google_absl//absl/time",
+        "@gflags//:gflags",
+        "@glog//:glog",
+        "@abseil-cpp//absl/base",
+        "@abseil-cpp//absl/functional:bind_front",
+        "@abseil-cpp//absl/time",
     ],
 )

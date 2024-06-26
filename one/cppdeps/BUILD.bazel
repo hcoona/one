@@ -33,10 +33,10 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@boost//:graph",
-        "@boost//:process",
-        "@boost//:program_options",
-        "@boost//:property_map",
-        "@boost//:property_tree",
+        "@boost.graph",
+        "@boost.process",
+        "@boost.program_options",
+        "@boost.property_map",
+        "@boost.property_tree",
     ],
 )

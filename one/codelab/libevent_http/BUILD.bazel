@@ -29,9 +29,9 @@ cc_binary(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
+        "@gflags//:gflags",
+        "@glog//:glog",
         "@com_github_libevent_libevent//:event",
-        "@com_google_absl//absl/strings:cord",
+        "@abseil-cpp//absl/strings:cord",
     ],
 )

@@ -25,7 +25,7 @@ cc_library(
         "//one/base:macros",
         "//one/base:narrow_cast",
         "//one/base/container:span",
-        "@com_google_absl//absl/base",
+        "@abseil-cpp//absl/base",
     ],
 )
 
@@ -43,8 +43,8 @@ cc_test(
         "//one/base:macros",
         "//one/base/container:span",
         "//one/test:status",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -55,7 +55,7 @@ cc_library(
     deps = [
         "//one/base:macros",
         "//one/base/container:span",
-        "@com_google_absl//absl/base",
+        "@abseil-cpp//absl/base",
     ],
 )
 
@@ -74,7 +74,7 @@ cc_test(
         "//one/base:macros",
         "//one/base/container:span",
         "//one/test:status",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )

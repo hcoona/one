@@ -38,8 +38,8 @@ cc_library(
         "//one/codelab/minikafka/protocol:request_header",
         "//one/codelab/minikafka/protocol:response_header",
         "//one/jinduo/net",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/base",
-        "@com_google_absl//absl/time",
+        "@glog//:glog",
+        "@abseil-cpp//absl/base",
+        "@abseil-cpp//absl/time",
     ],
 )

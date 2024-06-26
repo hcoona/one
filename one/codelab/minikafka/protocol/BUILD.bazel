@@ -23,8 +23,8 @@ cc_library(
     hdrs = ["api_key.h"],
     visibility = ["//one/codelab/minikafka:__subpackages__"],
     deps = [
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
+        "@abseil-cpp//absl/status:statusor",
+        "@abseil-cpp//absl/strings",
     ],
 )
 
@@ -47,7 +47,7 @@ cc_library(
         ":api_key",
         "//one/base:macros",
         "//one/codelab/minikafka/base:kafka_binary_reader",
-        "@com_google_absl//absl/status",
+        "@abseil-cpp//absl/status",
     ],
 )
 
@@ -67,8 +67,8 @@ cc_library(
         ":api_key",
         "//one/base:macros",
         "//one/codelab/minikafka/base:kafka_binary_writer",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
+        "@glog//:glog",
+        "@abseil-cpp//absl/status",
     ],
 )
 
@@ -92,8 +92,8 @@ cc_library(
         ":api_key",
         "//one/base:macros",
         "//one/codelab/minikafka/base:kafka_binary_reader",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/types:span",
+        "@abseil-cpp//absl/status",
+        "@abseil-cpp//absl/types:span",
     ],
 )
 
@@ -113,7 +113,7 @@ cc_library(
         ":api_key",
         "//one/base:macros",
         "//one/codelab/minikafka/base:kafka_binary_writer",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/types:span",
+        "@abseil-cpp//absl/status",
+        "@abseil-cpp//absl/types:span",
     ],
 )
