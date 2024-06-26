@@ -27,8 +27,6 @@ jobs:
       connectedServiceName: 'Isolated'
       keyVaultName: 'shuaizhang-akv'
       secretsFilter: 'BuildBuddyApiKey'
-  - bash: tools/setup_clang.sh /usr/lib/llvm-14
-    displayName: Setup for Bazel build with clang
   - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
   - task: DownloadPipelineArtifact@2.198.0
@@ -72,8 +70,6 @@ jobs:
       connectedServiceName: 'Isolated'
       keyVaultName: 'shuaizhang-akv'
       secretsFilter: 'BuildBuddyApiKey'
-  - bash: tools/setup_clang.sh /usr/lib/llvm-14
-    displayName: Setup for Bazel build with clang
   - bash: .azure-pipelines/common/get_source_branch_name.sh
     displayName: Set source branch name for BuildBuddy
   - task: DownloadPipelineArtifact@2.198.0
