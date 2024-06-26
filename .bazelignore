@@ -1,9 +1,2 @@
 .bazel_output
 .cache
-
-# Disabled
-one/codelab/folly_io_http
-third_party/fizz
-third_party/folly
-third_party/mvfst
-third_party/wangle
