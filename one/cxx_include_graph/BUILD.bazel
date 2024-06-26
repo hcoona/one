@@ -32,9 +32,9 @@ cc_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//one/base/filesystem:posix_file_system",
-        "//third_party/rapidjson",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/status",
+        "@rapidjson",
     ],
 )
