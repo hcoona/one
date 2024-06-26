@@ -20,81 +20,8 @@ workspace(name = "com_github_hcoona_one")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 #
-# Constants
-#
-
-BAZEL_IO_VERSION = "4.2.2"  # 2021-12-03T09:26:35Z
-
-BAZEL_IO_SHA256 = "4c179ce66bbfff6ac5d81b8895518096e7f750866d08da2d4a574d1b8029e914"
-
-BAZEL_SKYLIB_VERSION = "1.1.1"  # 2021-09-27T17:33:49Z
-
-BAZEL_SKYLIB_SHA256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d"
-
-BAZEL_PLATFORMS_VERSION = "0.0.4"  # 2021-02-26
-
-BAZEL_PLATFORMS_SHA256 = "079945598e4b6cc075846f7fd6a9d0857c33a7afc0de868c2ccb96405225135d"
-
-RULES_PROTO_TAG = "4.0.0"  # 2021-09-15T14:13:21Z
-
-RULES_PROTO_SHA256 = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1"
-
-RULES_CC_COMMIT_ID = "0913abc3be0edff60af681c0473518f51fb9eeef"  # 2021-08-12T14:14:28Z
-
-RULES_CC_SHA256 = "04d22a8c6f0caab1466ff9ae8577dbd12a0c7d0bc468425b75de094ec68ab4f9"
-
-# Replace with the LLVM commit you want to use.
-LLVM_COMMIT = "llvmorg-14.0.1"
-
-# The easiest way to calculate this for a new commit is to set it to empty and
-# then run a bazel build and it will report the digest necessary to cache the
-# archive and make the build reproducible.
-LLVM_SHA256 = "c8be00406e872c8a24f8571cf6f5517b73ae707104724b1fd1db2f0af9544019"
-
-#
 # Starlark libraries
 #
-
-http_archive(
-    name = "io_bazel",
-    sha256 = BAZEL_IO_SHA256,
-    strip_prefix = "bazel-" + BAZEL_IO_VERSION,
-    url = "https://github.com/bazelbuild/bazel/archive/" + BAZEL_IO_VERSION + ".zip",
-)
-
-http_archive(
-    name = "bazel_skylib",
-    sha256 = BAZEL_SKYLIB_SHA256,
-    urls = [
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/{version}/bazel-skylib-{version}.tar.gz".format(version = BAZEL_SKYLIB_VERSION),
-    ],
-)
-
-http_archive(
-    name = "platforms",
-    sha256 = BAZEL_PLATFORMS_SHA256,
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
-        "https://github.com/bazelbuild/platforms/releases/download/{version}/platforms-{version}.tar.gz".format(version = BAZEL_PLATFORMS_VERSION),
-    ],
-)
-
-http_archive(
-    name = "rules_proto",
-    sha256 = RULES_PROTO_SHA256,
-    strip_prefix = "rules_proto-{version}".format(version = RULES_PROTO_TAG),
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/{version}.tar.gz".format(version = RULES_PROTO_TAG)],
-)
-
-http_archive(
-    name = "rules_cc",
-    sha256 = RULES_CC_SHA256,
-    strip_prefix = "rules_cc-{commit_id}".format(commit_id = RULES_CC_COMMIT_ID),
-    urls = [
-        "https://github.com/bazelbuild/rules_cc/archive/{commit_id}.tar.gz".format(commit_id = RULES_CC_COMMIT_ID),
-    ],
-)
 
 # Use rules_foreign_cc as less as possible.
 #
@@ -105,15 +32,6 @@ http_archive(
     sha256 = "2a4d07cd64b0719b39a7c12218a3e507672b82a97b98c6a89d38565894cf7c51",
     strip_prefix = "rules_foreign_cc-0.9.0",
     url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.9.0.tar.gz",
-)
-
-http_archive(
-    name = "rules_perl",  # 2021-09-23T03:21:58Z
-    sha256 = "7d4e17a5850446388ab74a3d884d80731d45931aa6ac93edb9efbd500628fdcb",
-    strip_prefix = "rules_perl-022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403",
-    urls = [
-        "https://github.com/bazelbuild/rules_perl/archive/022b8daf2bb4836ac7a50e4a1d8ea056a3e1e403.tar.gz",
-    ],
 )
 
 #
@@ -237,36 +155,6 @@ http_archive(
     ],
 )
 
-# TODO(zhangshuai.ustc): patch to leverage clangd CommandMangler.
-# https://github.com/llvm/llvm-project/blob/llvmorg-14.0.1/clang-tools-extra/clangd/CompileCommands.cpp
-http_archive(
-    name = "com_github_llvm_llvm_project",  # 2022-04-13T06:38:11Z
-    build_file_content = "# empty",
-    sha256 = LLVM_SHA256,
-    strip_prefix = "llvm-project-" + LLVM_COMMIT,
-    urls = ["https://github.com/llvm/llvm-project/archive/{commit}.tar.gz".format(commit = LLVM_COMMIT)],
-)
-
-load("@com_github_llvm_llvm_project//utils/bazel:configure.bzl", "llvm_configure")
-
-llvm_configure(
-    name = "llvm-project",
-    targets = [
-        "X86",
-    ],
-)
-
-load("@com_github_llvm_llvm_project//utils/bazel:zlib.bzl", "llvm_zlib_external")
-
-llvm_zlib_external(
-    name = "llvm_zlib",
-    external_zlib = "@com_github_madler_zlib//:zlib",
-)
-
-load("@com_github_llvm_llvm_project//utils/bazel:terminfo.bzl", "llvm_terminfo_disable")
-
-llvm_terminfo_disable(name = "llvm_terminfo")
-
 http_archive(
     name = "com_github_lz4_lz4",  # 2019-08-20
     build_file = "//bazel/third_party/lz4:lz4.BUILD",
@@ -372,28 +260,3 @@ http_archive(
         "https://tukaani.org/xz/xz-5.2.3.tar.gz",
     ],
 )
-
-#
-# Perl Dependencies
-#
-
-load("@rules_perl//perl:deps.bzl", "perl_register_toolchains")
-
-perl_register_toolchains()
-
-#
-# Tools Dependencies
-#
-
-# Hedron's Compile Commands Extractor for Bazel
-# https://github.com/hedronvision/bazel-compile-commands-extractor
-http_archive(
-    name = "hedron_compile_commands",
-    sha256 = "4deb7cd90ba69983ec7734c0dcc7071828ebdc430a69f82ddbccf698018b9c04",
-    strip_prefix = "bazel-compile-commands-extractor-5ceebcf367f51c6a18fffe726755951a43b50e45",
-    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/5ceebcf367f51c6a18fffe726755951a43b50e45.tar.gz",
-)
-
-load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
-
-hedron_compile_commands_setup()
