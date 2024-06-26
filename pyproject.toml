@@ -1,39 +1,20 @@
 [project]
 authors = [
-  {name = "Shuai Zhang", email = "zhangshuai.ustc@gmail.com"},
+    {name = "Shuai Zhang", email = "zhangshuai.ustc@gmail.com"},
 ]
 dependencies = [
-  "absl-py<2.0,>=1.0.0",
-  "jinja2<4.0,>=3.0.3",
-  "pyyaml<7.0,>=6.0",
+    "absl-py>=2.1.0",
+    "jinja2>=3.1.4",
+    "pyyaml>=6.0.1",
 ]
 description = "Python project manager for ONE repo"
 name = "one"
-requires-python = ">=3.7"
-version = "0.0.1-alpha.1"
-[project.optional-dependencies]
-
-[tool.pdm.dev-dependencies]
-dev = [
-    "cpplint<2.0,>=1.5.5",
-    "isort<6.0,>=5.8.0",
-    "pylint<3.0,>=2.7.4",
-    "yapf<1.0,>=0.31.0",
-    "mkdocs>=1.4.1",
-    "markdown-include>=0.7.0",
-]
-
-# [[tool.pdm.source]]
-# name = "pypi"
-# url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-# verify_ssl = true
-
-[tool.pdm.build]
-includes = []
+requires-python = ">=3.11"
+version = "1.0.0-dev"
 
 [build-system]
-build-backend = "pdm.pep517.api"
-requires = ["pdm-pep517>=1.0.0"]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.isort]
 force_single_line = true
@@ -47,6 +28,19 @@ split_before_named_assigns = true
 
 [tool.pyright]
 exclude = [
-  "bazel-*/**",
-  "third_party/**",
+    "bazel-*/**",
+    "third_party/**",
+]
+
+[tool.pdm.build]
+includes = []
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "cpplint>=1.6.1",
+    "isort>=5.13.2",
+    "pylint>=3.2.4",
+    "yapf>=0.40.2",
+    "mkdocs>=1.6.0",
+    "markdown-include>=0.8.1",
 ]
