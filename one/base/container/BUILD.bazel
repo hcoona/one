@@ -23,8 +23,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":fixed_ring_buffer",
-        "@com_google_absl//absl/base",
-        "@com_google_absl//absl/synchronization",
+        "@abseil-cpp//absl/base",
+        "@abseil-cpp//absl/synchronization",
     ],
 )
 
@@ -42,8 +42,8 @@ cc_test(
     deps = [
         ":blocking_bounded_queue",
         "//one/test:move_only_value",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -70,8 +70,8 @@ cc_test(
     deps = [
         ":fixed_ring_buffer",
         "//one/test:move_only_value",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -98,9 +98,9 @@ cc_test(
     deps = [
         ":lru",
         "@bazel_tools//tools/cpp/runfiles",
-        "@com_google_absl//absl/strings",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@abseil-cpp//absl/strings",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -128,7 +128,7 @@ cc_test(
     ],
     deps = [
         ":span",
-        "@com_google_googletest//:gtest",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )

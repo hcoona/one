@@ -21,7 +21,7 @@ cc_library(
     hdrs = ["status.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_google_googletest//:gtest",
+        "@googletest//:gtest",
     ],
 )
 

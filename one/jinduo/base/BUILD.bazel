@@ -37,6 +37,6 @@ cc_library(
         "//one/jinduo:__subpackages__",
     ],
     deps = [
-        "@com_google_absl//absl/base",
+        "@abseil-cpp//absl/base",
     ],
 )

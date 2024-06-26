@@ -22,7 +22,7 @@ cc_library(
     hdrs = ["file_system.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_google_absl//absl/status",
+        "@abseil-cpp//absl/status",
     ],
 )
 
@@ -33,7 +33,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":file_system",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@abseil-cpp//absl/status",
+        "@abseil-cpp//absl/strings",
     ],
 )

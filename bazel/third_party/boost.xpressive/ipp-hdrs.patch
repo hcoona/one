@@ -1,0 +1,14 @@
+diff --git a/BUILD.bazel b/BUILD.bazel
+index 4531429..ed3511d 100644
+--- a/BUILD.bazel
++++ b/BUILD.bazel
+@@ -8,6 +8,9 @@ cc_library(
+         "include/**/*.hpp",
+         "include/**/*.h",
+     ]),
++    textual_hdrs = glob([
++        "include/**/*.ipp",
++    ]),
+     includes = ["include"],
+     deps = [
+         "@boost.assert",
