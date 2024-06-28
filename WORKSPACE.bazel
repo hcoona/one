@@ -20,29 +20,6 @@ workspace(name = "com_github_hcoona_one")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 #
-# Starlark libraries
-#
-
-# Use rules_foreign_cc as less as possible.
-#
-# 1. Build very basic libraries without any further dependencies.
-# 2. Build too complex to bazelize library.
-http_archive(
-    name = "rules_foreign_cc",  # 2021-12-03T17:15:40Z
-    sha256 = "476303bd0f1b04cc311fc258f1708a5f6ef82d3091e53fd1977fa20383425a6a",
-    strip_prefix = "rules_foreign_cc-0.10.1",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/0.10.1.tar.gz",
-)
-
-#
-# Starlark rules
-#
-
-load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
-
-rules_foreign_cc_dependencies(register_preinstalled_tools = False)
-
-#
 # C++ deps
 #
 # Ordered lexicographical.
