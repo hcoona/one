@@ -31,7 +31,7 @@ cc_binary(
     deps = [
         "@gflags//:gflags",
         "@glog//:glog",
-        "@com_github_libevent_libevent//:event",
+        "@libevent//:libevent",
         "@abseil-cpp//absl/strings:cord",
     ],
 )

@@ -1,0 +1,17 @@
+{
+    "homepage": "https://www.openssl.org/",
+    "maintainers": [
+        {
+            "email": "zhangshuai.ustc@gmail.com",
+            "github": "hcoona",
+            "name": "Shuai Zhang"
+        }
+    ],
+    "repository": [
+        "github:openssl/openssl"
+    ],
+    "versions": [
+        "1.1.1n"
+    ],
+    "yanked_versions": {}
+}

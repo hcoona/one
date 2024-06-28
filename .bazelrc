@@ -21,6 +21,7 @@
 
 common --enable_bzlmod
 common --enable_platform_specific_config
+common --registry=file://%workspace%/one-central-registry
 common --registry=https://raw.githubusercontent.com/bazelboost/registry/main
 common --registry=https://bcr.bazel.build
 
