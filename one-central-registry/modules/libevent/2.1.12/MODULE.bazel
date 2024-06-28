@@ -15,5 +15,18 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-# Thie empty BUILD.bazel file is required to make Bazel treat
-# this directory as a package.
+module(
+    name = "libevent",
+    repo_name = "com_github_libevent_libevent",
+    version = "2.1.12",
+    compatibility_level = 1,
+)
+
+# Only direct dependencies need to be listed below.
+# Please keep the versions in sync with the versions in the WORKSPACE file.
+
+bazel_dep(name = "platforms", version = "0.0.10")
+bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
+bazel_dep(name = "rules_perl", version = "0.2.0")
+
+bazel_dep(name = "openssl", version = "1.1.1n")

@@ -1,0 +1,17 @@
+{
+    "homepage": "https://libevent.org/",
+    "maintainers": [
+        {
+            "email": "zhangshuai.ustc@gmail.com",
+            "github": "hcoona",
+            "name": "Shuai Zhang"
+        }
+    ],
+    "repository": [
+        "github:libevent/libevent"
+    ],
+    "versions": [
+        "release-2.1.12-stable"
+    ],
+    "yanked_versions": {}
+}

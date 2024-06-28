@@ -1,2 +1,3 @@
 .bazel_output
 .cache
+one-central-registry

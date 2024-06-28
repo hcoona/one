@@ -1,0 +1,9 @@
+{
+    "url": "https://openssl.org/source/old/1.1.1/openssl-1.1.1n.tar.gz",
+    "integrity": "sha256-QNzrUaT2pSdb3g5r8g70uRv8Mu1XwFUuLo4VRjNysXo=",
+    "strip_prefix": "openssl-1.1.1n",
+    "patches": {
+        "bazel-module-workspace.patch": "sha256-zWBKj7J8RUrpeDMoOYsyGcBcoJwuuzgcZohBZrIRtN0="
+    },
+    "patch_strip": 1
+}

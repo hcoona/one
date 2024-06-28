@@ -16,34 +16,3 @@
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
 workspace(name = "com_github_hcoona_one")
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-#
-# C++ deps
-#
-# Ordered lexicographical.
-#
-
-http_archive(
-    name = "com_github_libevent_libevent",  # 2020-07-05T13:33:03Z
-    build_file = "//bazel/third_party/event:event.BUILD",
-    patch_cmds = [
-    ],
-    sha256 = "92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb",
-    strip_prefix = "libevent-2.1.12-stable",
-    urls = [
-        "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz",
-    ],
-)
-
-# Too hard to use boringssl/libressl with facebook libraries.
-http_archive(
-    name = "openssl",
-    build_file = "//bazel/third_party/openssl:openssl.BUILD",
-    sha256 = "40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a",
-    strip_prefix = "openssl-1.1.1n",
-    urls = [
-        "https://www.openssl.org/source/openssl-1.1.1n.tar.gz",
-    ],
-)
