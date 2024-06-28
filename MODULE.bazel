@@ -16,7 +16,8 @@
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
 module(
-    name = "com_github_hcoona_one",
+    name = "hcoona-one",
+    repo_name = "com_github_hcoona_one",
     version = "1.0.0-dev",
     compatibility_level = 1,
 )
