@@ -77,7 +77,7 @@ bazel_dep(name = "rapidjson", version = "1.1.0")
 #
 
 bazel_dep(name = "googletest", version = "1.14.0.bcr.1", dev_dependency = True)
-bazel_dep(name = "google_benchmark", version = "1.8.4", dev_dependency = True)
+bazel_dep(name = "google_benchmark", version = "1.8.5", dev_dependency = True)
 
 # Hedron's Compile Commands Extractor for Bazel
 # https://github.com/hedronvision/bazel-compile-commands-extractor
