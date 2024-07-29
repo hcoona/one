@@ -15,5 +15,13 @@
 # You should have received a copy of the GNU General Public License along with
 # ONE. If not, see <https://www.gnu.org/licenses/>.
 
-# Thie empty BUILD.bazel file is required to make Bazel treat
-# this directory as a package.
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+
+# PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+# bazel run //:requirements.update to update requirements.txt file from pyproject.toml
+compile_pip_requirements(
+    name = "requirements",
+    src = "pyproject.toml",
+    extra_args = ["--all-extras", "--newline LF"],
+    requirements_txt = "requirements.txt",
+)
