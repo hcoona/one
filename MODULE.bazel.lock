@@ -879,6 +879,2420 @@
         ]
       }
     },
+    "@@rules_python~//python/extensions:pip.bzl%pip": {
+      "general": {
+        "bzlTransitiveDigest": "Mq344Po1V8PEZVMDMZEMWpIPMt5KWuEEaw5s76igs4A=",
+        "usagesDigest": "AxqXfOgcyOQyb2qetXINfxRzLxDJO97SJIasQQ8s4O4=",
+        "recordedFileInputs": {
+          "@@//requirements.txt": "3a20ffc8bdd2aaa4a2390bf4cf140e97b76b1127f38dd06340b7f42d6e83a6ef"
+        },
+        "recordedDirentsInputs": {},
+        "envVariables": {
+          "PIP_INDEX_URL": null
+        },
+        "generatedRepoSpecs": {
+          "mono_pip_deps_311_platformdirs_sdist_38b7b51f": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "platformdirs-4.2.2.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "platformdirs==4.2.2",
+              "sha256": "38b7b51f512eed9e84a22788b4bce1de17c0adb134d6becb09836e37d8654cd3",
+              "urls": [
+                "https://files.pythonhosted.org/packages/f5/52/0763d1d976d5c262df53ddda8d8d4719eedf9594d046f117c25a27261a19/platformdirs-4.2.2.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_jinja2_py3_none_any_bc5dd2ab": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "jinja2-3.1.4-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "jinja2==3.1.4",
+              "sha256": "bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d",
+              "urls": [
+                "https://files.pythonhosted.org/packages/31/80/3a54838c3fb461f6fec263ebf3a3a41771bd05190238de3486aae8540c36/jinja2-3.1.4-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_macosx_10_9_x86_64_5b7b716f": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "5b7b716f97b52c5a14bffdf688f971b2d5ef4029127f1ad7a513973cfd818df2",
+              "urls": [
+                "https://files.pythonhosted.org/packages/6b/cb/aed7a284c00dfa7c0682d14df85ad4955a350a21d2e3b06d8240497359bf/MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps": {
+            "bzlFile": "@@rules_python~//python/private/pypi:hub_repository.bzl",
+            "ruleClassName": "hub_repository",
+            "attributes": {
+              "repo_name": "mono_pip_deps",
+              "whl_map": {
+                "six": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"six-1.16.0-py2.py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_six_py2_none_any_8abb2f1d\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"six-1.16.0.tar.gz\",\"repo\":\"mono_pip_deps_311_six_sdist_1e61c374\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "dill": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"dill-0.3.8-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_dill_py3_none_any_c36ca9ff\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"dill-0.3.8.tar.gz\",\"repo\":\"mono_pip_deps_311_dill_sdist_3ebe3c47\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "yapf": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"yapf-0.40.2-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_yapf_py3_none_any_adc8b5dd\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"yapf-0.40.2.tar.gz\",\"repo\":\"mono_pip_deps_311_yapf_sdist_4dab8a5e\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "zipp": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"zipp-3.19.2-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_zipp_py3_none_any_f091755f\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"zipp-3.19.2.tar.gz\",\"repo\":\"mono_pip_deps_311_zipp_sdist_bf1dcf64\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "click": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"click-8.1.7-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_click_py3_none_any_ae74fb96\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"click-8.1.7.tar.gz\",\"repo\":\"mono_pip_deps_311_click_sdist_ca9853ad\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "isort": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"isort-5.13.2-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_isort_py3_none_any_8ca5e72a\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"isort-5.13.2.tar.gz\",\"repo\":\"mono_pip_deps_311_isort_sdist_48fdfcb9\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "tomli": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"tomli-2.0.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_tomli_py3_none_any_939de3e7\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"tomli-2.0.1.tar.gz\",\"repo\":\"mono_pip_deps_311_tomli_sdist_de526c12\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "jinja2": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"jinja2-3.1.4-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_jinja2_py3_none_any_bc5dd2ab\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"jinja2-3.1.4.tar.gz\",\"repo\":\"mono_pip_deps_311_jinja2_sdist_4a3aee7a\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "mccabe": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mccabe-0.7.0-py2.py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_mccabe_py2_none_any_6c2d30ab\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mccabe-0.7.0.tar.gz\",\"repo\":\"mono_pip_deps_311_mccabe_sdist_348e0240\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "mkdocs": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mkdocs-1.6.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_mkdocs_py3_none_any_1eb5cb76\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mkdocs-1.6.0.tar.gz\",\"repo\":\"mono_pip_deps_311_mkdocs_sdist_a73f7358\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "pylint": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pylint-3.2.6-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_pylint_py3_none_any_03c8e3ba\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pylint-3.2.6.tar.gz\",\"repo\":\"mono_pip_deps_311_pylint_sdist_a5d01678\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "pyyaml": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_s390x_062582fc\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_aarch64_42f8152b\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-macosx_10_9_x86_64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_macosx_10_9_x86_64_6965a7bc\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-win_amd64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_win_amd64_bf07ee2f\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_x86_64_d2b04aac\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-musllinux_1_1_x86_64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_musllinux_1_1_x86_64_e7d73685\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1-cp311-cp311-macosx_11_0_arm64.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_cp311_cp311_macosx_11_0_arm64_f003ed9a\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"PyYAML-6.0.1.tar.gz\",\"repo\":\"mono_pip_deps_311_pyyaml_sdist_bfdf460b\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "absl_py": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"absl_py-2.1.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_absl_py_py3_none_any_526a04ea\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"absl-py-2.1.0.tar.gz\",\"repo\":\"mono_pip_deps_311_absl_py_sdist_7820790e\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "astroid": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"astroid-3.2.4-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_astroid_py3_none_any_413658a6\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"astroid-3.2.4.tar.gz\",\"repo\":\"mono_pip_deps_311_astroid_sdist_0e142028\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "cpplint": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"cpplint-1.6.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_cpplint_py3_none_any_00ddc86d\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"cpplint-1.6.1.tar.gz\",\"repo\":\"mono_pip_deps_311_cpplint_sdist_d430ce8f\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "tomlkit": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"tomlkit-0.13.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_tomlkit_py3_none_any_7075d304\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"tomlkit-0.13.0.tar.gz\",\"repo\":\"mono_pip_deps_311_tomlkit_sdist_08ad1926\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "markdown": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"Markdown-3.6-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_markdown_py3_none_any_48f276f4\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"Markdown-3.6.tar.gz\",\"repo\":\"mono_pip_deps_311_markdown_sdist_ed4f41f6\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "pathspec": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pathspec-0.12.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_pathspec_py3_none_any_a0d503e1\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pathspec-0.12.1.tar.gz\",\"repo\":\"mono_pip_deps_311_pathspec_sdist_a482d515\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "watchdog": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-cp311-cp311-macosx_10_9_x86_64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_cp311_cp311_macosx_10_9_x86_64_03e70d2d\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-cp311-cp311-macosx_11_0_arm64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_cp311_cp311_macosx_11_0_arm64_123587af\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-cp311-cp311-macosx_10_9_universal2.whl\",\"repo\":\"mono_pip_deps_311_watchdog_cp311_cp311_macosx_10_9_universal2_17e32f14\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_armv7l.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_armv7l_4513ec23\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_ppc64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_ppc64_6e8c70d2\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-win_amd64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_win_amd64_7577b3c4\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_x86_64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_x86_64_ac7041b3\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_aarch64.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_aarch64_dddba7ca\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_ppc64le.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_ppc64le_f27279d0\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1-py3-none-manylinux2014_s390x.whl\",\"repo\":\"mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_s390x_f8affdf3\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"watchdog-4.0.1.tar.gz\",\"repo\":\"mono_pip_deps_311_watchdog_sdist_eebaacf6\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "mergedeep": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mergedeep-1.3.4-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_mergedeep_py3_none_any_70775750\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mergedeep-1.3.4.tar.gz\",\"repo\":\"mono_pip_deps_311_mergedeep_sdist_0096d52e\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "packaging": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"packaging-24.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_packaging_py3_none_any_5b8f2217\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"packaging-24.1.tar.gz\",\"repo\":\"mono_pip_deps_311_packaging_sdist_026ed72c\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "ghp_import": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"ghp_import-2.1.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_ghp_import_py3_none_any_8337dd7b\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"ghp-import-2.1.0.tar.gz\",\"repo\":\"mono_pip_deps_311_ghp_import_sdist_9c535c4c\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "markupsafe": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_aarch64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_musllinux_1_1_aarch64_0e397ac9\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-win_amd64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_win_amd64_2b7c57a4\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_x86_64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_musllinux_1_1_x86_64_3a57fdd7\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_x86_64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_macosx_10_9_x86_64_5b7b716f\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_universal2.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_macosx_10_9_universal2_629ddd2c\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_manylinux_2_17_aarch64_6ec585f6\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl\",\"repo\":\"mono_pip_deps_311_markupsafe_cp311_cp311_manylinux_2_17_x86_64_b91c0375\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"MarkupSafe-2.1.5.tar.gz\",\"repo\":\"mono_pip_deps_311_markupsafe_sdist_d283d37a\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "platformdirs": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"platformdirs-4.2.2-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_platformdirs_py3_none_any_2d7a1657\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"platformdirs-4.2.2.tar.gz\",\"repo\":\"mono_pip_deps_311_platformdirs_sdist_38b7b51f\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "pyyaml_env_tag": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pyyaml_env_tag-0.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_pyyaml_env_tag_py3_none_any_af31106d\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"pyyaml_env_tag-0.1.tar.gz\",\"repo\":\"mono_pip_deps_311_pyyaml_env_tag_sdist_70092675\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "mkdocs_get_deps": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mkdocs_get_deps-0.2.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_mkdocs_get_deps_py3_none_any_2bf11d0b\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"mkdocs_get_deps-0.2.0.tar.gz\",\"repo\":\"mono_pip_deps_311_mkdocs_get_deps_sdist_162b3d12\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "python_dateutil": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"python_dateutil-2.9.0.post0-py2.py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_python_dateutil_py2_none_any_a8b2bc7b\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"python-dateutil-2.9.0.post0.tar.gz\",\"repo\":\"mono_pip_deps_311_python_dateutil_sdist_37dd5420\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "markdown_include": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"markdown_include-0.8.1-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_markdown_include_py3_none_any_32f0635b\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"markdown-include-0.8.1.tar.gz\",\"repo\":\"mono_pip_deps_311_markdown_include_sdist_1d0623e0\",\"target_platforms\":null,\"version\":\"3.11\"}]",
+                "importlib_metadata": "[{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"importlib_metadata-8.2.0-py3-none-any.whl\",\"repo\":\"mono_pip_deps_311_importlib_metadata_py3_none_any_11901fa0\",\"target_platforms\":null,\"version\":\"3.11\"},{\"config_setting\":\"//_config:is_python_3.11\",\"filename\":\"importlib_metadata-8.2.0.tar.gz\",\"repo\":\"mono_pip_deps_311_importlib_metadata_sdist_72e8d439\",\"target_platforms\":null,\"version\":\"3.11\"}]"
+              },
+              "default_version": "3.11",
+              "packages": [
+                "absl_py",
+                "astroid",
+                "click",
+                "cpplint",
+                "dill",
+                "ghp_import",
+                "importlib_metadata",
+                "isort",
+                "jinja2",
+                "markdown",
+                "markdown_include",
+                "markupsafe",
+                "mccabe",
+                "mergedeep",
+                "mkdocs",
+                "mkdocs_get_deps",
+                "packaging",
+                "pathspec",
+                "platformdirs",
+                "pylint",
+                "python_dateutil",
+                "pyyaml",
+                "pyyaml_env_tag",
+                "six",
+                "tomli",
+                "tomlkit",
+                "watchdog",
+                "yapf",
+                "zipp"
+              ],
+              "groups": {}
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_macosx_10_9_x86_64_6965a7bc": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-macosx_10_9_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "6965a7bc3cf88e5a1c3bd2e0b5c22f8d677dc88a455344035f03399034eb3007",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ec/0d/26fb23e8863e0aeaac0c64e03fd27367ad2ae3f3cccf3798ee98ce160368/PyYAML-6.0.1-cp311-cp311-macosx_10_9_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pathspec_py3_none_any_a0d503e1": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pathspec-0.12.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pathspec==0.12.1",
+              "sha256": "a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08",
+              "urls": [
+                "https://files.pythonhosted.org/packages/cc/20/ff623b09d963f88bfde16306a54e12ee5ea43e9b597108672ff3a408aad6/pathspec-0.12.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markdown_include_py3_none_any_32f0635b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "markdown_include-0.8.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markdown-include==0.8.1",
+              "sha256": "32f0635b9cfef46997b307e2430022852529f7a5b87c0075c504283e7cc7db53",
+              "urls": [
+                "https://files.pythonhosted.org/packages/d7/e2/c4d20b21a05fe0fee571649cebc05f7f72e80b1a743f932e7326125e6c9e/markdown_include-0.8.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_aarch64_42f8152b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "42f8152b8dbc4fe7d96729ec2b99c7097d656dc1213a3229ca5383f973a5ed6d",
+              "urls": [
+                "https://files.pythonhosted.org/packages/5e/94/7d5ee059dfb92ca9e62f4057dcdec9ac08a9e42679644854dc01177f8145/PyYAML-6.0.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_tomlkit_sdist_08ad1926": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "tomlkit-0.13.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "tomlkit==0.13.0",
+              "sha256": "08ad192699734149f5b97b45f1f18dad7eb1b6d16bc72ad0c2335772650d7b72",
+              "urls": [
+                "https://files.pythonhosted.org/packages/4b/34/f5f4fbc6b329c948a90468dd423aaa3c3bfc1e07d5a76deec269110f2f6e/tomlkit-0.13.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_env_tag_py3_none_any_af31106d": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pyyaml_env_tag-0.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml-env-tag==0.1",
+              "sha256": "af31106dec8a4d68c60207c1886031cbf839b68aa7abccdb19868200532c2069",
+              "urls": [
+                "https://files.pythonhosted.org/packages/5a/66/bbb1dd374f5c870f59c5bb1db0e18cbe7fa739415a24cbd95b2d1f5ae0c4/pyyaml_env_tag-0.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_s390x_f8affdf3": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_s390x.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "f8affdf3c0f0466e69f5b3917cdd042f89c8c63aebdb9f7c078996f607cdb0f5",
+              "urls": [
+                "https://files.pythonhosted.org/packages/2a/09/4b07dc8dd1a9f67a7acfbc084f26fc35ee8a2e4feeb0a2c98fe9a1ef196c/watchdog-4.0.1-py3-none-manylinux2014_s390x.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mergedeep_py3_none_any_70775750": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mergedeep-1.3.4-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mergedeep==1.3.4",
+              "sha256": "70775750742b25c0d8f36c55aed03d24c3384d17c951b3175d898bd778ef0307",
+              "urls": [
+                "https://files.pythonhosted.org/packages/2c/19/04f9b178c2d8a15b076c8b5140708fa6ffc5601fb6f1e975537072df5b2a/mergedeep-1.3.4-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_manylinux_2_17_aarch64_6ec585f6": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "6ec585f69cec0aa07d945b20805be741395e28ac1627333b1c5b0105962ffced",
+              "urls": [
+                "https://files.pythonhosted.org/packages/1c/cf/35fe557e53709e93feb65575c93927942087e9b97213eabc3fe9d5b25a55/MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_win_amd64_bf07ee2f": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-win_amd64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "bf07ee2fef7014951eeb99f56f39c9bb4af143d8aa3c21b1677805985307da34",
+              "urls": [
+                "https://files.pythonhosted.org/packages/b3/34/65bb4b2d7908044963ebf614fe0fdb080773fc7030d7e39c8d3eddcd4257/PyYAML-6.0.1-cp311-cp311-win_amd64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_musllinux_1_1_x86_64_3a57fdd7": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "3a57fdd7ce31c7ff06cdfbf31dafa96cc533c21e443d57f5b1ecc6cdc668ec7f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/f8/81/56e567126a2c2bc2684d6391332e357589a96a76cb9f8e5052d85cb0ead8/MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mkdocs_get_deps_py3_none_any_2bf11d0b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mkdocs_get_deps-0.2.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mkdocs-get-deps==0.2.0",
+              "sha256": "2bf11d0b133e77a0dd036abeeb06dec8775e46efa526dc70667d8863eefc6134",
+              "urls": [
+                "https://files.pythonhosted.org/packages/9f/d4/029f984e8d3f3b6b726bd33cafc473b75e9e44c0f7e80a5b29abc466bdea/mkdocs_get_deps-0.2.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_isort_py3_none_any_8ca5e72a": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "isort-5.13.2-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "isort==5.13.2",
+              "sha256": "8ca5e72a8d85860d5a3fa69b8745237f2939afe12dbf656afbcb47fe72d947a6",
+              "urls": [
+                "https://files.pythonhosted.org/packages/d1/b3/8def84f539e7d2289a02f0524b944b15d7c75dab7628bedf1c4f0992029c/isort-5.13.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_jinja2_sdist_4a3aee7a": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "jinja2-3.1.4.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "jinja2==3.1.4",
+              "sha256": "4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ed/55/39036716d19cab0747a5020fc7e907f362fbf48c984b14e62127f7e68e5d/jinja2-3.1.4.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_click_py3_none_any_ae74fb96": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "click-8.1.7-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "click==8.1.7",
+              "sha256": "ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28",
+              "urls": [
+                "https://files.pythonhosted.org/packages/00/2e/d53fa4befbf2cfa713304affc7ca780ce4fc1fd8710527771b58311a3229/click-8.1.7-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mccabe_py2_none_any_6c2d30ab": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mccabe-0.7.0-py2.py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mccabe==0.7.0",
+              "sha256": "6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e",
+              "urls": [
+                "https://files.pythonhosted.org/packages/27/1a/1f68f9ba0c207934b35b86a8ca3aad8395a3d6dd7921c0686e23853ff5a9/mccabe-0.7.0-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_sdist_d283d37a": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b",
+              "urls": [
+                "https://files.pythonhosted.org/packages/87/5b/aae44c6655f3801e81aa3eef09dbbf012431987ba564d7231722f68df02d/MarkupSafe-2.1.5.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_python_dateutil_py2_none_any_a8b2bc7b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "python-dateutil==2.9.0.post0",
+              "sha256": "a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_win_amd64_2b7c57a4": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-win_amd64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "2b7c57a4dfc4f16f7142221afe5ba4e093e09e728ca65c51f5620c9aaeb9a617",
+              "urls": [
+                "https://files.pythonhosted.org/packages/b7/a2/c78a06a9ec6d04b3445a949615c4c7ed86a0b2eb68e44e7541b9d57067cc/MarkupSafe-2.1.5-cp311-cp311-win_amd64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_cp311_cp311_macosx_11_0_arm64_123587af": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-cp311-cp311-macosx_11_0_arm64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "123587af84260c991dc5f62a6e7ef3d1c57dfddc99faacee508c71d287248459",
+              "urls": [
+                "https://files.pythonhosted.org/packages/5a/a5/72b9557e77ac3e6c41816fb16f643069b17cf21f745d26e2931cb1bf136c/watchdog-4.0.1-cp311-cp311-macosx_11_0_arm64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_armv7l_4513ec23": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_armv7l.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "4513ec234c68b14d4161440e07f995f231be21a09329051e67a2118a7a612d2d",
+              "urls": [
+                "https://files.pythonhosted.org/packages/05/7b/efc5b4134c97f08b161faa703327cde3fe647c5c48c156fde0c343471095/watchdog-4.0.1-py3-none-manylinux2014_armv7l.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_sdist_bfdf460b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43",
+              "urls": [
+                "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_importlib_metadata_sdist_72e8d439": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "importlib_metadata-8.2.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "importlib-metadata==8.2.0",
+              "sha256": "72e8d4399996132204f9a16dcc751af254a48f8d1b20b9ff0f98d4a8f901e73d",
+              "urls": [
+                "https://files.pythonhosted.org/packages/f6/a1/db39a513aa99ab3442010a994eef1cb977a436aded53042e69bee6959f74/importlib_metadata-8.2.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pathspec_sdist_a482d515": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pathspec-0.12.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pathspec==0.12.1",
+              "sha256": "a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ca/bc/f35b8446f4531a7cb215605d100cd88b7ac6f44ab3fc94870c120ab3adbf/pathspec-0.12.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_macosx_10_9_universal2_629ddd2c": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_universal2.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "629ddd2ca402ae6dbedfceeba9c46d5f7b2a61d9749597d4307f943ef198fc1f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/11/e7/291e55127bb2ae67c64d66cef01432b5933859dfb7d6949daa721b89d0b3/MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_universal2.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_ppc64_6e8c70d2": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_ppc64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "6e8c70d2cd745daec2a08734d9f63092b793ad97612470a0ee4cbb8f5f705c57",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ce/df/c8719022af772d9f75f1c49af453a48a785a45295bca1ce4f3f55b9923af/watchdog-4.0.1-py3-none-manylinux2014_ppc64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_python_dateutil_sdist_37dd5420": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "python-dateutil-2.9.0.post0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "python-dateutil==2.9.0.post0",
+              "sha256": "37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3",
+              "urls": [
+                "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mergedeep_sdist_0096d52e": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mergedeep-1.3.4.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mergedeep==1.3.4",
+              "sha256": "0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8",
+              "urls": [
+                "https://files.pythonhosted.org/packages/3a/41/580bb4006e3ed0361b8151a01d324fb03f420815446c7def45d02f74c270/mergedeep-1.3.4.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_isort_sdist_48fdfcb9": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "isort-5.13.2.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "isort==5.13.2",
+              "sha256": "48fdfcb9face5d58a4f6dde2e72a1fb8dcaf8ab26f95ab49fab84c2ddefb0109",
+              "urls": [
+                "https://files.pythonhosted.org/packages/87/f9/c1eb8635a24e87ade2efce21e3ce8cd6b8630bb685ddc9cdaca1349b2eb5/isort-5.13.2.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_astroid_sdist_0e142028": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "astroid-3.2.4.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "astroid==3.2.4",
+              "sha256": "0e14202810b30da1b735827f78f5157be2bbd4a7a59b7707ca0bfc2fb4c0063a",
+              "urls": [
+                "https://files.pythonhosted.org/packages/9e/53/1067e1113ecaf58312357f2cd93063674924119d80d173adc3f6f2387aa2/astroid-3.2.4.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_packaging_py3_none_any_5b8f2217": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "packaging-24.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "packaging==24.1",
+              "sha256": "5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124",
+              "urls": [
+                "https://files.pythonhosted.org/packages/08/aa/cc0199a5f0ad350994d660967a8efb233fe0416e4639146c089643407ce6/packaging-24.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pylint_sdist_a5d01678": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pylint-3.2.6.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pylint==3.2.6",
+              "sha256": "a5d01678349454806cff6d886fb072294f56a58c4761278c97fb557d708e1eb3",
+              "urls": [
+                "https://files.pythonhosted.org/packages/30/10/abee071c1d52b2bca48be40fe9f64ca878a77e0beef6504597e8c9c1ed84/pylint-3.2.6.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_importlib_metadata_py3_none_any_11901fa0": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "importlib_metadata-8.2.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "importlib-metadata==8.2.0",
+              "sha256": "11901fa0c2f97919b288679932bb64febaeacf289d18ac84dd68cb2e74213369",
+              "urls": [
+                "https://files.pythonhosted.org/packages/82/47/bb25ec04985d0693da478797c3d8c1092b140f3a53ccb984fbbd38affa5b/importlib_metadata-8.2.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_zipp_py3_none_any_f091755f": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "zipp-3.19.2-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "zipp==3.19.2",
+              "sha256": "f091755f667055f2d02b32c53771a7a6c8b47e1fdbc4b72a8b9072b3eef8015c",
+              "urls": [
+                "https://files.pythonhosted.org/packages/20/38/f5c473fe9b90c8debdd29ea68d5add0289f1936d6f923b6b9cc0b931194c/zipp-3.19.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mccabe_sdist_348e0240": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mccabe-0.7.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mccabe==0.7.0",
+              "sha256": "348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325",
+              "urls": [
+                "https://files.pythonhosted.org/packages/e7/ff/0ffefdcac38932a54d2b5eed4e0ba8a408f215002cd178ad1df0f2806ff8/mccabe-0.7.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markdown_py3_none_any_48f276f4": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "Markdown-3.6-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markdown==3.6",
+              "sha256": "48f276f4d8cfb8ce6527c8f79e2ee29708508bf4d40aa410fbc3b4ee832c850f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/fc/b3/0c0c994fe49cd661084f8d5dc06562af53818cc0abefaca35bdc894577c3/Markdown-3.6-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_cp311_cp311_macosx_10_9_x86_64_03e70d2d": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-cp311-cp311-macosx_10_9_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "03e70d2df2258fb6cb0e95bbdbe06c16e608af94a3ffbd2b90c3f1e83eb10767",
+              "urls": [
+                "https://files.pythonhosted.org/packages/c2/84/9c66fb603bb683fe559ceeba8f3d5dbea3293b631b2eba319d7d47a2d7fb/watchdog-4.0.1-cp311-cp311-macosx_10_9_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_x86_64_ac7041b3": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "ac7041b385f04c047fcc2951dc001671dee1b7e0615cde772e84b01fbf68ee84",
+              "urls": [
+                "https://files.pythonhosted.org/packages/24/01/a4034a94a5f1828eb050230e7cf13af3ac23cf763512b6afe008d3def97c/watchdog-4.0.1-py3-none-manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markdown_sdist_ed4f41f6": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "Markdown-3.6.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markdown==3.6",
+              "sha256": "ed4f41f6daecbeeb96e576ce414c41d2d876daa9a16cb35fa8ed8c2ddfad0224",
+              "urls": [
+                "https://files.pythonhosted.org/packages/22/02/4785861427848cc11e452cc62bb541006a1087cf04a1de83aedd5530b948/Markdown-3.6.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_macosx_11_0_arm64_f003ed9a": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-macosx_11_0_arm64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "f003ed9ad21d6a4713f0a9b5a7a0a79e08dd0f221aff4525a2be4c346ee60aab",
+              "urls": [
+                "https://files.pythonhosted.org/packages/28/09/55f715ddbf95a054b764b547f617e22f1d5e45d83905660e9a088078fe67/PyYAML-6.0.1-cp311-cp311-macosx_11_0_arm64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_ghp_import_sdist_9c535c4c": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "ghp-import-2.1.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "ghp-import==2.1.0",
+              "sha256": "9c535c4c61193c2df8871222567d7fd7e5014d835f97dc7b7439069e2413d343",
+              "urls": [
+                "https://files.pythonhosted.org/packages/d9/29/d40217cbe2f6b1359e00c6c307bb3fc876ba74068cbab3dde77f03ca0dc4/ghp-import-2.1.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mkdocs_py3_none_any_1eb5cb76": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mkdocs-1.6.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mkdocs==1.6.0",
+              "sha256": "1eb5cb7676b7d89323e62b56235010216319217d4af5ddc543a91beb8d125ea7",
+              "urls": [
+                "https://files.pythonhosted.org/packages/b8/c0/930dcf5a3e96b9c8e7ad15502603fc61d495479699e2d2c381e3d37294d1/mkdocs-1.6.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_cpplint_sdist_d430ce8f": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "cpplint-1.6.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "cpplint==1.6.1",
+              "sha256": "d430ce8f67afc1839340e60daa89e90de08b874bc27149833077bba726dfc13a",
+              "urls": [
+                "https://files.pythonhosted.org/packages/18/72/ea0f4035bcf35d8f8df053657d7f3370d56ff4d4e6617021b6544b9958d4/cpplint-1.6.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_ppc64le_f27279d0": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_ppc64le.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "f27279d060e2ab24c0aa98363ff906d2386aa6c4dc2f1a374655d4e02a6c5e5e",
+              "urls": [
+                "https://files.pythonhosted.org/packages/b0/d5/7285d52e7a7ffce2ae0b21a98dbbed345bcb227672a4268eb26d046d8d41/watchdog-4.0.1-py3-none-manylinux2014_ppc64le.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_sdist_eebaacf6": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "eebaacf674fa25511e8867028d281e602ee6500045b57f43b08778082f7f8b44",
+              "urls": [
+                "https://files.pythonhosted.org/packages/1b/f9/b01e4632aed9a6ecc2b3e501feffd3af5aa0eb4e3b0283fc9525bf503c38/watchdog-4.0.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_absl_py_py3_none_any_526a04ea": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "absl_py-2.1.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "absl-py==2.1.0",
+              "sha256": "526a04eadab8b4ee719ce68f204172ead1027549089702d99b9059f129ff1308",
+              "urls": [
+                "https://files.pythonhosted.org/packages/a2/ad/e0d3c824784ff121c03cc031f944bc7e139a8f1870ffd2845cc2dd76f6c4/absl_py-2.1.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_packaging_sdist_026ed72c": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "packaging-24.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "packaging==24.1",
+              "sha256": "026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002",
+              "urls": [
+                "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_astroid_py3_none_any_413658a6": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "astroid-3.2.4-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "astroid==3.2.4",
+              "sha256": "413658a61eeca6202a59231abb473f932038fbcbf1666587f66d482083413a25",
+              "urls": [
+                "https://files.pythonhosted.org/packages/80/96/b32bbbb46170a1c8b8b1f28c794202e25cfe743565e9d3469b8eb1e0cc05/astroid-3.2.4-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_x86_64_d2b04aac": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "d2b04aac4d386b172d5b9692e2d2da8de7bfb6c387fa4f801fbf6fb2e6ba4673",
+              "urls": [
+                "https://files.pythonhosted.org/packages/7b/5e/efd033ab7199a0b2044dab3b9f7a4f6670e6a52c089de572e928d2873b06/PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_ghp_import_py3_none_any_8337dd7b": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "ghp_import-2.1.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "ghp-import==2.1.0",
+              "sha256": "8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619",
+              "urls": [
+                "https://files.pythonhosted.org/packages/f7/ec/67fbef5d497f86283db54c22eec6f6140243aae73265799baaaa19cd17fb/ghp_import-2.1.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_manylinux_2_17_s390x_062582fc": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc",
+              "urls": [
+                "https://files.pythonhosted.org/packages/06/92/e0224aa6ebf9dc54a06a4609da37da40bb08d126f5535d81bff6b417b2ae/PyYAML-6.0.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_tomlkit_py3_none_any_7075d304": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "tomlkit-0.13.0-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "tomlkit==0.13.0",
+              "sha256": "7075d3042d03b80f603482d69bf0c8f345c2b30e41699fd8883227f89972b264",
+              "urls": [
+                "https://files.pythonhosted.org/packages/fd/7c/b753bf603852cab0a660da6e81f4ea5d2ca0f0b2b4870766d7aa9bceb7a2/tomlkit-0.13.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mkdocs_get_deps_sdist_162b3d12": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mkdocs_get_deps-0.2.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mkdocs-get-deps==0.2.0",
+              "sha256": "162b3d129c7fad9b19abfdcb9c1458a651628e4b1dea628ac68790fb3061c60c",
+              "urls": [
+                "https://files.pythonhosted.org/packages/98/f5/ed29cd50067784976f25ed0ed6fcd3c2ce9eb90650aa3b2796ddf7b6870b/mkdocs_get_deps-0.2.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_zipp_sdist_bf1dcf64": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "zipp-3.19.2.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "zipp==3.19.2",
+              "sha256": "bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19",
+              "urls": [
+                "https://files.pythonhosted.org/packages/d3/20/b48f58857d98dcb78f9e30ed2cfe533025e2e9827bbd36ea0a64cc00cbc1/zipp-3.19.2.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_mkdocs_sdist_a73f7358": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "mkdocs-1.6.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "mkdocs==1.6.0",
+              "sha256": "a73f735824ef83a4f3bcb7a231dcab23f5a838f88b7efc54a0eef5fbdbc3c512",
+              "urls": [
+                "https://files.pythonhosted.org/packages/cc/6b/26b33cc8ad54e8bc0345cddc061c2c5c23e364de0ecd97969df23f95a673/mkdocs-1.6.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_absl_py_sdist_7820790e": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "absl-py-2.1.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "absl-py==2.1.0",
+              "sha256": "7820790efbb316739cde8b4e19357243fc3608a152024288513dd968d7d959ff",
+              "urls": [
+                "https://files.pythonhosted.org/packages/7a/8f/fc001b92ecc467cc32ab38398bd0bfb45df46e7523bf33c2ad22a505f06e/absl-py-2.1.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_yapf_py3_none_any_adc8b5dd": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "yapf-0.40.2-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "yapf==0.40.2",
+              "sha256": "adc8b5dd02c0143108878c499284205adb258aad6db6634e5b869e7ee2bd548b",
+              "urls": [
+                "https://files.pythonhosted.org/packages/66/c9/d4b03b2490107f13ebd68fe9496d41ae41a7de6275ead56d0d4621b11ffd/yapf-0.40.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_tomli_py3_none_any_939de3e7": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "tomli-2.0.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "tomli==2.0.1",
+              "sha256": "939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc",
+              "urls": [
+                "https://files.pythonhosted.org/packages/97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9/tomli-2.0.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_dill_py3_none_any_c36ca9ff": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "dill-0.3.8-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "dill==0.3.8",
+              "sha256": "c36ca9ffb54365bdd2f8eb3eff7d2a21237f8452b57ace88b1ac615b7e815bd7",
+              "urls": [
+                "https://files.pythonhosted.org/packages/c9/7a/cef76fd8438a42f96db64ddaa85280485a9c395e7df3db8158cfec1eee34/dill-0.3.8-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_cpplint_py3_none_any_00ddc86d": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "cpplint-1.6.1-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "cpplint==1.6.1",
+              "sha256": "00ddc86d6e4de2a9dcfa272402dcbe21593363a93b7c475bc391e335062f34b1",
+              "urls": [
+                "https://files.pythonhosted.org/packages/6c/68/31f71f3946e1b445cc5ffa2bc7143488b1f3a556dce344c5b6ae498bbe2a/cpplint-1.6.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_manylinux_2_17_x86_64_b91c0375": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "b91c037585eba9095565a3556f611e3cbfaa42ca1e865f7b8015fe5c7336d5a5",
+              "urls": [
+                "https://files.pythonhosted.org/packages/97/18/c30da5e7a0e7f4603abfc6780574131221d9148f323752c2755d48abad30/MarkupSafe-2.1.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pylint_py3_none_any_03c8e3ba": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pylint-3.2.6-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pylint==3.2.6",
+              "sha256": "03c8e3baa1d9fb995b12c1dbe00aa6c4bcef210c2a2634374aedeb22fb4a8f8f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/09/88/1a406dd0b17a4796f025d8c937d8d56f97869cffa55c21d9edb07f5a3912/pylint-3.2.6-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_cp311_cp311_macosx_10_9_universal2_17e32f14": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-cp311-cp311-macosx_10_9_universal2.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "17e32f147d8bf9657e0922c0940bcde863b894cd871dbb694beb6704cfbd2fb5",
+              "urls": [
+                "https://files.pythonhosted.org/packages/1c/bc/a1ce8b77eede5a2f4fbcdc923079eb85b7c6e0f5e366ad06661b4dd807e1/watchdog-4.0.1-cp311-cp311-macosx_10_9_universal2.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_cp311_cp311_musllinux_1_1_x86_64_e7d73685": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "PyYAML-6.0.1-cp311-cp311-musllinux_1_1_x86_64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml==6.0.1",
+              "sha256": "e7d73685e87afe9f3b36c799222440d6cf362062f78be1013661b00c5c6f678b",
+              "urls": [
+                "https://files.pythonhosted.org/packages/03/5c/c4671451b2f1d76ebe352c0945d4cd13500adb5d05f5a51ee296d80152f7/PyYAML-6.0.1-cp311-cp311-musllinux_1_1_x86_64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_pyyaml_env_tag_sdist_70092675": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "pyyaml_env_tag-0.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "pyyaml-env-tag==0.1",
+              "sha256": "70092675bda14fdec33b31ba77e7543de9ddc88f2e5b99160396572d11525bdb",
+              "urls": [
+                "https://files.pythonhosted.org/packages/fb/8e/da1c6c58f751b70f8ceb1eb25bc25d524e8f14fe16edcce3f4e3ba08629c/pyyaml_env_tag-0.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_dill_sdist_3ebe3c47": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "dill-0.3.8.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "dill==0.3.8",
+              "sha256": "3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca",
+              "urls": [
+                "https://files.pythonhosted.org/packages/17/4d/ac7ffa80c69ea1df30a8aa11b3578692a5118e7cd1aa157e3ef73b092d15/dill-0.3.8.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_yapf_sdist_4dab8a5e": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "yapf-0.40.2.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "yapf==0.40.2",
+              "sha256": "4dab8a5ed7134e26d57c1647c7483afb3f136878b579062b786c9ba16b94637b",
+              "urls": [
+                "https://files.pythonhosted.org/packages/b9/14/c1f0ebd083fddd38a7c832d5ffde343150bd465689d12c549c303fbcd0f5/yapf-0.40.2.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_click_sdist_ca9853ad": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "click-8.1.7.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "click==8.1.7",
+              "sha256": "ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de",
+              "urls": [
+                "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_manylinux_2_17_aarch64_dddba7ca": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-manylinux2014_aarch64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "dddba7ca1c807045323b6af4ff80f5ddc4d654c8bce8317dde1bd96b128ed253",
+              "urls": [
+                "https://files.pythonhosted.org/packages/3a/36/28ce38b960f2bf1e1be573d85e8127c9ac66b4de63a7bef3f61b3f77ce57/watchdog-4.0.1-py3-none-manylinux2014_aarch64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markdown_include_sdist_1d0623e0": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "markdown-include-0.8.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markdown-include==0.8.1",
+              "sha256": "1d0623e0fc2757c38d35df53752768356162284259d259c486b4ab6285cdbbe3",
+              "urls": [
+                "https://files.pythonhosted.org/packages/ad/d8/66bf162fe6c1adb619f94a6da599323eecacf15b6d57469d0fd0421c10df/markdown-include-0.8.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_watchdog_py3_none_win_amd64_7577b3c4": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "watchdog-4.0.1-py3-none-win_amd64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "watchdog==4.0.1",
+              "sha256": "7577b3c43e5909623149f76b099ac49a1a01ca4e167d1785c76eb52fa585745a",
+              "urls": [
+                "https://files.pythonhosted.org/packages/85/e0/2a9f43008902427b5f074c497705d6ef8f815c85d4bc25fbf83f720a6159/watchdog-4.0.1-py3-none-win_amd64.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_six_py2_none_any_8abb2f1d": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "six-1.16.0-py2.py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "six==1.16.0",
+              "sha256": "8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254",
+              "urls": [
+                "https://files.pythonhosted.org/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_tomli_sdist_de526c12": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "tomli-2.0.1.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "tomli==2.0.1",
+              "sha256": "de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/c0/3f/d7af728f075fb08564c5949a9c95e44352e23dee646869fa104a3b2060a3/tomli-2.0.1.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_platformdirs_py3_none_any_2d7a1657": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "platformdirs-4.2.2-py3-none-any.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "platformdirs==4.2.2",
+              "sha256": "2d7a1657e36a80ea911db832a8a6ece5ee53d8de21edd5cc5879af6530b1bfee",
+              "urls": [
+                "https://files.pythonhosted.org/packages/68/13/2aa1f0e1364feb2c9ef45302f387ac0bd81484e9c9a4c5688a322fbdfd08/platformdirs-4.2.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "mono_pip_deps_311_six_sdist_1e61c374": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "six-1.16.0.tar.gz",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "six==1.16.0",
+              "sha256": "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
+              "urls": [
+                "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
+              ]
+            }
+          },
+          "mono_pip_deps_311_markupsafe_cp311_cp311_musllinux_1_1_aarch64_0e397ac9": {
+            "bzlFile": "@@rules_python~//python/private/pypi:whl_library.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "dep_template": "@mono_pip_deps//{name}:{target}",
+              "envsubst": [
+                "PIP_INDEX_URL"
+              ],
+              "experimental_target_platforms": [
+                "linux_aarch64",
+                "linux_arm",
+                "linux_ppc",
+                "linux_s390x",
+                "linux_x86_64",
+                "osx_aarch64",
+                "osx_x86_64",
+                "windows_x86_64"
+              ],
+              "filename": "MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_aarch64.whl",
+              "python_interpreter_target": "@@rules_python~~python~python_3_11_host//:python",
+              "repo": "mono_pip_deps_311",
+              "requirement": "markupsafe==2.1.5",
+              "sha256": "0e397ac966fdf721b2c528cf028494e86172b4feba51d65f81ffd65c63798f3f",
+              "urls": [
+                "https://files.pythonhosted.org/packages/18/46/5dca760547e8c59c5311b332f70605d24c99d1303dd9a6e1fc3ed0d73561/MarkupSafe-2.1.5-cp311-cp311-musllinux_1_1_aarch64.whl"
+              ]
+            }
+          }
+        },
+        "moduleExtensionMetadata": {
+          "useAllRepos": "NO",
+          "reproducible": false
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "bazel_features~",
+            "bazel_features_globals",
+            "bazel_features~~version_extension~bazel_features_globals"
+          ],
+          [
+            "bazel_features~",
+            "bazel_features_version",
+            "bazel_features~~version_extension~bazel_features_version"
+          ],
+          [
+            "rules_python~",
+            "bazel_features",
+            "bazel_features~"
+          ],
+          [
+            "rules_python~",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_python~",
+            "pypi__build",
+            "rules_python~~internal_deps~pypi__build"
+          ],
+          [
+            "rules_python~",
+            "pypi__click",
+            "rules_python~~internal_deps~pypi__click"
+          ],
+          [
+            "rules_python~",
+            "pypi__colorama",
+            "rules_python~~internal_deps~pypi__colorama"
+          ],
+          [
+            "rules_python~",
+            "pypi__importlib_metadata",
+            "rules_python~~internal_deps~pypi__importlib_metadata"
+          ],
+          [
+            "rules_python~",
+            "pypi__installer",
+            "rules_python~~internal_deps~pypi__installer"
+          ],
+          [
+            "rules_python~",
+            "pypi__more_itertools",
+            "rules_python~~internal_deps~pypi__more_itertools"
+          ],
+          [
+            "rules_python~",
+            "pypi__packaging",
+            "rules_python~~internal_deps~pypi__packaging"
+          ],
+          [
+            "rules_python~",
+            "pypi__pep517",
+            "rules_python~~internal_deps~pypi__pep517"
+          ],
+          [
+            "rules_python~",
+            "pypi__pip",
+            "rules_python~~internal_deps~pypi__pip"
+          ],
+          [
+            "rules_python~",
+            "pypi__pip_tools",
+            "rules_python~~internal_deps~pypi__pip_tools"
+          ],
+          [
+            "rules_python~",
+            "pypi__pyproject_hooks",
+            "rules_python~~internal_deps~pypi__pyproject_hooks"
+          ],
+          [
+            "rules_python~",
+            "pypi__setuptools",
+            "rules_python~~internal_deps~pypi__setuptools"
+          ],
+          [
+            "rules_python~",
+            "pypi__tomli",
+            "rules_python~~internal_deps~pypi__tomli"
+          ],
+          [
+            "rules_python~",
+            "pypi__wheel",
+            "rules_python~~internal_deps~pypi__wheel"
+          ],
+          [
+            "rules_python~",
+            "pypi__zipp",
+            "rules_python~~internal_deps~pypi__zipp"
+          ],
+          [
+            "rules_python~",
+            "pythons_hub",
+            "rules_python~~python~pythons_hub"
+          ],
+          [
+            "rules_python~~python~pythons_hub",
+            "python_3_11_host",
+            "rules_python~~python~python_3_11_host"
+          ],
+          [
+            "rules_python~~python~pythons_hub",
+            "python_3_9_host",
+            "rules_python~~python~python_3_9_host"
+          ]
+        ]
+      }
+    },
     "@@toolchains_llvm~//toolchain/extensions:llvm.bzl%llvm": {
       "general": {
         "bzlTransitiveDigest": "1w0wdH2QnKapJmTbk88f5iQjNlw7vw4f4r1cNf1vWVI=",
