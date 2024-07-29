@@ -1,4 +1,7 @@
 [project]
+name = "one"
+version = "1.0.0-dev"
+description = "Python project manager for ONE repo"
 authors = [
     {name = "Shuai Zhang", email = "zhangshuai.ustc@gmail.com"},
 ]
@@ -7,14 +10,29 @@ dependencies = [
     "jinja2>=3.1.4",
     "pyyaml>=6.0.1",
 ]
-description = "Python project manager for ONE repo"
-name = "one"
 requires-python = ">=3.11"
-version = "1.0.0-dev"
+
+[project.optional-dependencies]
+lint = [
+    "cpplint>=1.6.1",
+    "isort>=5.13.2",
+    "pylint>=3.2.4",
+    "yapf>=0.40.2",
+]
+doc = [
+    "mkdocs>=1.6.0",
+    "markdown-include>=0.8.1",
+]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.isort]
 force_single_line = true
@@ -30,17 +48,4 @@ split_before_named_assigns = true
 exclude = [
     "bazel-*/**",
     "third_party/**",
-]
-
-[tool.pdm.build]
-includes = []
-
-[tool.pdm.dev-dependencies]
-dev = [
-    "cpplint>=1.6.1",
-    "isort>=5.13.2",
-    "pylint>=3.2.4",
-    "yapf>=0.40.2",
-    "mkdocs>=1.6.0",
-    "markdown-include>=0.8.1",
 ]

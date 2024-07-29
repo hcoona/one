@@ -40,9 +40,18 @@ register_toolchains("@llvm_toolchain//:all")
 
 bazel_dep(name = "rules_python", version = "0.34.0")
 
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+
+python.toolchain(
+    configure_coverage_tool = True,
+    python_version = "3.11",
+)
+
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 
 pip.parse(
+    envsubst = ["PIP_INDEX_URL"],
+    experimental_index_url = "${PIP_INDEX_URL:-https://pypi.org/simple}",
     hub_name = "mono_pip_deps",
     python_version = "3.11",
     requirements_lock = "//:requirements.txt",
