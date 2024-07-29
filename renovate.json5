@@ -1,13 +1,11 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
+    "config:best-practices",
     ":preserveSemverRanges",
     ":rebaseStalePrs",
-    "config:base",
-    "group:monorepos",
-    "group:recommended",
     "schedule:weekly",
-    "workarounds:all",
+    ":automergeMinor",
   ],
   labels: [
     "renovate",
@@ -15,21 +13,6 @@
   prConcurrentLimit: 1,
   platformAutomerge: true,
   platformCommit: true,
-  packageRules: [
-    {
-      // Only extract major version.
-      matchManagers: [
-        "azure-pipelines",
-      ],
-      extractVersion: "^(?<version>\\d+)",
-      automerge: true,
-    },
-    {
-      matchManagers: [
-        // Managed by PDM.
-        "pip_requirements",
-      ],
-      enabled: false,
-    },
-  ],
+  timezone: "Asia/Hong_Kong",
+  "enabledManagers": ["bazel", "bazel-module", "bazelisk", "pep621"],
 }
