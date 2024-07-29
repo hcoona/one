@@ -62,7 +62,9 @@ build:buildbuddy --bes_results_url=https://app.buildbuddy.io/invocation/
 build:buildbuddy --bes_backend=grpcs://remote.buildbuddy.io
 build:buildbuddy --remote_cache=grpcs://remote.buildbuddy.io
 build:buildbuddy --remote_timeout=3600
-build:buildbuddy --experimental_remote_cache_compression
+build:buildbuddy --experimental_remote_cache_compression --experimental_remote_cache_compression_threshold=100
+build:buildbuddy --nolegacy_important_outputs
+build:buildbuddy --noslim_profile --experimental_profile_include_target_label --experimental_profile_include_primary_output
 build:buildbuddy --remote_download_outputs=all
 
 build:buildbuddy-readonly --config=buildbuddy
