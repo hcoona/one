@@ -21,10 +21,8 @@
 #include <thread>
 #include <vector>
 
-#include "absl/base/internal/per_thread_tls.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/container/fixed_array.h"
-#include "absl/strings/str_format.h"
 #include "absl/synchronization/mutex.h"
 #include "benchmark/benchmark.h"
 
@@ -46,14 +44,14 @@ class CompareAndSwapCounter {
   static_assert(std::atomic<int>::is_always_lock_free);
 
  public:
-  void Increase() { value_.fetch_add(1, std::memory_order_acq_rel); }
+  void Increase() { value_.fetch_add(1, std::memory_order_release); }
 
   int GetAndIncrease() {
-    return value_.fetch_add(1, std::memory_order_acq_rel);
+    return value_.fetch_add(1, std::memory_order_release);
   }
 
   int GetAndDecrease() {
-    return value_.fetch_sub(1, std::memory_order_acq_rel);
+    return value_.fetch_sub(1, std::memory_order_release);
   }
 
   [[nodiscard]] int Get() const {
@@ -166,7 +164,7 @@ void BM_IncreasePerThread(benchmark::State& state, int iterationsPerThread) {
   }
 }
 
-constexpr int kThreadCountMax = 16;
+constexpr int kThreadCountMax = 64;
 
 BENCHMARK_TEMPLATE1_CAPTURE(BM_IncreasePerThread, ThreadUnsafeCounter,
                             IterationsPerThread, 1000000)
@@ -181,6 +179,12 @@ BENCHMARK_TEMPLATE1_CAPTURE(BM_IncreasePerThread, CompareAndSwapCounter,
     ->UseRealTime();
 
 BENCHMARK_TEMPLATE1_CAPTURE(BM_IncreasePerThread, MutexCounter,
+                            IterationsPerThread, 1000000)
+    ->RangeMultiplier(2)
+    ->Range(1, kThreadCountMax)
+    ->UseRealTime();
+
+BENCHMARK_TEMPLATE1_CAPTURE(BM_IncreasePerThread, PthreadThreadLocalCounter<64>,
                             IterationsPerThread, 1000000)
     ->RangeMultiplier(2)
     ->Range(1, kThreadCountMax)
