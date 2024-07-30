@@ -1,0 +1,17 @@
+{
+    "homepage": "https://github.com/hedronvision/bazel-compile-commands-extractor",
+    "maintainers": [
+        {
+            "email": "zhangshuai.ustc@gmail.com",
+            "github": "hcoona",
+            "name": "Shuai Zhang"
+        }
+    ],
+    "repository": [
+        "github:hedronvision/bazel-compile-commands-extractor"
+    ],
+    "versions": [
+        "20240628.1"
+    ],
+    "yanked_versions": {}
+}
