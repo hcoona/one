@@ -1,0 +1,9 @@
+{
+    "url": "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz",
+    "integrity": "sha256-kubeG+nsF2Qo/SNnZ35hzv/C7hyxGQNQN6J9NGsEA7s=",
+    "strip_prefix": "libevent-2.1.12-stable",
+    "patches": {
+        "bazel-module-workspace.patch": "sha256-NVX5yrIYvJIkzIiFPBNEqlqBHUFq6hT2xm4BgDyLRgE="
+    },
+    "patch_strip": 1
+}

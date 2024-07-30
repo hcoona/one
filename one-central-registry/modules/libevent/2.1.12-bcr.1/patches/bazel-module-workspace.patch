@@ -1,0 +1,129 @@
+diff --git a/BUILD.bazel b/BUILD.bazel
+new file mode 100644
+index 0000000..b160aec
+--- /dev/null
++++ b/BUILD.bazel
+@@ -0,0 +1,64 @@
++# Copyright (c) 2022 Zhang Shuai<zhangshuai.ustc@gmail.com>.
++# All rights reserved.
++#
++# This file is part of ONE.
++#
++# ONE is free software: you can redistribute it and/or modify it under the
++# terms of the GNU General Public License as published by the Free Software
++# Foundation, either version 3 of the License, or (at your option) any later
++# version.
++#
++# ONE is distributed in the hope that it will be useful, but WITHOUT ANY
++# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
++# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License along with
++# ONE. If not, see <https://www.gnu.org/licenses/>.
++
++load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
++
++filegroup(
++    name = "all_srcs",
++    srcs = glob(["**"]),
++)
++
++cmake(
++    name = "libevent",
++    cache_entries = {
++        "EVENT__DISABLE_BENCHMARK": "ON",
++        "EVENT__DISABLE_TESTS": "ON",
++        "EVENT__DISABLE_SAMPLES": "ON",
++        "EVENT__LIBRARY_TYPE": "STATIC",
++        "OPENSSL_ROOT_DIR": "$$EXT_BUILD_DEPS$$",
++        "OPENSSL_USE_STATIC_LIBS": "TRUE",
++        "OPENSSL_CRYPTO_LIBRARY": "$$EXT_BUILD_DEPS$$/lib/libcrypto_internal.a",
++        "OPENSSL_SSL_LIBRARY": "$$EXT_BUILD_DEPS$$/lib/libssl_internal.a",
++    },
++    generate_args = ["-GNinja"],
++    lib_source = ":all_srcs",
++    linkopts = [
++        "-pthread",
++    ],
++    out_static_libs = select({
++        "@platforms//os:windows": [
++            "event.lib",
++            "event_core.lib",
++            "event_extra.lib",
++            "event_openssl.lib",
++            "event_pthreads.lib",
++        ],
++        "//conditions:default": [
++            "libevent.a",
++            "libevent_core.a",
++            "libevent_extra.a",
++            "libevent_openssl.a",
++            "libevent_pthreads.a",
++        ],
++    }),
++    visibility = ["//visibility:public"],
++    deps = [
++        # zlib is only used for testing.
++        "@boringssl//:crypto",
++        "@boringssl//:ssl",
++    ],
++)
+diff --git a/MODULE.bazel b/MODULE.bazel
+new file mode 100644
+index 0000000..523a547
+--- /dev/null
++++ b/MODULE.bazel
+@@ -0,0 +1,29 @@
++# Copyright (c) 2022 Zhang Shuai<zhangshuai.ustc@gmail.com>.
++# All rights reserved.
++#
++# This file is part of ONE.
++#
++# ONE is free software: you can redistribute it and/or modify it under the
++# terms of the GNU General Public License as published by the Free Software
++# Foundation, either version 3 of the License, or (at your option) any later
++# version.
++#
++# ONE is distributed in the hope that it will be useful, but WITHOUT ANY
++# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
++# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License along with
++# ONE. If not, see <https://www.gnu.org/licenses/>.
++
++module(
++    name = "libevent",
++    repo_name = "com_github_libevent_libevent",
++    version = "2.1.12",
++    compatibility_level = 1,
++)
++
++bazel_dep(name = "platforms", version = "0.0.10")
++bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
++bazel_dep(name = "rules_perl", version = "0.2.0")
++
++bazel_dep(name = "boringssl", version = "0.0.0-20240530-2db0eb3")
+diff --git a/WORKSPACE b/WORKSPACE
+new file mode 100644
+index 0000000..9483279
+--- /dev/null
++++ b/WORKSPACE
+@@ -0,0 +1,18 @@
++# Copyright (c) 2022 Zhang Shuai<zhangshuai.ustc@gmail.com>.
++# All rights reserved.
++#
++# This file is part of ONE.
++#
++# ONE is free software: you can redistribute it and/or modify it under the
++# terms of the GNU General Public License as published by the Free Software
++# Foundation, either version 3 of the License, or (at your option) any later
++# version.
++#
++# ONE is distributed in the hope that it will be useful, but WITHOUT ANY
++# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
++# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License along with
++# ONE. If not, see <https://www.gnu.org/licenses/>.
++#
++# This file is intented to be empty.
