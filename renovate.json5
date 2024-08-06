@@ -1,18 +1,23 @@
 {
-  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
-    "config:best-practices",
-    ":preserveSemverRanges",
-    ":rebaseStalePrs",
-    "schedule:weekly",
-    ":automergeMinor",
+    'config:best-practices',
+    ':preserveSemverRanges',
+    ':rebaseStalePrs',
+    'schedule:weekly',
+    ':automergeMinor',
   ],
   labels: [
-    "renovate",
+    'renovate',
   ],
   prConcurrentLimit: 1,
   platformAutomerge: true,
-  platformCommit: true,
-  timezone: "Asia/Hong_Kong",
-  "enabledManagers": ["bazel", "bazel-module", "bazelisk", "pep621"],
+  platformCommit: 'enabled',
+  timezone: 'Asia/Hong_Kong',
+  enabledManagers: [
+    'bazel',
+    'bazel-module',
+    'bazelisk',
+    'pep621',
+  ],
 }
