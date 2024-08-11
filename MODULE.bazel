@@ -75,7 +75,7 @@ single_version_override(
     patches = ["//bazel/third_party/boost.xpressive:ipp-hdrs.patch"],
 )
 
-bazel_dep(name = "abseil-cpp", version = "20240116.2")
+bazel_dep(name = "abseil-cpp", version = "20240722.0")
 bazel_dep(name = "gflags", version = "2.2.2")
 bazel_dep(name = "glog", version = "0.7.1")
 bazel_dep(name = "libevent", version = "2.1.12-bcr.1")
