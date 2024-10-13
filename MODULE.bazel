@@ -79,7 +79,7 @@ bazel_dep(name = "abseil-cpp", version = "20240722.0")
 bazel_dep(name = "gflags", version = "2.2.2")
 bazel_dep(name = "glog", version = "0.7.1")
 bazel_dep(name = "libevent", version = "2.1.12-bcr.1")
-bazel_dep(name = "rapidjson", version = "1.1.0")
+bazel_dep(name = "rapidjson", version = "1.1.0.bcr.20241007")
 
 #
 # Dev Dependencies
