@@ -26,7 +26,7 @@ module(
 # Toolchains
 #
 
-bazel_dep(name = "toolchains_llvm", version = "1.1.2", dev_dependency = True)
+bazel_dep(name = "toolchains_llvm", version = "1.2.0", dev_dependency = True)
 
 # Configure and register the toolchain.
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
