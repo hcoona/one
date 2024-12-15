@@ -29,4 +29,4 @@ bazel_dep(name = "platforms", version = "0.0.10")
 bazel_dep(name = "rules_foreign_cc", version = "0.13.0")
 bazel_dep(name = "rules_perl", version = "0.2.0")
 
-bazel_dep(name = "boringssl", version = "0.20241024.0")
+bazel_dep(name = "boringssl", version = "0.20241209.0")
